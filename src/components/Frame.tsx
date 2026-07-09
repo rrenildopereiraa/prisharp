@@ -21,7 +21,6 @@ export const Frame = forwardRef<
 		onFileNameChange: (value: string) => void;
 	}
 >(function Frame({ code, onCodeChange, language, fileName, onFileNameChange }, ref) {
-	const lineCount = code.split("\n").length;
 
 	return (
 		<div ref={ref} className="p-r min-w-0 bg-page" style={{ padding: FRAME_PADDING }}>
@@ -64,7 +63,7 @@ export const Frame = forwardRef<
 						{/* Status bar */}
 						<div className="d-f ai-c jc-fe px-4 py-2 btw-1 bs-s bc-border">
 							<span className="ff-m fs-xs c-accent-dim">
-								{LANGUAGES[language]} · {lineCount} {lineCount === 1 ? "line" : "lines"}
+								{LANGUAGES[language]}
 							</span>
 						</div>
 					</div>
