@@ -1,7 +1,8 @@
 import { forwardRef } from "react";
-import type { LanguageId } from "../lib/highlighter";
-import { LANGUAGES } from "../lib/highlighter";
+import type * as highlighter_1 from "../lib/highlighter";
+import * as highlighter from "../lib/highlighter";
 import { CodeEditor } from "./CodeEditor";
+import { CommitIcon, MagnifyingGlassIcon, MixerHorizontalIcon } from "@radix-ui/react-icons";
 
 // Diagonal hatch texture
 const hatchStyle = {
@@ -16,7 +17,7 @@ export const Frame = forwardRef<
 	{
 		code: string;
 		onCodeChange: (value: string) => void;
-		language: LanguageId;
+		language: highlighter_1.LanguageId;
 		fileName: string;
 		onFileNameChange: (value: string) => void;
 	}
@@ -35,11 +36,6 @@ export const Frame = forwardRef<
 				<div className="p-a r-0 t--16 b--16 w-px bg-border" aria-hidden="true" />
 
 				<div className="d-f bg-surface bw-1 bs-s bc-border o-h">
-					<div className="d-f fd-c ai-c g-3 w-10 py-4 brw-1 bs-s bc-border">
-						<span className="w-2 h-2 bg-accent-dim" aria-hidden="true" />
-						<span className="w-2 h-2 bg-accent-dim/50" aria-hidden="true" />
-						<span className="w-2 h-2 bg-accent-dim/25" aria-hidden="true" />
-					</div>
 
 					<div className="f-1 min-w-0">
 						{/* Tab bar */}
@@ -63,7 +59,7 @@ export const Frame = forwardRef<
 						{/* Status bar */}
 						<div className="d-f ai-c jc-fe px-4 py-2 btw-1 bs-s bc-border">
 							<span className="ff-m fs-xs c-accent-dim">
-								{LANGUAGES[language]}
+								{highlighter.LANGUAGES[language]}
 							</span>
 						</div>
 					</div>
