@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Aperture — mock</title>
+	<link rel="stylesheet" href="mock.css" />
+	<style>
+		/*
+			Everything below is deliberately NOT Yumma CSS, and that's the point:
+			- Syntax token colors (.tok-*) simulate what Shiki will inject at
+			  runtime via its own theme mechanism. Two token categories already
+			  reuse real theme colors (c-accent for strings, c-code for
+			  constants) - the rest have no brand-token equivalent, so Shiki
+			  will own them directly, not Yumma CSS utilities.
+			- The diagonal hatch texture is a repeating-linear-gradient, applied
+			  inline in the real component (same precedent already agreed for
+			  Trigger.dev's own pattern asset) - there's no "diagonal hatch
+			  texture" utility to derive a class name from, so this stays raw
+			  CSS/inline style in both the mock and the real app, not a
+			  standalone stylesheet.
+			- The hover transition and button reset are the only actual custom
+			  rules; everything else is a real Yumma CSS utility class.
+		*/
+		body { margin: 0; }
+		button { font: inherit; border: 0; }
+		.tok-keyword { color: #9595e3; }
+		.tok-function { color: #f5faff; }
+		.tok-comment { color: #979cac; }
+		.tok-property { color: #85b1e0; }
+		.hatch {
+			background-image: repeating-linear-gradient(
+				45deg,
+				transparent 0,
+				transparent 7px,
+				#23274180 7px,
+				#23274180 8px
+			);
+		}
+	</style>
+</head>
+<body class="bg-page">
+	<div class="d-f fd-c min-h-vh">
+
+		<!-- Header: primary actions only -->
+		<header class="d-f ai-c jc-sb px-8 py-6">
+			<span class="ff-m fw-700 fs-lg c-accent">Aperture</span>
+
+			<div class="d-f ai-c g-3">
+				<!-- Language picker (Base UI Combobox trigger) -->
+				<button class="d-f ai-c g-2 px-4 py-2 bw-1 bs-s bc-border bg-surface c-accent-dim fs-sm ff-m c-p h:bc-accent-dim">
+					Swift
+					<span class="c-accent-dim fs-xs">▾</span>
+				</button>
+
+				<!-- Copy (Base UI Button, secondary) -->
+				<button class="px-4 py-2 bw-1 bs-s bc-border bg-surface c-accent-dim fs-sm ff-m c-p h:bc-accent-dim">
+					Copy
+				</button>
+
+				<!-- Export (Base UI Button, primary) -->
+				<button class="px-4 py-2 bw-1 bs-s bc-accent bg-accent c-page fw-600 fs-sm ff-m c-p h:bg-accent-dim">
+					Export PNG
+				</button>
+			</div>
+		</header>
+
+		<div class="h-px bg-border"></div>
+
+		<!-- Stage: hashtag grid + diagonal hatch, frame grows with content -->
+		<main class="hatch f-1 d-f ai-c jc-c p-r o-h px-8 py-24" aria-hidden="false">
+
+			<!-- Frame -->
+			<div class="p-r zi-10 w-192 max-w-100% bg-surface bw-1 bs-s bc-border o-v">
+
+				<!-- Grid extension lines, attached to the frame's own edges -->
+				<div class="p-a t-0 l--16 w-224 h-px bg-border" aria-hidden="true"></div>
+				<div class="p-a b-0 l--16 w-224 h-px bg-border" aria-hidden="true"></div>
+				<div class="p-a t--16 l-0 h-112 w-px bg-border" aria-hidden="true"></div>
+				<div class="p-a t--16 r-0 h-112 w-px bg-border" aria-hidden="true"></div>
+
+				<!-- Corner dots: the one deliberate border-radius use in this whole app -
+				     diagram connector nodes, not surface/card rounding -->
+				<div class="p-a t--17 l--16 w-2 h-2 bg-accent-dim" aria-hidden="true"></div>
+				<div class="p-a t--17 r--16 w-2 h-2 bg-accent-dim" aria-hidden="true"></div>
+				<div class="p-a b--17 l--16 w-2 h-2 bg-accent-dim" aria-hidden="true"></div>
+				<div class="p-a b--17 r--16 w-2 h-2 bg-accent-dim" aria-hidden="true"></div>
+
+				<!-- Frame header -->
+				<div class="d-f ai-c jc-sb px-6 py-4">
+					<span class="ff-m fs-sm c-accent-dim">Untitled-1</span>
+					<span class="ff-m fs-xs c-accent-dim">Swift</span>
+				</div>
+				<div class="h-px bg-border"></div>
+
+				<!-- Code body -->
+				<div class="d-f p-6 g-4 ff-m fs-sm lh-4">
+					<!-- Line numbers: toggleable, on by default in this mock -->
+					<div class="d-f fd-c g-1 ta-r c-accent-dim o-50">
+						<span>1</span>
+						<span>2</span>
+						<span>3</span>
+						<span>4</span>
+						<span>5</span>
+						<span>6</span>
+					</div>
+
+					<!-- Code lines -->
+					<div class="d-f fd-c g-1 f-1">
+						<div><span class="tok-keyword">import</span> SwiftUI</div>
+						<div>&nbsp;</div>
+						<div><span class="tok-keyword">struct</span> <span class="tok-function">CircleImage</span>: View {</div>
+						<div class="pl-6"><span class="tok-keyword">var</span> body: <span class="tok-keyword">some</span> View {</div>
+						<div class="pl-12">Image(<span class="c-accent">"turtlerock"</span>)</div>
+						<div class="pl-16">.clipShape(<span class="tok-function">Circle</span>())</div>
+					</div>
+				</div>
+			</div>
+		</main>
+
+		<!-- Adjustment toolbar: secondary to the header's primary actions -->
+		<footer class="d-f ai-c jc-c g-6 px-8 py-5">
+			<div class="d-f ai-c g-2">
+				<span class="fs-xs c-accent-dim ff-m">Padding</span>
+				<div class="d-f bw-1 bs-s bc-border">
+					<button class="px-3 py-1 fs-xs ff-m c-page bg-accent c-p">16</button>
+					<button class="px-3 py-1 fs-xs ff-m c-accent-dim bg-surface c-p h:bc-accent-dim">32</button>
+					<button class="px-3 py-1 fs-xs ff-m c-accent-dim bg-surface c-p h:bc-accent-dim">64</button>
+					<button class="px-3 py-1 fs-xs ff-m c-accent-dim bg-surface c-p h:bc-accent-dim">128</button>
+				</div>
+			</div>
+
+			<div class="d-f ai-c g-2">
+				<span class="fs-xs c-accent-dim ff-m">Ratio</span>
+				<div class="d-f bw-1 bs-s bc-border">
+					<button class="px-3 py-1 fs-xs ff-m c-page bg-accent c-p">Auto</button>
+					<button class="px-3 py-1 fs-xs ff-m c-accent-dim bg-surface c-p h:bc-accent-dim">1:1</button>
+					<button class="px-3 py-1 fs-xs ff-m c-accent-dim bg-surface c-p h:bc-accent-dim">16:9</button>
+					<button class="px-3 py-1 fs-xs ff-m c-accent-dim bg-surface c-p h:bc-accent-dim">4:3</button>
+				</div>
+			</div>
+
+			<div class="d-f ai-c g-2">
+				<span class="fs-xs c-accent-dim ff-m">Line numbers</span>
+				<button class="p-r w-10 h-6 bw-1 bs-s bc-accent-dim bg-accent c-p" aria-pressed="true">
+					<span class="p-a t-1 r-1 w-4 h-4 bg-page"></span>
+				</button>
+			</div>
+		</footer>
+	</div>
+</body>
+</html>

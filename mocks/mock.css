@@ -1,0 +1,488 @@
+*,
+:before,
+:after {
+	box-sizing: border-box;
+	border: 0 solid;
+}
+
+* {
+	margin: 0;
+	padding: 0;
+}
+
+html {
+	font-family:
+		system-ui,
+		-apple-system,
+		Segoe UI,
+		Roboto,
+		Helvetica Neue,
+		Noto Sans,
+		Liberation Sans,
+		Arial,
+		sans-serif,
+		Apple Color Emoji,
+		Segoe UI Emoji,
+		Segoe UI Symbol,
+		Noto Color Emoji;
+}
+
+body {
+	-webkit-font-smoothing: antialiased;
+	font-family: inherit;
+	line-height: 1.5;
+}
+
+canvas,
+img,
+picture,
+svg,
+video {
+	max-width: 100%;
+	display: block;
+}
+
+button,
+input,
+optgroup,
+select,
+textarea {
+	background-color: transparent;
+	padding: 0.5rem;
+	font-family: inherit;
+}
+
+button:not([class]),
+input:not([class]),
+optgroup:not([class]),
+select:not([class]),
+textarea:not([class]) {
+	border: 1px solid #bfc2c7;
+}
+
+:is(a, button, input, select, summary, textarea):focus {
+	outline: 2px solid transparent;
+}
+
+textarea:not([rows]) {
+	min-height: 10em;
+}
+
+button {
+	cursor: pointer;
+}
+
+button:disabled,
+input:disabled,
+select:disabled,
+textarea:disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+	overflow-wrap: break-word;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	text-wrap: balance;
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+p {
+	text-wrap: pretty;
+}
+
+b,
+strong {
+	font-weight: 700;
+}
+
+small {
+	font-size: 80%;
+	line-height: 1.4;
+}
+
+pre,
+code,
+kbd,
+samp {
+	font-family: monospace;
+	font-size: 1em;
+}
+
+a {
+	color: inherit;
+	text-decoration: none;
+}
+
+ol,
+ul {
+	padding: 0;
+	list-style: none;
+}
+
+th {
+	font-size: 1rem;
+	font-weight: 600;
+}
+
+hr {
+	border-top: 1px solid #bfc2c7;
+	height: 0;
+	margin: 1em 0;
+}
+
+details {
+	display: block;
+}
+
+summary {
+	display: list-item;
+}
+
+.ai-c {
+	align-items: center;
+}
+
+.b--17 {
+	bottom: -4.25rem;
+}
+
+.b-0 {
+	bottom: 0;
+}
+
+.bc-accent {
+	border-color: #bec6f2;
+}
+
+.bc-accent-dim {
+	border-color: #9aa5ef;
+}
+
+.bc-border {
+	border-color: #232741;
+}
+
+.bg-accent {
+	background-color: #bec6f2;
+}
+
+.bg-accent-dim {
+	background-color: #9aa5ef;
+}
+
+.bg-border {
+	background-color: #232741;
+}
+
+.bg-page {
+	background-color: #151724;
+}
+
+.bg-surface {
+	background-color: #1a1d2e;
+}
+
+.br-50\% {
+	border-radius: 50%;
+}
+
+.bs-s {
+	border-style: solid;
+}
+
+.bw-1 {
+	border-width: 1px;
+}
+
+.c-accent {
+	color: #bec6f2;
+}
+
+.c-accent-dim {
+	color: #9aa5ef;
+}
+
+.c-code {
+	color: #dda2f6;
+}
+
+.c-p {
+	cursor: pointer;
+}
+
+.c-page {
+	color: #151724;
+}
+
+.d-f {
+	display: flex;
+}
+
+.f-1 {
+	flex: 1;
+}
+
+.fd-c {
+	flex-direction: column;
+}
+
+.ff-m {
+	font-family:
+		ui-monospace,
+		Cascadia Code,
+		Source Code Pro,
+		Menlo,
+		Roboto Mono,
+		Ubuntu Mono,
+		Consolas,
+		Liberation Mono,
+		Courier New,
+		monospace;
+}
+
+.fs-lg {
+	font-size: 1.125rem;
+}
+
+.fs-sm {
+	font-size: 0.875rem;
+}
+
+.fs-xs {
+	font-size: 0.75rem;
+}
+
+.fw-600 {
+	font-weight: 600;
+}
+
+.fw-700 {
+	font-weight: 700;
+}
+
+.g-1 {
+	gap: 0.25rem;
+}
+
+.g-2 {
+	gap: 0.5rem;
+}
+
+.g-3 {
+	gap: 0.75rem;
+}
+
+.g-4 {
+	gap: 1rem;
+}
+
+.g-6 {
+	gap: 1.5rem;
+}
+
+.h-112 {
+	height: 28rem;
+}
+
+.h-2 {
+	height: 0.5rem;
+}
+
+.h-4 {
+	height: 1rem;
+}
+
+.h-6 {
+	height: 1.5rem;
+}
+
+.h-px {
+	height: 1px;
+}
+
+.h\:bc-accent-dim:hover {
+	border-color: #9aa5ef;
+}
+
+.h\:bg-accent-dim:hover {
+	background-color: #9aa5ef;
+}
+
+.jc-c {
+	justify-content: center;
+}
+
+.jc-sb {
+	justify-content: space-between;
+}
+
+.l--16 {
+	left: -4rem;
+}
+
+.l-0 {
+	left: 0;
+}
+
+.lh-4 {
+	line-height: 1.5;
+}
+
+.max-w-100\% {
+	max-width: 100%;
+}
+
+.min-h-vh {
+	min-height: 100vh;
+}
+
+.o-50 {
+	opacity: 0.5;
+}
+
+.o-h {
+	overflow: hidden;
+}
+
+.o-v {
+	overflow: visible;
+}
+
+.p-6 {
+	padding: 1.5rem;
+}
+
+.p-a {
+	position: absolute;
+}
+
+.p-r {
+	position: relative;
+}
+
+.pl-12 {
+	padding-left: 3rem;
+}
+
+.pl-16 {
+	padding-left: 4rem;
+}
+
+.pl-6 {
+	padding-left: 1.5rem;
+}
+
+.px-3 {
+	padding-inline: 0.75rem;
+}
+
+.px-4 {
+	padding-inline: 1rem;
+}
+
+.px-6 {
+	padding-inline: 1.5rem;
+}
+
+.px-8 {
+	padding-inline: 2rem;
+}
+
+.py-1 {
+	padding-block: 0.25rem;
+}
+
+.py-2 {
+	padding-block: 0.5rem;
+}
+
+.py-24 {
+	padding-block: 6rem;
+}
+
+.py-4 {
+	padding-block: 1rem;
+}
+
+.py-5 {
+	padding-block: 1.25rem;
+}
+
+.py-6 {
+	padding-block: 1.5rem;
+}
+
+.r--16 {
+	right: -4rem;
+}
+
+.r-0 {
+	right: 0;
+}
+
+.r-1 {
+	right: 0.25rem;
+}
+
+.t--16 {
+	top: -4rem;
+}
+
+.t--17 {
+	top: -4.25rem;
+}
+
+.t-0 {
+	top: 0;
+}
+
+.t-1 {
+	top: 0.25rem;
+}
+
+.ta-r {
+	text-align: right;
+}
+
+.w-10 {
+	width: 2.5rem;
+}
+
+.w-192 {
+	width: 48rem;
+}
+
+.w-2 {
+	width: 0.5rem;
+}
+
+.w-224 {
+	width: 56rem;
+}
+
+.w-4 {
+	width: 1rem;
+}
+
+.w-px {
+	width: 1px;
+}
+
+.zi-10 {
+	z-index: 10;
+}

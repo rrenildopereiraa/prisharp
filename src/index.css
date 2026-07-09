@@ -1,0 +1,12 @@
+@import "@fontsource/ia-writer-quattro";
+
+@yummacss;
+
+:root {
+	color-scheme: dark;
+}
+
+body {
+	margin: 0;
+	font-family: "iA Writer Quattro", sans-serif;
+}
