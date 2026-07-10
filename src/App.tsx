@@ -42,7 +42,7 @@ function App() {
 	const [showTabBar, setShowTabBar] = useState(true);
 	const [showStatusBar, setShowStatusBar] = useState(true);
 	const [background, setBackground] = useState<Background>("stripes");
-	const [showHashtagLines, setShowHashtagLines] = useState(true);
+	const [showGridLines, setShowGridLines] = useState(true);
 	const [radii, setRadii] = useState<CornerRadii>({
 		tl: 0,
 		tr: 0,
@@ -129,8 +129,8 @@ function App() {
 		onShowTabBarChange: (value) => setShowTabBar(value),
 		showStatusBar,
 		onShowStatusBarChange: (value) => setShowStatusBar(value),
-		showHashtagLines,
-		onShowHashtagLinesChange: (value) => setShowHashtagLines(value),
+		showGridLines,
+		onShowGridLinesChange: (value) => setShowGridLines(value),
 		background,
 		onBackgroundChange: setBackground,
 		onSetLanguage: setLanguage,
@@ -160,7 +160,7 @@ function App() {
 					onFileNameChange={setFileName}
 					showTabBar={showTabBar}
 					showStatusBar={showStatusBar}
-					showHashtagLines={showHashtagLines}
+					showGridLines={showGridLines}
 					background={background}
 					radii={radii}
 					font={FONTS[font].stack}
@@ -173,8 +173,8 @@ function App() {
 					onShowTabBarChange={setShowTabBar}
 					showStatusBar={showStatusBar}
 					onShowStatusBarChange={setShowStatusBar}
-					showHashtagLines={showHashtagLines}
-					onShowHashtagLinesChange={setShowHashtagLines}
+					showGridLines={showGridLines}
+					onShowGridLinesChange={setShowGridLines}
 					background={background}
 					onBackgroundChange={setBackground}
 					radii={radii}

@@ -15,8 +15,8 @@ export function buildCommands({
 	onShowTabBarChange,
 	showStatusBar,
 	onShowStatusBarChange,
-	showHashtagLines,
-	onShowHashtagLinesChange,
+	showGridLines,
+	onShowGridLinesChange,
 	background,
 	onBackgroundChange,
 	onSetLanguage,
@@ -30,8 +30,8 @@ export function buildCommands({
 	onShowTabBarChange: (value: boolean) => void;
 	showStatusBar: boolean;
 	onShowStatusBarChange: (value: boolean) => void;
-	showHashtagLines: boolean;
-	onShowHashtagLinesChange: (value: boolean) => void;
+	showGridLines: boolean;
+	onShowGridLinesChange: (value: boolean) => void;
 	background: Background;
 	onBackgroundChange: (value: Background) => void;
 	onSetLanguage: (value: LanguageId) => void;
@@ -72,9 +72,9 @@ export function buildCommands({
 				onBackgroundChange(background === "stripes" ? "solid" : "stripes"),
 		},
 		{
-			id: "toggle-hashtag-lines",
-			label: `${showHashtagLines ? "Hide" : "Show"} hashtag lines`,
-			run: () => onShowHashtagLinesChange(!showHashtagLines),
+			id: "toggle-grid-lines",
+			label: `${showGridLines ? "Hide" : "Show"} grid lines`,
+			run: () => onShowGridLinesChange(!showGridLines),
 		},
 		...(Object.keys(FONTS) as FontId[]).map(
 			(id): Command => ({

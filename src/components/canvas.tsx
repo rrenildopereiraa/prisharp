@@ -12,7 +12,7 @@ export function Canvas({
 	onFileNameChange,
 	showTabBar,
 	showStatusBar,
-	showHashtagLines,
+	showGridLines,
 	background,
 	radii,
 	font,
@@ -26,7 +26,7 @@ export function Canvas({
 	onFileNameChange: (value: string) => void;
 	showTabBar: boolean;
 	showStatusBar: boolean;
-	showHashtagLines: boolean;
+	showGridLines: boolean;
 	background: Background;
 	radii: CornerRadii;
 	font?: string;
@@ -45,7 +45,7 @@ export function Canvas({
 					onFileNameChange={onFileNameChange}
 					showTabBar={showTabBar}
 					showStatusBar={showStatusBar}
-					showHashtagLines={showHashtagLines}
+					showGridLines={showGridLines}
 					background={background}
 					radii={radii}
 					font={font}

@@ -264,8 +264,8 @@ export function Inspector({
 	onShowTabBarChange,
 	showStatusBar,
 	onShowStatusBarChange,
-	showHashtagLines,
-	onShowHashtagLinesChange,
+	showGridLines,
+	onShowGridLinesChange,
 	background,
 	onBackgroundChange,
 	radii,
@@ -279,8 +279,8 @@ export function Inspector({
 	onShowTabBarChange: (value: boolean) => void;
 	showStatusBar: boolean;
 	onShowStatusBarChange: (value: boolean) => void;
-	showHashtagLines: boolean;
-	onShowHashtagLinesChange: (value: boolean) => void;
+	showGridLines: boolean;
+	onShowGridLinesChange: (value: boolean) => void;
 	background: Background;
 	onBackgroundChange: (value: Background) => void;
 	radii: CornerRadii;
@@ -317,9 +317,9 @@ export function Inspector({
 			<SectionSeparator label="Background" />
 
 			<OptionSwitch
-				label="Hashtag lines"
-				checked={showHashtagLines}
-				onCheckedChange={onShowHashtagLinesChange}
+				label="Grid lines"
+				checked={showGridLines}
+				onCheckedChange={onShowGridLinesChange}
 			/>
 
 			<div className="px-2 py-1">

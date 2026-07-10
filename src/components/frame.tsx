@@ -25,7 +25,7 @@ export const Frame = forwardRef<
 		onFileNameChange: (value: string) => void;
 		showTabBar: boolean;
 		showStatusBar: boolean;
-		showHashtagLines: boolean;
+		showGridLines: boolean;
 		background: Background;
 		radii: CornerRadii;
 		font?: string;
@@ -40,7 +40,7 @@ export const Frame = forwardRef<
 		onFileNameChange,
 		showTabBar,
 		showStatusBar,
-		showHashtagLines,
+		showGridLines,
 		background,
 		radii,
 		font,
@@ -73,7 +73,7 @@ export const Frame = forwardRef<
 				)}
 
 				{/* Grid lines */}
-				{showHashtagLines && (
+				{showGridLines && (
 					<>
 						<div
 							className="p-a t-0 l--16 r--16 h-px bg-border"

@@ -25,7 +25,7 @@ export function StatusBar({
 				onClick={onOpenPalette}
 				className="d-f ai-c jc-sb g-2 w-64 my-1 px-3 py-1 bg-page c-accent-dim fs-xs ff-m us-none c-p bw-0 h:c-accent fv:os-s fv:oo--2 fv:oc-accent"
 			>
-				Search...
+				Search commands...
 				<span className="px-1 bw-1 bs-s bc-border fs-xs c-accent-dim ws-nw">
 					Ctrl K
 				</span>
