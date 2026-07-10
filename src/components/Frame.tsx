@@ -24,7 +24,11 @@ export const Frame = forwardRef<
 		onFileNameChange: (value: string) => void;
 		showTabBar: boolean;
 		showStatusBar: boolean;
+		showHashtagLines: boolean;
 		background: Background;
+		radius: number;
+		font?: string;
+		themeName: string;
 	}
 >(function Frame(
 	{
@@ -35,17 +39,26 @@ export const Frame = forwardRef<
 		onFileNameChange,
 		showTabBar,
 		showStatusBar,
+		showHashtagLines,
 		background,
+		radius,
+		font,
+		themeName,
 	},
 	ref,
 ) {
+	const fontStyle = font ? { fontFamily: font } : undefined;
+
 	return (
 		<div
 			ref={ref}
 			className="p-r min-w-0 bg-page"
 			style={{ padding: FRAME_PADDING }}
 		>
-			<div className="p-r zi-10 w-192 max-w-100% bg-surface o-v">
+			<div
+				className="p-r zi-10 w-192 max-w-100% bg-surface o-v"
+				style={{ borderRadius: radius }}
+			>
 				{/* Hatch texture - "stripes" background only; "solid" leaves the
 				    plain bg-page backdrop */}
 				{background === "stripes" && (
@@ -57,24 +70,31 @@ export const Frame = forwardRef<
 				)}
 
 				{/* Grid lines */}
-				<div
-					className="p-a t-0 l--16 r--16 h-px bg-border"
-					aria-hidden="true"
-				/>
-				<div
-					className="p-a b-0 l--16 r--16 h-px bg-border"
-					aria-hidden="true"
-				/>
-				<div
-					className="p-a l-0 t--16 b--16 w-px bg-border"
-					aria-hidden="true"
-				/>
-				<div
-					className="p-a r-0 t--16 b--16 w-px bg-border"
-					aria-hidden="true"
-				/>
+				{showHashtagLines && (
+					<>
+						<div
+							className="p-a t-0 l--16 r--16 h-px bg-border"
+							aria-hidden="true"
+						/>
+						<div
+							className="p-a b-0 l--16 r--16 h-px bg-border"
+							aria-hidden="true"
+						/>
+						<div
+							className="p-a l-0 t--16 b--16 w-px bg-border"
+							aria-hidden="true"
+						/>
+						<div
+							className="p-a r-0 t--16 b--16 w-px bg-border"
+							aria-hidden="true"
+						/>
+					</>
+				)}
 
-				<div className="d-f bg-surface bw-1 bs-s bc-border o-h">
+				<div
+					className="d-f bg-surface bw-1 bs-s bc-border o-h"
+					style={{ borderRadius: radius }}
+				>
 					<div className="f-1 min-w-0">
 						<AnimatePresence>
 							{showTabBar && (
@@ -95,6 +115,7 @@ export const Frame = forwardRef<
 												spellCheck={false}
 												placeholder="Untitled-1"
 												className="ff-m fs-sm c-accent-dim bg-transparent bw-0 os-none p-0 w-fc"
+												style={fontStyle}
 											/>
 										</div>
 									</div>
@@ -108,6 +129,8 @@ export const Frame = forwardRef<
 								code={code}
 								onCodeChange={onCodeChange}
 								language={language}
+								themeName={themeName}
+								font={font}
 							/>
 						</div>
 
@@ -121,7 +144,7 @@ export const Frame = forwardRef<
 									className="o-h"
 								>
 									<div className="d-f ai-c jc-fe px-4 py-2 btw-1 bs-s bc-border">
-										<span className="ff-m fs-xs c-accent-dim">
+										<span className="ff-m fs-xs c-accent-dim" style={fontStyle}>
 											{LANGUAGES[language]}
 										</span>
 									</div>

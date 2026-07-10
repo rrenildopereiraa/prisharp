@@ -67,3 +67,79 @@ export function getHighlighter(): Promise<HighlighterCore> {
 	}
 	return highlighterPromise;
 }
+
+// VS Code theme files are JSONC - strip // and /* */ comments (outside
+// strings) and trailing commas so JSON.parse accepts them.
+function stripJsonComments(text: string): string {
+	let result = "";
+	let inString = false;
+	let inLineComment = false;
+	let inBlockComment = false;
+
+	for (let i = 0; i < text.length; i++) {
+		const char = text[i];
+		const next = text[i + 1];
+
+		if (inLineComment) {
+			if (char === "\n") {
+				inLineComment = false;
+				result += char;
+			}
+			continue;
+		}
+		if (inBlockComment) {
+			if (char === "*" && next === "/") {
+				inBlockComment = false;
+				i++;
+			}
+			continue;
+		}
+		if (inString) {
+			result += char;
+			if (char === "\\") {
+				result += next ?? "";
+				i++;
+			} else if (char === '"') {
+				inString = false;
+			}
+			continue;
+		}
+		if (char === '"') {
+			inString = true;
+			result += char;
+			continue;
+		}
+		if (char === "/" && next === "/") {
+			inLineComment = true;
+			i++;
+			continue;
+		}
+		if (char === "/" && next === "*") {
+			inBlockComment = true;
+			i++;
+			continue;
+		}
+		result += char;
+	}
+
+	// Trailing commas before } or ]
+	return result.replace(/,(\s*[}\]])/g, "$1");
+}
+
+/**
+ * Register a user-uploaded VS Code theme (JSON or JSONC) with the
+ * highlighter and return its name for use with codeToTokens.
+ */
+export async function loadCustomTheme(text: string): Promise<string> {
+	const theme = JSON.parse(stripJsonComments(text)) as {
+		name?: string;
+		tokenColors?: unknown;
+	};
+	if (!theme.tokenColors) {
+		throw new Error("Not a VS Code color theme (missing tokenColors)");
+	}
+	theme.name = theme.name || "Custom";
+	const highlighter = await getHighlighter();
+	await highlighter.loadTheme(theme as unknown as ThemeInput);
+	return theme.name;
+}
