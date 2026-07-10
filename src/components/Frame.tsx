@@ -1,8 +1,9 @@
+import { Input } from "@base-ui/react/input";
 import { forwardRef } from "react";
-import type * as highlighter_1 from "../lib/highlighter";
-import * as highlighter from "../lib/highlighter";
+import type { LanguageId } from "../lib/highlighter";
+import { LANGUAGES } from "../lib/highlighter";
 import { CodeEditor } from "./CodeEditor";
-import { CommitIcon, MagnifyingGlassIcon, MixerHorizontalIcon } from "@radix-ui/react-icons";
+import type { Background } from "./Toolbar";
 
 // Diagonal hatch texture
 const hatchStyle = {
@@ -17,51 +18,95 @@ export const Frame = forwardRef<
 	{
 		code: string;
 		onCodeChange: (value: string) => void;
-		language: highlighter_1.LanguageId;
+		language: LanguageId;
 		fileName: string;
 		onFileNameChange: (value: string) => void;
+		showTabBar: boolean;
+		showStatusBar: boolean;
+		background: Background;
 	}
->(function Frame({ code, onCodeChange, language, fileName, onFileNameChange }, ref) {
-
+>(function Frame(
+	{
+		code,
+		onCodeChange,
+		language,
+		fileName,
+		onFileNameChange,
+		showTabBar,
+		showStatusBar,
+		background,
+	},
+	ref,
+) {
 	return (
-		<div ref={ref} className="p-r min-w-0 bg-page" style={{ padding: FRAME_PADDING }}>
+		<div
+			ref={ref}
+			className="p-r min-w-0 bg-page"
+			style={{ padding: FRAME_PADDING }}
+		>
 			<div className="p-r zi-10 w-192 max-w-100% bg-surface o-v">
-				{/* Hatch texture */}
-				<div className="p-a t--16 r--16 b--16 l--16 o-h zi--10 bg-page" style={hatchStyle} aria-hidden="true" />
+				{/* Hatch texture - "stripes" background only; "solid" leaves the
+				    plain bg-page backdrop */}
+				{background === "stripes" && (
+					<div
+						className="p-a t--16 r--16 b--16 l--16 o-h zi--10 bg-page"
+						style={hatchStyle}
+						aria-hidden="true"
+					/>
+				)}
 
 				{/* Grid lines */}
-				<div className="p-a t-0 l--16 r--16 h-px bg-border" aria-hidden="true" />
-				<div className="p-a b-0 l--16 r--16 h-px bg-border" aria-hidden="true" />
-				<div className="p-a l-0 t--16 b--16 w-px bg-border" aria-hidden="true" />
-				<div className="p-a r-0 t--16 b--16 w-px bg-border" aria-hidden="true" />
+				<div
+					className="p-a t-0 l--16 r--16 h-px bg-border"
+					aria-hidden="true"
+				/>
+				<div
+					className="p-a b-0 l--16 r--16 h-px bg-border"
+					aria-hidden="true"
+				/>
+				<div
+					className="p-a l-0 t--16 b--16 w-px bg-border"
+					aria-hidden="true"
+				/>
+				<div
+					className="p-a r-0 t--16 b--16 w-px bg-border"
+					aria-hidden="true"
+				/>
 
 				<div className="d-f bg-surface bw-1 bs-s bc-border o-h">
-
 					<div className="f-1 min-w-0">
 						{/* Tab bar */}
-						<div className="d-f ai-c bbw-1 bs-s bc-border bg-page">
-							<div className="d-f ai-c g-2 px-4 bg-surface py-3 bbw-2 bs-s bc-accent">
-								<input
-									value={fileName}
-									onChange={(event) => onFileNameChange(event.target.value)}
-									spellCheck={false}
-									placeholder="Untitled-1"
-									className="ff-m fs-sm c-accent-dim bg-transparent bw-0 os-none p-0 w-fc"
-								/>
+						{showTabBar && (
+							<div className="d-f ai-c bbw-1 bs-s bc-border bg-page">
+								<div className="d-f ai-c g-2 px-4 bg-surface py-3 bbw-2 bs-s bc-accent">
+									<Input
+										value={fileName}
+										onChange={(event) => onFileNameChange(event.target.value)}
+										spellCheck={false}
+										placeholder="Untitled-1"
+										className="ff-m fs-sm c-accent-dim bg-transparent bw-0 os-none p-0 w-fc"
+									/>
+								</div>
 							</div>
-						</div>
+						)}
 
 						{/* Code body */}
 						<div className="p-4">
-							<CodeEditor code={code} onCodeChange={onCodeChange} language={language} />
+							<CodeEditor
+								code={code}
+								onCodeChange={onCodeChange}
+								language={language}
+							/>
 						</div>
 
 						{/* Status bar */}
-						<div className="d-f ai-c jc-fe px-4 py-2 btw-1 bs-s bc-border">
-							<span className="ff-m fs-xs c-accent-dim">
-								{highlighter.LANGUAGES[language]}
-							</span>
-						</div>
+						{showStatusBar && (
+							<div className="d-f ai-c jc-fe px-4 py-2 btw-1 bs-s bc-border">
+								<span className="ff-m fs-xs c-accent-dim">
+									{LANGUAGES[language]}
+								</span>
+							</div>
+						)}
 					</div>
 				</div>
 			</div>
