@@ -59,7 +59,7 @@ export function StatusBar({
 				<span className="px-3 py-1 ff-m fs-xs c-accent-dim">
 					{width} × {height}
 				</span>
-				<Separator orientation="vertical" className="h-4 w-px bg-page" />
+				<Separator orientation="vertical" className="h-4 w-px bg-border" />
 				<span className="py-1 pr-3 ff-m fs-xs c-accent-dim">2x</span>
 			</div>
 		</footer>

@@ -80,7 +80,6 @@ export function CodeEditor({
 				ref={textareaRef}
 				onKeyDown={handleKeyDown}
 				className="p-a t-0 l-0 w-100% h-100% p-0 m-0 bg-transparent c-transparent cc-accent bw-0 os-none o-h r-none ff-m fs-sm lh-4 ws-pw"
-				style={{ tabSize: 2 }}
 			/>
 		</div>
 	);
