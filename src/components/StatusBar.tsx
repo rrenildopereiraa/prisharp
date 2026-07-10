@@ -28,7 +28,10 @@ export function StatusBar({
 			<div className="d-f ai-c">
 				<img src="/favicon.svg" className="w-4 h-4 mx-2" alt="" />
 
-				<Separator orientation="vertical" className="h-4 brw-1 bs-s bc-border" />
+				<Separator
+					orientation="vertical"
+					className="h-4 brw-1 bs-s bc-border"
+				/>
 
 				<Toggle
 					pressed={showTabBar}
