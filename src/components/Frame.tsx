@@ -1,4 +1,5 @@
 import { Input } from "@base-ui/react/input";
+import { AnimatePresence, motion } from "motion/react";
 import { forwardRef } from "react";
 import type { LanguageId } from "../lib/highlighter";
 import { LANGUAGES } from "../lib/highlighter";
@@ -75,20 +76,31 @@ export const Frame = forwardRef<
 
 				<div className="d-f bg-surface bw-1 bs-s bc-border o-h">
 					<div className="f-1 min-w-0">
-						{/* Tab bar */}
-						{showTabBar && (
-							<div className="d-f ai-c bbw-1 bs-s bc-border bg-page">
-								<div className="d-f ai-c g-2 px-4 bg-surface py-3 bbw-2 bs-s bc-accent">
-									<Input
-										value={fileName}
-										onChange={(event) => onFileNameChange(event.target.value)}
-										spellCheck={false}
-										placeholder="Untitled-1"
-										className="ff-m fs-sm c-accent-dim bg-transparent bw-0 os-none p-0 w-fc"
-									/>
-								</div>
-							</div>
-						)}
+						<AnimatePresence>
+							{showTabBar && (
+								<motion.div
+									initial={{ height: 0, opacity: 0 }}
+									animate={{ height: "auto", opacity: 1 }}
+									exit={{ height: 0, opacity: 0 }}
+									transition={{ duration: 0.15, ease: "easeOut" }}
+									className="o-h"
+								>
+									<div className="d-f ai-c bbw-1 bs-s bc-border bg-page">
+										<div className="d-f ai-c g-2 px-4 bg-surface py-3 bbw-2 bs-s bc-accent">
+											<Input
+												value={fileName}
+												onChange={(event) =>
+													onFileNameChange(event.target.value)
+												}
+												spellCheck={false}
+												placeholder="Untitled-1"
+												className="ff-m fs-sm c-accent-dim bg-transparent bw-0 os-none p-0 w-fc"
+											/>
+										</div>
+									</div>
+								</motion.div>
+							)}
+						</AnimatePresence>
 
 						{/* Code body */}
 						<div className="p-4">
@@ -99,14 +111,23 @@ export const Frame = forwardRef<
 							/>
 						</div>
 
-						{/* Status bar */}
-						{showStatusBar && (
-							<div className="d-f ai-c jc-fe px-4 py-2 btw-1 bs-s bc-border">
-								<span className="ff-m fs-xs c-accent-dim">
-									{LANGUAGES[language]}
-								</span>
-							</div>
-						)}
+						<AnimatePresence>
+							{showStatusBar && (
+								<motion.div
+									initial={{ height: 0, opacity: 0 }}
+									animate={{ height: "auto", opacity: 1 }}
+									exit={{ height: 0, opacity: 0 }}
+									transition={{ duration: 0.15, ease: "easeOut" }}
+									className="o-h"
+								>
+									<div className="d-f ai-c jc-fe px-4 py-2 btw-1 bs-s bc-border">
+										<span className="ff-m fs-xs c-accent-dim">
+											{LANGUAGES[language]}
+										</span>
+									</div>
+								</motion.div>
+							)}
+						</AnimatePresence>
 					</div>
 				</div>
 			</div>
