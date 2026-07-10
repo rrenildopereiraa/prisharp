@@ -1,1 +1,38 @@
 # Aperture
+
+Beautiful code screenshots, instantly. [aperture.yummacss.com](https://aperture.yummacss.com)
+
+Paste your code, pick a language, and export a polished screenshot.
+
+## Tech stack
+
+- [React 19](https://react.dev) + [TypeScript](https://www.typescriptlang.org)
+- [Vite](https://vite.dev) for bundling
+- [Yumma CSS](https://yummacss.com) for styling
+- [Shiki](https://shiki.style) for syntax highlighting
+- [Base UI](https://base-ui.com) for accessible primitives
+- [Motion](https://motion.dev) for animations
+- [html-to-image](https://github.com/bubkoo/html-to-image) for exports
+
+## Getting started
+
+```bash
+pnpm install
+pnpm dev
+```
+
+Open [localhost:5173](http://localhost:5173) in your browser.
+
+## Commands
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start the dev server |
+| `pnpm build` | Type-check and build for production |
+| `pnpm preview` | Preview the production build |
+| `pnpm lint` | Run Biome linter and formatter |
+| `pnpm validate` | Run Yumma CSS canon validation |
+
+## License
+
+MIT
