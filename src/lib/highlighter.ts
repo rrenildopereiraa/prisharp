@@ -18,8 +18,9 @@ import svelte from "@shikijs/langs/svelte";
 import tsx from "@shikijs/langs/tsx";
 import typescript from "@shikijs/langs/typescript";
 import vue from "@shikijs/langs/vue";
-
+import amber from "../themes/amber-theme.json";
 import eclipsa from "../themes/eclipsa-theme.json";
+import monochrome from "../themes/monochrome-theme.json";
 
 export const LANGUAGES = {
 	html: "HTML",
@@ -41,12 +42,22 @@ export type LanguageId = keyof typeof LANGUAGES;
 
 export const THEME_NAME = eclipsa.name;
 
+const BUILTIN_THEMES = [eclipsa, monochrome, amber] as ThemeInput[];
+
+export const THEMES = {
+	[THEME_NAME]: eclipsa.name,
+	[monochrome.name]: monochrome.name,
+	[amber.name]: amber.name,
+} as const;
+
+export type ThemeId = keyof typeof THEMES;
+
 let highlighterPromise: Promise<HighlighterCore> | null = null;
 
 export function getHighlighter(): Promise<HighlighterCore> {
 	if (!highlighterPromise) {
 		highlighterPromise = createHighlighterCore({
-			themes: [eclipsa as unknown as ThemeInput],
+			themes: BUILTIN_THEMES,
 			langs: [
 				astro,
 				css,

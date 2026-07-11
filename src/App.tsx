@@ -1,6 +1,6 @@
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { toBlob } from "html-to-image";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Canvas } from "./components/canvas";
 import { CommandPalette } from "./components/command-palette";
 import type { ExportFormat } from "./components/format-picker";
@@ -15,6 +15,7 @@ import type { Background } from "./components/toolbar";
 import { Toolbar } from "./components/toolbar";
 import { buildCommands } from "./lib/commands";
 import { captureDataUrl } from "./lib/export";
+import { useHaptics } from "./lib/haptics";
 import {
 	type LanguageId,
 	loadCustomTheme,
@@ -54,6 +55,14 @@ function App() {
 	const [paletteOpen, setPaletteOpen] = useState(false);
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const frameRef = useRef<HTMLDivElement>(null);
+	const { trigger: haptic } = useHaptics();
+
+	// biome-ignore lint/correctness/useExhaustiveDependencies: fire on dims change
+	useEffect(() => {
+		if (dimensions.width > 0 || dimensions.height > 0) {
+			haptic("success");
+		}
+	}, [dimensions.width, dimensions.height]);
 
 	async function handleUploadTheme(file: File) {
 		try {
@@ -182,6 +191,7 @@ function App() {
 					font={font}
 					onFontChange={setFont}
 					themeName={themeName}
+					onThemeChange={setThemeName}
 					onUploadTheme={handleUploadTheme}
 				/>
 			</div>

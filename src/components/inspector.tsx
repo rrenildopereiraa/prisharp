@@ -6,14 +6,11 @@ import { Switch } from "@base-ui/react/switch";
 import { Tabs } from "@base-ui/react/tabs";
 import { Toggle } from "@base-ui/react/toggle";
 import { ToggleGroup } from "@base-ui/react/toggle-group";
-import {
-	CaretDownIcon,
-	SquareIcon,
-	UploadSimpleIcon,
-} from "@phosphor-icons/react";
+import { CaretDownIcon, UploadSimpleIcon } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useHaptics } from "../lib/haptics";
+import { THEMES, type ThemeId } from "../lib/highlighter";
 import type { Background } from "./toolbar";
 
 export type FontId =
@@ -52,8 +49,6 @@ const CORNER_TABS: { id: CornerScope; label: string }[] = [
 	{ id: "br", label: "BR" },
 ];
 
-// Figma-style per-corner radius: tabs pick the scope (all corners or a
-// single one), the slider edits whatever is selected.
 function RadiusControl({
 	radii,
 	onRadiiChange,
@@ -63,6 +58,7 @@ function RadiusControl({
 }) {
 	const [scope, setScope] = useState<CornerScope>("all");
 	const current = scope === "all" ? radii.tl : radii[scope];
+	const { trigger: haptic } = useHaptics();
 
 	function apply(value: number) {
 		if (scope === "all") {
@@ -70,11 +66,12 @@ function RadiusControl({
 		} else {
 			onRadiiChange({ ...radii, [scope]: value });
 		}
+		haptic("success");
 	}
 
 	return (
 		<div className="d-f fd-c g-1 px-2 py-1">
-			<span className="fs-sm ff-m c-accent-dim us-none">Radius</span>
+			<span className="fs-sm ff-m c-accent-dim us-none">Border Radius</span>
 			<Tabs.Root
 				value={scope}
 				onValueChange={(value) => setScope(value as CornerScope)}
@@ -117,7 +114,6 @@ function RadiusControl({
 	);
 }
 
-// --[LABEL]---------- section separator; text beats icons for clarity
 function SectionSeparator({ label }: { label: string }) {
 	return (
 		<div className="d-f ai-c g-2 py-2">
@@ -128,7 +124,6 @@ function SectionSeparator({ label }: { label: string }) {
 	);
 }
 
-// Yumma UI switch-square pattern, recolored to the Aperture palette
 function OptionSwitch({
 	label,
 	checked,
@@ -167,12 +162,12 @@ function OptionSwitch({
 	);
 }
 
-function FontPicker({
+function ThemePicker({
 	value,
 	onValueChange,
 }: {
-	value: FontId;
-	onValueChange: (value: FontId) => void;
+	value: string;
+	onValueChange: (value: string) => void;
 }) {
 	const [open, setOpen] = useState(false);
 	const { trigger: haptic } = useHaptics();
@@ -193,9 +188,7 @@ function FontPicker({
 				className={`d-f ai-c jc-sb g-1 w-100% px-2 py-1 c-accent-dim fs-sm ff-m us-none c-p bw-1 bs-s bc-border fv:os-s fv:oo-2 fv:oc-accent ${open ? "bg-page" : "bg-transparent"} h:bg-page`}
 			>
 				<Select.Value>
-					{() => (
-						<span className="min-w-0 o-h to-e ws-nw">{FONTS[value].label}</span>
-					)}
+					{() => <span className="min-w-0 o-h to-e ws-nw">{value}</span>}
 				</Select.Value>
 				<Select.Icon className="d-f c-accent-dim">
 					<CaretDownIcon size={12} weight="fill" />
@@ -221,7 +214,7 @@ function FontPicker({
 								className="w-48 bw-1 bc-border bg-surface py-1 bs-o-xs"
 							>
 								<Select.List>
-									{(Object.keys(FONTS) as FontId[]).map((id) => (
+									{(Object.keys(THEMES) as ThemeId[]).map((id) => (
 										<Select.Item
 											key={id}
 											value={id}
@@ -229,20 +222,7 @@ function FontPicker({
 												`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-page c-accent" : "c-accent-dim"}`
 											}
 										>
-											<Select.ItemText>
-												<span
-													style={
-														FONTS[id].stack
-															? { fontFamily: FONTS[id].stack }
-															: undefined
-													}
-												>
-													{FONTS[id].label}
-												</span>
-											</Select.ItemText>
-											<Select.ItemIndicator className="d-f ai-c c-accent">
-												<SquareIcon size={14} weight="fill" />
-											</Select.ItemIndicator>
+											<Select.ItemText>{id}</Select.ItemText>
 										</Select.Item>
 									))}
 								</Select.List>
@@ -273,6 +253,7 @@ export function Inspector({
 	font,
 	onFontChange,
 	themeName,
+	onThemeChange,
 	onUploadTheme,
 }: {
 	showTabBar: boolean;
@@ -288,6 +269,7 @@ export function Inspector({
 	font: FontId;
 	onFontChange: (value: FontId) => void;
 	themeName: string;
+	onThemeChange: (value: string) => void;
 	onUploadTheme: (file: File) => void;
 }) {
 	const { trigger: haptic } = useHaptics();
@@ -311,7 +293,23 @@ export function Inspector({
 
 			<div className="d-f fd-c g-1 px-2 py-1">
 				<span className="fs-sm ff-m c-accent-dim us-none">Font</span>
-				<FontPicker value={font} onValueChange={onFontChange} />
+				<div className="d-f bw-1 bs-s bc-border">
+					{(Object.keys(FONTS) as FontId[]).map((id) => (
+						<Button
+							key={id}
+							onClick={() => {
+								onFontChange(id);
+								haptic("success");
+							}}
+							style={
+								FONTS[id].stack ? { fontFamily: FONTS[id].stack } : undefined
+							}
+							className={`f-1 px-1 py-2 fs-sm ff-m us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${font === id ? "c-page bg-accent fw-700" : "c-accent-dim bg-transparent h:bg-page"}`}
+						>
+							Aa
+						</Button>
+					))}
+				</div>
 			</div>
 
 			<SectionSeparator label="Background" />
@@ -351,10 +349,9 @@ export function Inspector({
 
 			<SectionSeparator label="Theme" />
 
-			<div className="d-f ai-c jc-sb g-2 px-2 py-1">
-				<span className="fs-sm ff-m c-accent us-none min-w-0 o-h to-e ws-nw">
-					{themeName}
-				</span>
+			<div className="d-f fd-c g-1 px-2 py-1">
+				<span className="fs-sm ff-m c-accent-dim us-none">Syntax theme</span>
+				<ThemePicker value={themeName} onValueChange={onThemeChange} />
 			</div>
 
 			<div className="px-2 py-1">
@@ -365,7 +362,10 @@ export function Inspector({
 						input.accept = ".json,.jsonc,application/json";
 						input.onchange = () => {
 							const file = input.files?.[0];
-							if (file) onUploadTheme(file);
+							if (file) {
+								onUploadTheme(file);
+								haptic("success");
+							}
 						};
 						input.click();
 					}}

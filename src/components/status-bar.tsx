@@ -1,5 +1,6 @@
 import { Button } from "@base-ui/react/button";
 import { Separator } from "@base-ui/react/separator";
+import { useHaptics } from "../lib/haptics";
 
 export function StatusBar({
 	onOpenPalette,
@@ -10,6 +11,8 @@ export function StatusBar({
 	width: number;
 	height: number;
 }) {
+	const { trigger: haptic } = useHaptics();
+
 	return (
 		<footer className="d-f ai-c btw-1 bs-s bc-border bg-surface">
 			<div className="f-1 d-f ai-c">
@@ -22,7 +25,10 @@ export function StatusBar({
 			</div>
 
 			<Button
-				onClick={onOpenPalette}
+				onClick={() => {
+					haptic("success");
+					onOpenPalette();
+				}}
 				className="d-f ai-c jc-sb g-2 w-64 my-1 px-3 py-1 bg-page c-accent-dim fs-xs ff-m us-none c-p bw-0 h:c-accent fv:os-s fv:oo--2 fv:oc-accent"
 			>
 				Search commands...

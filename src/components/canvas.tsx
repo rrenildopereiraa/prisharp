@@ -1,7 +1,7 @@
 import type { LanguageId } from "../lib/highlighter";
 import { Frame } from "./frame";
-import { SelectionHandles } from "./selection-handles";
 import type { CornerRadii } from "./inspector";
+import { SelectionHandles } from "./selection-handles";
 import type { Background } from "./toolbar";
 
 export function Canvas({
