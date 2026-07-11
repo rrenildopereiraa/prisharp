@@ -7,11 +7,16 @@ import { CodeEditor } from "./code-editor";
 import type { CornerRadii } from "./inspector";
 import type { Background } from "./toolbar";
 
+export interface FrameColors {
+	page: string;
+	surface: string;
+	border: string;
+	accentDim: string;
+}
+
 // Diagonal hatch texture
-const hatchStyle = {
-	backgroundImage:
-		"repeating-linear-gradient(45deg, transparent 0, transparent 7px, #23274180 7px, #23274180 9px)",
-};
+const hatchBackground = (border: string) =>
+	`repeating-linear-gradient(45deg, transparent 0, transparent 7px, ${border}80 7px, ${border}80 9px)`;
 
 const FRAME_PADDING = 64;
 
@@ -30,6 +35,7 @@ export const Frame = forwardRef<
 		radii: CornerRadii;
 		font?: string;
 		themeName: string;
+		colors: FrameColors;
 	}
 >(function Frame(
 	{
@@ -45,58 +51,66 @@ export const Frame = forwardRef<
 		radii,
 		font,
 		themeName,
+		colors,
 	},
 	ref,
 ) {
 	const fontStyle = font ? { fontFamily: font } : undefined;
-	// CSS border-radius shorthand order: TL TR BR BL
 	const borderRadius = `${radii.tl}px ${radii.tr}px ${radii.br}px ${radii.bl}px`;
 
 	return (
 		<div
 			ref={ref}
-			className="p-r min-w-0 bg-page"
-			style={{ padding: FRAME_PADDING }}
+			className="p-r min-w-0"
+			style={{ padding: FRAME_PADDING, backgroundColor: colors.page }}
 		>
 			<div
-				className="p-r zi-10 w-192 max-w-100% bg-surface o-v"
-				style={{ borderRadius }}
+				className="p-r zi-10 w-192 max-w-100% o-v"
+				style={{ backgroundColor: colors.surface, borderRadius }}
 			>
-				{/* Hatch texture - "stripes" background only; "solid" leaves the
-				    plain bg-page backdrop */}
 				{background === "stripes" && (
 					<div
-						className="p-a t--16 r--16 b--16 l--16 o-h zi--10 bg-page"
-						style={hatchStyle}
+						className="p-a t--16 r--16 b--16 l--16 o-h zi--10"
+						style={{
+							backgroundImage: hatchBackground(colors.border),
+							backgroundColor: colors.page,
+						}}
 						aria-hidden="true"
 					/>
 				)}
 
-				{/* Grid lines */}
 				{showGridLines && (
 					<>
 						<div
-							className="p-a t-0 l--16 r--16 h-px bg-border"
+							className="p-a t-0 l--16 r--16 h-px"
+							style={{ backgroundColor: colors.border }}
 							aria-hidden="true"
 						/>
 						<div
-							className="p-a b-0 l--16 r--16 h-px bg-border"
+							className="p-a b-0 l--16 r--16 h-px"
+							style={{ backgroundColor: colors.border }}
 							aria-hidden="true"
 						/>
 						<div
-							className="p-a l-0 t--16 b--16 w-px bg-border"
+							className="p-a l-0 t--16 b--16 w-px"
+							style={{ backgroundColor: colors.border }}
 							aria-hidden="true"
 						/>
 						<div
-							className="p-a r-0 t--16 b--16 w-px bg-border"
+							className="p-a r-0 t--16 b--16 w-px"
+							style={{ backgroundColor: colors.border }}
 							aria-hidden="true"
 						/>
 					</>
 				)}
 
 				<div
-					className="d-f bg-surface bw-1 bs-s bc-border o-h"
-					style={{ borderRadius }}
+					className="d-f bw-1 bs-s o-h"
+					style={{
+						backgroundColor: colors.surface,
+						borderColor: colors.border,
+						borderRadius,
+					}}
 				>
 					<div className="f-1 min-w-0">
 						<AnimatePresence>
@@ -108,8 +122,20 @@ export const Frame = forwardRef<
 									transition={{ duration: 0.15, ease: "easeOut" }}
 									className="o-h"
 								>
-									<div className="d-f ai-c bbw-1 bs-s bc-border bg-page">
-										<div className="d-f ai-c g-2 px-4 bg-surface py-3 bbw-2 bs-s bc-accent">
+									<div
+										className="d-f ai-c bbw-1 bs-s"
+										style={{
+											backgroundColor: colors.page,
+											borderColor: colors.border,
+										}}
+									>
+										<div
+											className="d-f ai-c g-2 px-4 py-3 bbw-2 bs-s"
+											style={{
+												backgroundColor: colors.surface,
+												borderColor: colors.accentDim,
+											}}
+										>
 											<Input
 												value={fileName}
 												onChange={(event) =>
@@ -117,8 +143,8 @@ export const Frame = forwardRef<
 												}
 												spellCheck={false}
 												placeholder="Untitled-1"
-												className="ff-m fs-sm c-accent-dim bg-transparent bw-0 os-none p-0 w-fc"
-												style={fontStyle}
+												className="ff-m fs-sm bg-transparent bw-0 os-none p-0 w-fc"
+												style={{ color: colors.accentDim, ...fontStyle }}
 											/>
 										</div>
 									</div>
@@ -126,7 +152,6 @@ export const Frame = forwardRef<
 							)}
 						</AnimatePresence>
 
-						{/* Code body */}
 						<div className="p-4">
 							<CodeEditor
 								code={code}
@@ -146,8 +171,14 @@ export const Frame = forwardRef<
 									transition={{ duration: 0.15, ease: "easeOut" }}
 									className="o-h"
 								>
-									<div className="d-f ai-c jc-fe px-4 py-2 btw-1 bs-s bc-border">
-										<span className="ff-m fs-xs c-accent-dim" style={fontStyle}>
+									<div
+										className="d-f ai-c jc-fe px-4 py-2 btw-1 bs-s"
+										style={{ borderColor: colors.border }}
+									>
+										<span
+											className="ff-m fs-xs"
+											style={{ color: colors.accentDim, ...fontStyle }}
+										>
 											{LANGUAGES[language]}
 										</span>
 									</div>

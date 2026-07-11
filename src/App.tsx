@@ -4,6 +4,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { Canvas } from "./components/canvas";
 import { CommandPalette } from "./components/command-palette";
 import type { ExportFormat } from "./components/format-picker";
+import type { FrameColors } from "./components/frame";
 import {
 	type CornerRadii,
 	FONTS,
@@ -53,6 +54,12 @@ function App() {
 	const [font, setFont] = useState<FontId>("default");
 	const [themeName, setThemeName] = useState(THEME_NAME);
 	const [paletteOpen, setPaletteOpen] = useState(false);
+	const [frameColors, setFrameColors] = useState<FrameColors>({
+		page: "#151724",
+		surface: "#1a1d2e",
+		border: "#232741",
+		accentDim: "#9aa5ef",
+	});
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const frameRef = useRef<HTMLDivElement>(null);
 	const { trigger: haptic } = useHaptics();
@@ -174,6 +181,7 @@ function App() {
 					radii={radii}
 					font={FONTS[font].stack}
 					themeName={themeName}
+					colors={frameColors}
 					frameRef={frameRef}
 				/>
 
@@ -192,6 +200,8 @@ function App() {
 					onFontChange={setFont}
 					themeName={themeName}
 					onThemeChange={setThemeName}
+					frameColors={frameColors}
+					onFrameColorsChange={setFrameColors}
 					onUploadTheme={handleUploadTheme}
 				/>
 			</div>

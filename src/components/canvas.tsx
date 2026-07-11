@@ -1,5 +1,5 @@
 import type { LanguageId } from "../lib/highlighter";
-import { Frame } from "./frame";
+import { Frame, type FrameColors } from "./frame";
 import type { CornerRadii } from "./inspector";
 import { SelectionHandles } from "./selection-handles";
 import type { Background } from "./toolbar";
@@ -17,6 +17,7 @@ export function Canvas({
 	radii,
 	font,
 	themeName,
+	colors,
 	frameRef,
 }: {
 	code: string;
@@ -31,6 +32,7 @@ export function Canvas({
 	radii: CornerRadii;
 	font?: string;
 	themeName: string;
+	colors: FrameColors;
 	frameRef: React.RefObject<HTMLDivElement | null>;
 }) {
 	return (
@@ -50,6 +52,7 @@ export function Canvas({
 					radii={radii}
 					font={font}
 					themeName={themeName}
+					colors={colors}
 				/>
 
 				<SelectionHandles />

@@ -10,7 +10,9 @@ import { CaretDownIcon, UploadSimpleIcon } from "@phosphor-icons/react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
 import { useHaptics } from "../lib/haptics";
-import { THEMES, type ThemeId } from "../lib/highlighter";
+import { THEMES } from "../lib/highlighter";
+import { ColorInput } from "./color-input";
+import type { FrameColors } from "./frame";
 import type { Background } from "./toolbar";
 
 export type FontId =
@@ -70,7 +72,7 @@ function RadiusControl({
 	}
 
 	return (
-		<div className="d-f fd-c g-1 px-2 py-1">
+		<div className="d-f fd-c g-1 px-2 pt-1 pb-3">
 			<span className="fs-sm ff-m c-accent-dim us-none">Border Radius</span>
 			<Tabs.Root
 				value={scope}
@@ -116,7 +118,7 @@ function RadiusControl({
 
 function SectionSeparator({ label }: { label: string }) {
 	return (
-		<div className="d-f ai-c g-2 py-2">
+		<div className="d-f ai-c g-2 pb-2">
 			<Separator orientation="horizontal" className="w-3 h-px bg-border" />
 			<span className="fs-xs ff-m c-accent-dim us-none ws-nw">{label}</span>
 			<Separator orientation="horizontal" className="f-1 h-px bg-border" />
@@ -136,7 +138,7 @@ function OptionSwitch({
 	const { trigger: haptic } = useHaptics();
 
 	return (
-		<div className="d-f ai-c jc-sb g-2 px-2 py-1">
+		<div className="d-f ai-c jc-sb g-2 px-2 pb-2">
 			<span className="fs-sm ff-m c-accent-dim us-none">{label}</span>
 			<Switch.Root
 				checked={checked}
@@ -214,17 +216,19 @@ function ThemePicker({
 								className="w-48 bw-1 bc-border bg-surface py-1 bs-o-xs"
 							>
 								<Select.List>
-									{(Object.keys(THEMES) as ThemeId[]).map((id) => (
-										<Select.Item
-											key={id}
-											value={id}
-											className={(state) =>
-												`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-page c-accent" : "c-accent-dim"}`
-											}
-										>
-											<Select.ItemText>{id}</Select.ItemText>
-										</Select.Item>
-									))}
+									{(Object.keys(THEMES) as (keyof typeof THEMES)[]).map(
+										(id) => (
+											<Select.Item
+												key={id}
+												value={id}
+												className={(state) =>
+													`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-page c-accent" : "c-accent-dim"}`
+												}
+											>
+												<Select.ItemText>{id}</Select.ItemText>
+											</Select.Item>
+										),
+									)}
 								</Select.List>
 							</Select.Popup>
 						</Select.Positioner>
@@ -254,6 +258,8 @@ export function Inspector({
 	onFontChange,
 	themeName,
 	onThemeChange,
+	frameColors,
+	onFrameColorsChange,
 	onUploadTheme,
 }: {
 	showTabBar: boolean;
@@ -270,6 +276,8 @@ export function Inspector({
 	onFontChange: (value: FontId) => void;
 	themeName: string;
 	onThemeChange: (value: string) => void;
+	frameColors: FrameColors;
+	onFrameColorsChange: (value: FrameColors) => void;
 	onUploadTheme: (file: File) => void;
 }) {
 	const { trigger: haptic } = useHaptics();
@@ -291,7 +299,7 @@ export function Inspector({
 
 			<RadiusControl radii={radii} onRadiiChange={onRadiiChange} />
 
-			<div className="d-f fd-c g-1 px-2 py-1">
+			<div className="d-f fd-c g-1 px-2 pb-3">
 				<span className="fs-sm ff-m c-accent-dim us-none">Font</span>
 				<div className="d-f bw-1 bs-s bc-border">
 					{(Object.keys(FONTS) as FontId[]).map((id) => (
@@ -304,7 +312,7 @@ export function Inspector({
 							style={
 								FONTS[id].stack ? { fontFamily: FONTS[id].stack } : undefined
 							}
-							className={`f-1 px-1 py-2 fs-sm ff-m us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${font === id ? "c-page bg-accent fw-700" : "c-accent-dim bg-transparent h:bg-page"}`}
+							className={`f-1 px-1 py-1 fs-xs ff-m us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${font === id ? "c-page bg-accent fw-700" : "c-accent-dim bg-transparent h:bg-page"}`}
 						>
 							Aa
 						</Button>
@@ -320,7 +328,7 @@ export function Inspector({
 				onCheckedChange={onShowGridLinesChange}
 			/>
 
-			<div className="px-2 py-1">
+			<div className="px-2 pb-3">
 				<ToggleGroup
 					value={[background]}
 					onValueChange={(value) => {
@@ -347,14 +355,39 @@ export function Inspector({
 				</ToggleGroup>
 			</div>
 
+			<SectionSeparator label="Colors" />
+
+			<ColorInput
+				label="Page"
+				value={frameColors.page}
+				onChange={(page) => onFrameColorsChange({ ...frameColors, page })}
+			/>
+			<ColorInput
+				label="Surface"
+				value={frameColors.surface}
+				onChange={(surface) => onFrameColorsChange({ ...frameColors, surface })}
+			/>
+			<ColorInput
+				label="Border"
+				value={frameColors.border}
+				onChange={(border) => onFrameColorsChange({ ...frameColors, border })}
+			/>
+			<ColorInput
+				label="Dim accent"
+				value={frameColors.accentDim}
+				onChange={(accentDim) =>
+					onFrameColorsChange({ ...frameColors, accentDim })
+				}
+			/>
+
 			<SectionSeparator label="Theme" />
 
-			<div className="d-f fd-c g-1 px-2 py-1">
+			<div className="d-f fd-c g-1 px-2 pb-3">
 				<span className="fs-sm ff-m c-accent-dim us-none">Syntax theme</span>
 				<ThemePicker value={themeName} onValueChange={onThemeChange} />
 			</div>
 
-			<div className="px-2 py-1">
+			<div className="px-2">
 				<Button
 					onClick={() => {
 						const input = document.createElement("input");
