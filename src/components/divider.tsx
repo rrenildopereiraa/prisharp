@@ -7,7 +7,7 @@ const COLOR_CLASS = {
 
 export function Divider({
 	orientation = "vertical",
-	color = "page",
+	color = "border",
 	size = "sm",
 }: {
 	orientation?: "vertical" | "horizontal";
