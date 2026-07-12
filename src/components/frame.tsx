@@ -35,6 +35,7 @@ export const Frame = forwardRef<
 		showTabBar: boolean;
 		showStatusBar: boolean;
 		showGridLines: boolean;
+		showActiveTabBorder: boolean;
 		background: Background;
 		radii: CornerRadii;
 		font?: string;
@@ -51,6 +52,7 @@ export const Frame = forwardRef<
 		showTabBar,
 		showStatusBar,
 		showGridLines,
+		showActiveTabBorder,
 		background,
 		radii,
 		font,
@@ -134,10 +136,10 @@ export const Frame = forwardRef<
 										}}
 									>
 										<div
-											className="d-f ai-c g-2 px-4 py-3 bbw-2 bs-s"
+											className={`d-f ai-c g-2 px-4 py-3 bs-s ${showActiveTabBorder ? "bbw-2" : "bbw-0"}`}
 											style={{
 												backgroundColor: colors.tabActive,
-												borderColor: colors.accentDim,
+												borderColor: showActiveTabBorder ? colors.activeTabBorder : "transparent",
 											}}
 										>
 											<Input
@@ -177,7 +179,7 @@ export const Frame = forwardRef<
 								>
 									<div
 										className="d-f ai-c jc-fe px-4 py-2 btw-1 bs-s"
-										style={{ borderColor: colors.border }}
+										style={{ backgroundColor: colors.statusBarBg, borderColor: colors.border }}
 									>
 										<span
 											className="ff-m fs-xs"

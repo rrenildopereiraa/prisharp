@@ -13,6 +13,7 @@ export function Canvas({
 	showTabBar,
 	showStatusBar,
 	showGridLines,
+	showActiveTabBorder,
 	background,
 	radii,
 	font,
@@ -29,6 +30,7 @@ export function Canvas({
 	showTabBar: boolean;
 	showStatusBar: boolean;
 	showGridLines: boolean;
+	showActiveTabBorder: boolean;
 	background: Background;
 	radii: CornerRadii;
 	font?: string;
@@ -38,7 +40,7 @@ export function Canvas({
 	frameRef: React.RefObject<HTMLDivElement | null>;
 }) {
 	return (
-		<main className="f-1 d-f ai-c jc-c p-r px-4 @sm:px-8 py-8 @sm:py-24">
+		<main className="f-1 d-f ai-c jc-c p-r px-2 @sm:px-4 py-8 @sm:py-24">
 			<div className="p-r min-w-0">
 				<Frame
 					ref={frameRef}
@@ -50,6 +52,7 @@ export function Canvas({
 					showTabBar={showTabBar}
 					showStatusBar={showStatusBar}
 					showGridLines={showGridLines}
+					showActiveTabBorder={showActiveTabBorder}
 					background={background}
 					radii={radii}
 					font={font}

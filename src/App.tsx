@@ -191,6 +191,7 @@ function App() {
 					showTabBar={showTabBar}
 					showStatusBar={showStatusBar}
 					showGridLines={showGridLines}
+					showActiveTabBorder={showActiveTabBorder}
 					background={background}
 					radii={radii}
 					font={FONTS[font].stack}
