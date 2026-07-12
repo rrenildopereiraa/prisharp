@@ -18,10 +18,10 @@ import svelte from "@shikijs/langs/svelte";
 import tsx from "@shikijs/langs/tsx";
 import typescript from "@shikijs/langs/typescript";
 import vue from "@shikijs/langs/vue";
+import type { FrameColors } from "../components/frame";
 import amber from "../themes/amber-theme.json";
 import eclipsa from "../themes/eclipsa-theme.json";
 import monochrome from "../themes/monochrome-theme.json";
-import type { FrameColors } from "../components/frame";
 
 export const LANGUAGES = {
 	html: "HTML",
@@ -64,13 +64,10 @@ export function readThemeFrameColors(theme: {
 	return {
 		page: getColor(c, "editor.background") ?? f.page ?? "#151724",
 		surface: getColor(c, "sideBar.background") ?? f.surface ?? "#1a1d2e",
-		border:
-			getColor(c, "editorGroupHeader.border") ?? f.border ?? "#232741",
+		border: getColor(c, "editorGroupHeader.border") ?? f.border ?? "#232741",
 		accentDim: getColor(c, "editor.foreground") ?? f.accentDim ?? "#9aa5ef",
-		tabBar:
-			getColor(c, "tab.inactiveBackground") ?? f.tabBar ?? "#151724",
-		tabActive:
-			getColor(c, "tab.activeBackground") ?? f.tabActive ?? "#1a1d2e",
+		tabBar: getColor(c, "tab.inactiveBackground") ?? f.tabBar ?? "#151724",
+		tabActive: getColor(c, "tab.activeBackground") ?? f.tabActive ?? "#1a1d2e",
 		statusBarBg:
 			getColor(c, "statusBar.background") ?? f.statusBarBg ?? "#2d3151",
 		activeTabBorder:
@@ -88,21 +85,27 @@ function getColor(
 }
 
 export const THEME_FRAME_COLORS: Record<string, FrameColors> = {
-	[eclipsa.name]: readThemeFrameColors(eclipsa as unknown as {
-		name: string;
-		colors?: Record<string, string | null>;
-		frameColors?: Partial<FrameColors>;
-	}),
-	[monochrome.name]: readThemeFrameColors(monochrome as unknown as {
-		name: string;
-		colors?: Record<string, string | null>;
-		frameColors?: Partial<FrameColors>;
-	}),
-	[amber.name]: readThemeFrameColors(amber as unknown as {
-		name: string;
-		colors?: Record<string, string | null>;
-		frameColors?: Partial<FrameColors>;
-	}),
+	[eclipsa.name]: readThemeFrameColors(
+		eclipsa as unknown as {
+			name: string;
+			colors?: Record<string, string | null>;
+			frameColors?: Partial<FrameColors>;
+		},
+	),
+	[monochrome.name]: readThemeFrameColors(
+		monochrome as unknown as {
+			name: string;
+			colors?: Record<string, string | null>;
+			frameColors?: Partial<FrameColors>;
+		},
+	),
+	[amber.name]: readThemeFrameColors(
+		amber as unknown as {
+			name: string;
+			colors?: Record<string, string | null>;
+			frameColors?: Partial<FrameColors>;
+		},
+	),
 };
 
 let highlighterPromise: Promise<HighlighterCore> | null = null;
@@ -210,5 +213,14 @@ export async function loadCustomTheme(text: string): Promise<{
 	theme.name = theme.name || "Custom";
 	const highlighter = await getHighlighter();
 	await highlighter.loadTheme(theme as unknown as ThemeInput);
-	return { name: theme.name, frameColors: readThemeFrameColors(theme as { name: string; colors?: Record<string, string | null>; frameColors?: Partial<FrameColors> }) };
+	return {
+		name: theme.name,
+		frameColors: readThemeFrameColors(
+			theme as {
+				name: string;
+				colors?: Record<string, string | null>;
+				frameColors?: Partial<FrameColors>;
+			},
+		),
+	};
 }

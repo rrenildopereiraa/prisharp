@@ -1,7 +1,7 @@
 import type { LanguageId } from "../lib/highlighter";
+import { BoundingBox } from "./bounding-box";
 import { Frame, type FrameColors } from "./frame";
 import type { CornerRadii } from "./inspector";
-import { BoundingBox } from "./bounding-box";
 import type { Background } from "./toolbar";
 
 export function Canvas({
@@ -18,6 +18,7 @@ export function Canvas({
 	font,
 	themeName,
 	colors,
+	showBoundingBox,
 	frameRef,
 }: {
 	code: string;
@@ -33,6 +34,7 @@ export function Canvas({
 	font?: string;
 	themeName: string;
 	colors: FrameColors;
+	showBoundingBox: boolean;
 	frameRef: React.RefObject<HTMLDivElement | null>;
 }) {
 	return (
@@ -55,7 +57,7 @@ export function Canvas({
 					colors={colors}
 				/>
 
-				<BoundingBox />
+				{showBoundingBox && <BoundingBox />}
 			</div>
 		</main>
 	);

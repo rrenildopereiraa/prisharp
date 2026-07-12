@@ -46,6 +46,8 @@ function App() {
 	const [showStatusBar, setShowStatusBar] = useState(false);
 	const [background, setBackground] = useState<Background>("stripes");
 	const [showGridLines, setShowGridLines] = useState(true);
+	const [showBoundingBox, setShowBoundingBox] = useState(true);
+	const [showActiveTabBorder, setShowActiveTabBorder] = useState(true);
 	const [radii, setRadii] = useState<CornerRadii>({
 		tl: 0,
 		tr: 0,
@@ -194,6 +196,7 @@ function App() {
 					font={FONTS[font].stack}
 					themeName={themeName}
 					colors={frameColors}
+					showBoundingBox={showBoundingBox}
 					frameRef={frameRef}
 				/>
 
@@ -204,6 +207,10 @@ function App() {
 					onShowStatusBarChange={setShowStatusBar}
 					showGridLines={showGridLines}
 					onShowGridLinesChange={setShowGridLines}
+					showBoundingBox={showBoundingBox}
+					onShowBoundingBoxChange={setShowBoundingBox}
+					showActiveTabBorder={showActiveTabBorder}
+					onShowActiveTabBorderChange={setShowActiveTabBorder}
 					background={background}
 					onBackgroundChange={setBackground}
 					radii={radii}

@@ -72,7 +72,7 @@ function RadiusControl({
 	}
 
 	return (
-		<div className="d-f fd-c g-1 px-2 pt-1 pb-3">
+		<div className="d-f fd-c g-1 px-2 pt-1 pb-4">
 			<span className="fs-sm ff-m c-accent-dim us-none">Border Radius</span>
 			<Tabs.Root
 				value={scope}
@@ -138,7 +138,7 @@ function OptionSwitch({
 	const { trigger: haptic } = useHaptics();
 
 	return (
-		<div className="d-f ai-c jc-sb g-2 px-2 pb-2">
+		<div className="d-f ai-c jc-sb g-2 px-2 pb-3">
 			<span className="fs-sm ff-m c-accent-dim us-none">{label}</span>
 			<Switch.Root
 				checked={checked}
@@ -250,6 +250,10 @@ export function Inspector({
 	onShowStatusBarChange,
 	showGridLines,
 	onShowGridLinesChange,
+	showBoundingBox,
+	onShowBoundingBoxChange,
+	showActiveTabBorder,
+	onShowActiveTabBorderChange,
 	background,
 	onBackgroundChange,
 	radii,
@@ -268,6 +272,10 @@ export function Inspector({
 	onShowStatusBarChange: (value: boolean) => void;
 	showGridLines: boolean;
 	onShowGridLinesChange: (value: boolean) => void;
+	showBoundingBox: boolean;
+	onShowBoundingBoxChange: (value: boolean) => void;
+	showActiveTabBorder: boolean;
+	onShowActiveTabBorderChange: (value: boolean) => void;
 	background: Background;
 	onBackgroundChange: (value: Background) => void;
 	radii: CornerRadii;
@@ -296,10 +304,15 @@ export function Inspector({
 				checked={showStatusBar}
 				onCheckedChange={onShowStatusBarChange}
 			/>
+			<OptionSwitch
+				label="Bounding box"
+				checked={showBoundingBox}
+				onCheckedChange={onShowBoundingBoxChange}
+			/>
 
 			<RadiusControl radii={radii} onRadiiChange={onRadiiChange} />
 
-			<div className="d-f fd-c g-1 px-2 pb-3">
+			<div className="d-f fd-c g-1 px-2 pb-4">
 				<span className="fs-sm ff-m c-accent-dim us-none">Font</span>
 				<div className="d-f bw-1 bs-s bc-border">
 					{(Object.keys(FONTS) as FontId[]).map((id) => (
@@ -328,7 +341,7 @@ export function Inspector({
 				onCheckedChange={onShowGridLinesChange}
 			/>
 
-			<div className="px-2 pb-3">
+			<div className="px-2 pb-4">
 				<ToggleGroup
 					value={[background]}
 					onValueChange={(value) => {
@@ -358,46 +371,66 @@ export function Inspector({
 			<SectionSeparator label="Colors" />
 
 			<ColorInput
-				label="Page"
+				label="editor.background"
 				value={frameColors.page}
 				onChange={(page) => onFrameColorsChange({ ...frameColors, page })}
 			/>
 			<ColorInput
-				label="Surface"
+				label="sideBar.background"
 				value={frameColors.surface}
 				onChange={(surface) => onFrameColorsChange({ ...frameColors, surface })}
 			/>
 			<ColorInput
-				label="Border"
+				label="editorGroupHeader.border"
 				value={frameColors.border}
 				onChange={(border) => onFrameColorsChange({ ...frameColors, border })}
 			/>
 			<ColorInput
-				label="Dim accent"
+				label="editor.foreground"
 				value={frameColors.accentDim}
 				onChange={(accentDim) =>
 					onFrameColorsChange({ ...frameColors, accentDim })
 				}
 			/>
 			<ColorInput
-				label="Tab bar"
+				label="tab.inactiveBackground"
 				value={frameColors.tabBar}
-				onChange={(tabBar) =>
-					onFrameColorsChange({ ...frameColors, tabBar })
-				}
+				onChange={(tabBar) => onFrameColorsChange({ ...frameColors, tabBar })}
 			/>
 			<ColorInput
-				label="Tab active"
+				label="tab.activeBackground"
 				value={frameColors.tabActive}
 				onChange={(tabActive) =>
 					onFrameColorsChange({ ...frameColors, tabActive })
 				}
 			/>
+			<ColorInput
+				label="statusBar.background"
+				value={frameColors.statusBarBg}
+				onChange={(statusBarBg) =>
+					onFrameColorsChange({ ...frameColors, statusBarBg })
+				}
+			/>
+
+			<OptionSwitch
+				label="tab.activeBorder"
+				checked={showActiveTabBorder}
+				onCheckedChange={onShowActiveTabBorderChange}
+			/>
+			{showActiveTabBorder && (
+				<ColorInput
+					label="tab.activeBorder"
+					value={frameColors.activeTabBorder}
+					onChange={(activeTabBorder) =>
+						onFrameColorsChange({ ...frameColors, activeTabBorder })
+					}
+				/>
+			)}
 
 			<SectionSeparator label="Theme" />
 
-			<div className="d-f fd-c g-1 px-2 pb-3">
-				<span className="fs-sm ff-m c-accent-dim us-none">Syntax theme</span>
+			<div className="d-f fd-c g-1 px-2 pb-4">
+				<span className="fs-sm ff-m c-accent-dim us-none">Theme</span>
 				<ThemePicker value={themeName} onValueChange={onThemeChange} />
 			</div>
 
