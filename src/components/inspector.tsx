@@ -420,16 +420,12 @@ export function Inspector({
 			<ColorInput
 				label="Surface"
 				value={frameColors.surface}
-				onChange={(surface) =>
-					onFrameColorsChange({ ...frameColors, surface })
-				}
+				onChange={(surface) => onFrameColorsChange({ ...frameColors, surface })}
 			/>
 			<ColorInput
 				label="Border"
 				value={frameColors.border}
-				onChange={(border) =>
-					onFrameColorsChange({ ...frameColors, border })
-				}
+				onChange={(border) => onFrameColorsChange({ ...frameColors, border })}
 			/>
 			<ColorInput
 				label="Text"
@@ -441,9 +437,7 @@ export function Inspector({
 			<ColorInput
 				label="Tab"
 				value={frameColors.tabBar}
-				onChange={(tabBar) =>
-					onFrameColorsChange({ ...frameColors, tabBar })
-				}
+				onChange={(tabBar) => onFrameColorsChange({ ...frameColors, tabBar })}
 			/>
 			<ColorInput
 				label="Tab active"

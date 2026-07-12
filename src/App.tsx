@@ -12,6 +12,7 @@ import {
 	Inspector,
 } from "./components/inspector";
 import { StatusBar } from "./components/status-bar";
+import { ToastProvider, useToast } from "./components/toast-provider";
 import type { Background } from "./components/toolbar";
 import { Toolbar } from "./components/toolbar";
 import { buildCommands } from "./lib/commands";
@@ -70,6 +71,7 @@ function App() {
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const frameRef = useRef<HTMLDivElement>(null);
 	const { trigger: haptic } = useHaptics();
+	const toast = useToast();
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: fire on dims change
 	useEffect(() => {
@@ -83,8 +85,14 @@ function App() {
 			const result = await loadCustomTheme(await file.text());
 			setThemeName(result.name);
 			setFrameColors(result.frameColors);
-		} catch (error) {
-			console.error("Theme upload failed:", error);
+			toast.add({ title: "Theme loaded", description: result.name });
+		} catch (_error) {
+			toast.add({
+				title: "Invalid theme",
+				description:
+					"Could not parse the uploaded file as a VS Code color theme.",
+				type: "error",
+			});
 		}
 	}
 
@@ -172,76 +180,78 @@ function App() {
 	});
 
 	return (
-		<div className="d-f fd-c min-h-vh bg-page">
-			<StatusBar
-				onOpenPalette={() => setPaletteOpen(true)}
-				width={dimensions.width}
-				height={dimensions.height}
-			/>
-
-			<div className="h-px bg-border" />
-
-			<div className="f-1 d-f">
-				<Canvas
-					code={code}
-					onCodeChange={setCode}
-					language={language}
-					fileName={fileName}
-					onFileNameChange={setFileName}
-					showTabBar={showTabBar}
-					showStatusBar={showStatusBar}
-					showGridLines={showGridLines}
-					showActiveTabBorder={showActiveTabBorder}
-					background={background}
-					radii={radii}
-					font={FONTS[font].stack}
-					themeName={themeName}
-					colors={frameColors}
-					showBoundingBox={showBoundingBox}
-					frameRef={frameRef}
+		<ToastProvider>
+			<div className="d-f fd-c min-h-vh bg-page">
+				<StatusBar
+					onOpenPalette={() => setPaletteOpen(true)}
+					width={dimensions.width}
+					height={dimensions.height}
 				/>
 
-				<Inspector
-					showTabBar={showTabBar}
-					onShowTabBarChange={setShowTabBar}
-					showStatusBar={showStatusBar}
-					onShowStatusBarChange={setShowStatusBar}
-					showGridLines={showGridLines}
-					onShowGridLinesChange={setShowGridLines}
-					showBoundingBox={showBoundingBox}
-					onShowBoundingBoxChange={setShowBoundingBox}
-					showActiveTabBorder={showActiveTabBorder}
-					onShowActiveTabBorderChange={setShowActiveTabBorder}
-					background={background}
-					onBackgroundChange={setBackground}
-					radii={radii}
-					onRadiiChange={setRadii}
-					font={font}
-					onFontChange={setFont}
-					themeName={themeName}
-					onThemeChange={handleThemeChange}
-					frameColors={frameColors}
-					onFrameColorsChange={setFrameColors}
-					onUploadTheme={handleUploadTheme}
+				<div className="h-px bg-border" />
+
+				<div className="f-1 d-f">
+					<Canvas
+						code={code}
+						onCodeChange={setCode}
+						language={language}
+						fileName={fileName}
+						onFileNameChange={setFileName}
+						showTabBar={showTabBar}
+						showStatusBar={showStatusBar}
+						showGridLines={showGridLines}
+						showActiveTabBorder={showActiveTabBorder}
+						background={background}
+						radii={radii}
+						font={FONTS[font].stack}
+						themeName={themeName}
+						colors={frameColors}
+						showBoundingBox={showBoundingBox}
+						frameRef={frameRef}
+					/>
+
+					<Inspector
+						showTabBar={showTabBar}
+						onShowTabBarChange={setShowTabBar}
+						showStatusBar={showStatusBar}
+						onShowStatusBarChange={setShowStatusBar}
+						showGridLines={showGridLines}
+						onShowGridLinesChange={setShowGridLines}
+						showBoundingBox={showBoundingBox}
+						onShowBoundingBoxChange={setShowBoundingBox}
+						showActiveTabBorder={showActiveTabBorder}
+						onShowActiveTabBorderChange={setShowActiveTabBorder}
+						background={background}
+						onBackgroundChange={setBackground}
+						radii={radii}
+						onRadiiChange={setRadii}
+						font={font}
+						onFontChange={setFont}
+						themeName={themeName}
+						onThemeChange={handleThemeChange}
+						frameColors={frameColors}
+						onFrameColorsChange={setFrameColors}
+						onUploadTheme={handleUploadTheme}
+					/>
+				</div>
+
+				<Toolbar
+					language={language}
+					onLanguageChange={setLanguage}
+					format={format}
+					onFormatChange={setFormat}
+					exporting={exporting}
+					onCopy={() => navigator.clipboard.writeText(code)}
+					onExport={handleExport}
+				/>
+
+				<CommandPalette
+					open={paletteOpen}
+					onOpenChange={setPaletteOpen}
+					commands={commands}
 				/>
 			</div>
-
-			<Toolbar
-				language={language}
-				onLanguageChange={setLanguage}
-				format={format}
-				onFormatChange={setFormat}
-				exporting={exporting}
-				onCopy={() => navigator.clipboard.writeText(code)}
-				onExport={handleExport}
-			/>
-
-			<CommandPalette
-				open={paletteOpen}
-				onOpenChange={setPaletteOpen}
-				commands={commands}
-			/>
-		</div>
+		</ToastProvider>
 	);
 }
 

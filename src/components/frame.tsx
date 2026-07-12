@@ -139,7 +139,9 @@ export const Frame = forwardRef<
 											className={`d-f ai-c g-2 px-4 py-3 bs-s ${showActiveTabBorder ? "bbw-2" : "bbw-0"}`}
 											style={{
 												backgroundColor: colors.tabActive,
-												borderColor: showActiveTabBorder ? colors.activeTabBorder : "transparent",
+												borderColor: showActiveTabBorder
+													? colors.activeTabBorder
+													: "transparent",
 											}}
 										>
 											<Input
@@ -179,7 +181,10 @@ export const Frame = forwardRef<
 								>
 									<div
 										className="d-f ai-c jc-fe px-4 py-2 btw-1 bs-s"
-										style={{ backgroundColor: colors.statusBarBg, borderColor: colors.border }}
+										style={{
+											backgroundColor: colors.statusBarBg,
+											borderColor: colors.border,
+										}}
 									>
 										<span
 											className="ff-m fs-xs"
