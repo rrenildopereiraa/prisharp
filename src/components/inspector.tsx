@@ -312,6 +312,21 @@ export function Inspector({
 
 			<RadiusControl radii={radii} onRadiiChange={onRadiiChange} />
 
+			<OptionSwitch
+				label="Tab border"
+				checked={showActiveTabBorder}
+				onCheckedChange={onShowActiveTabBorderChange}
+			/>
+			{showActiveTabBorder && (
+				<ColorInput
+					label="Tab border"
+					value={frameColors.activeTabBorder}
+					onChange={(activeTabBorder) =>
+						onFrameColorsChange({ ...frameColors, activeTabBorder })
+					}
+				/>
+			)}
+
 			<div className="d-f fd-c g-1 px-2 pb-4">
 				<span className="fs-sm ff-m c-accent-dim us-none">Font</span>
 				<div className="d-f bw-1 bs-s bc-border">
@@ -368,73 +383,14 @@ export function Inspector({
 				</ToggleGroup>
 			</div>
 
-			<SectionSeparator label="Colors" />
-
-			<ColorInput
-				label="editor.background"
-				value={frameColors.page}
-				onChange={(page) => onFrameColorsChange({ ...frameColors, page })}
-			/>
-			<ColorInput
-				label="sideBar.background"
-				value={frameColors.surface}
-				onChange={(surface) => onFrameColorsChange({ ...frameColors, surface })}
-			/>
-			<ColorInput
-				label="editorGroupHeader.border"
-				value={frameColors.border}
-				onChange={(border) => onFrameColorsChange({ ...frameColors, border })}
-			/>
-			<ColorInput
-				label="editor.foreground"
-				value={frameColors.accentDim}
-				onChange={(accentDim) =>
-					onFrameColorsChange({ ...frameColors, accentDim })
-				}
-			/>
-			<ColorInput
-				label="tab.inactiveBackground"
-				value={frameColors.tabBar}
-				onChange={(tabBar) => onFrameColorsChange({ ...frameColors, tabBar })}
-			/>
-			<ColorInput
-				label="tab.activeBackground"
-				value={frameColors.tabActive}
-				onChange={(tabActive) =>
-					onFrameColorsChange({ ...frameColors, tabActive })
-				}
-			/>
-			<ColorInput
-				label="statusBar.background"
-				value={frameColors.statusBarBg}
-				onChange={(statusBarBg) =>
-					onFrameColorsChange({ ...frameColors, statusBarBg })
-				}
-			/>
-
-			<OptionSwitch
-				label="tab.activeBorder"
-				checked={showActiveTabBorder}
-				onCheckedChange={onShowActiveTabBorderChange}
-			/>
-			{showActiveTabBorder && (
-				<ColorInput
-					label="tab.activeBorder"
-					value={frameColors.activeTabBorder}
-					onChange={(activeTabBorder) =>
-						onFrameColorsChange({ ...frameColors, activeTabBorder })
-					}
-				/>
-			)}
-
-			<SectionSeparator label="Theme" />
+			<SectionSeparator label="Appearance" />
 
 			<div className="d-f fd-c g-1 px-2 pb-4">
 				<span className="fs-sm ff-m c-accent-dim us-none">Theme</span>
 				<ThemePicker value={themeName} onValueChange={onThemeChange} />
 			</div>
 
-			<div className="px-2">
+			<div className="px-2 pb-4">
 				<Button
 					onClick={() => {
 						const input = document.createElement("input");
@@ -455,6 +411,54 @@ export function Inspector({
 					Upload .json theme
 				</Button>
 			</div>
+
+			<ColorInput
+				label="Page"
+				value={frameColors.page}
+				onChange={(page) => onFrameColorsChange({ ...frameColors, page })}
+			/>
+			<ColorInput
+				label="Surface"
+				value={frameColors.surface}
+				onChange={(surface) =>
+					onFrameColorsChange({ ...frameColors, surface })
+				}
+			/>
+			<ColorInput
+				label="Border"
+				value={frameColors.border}
+				onChange={(border) =>
+					onFrameColorsChange({ ...frameColors, border })
+				}
+			/>
+			<ColorInput
+				label="Text"
+				value={frameColors.accentDim}
+				onChange={(accentDim) =>
+					onFrameColorsChange({ ...frameColors, accentDim })
+				}
+			/>
+			<ColorInput
+				label="Tab"
+				value={frameColors.tabBar}
+				onChange={(tabBar) =>
+					onFrameColorsChange({ ...frameColors, tabBar })
+				}
+			/>
+			<ColorInput
+				label="Tab active"
+				value={frameColors.tabActive}
+				onChange={(tabActive) =>
+					onFrameColorsChange({ ...frameColors, tabActive })
+				}
+			/>
+			<ColorInput
+				label="Status bar"
+				value={frameColors.statusBarBg}
+				onChange={(statusBarBg) =>
+					onFrameColorsChange({ ...frameColors, statusBarBg })
+				}
+			/>
 		</aside>
 	);
 }
