@@ -14,6 +14,8 @@ export interface FrameColors {
 	accentDim: string;
 	tabBar: string;
 	tabActive: string;
+	statusBarBg: string;
+	activeTabBorder: string;
 }
 
 // Diagonal hatch texture

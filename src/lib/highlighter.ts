@@ -53,31 +53,56 @@ export const THEMES = {
 
 export type ThemeId = keyof typeof THEMES;
 
+export function readThemeFrameColors(theme: {
+	name: string;
+	colors?: Record<string, string | null>;
+	frameColors?: Partial<FrameColors>;
+}): FrameColors {
+	const c = theme.colors ?? {};
+	const f = theme.frameColors ?? {};
+
+	return {
+		page: getColor(c, "editor.background") ?? f.page ?? "#151724",
+		surface: getColor(c, "sideBar.background") ?? f.surface ?? "#1a1d2e",
+		border:
+			getColor(c, "editorGroupHeader.border") ?? f.border ?? "#232741",
+		accentDim: getColor(c, "editor.foreground") ?? f.accentDim ?? "#9aa5ef",
+		tabBar:
+			getColor(c, "tab.inactiveBackground") ?? f.tabBar ?? "#151724",
+		tabActive:
+			getColor(c, "tab.activeBackground") ?? f.tabActive ?? "#1a1d2e",
+		statusBarBg:
+			getColor(c, "statusBar.background") ?? f.statusBarBg ?? "#2d3151",
+		activeTabBorder:
+			getColor(c, "tab.activeBorder") ?? f.activeTabBorder ?? "#00000000",
+	};
+}
+
+function getColor(
+	colors: Record<string, string | null>,
+	key: string,
+): string | undefined {
+	const value = colors[key];
+	if (value != null && value !== "#00000000" && value.length >= 7) return value;
+	return undefined;
+}
+
 export const THEME_FRAME_COLORS: Record<string, FrameColors> = {
-	[eclipsa.name]: {
-		page: "#151724",
-		surface: "#1a1d2e",
-		border: "#232741",
-		accentDim: "#9aa5ef",
-		tabBar: "#151724",
-		tabActive: "#1a1d2e",
-	},
-	[monochrome.name]: {
-		page: "#0d0d0d",
-		surface: "#1a1a1a",
-		border: "#333333",
-		accentDim: "#888888",
-		tabBar: "#0d0d0d",
-		tabActive: "#1a1a1a",
-	},
-	[amber.name]: {
-		page: "#1a1206",
-		surface: "#261e12",
-		border: "#3d2e1a",
-		accentDim: "#b8935a",
-		tabBar: "#1a1206",
-		tabActive: "#261e12",
-	},
+	[eclipsa.name]: readThemeFrameColors(eclipsa as unknown as {
+		name: string;
+		colors?: Record<string, string | null>;
+		frameColors?: Partial<FrameColors>;
+	}),
+	[monochrome.name]: readThemeFrameColors(monochrome as unknown as {
+		name: string;
+		colors?: Record<string, string | null>;
+		frameColors?: Partial<FrameColors>;
+	}),
+	[amber.name]: readThemeFrameColors(amber as unknown as {
+		name: string;
+		colors?: Record<string, string | null>;
+		frameColors?: Partial<FrameColors>;
+	}),
 };
 
 let highlighterPromise: Promise<HighlighterCore> | null = null;
@@ -167,12 +192,17 @@ function stripJsonComments(text: string): string {
 
 /**
  * Register a user-uploaded VS Code theme (JSON or JSONC) with the
- * highlighter and return its name for use with codeToTokens.
+ * highlighter and return its name and extracted frame colors.
  */
-export async function loadCustomTheme(text: string): Promise<string> {
+export async function loadCustomTheme(text: string): Promise<{
+	name: string;
+	frameColors: FrameColors;
+}> {
 	const theme = JSON.parse(stripJsonComments(text)) as {
 		name?: string;
 		tokenColors?: unknown;
+		colors?: Record<string, string | null>;
+		frameColors?: Partial<FrameColors>;
 	};
 	if (!theme.tokenColors) {
 		throw new Error("Not a VS Code color theme (missing tokenColors)");
@@ -180,5 +210,5 @@ export async function loadCustomTheme(text: string): Promise<string> {
 	theme.name = theme.name || "Custom";
 	const highlighter = await getHighlighter();
 	await highlighter.loadTheme(theme as unknown as ThemeInput);
-	return theme.name;
+	return { name: theme.name, frameColors: readThemeFrameColors(theme as { name: string; colors?: Record<string, string | null>; frameColors?: Partial<FrameColors> }) };
 }

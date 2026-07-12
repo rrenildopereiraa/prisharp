@@ -43,7 +43,7 @@ function App() {
 	const [format, setFormat] = useState<ExportFormat>("png");
 	const [exporting, setExporting] = useState(false);
 	const [showTabBar, setShowTabBar] = useState(true);
-	const [showStatusBar, setShowStatusBar] = useState(true);
+	const [showStatusBar, setShowStatusBar] = useState(false);
 	const [background, setBackground] = useState<Background>("stripes");
 	const [showGridLines, setShowGridLines] = useState(true);
 	const [radii, setRadii] = useState<CornerRadii>({
@@ -62,6 +62,8 @@ function App() {
 		accentDim: "#9aa5ef",
 		tabBar: "#151724",
 		tabActive: "#1a1d2e",
+		statusBarBg: "#2d3151",
+		activeTabBorder: "#00000000",
 	});
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const frameRef = useRef<HTMLDivElement>(null);
@@ -76,8 +78,9 @@ function App() {
 
 	async function handleUploadTheme(file: File) {
 		try {
-			const name = await loadCustomTheme(await file.text());
-			setThemeName(name);
+			const result = await loadCustomTheme(await file.text());
+			setThemeName(result.name);
+			setFrameColors(result.frameColors);
 		} catch (error) {
 			console.error("Theme upload failed:", error);
 		}
