@@ -31,7 +31,7 @@ export function ExportButton({
 				}}
 				disabled={exporting}
 				focusableWhenDisabled
-				className="d-f ai-c jc-c g-2 w-8 @sm:w-24 px-2 py-1 bg-accent c-page fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent"
+				className="d-f ai-c jc-c g-2 w-8 @sm:w-24 h-7 px-2 bg-accent c-page fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent"
 			>
 				{exporting ? (
 					<span className="d-f">
@@ -45,8 +45,10 @@ export function ExportButton({
 				</span>
 			</Button>
 
+			<div className="w-px bg-page/40" aria-hidden="true" />
+
 			<Menu.Root>
-				<Menu.Trigger className="d-f ai-c jc-c w-6 px-1 bg-accent c-page fw-600 fs-sm ff-m us-none c-p bw-0 blw-1 bs-s bc-page/20 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent">
+				<Menu.Trigger className="d-f ai-c jc-c w-6 h-7 px-1 bg-accent c-page fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent">
 					<CaretDownIcon size={12} weight="fill" />
 				</Menu.Trigger>
 				<Menu.Portal keepMounted>

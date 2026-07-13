@@ -2,9 +2,9 @@ import { Input } from "@base-ui/react/input";
 import { forwardRef } from "react";
 import type { LanguageId } from "../lib/highlighter";
 import { LANGUAGES } from "../lib/highlighter";
+import type { Background } from "../lib/types";
 import { CodeEditor } from "./code-editor";
 import type { CornerRadii } from "./inspector";
-import type { Background } from "./toolbar";
 
 export interface FrameColors {
 	page: string;

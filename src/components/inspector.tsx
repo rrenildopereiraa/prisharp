@@ -14,9 +14,9 @@ import {
 import { useState } from "react";
 import { useHaptics } from "../lib/haptics";
 import { THEMES } from "../lib/highlighter";
+import type { Background } from "../lib/types";
 import { ColorInput } from "./color-input";
 import type { FrameColors } from "./frame";
-import type { Background } from "./toolbar";
 
 export type FontId =
 	| "default"
