@@ -2,7 +2,7 @@ import { Button } from "@base-ui/react/button";
 import { Menu } from "@base-ui/react/menu";
 import {
 	CaretDownIcon,
-	CheckIcon,
+	SquareIcon,
 	DownloadSimpleIcon,
 	SpinnerIcon,
 } from "@phosphor-icons/react";
@@ -63,7 +63,7 @@ export function ExportButton({
 								>
 									{FORMAT_LABELS[key]}
 									{format === key && (
-										<CheckIcon size={14} weight="fill" className="c-page" />
+										<SquareIcon size={14} weight="fill" className="c-page" />
 									)}
 								</Menu.Item>
 							))}

@@ -6,6 +6,10 @@ import { Slider } from "@base-ui/react/slider";
 import { Switch } from "@base-ui/react/switch";
 import { Tabs } from "@base-ui/react/tabs";
 import {
+	ArrowDownLeftIcon,
+	ArrowDownRightIcon,
+	ArrowUpLeftIcon,
+	ArrowUpRightIcon,
 	CaretDownIcon,
 	CornersOutIcon,
 	UploadSimpleIcon,
@@ -46,30 +50,18 @@ export interface CornerRadii {
 const RADIUS_MIN = 0;
 const RADIUS_MAX = 16;
 
-const CORNERS: { id: keyof CornerRadii; label: string; glyph: string }[] = [
-	{ id: "tl", label: "Top left", glyph: "M1 9 V5 Q1 1 5 1 H9" },
-	{ id: "tr", label: "Top right", glyph: "M1 1 H5 Q9 1 9 5 V9" },
-	{ id: "bl", label: "Bottom left", glyph: "M1 1 V5 Q1 9 5 9 H9" },
-	{ id: "br", label: "Bottom right", glyph: "M9 1 V5 Q9 9 5 9 H1" },
+const CORNERS: {
+	id: keyof CornerRadii;
+	label: string;
+	Icon: typeof ArrowUpLeftIcon;
+}[] = [
+	{ id: "tl", label: "Top left", Icon: ArrowUpLeftIcon },
+	{ id: "tr", label: "Top right", Icon: ArrowUpRightIcon },
+	{ id: "bl", label: "Bottom left", Icon: ArrowDownLeftIcon },
+	{ id: "br", label: "Bottom right", Icon: ArrowDownRightIcon },
 ];
 
 const RADIUS_TICKS = [0, 25, 50, 75, 100];
-
-function CornerGlyph({ path }: { path: string }) {
-	return (
-		<svg
-			width={10}
-			height={10}
-			viewBox="0 0 10 10"
-			fill="none"
-			stroke="currentColor"
-			strokeWidth={1.5}
-			aria-hidden="true"
-		>
-			<path d={path} />
-		</svg>
-	);
-}
 
 function RadiusControl({
 	radii,
@@ -136,14 +128,12 @@ function RadiusControl({
 					</Slider.Value>
 				</Slider.Root>
 
-				<button
-					type="button"
+				<Button
 					onClick={() => {
 						setSplit((value) => !value);
 						haptic("success");
 					}}
 					aria-pressed={split}
-					title="Per-corner radii"
 					className={`d-f ai-c jc-c w-7 h-7 fs-0 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent ${
 						split
 							? "bg-accent bc-accent c-page"
@@ -151,7 +141,7 @@ function RadiusControl({
 					}`}
 				>
 					<CornersOutIcon size={14} weight="bold" />
-				</button>
+				</Button>
 			</div>
 
 			{split && (
@@ -159,10 +149,10 @@ function RadiusControl({
 					className="g-1"
 					style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}
 				>
-					{CORNERS.map(({ id, label, glyph }) => (
+					{CORNERS.map(({ id, label, Icon }) => (
 						<div key={id} className="d-f bw-1 bs-s bc-border">
 							<span className="d-f ai-c jc-c w-6 fs-0 c-accent-dim brw-1 bs-s bc-border">
-								<CornerGlyph path={glyph} />
+								<Icon size={12} weight="bold" aria-hidden />
 							</span>
 							<NumberField.Root
 								value={radii[id]}
@@ -336,18 +326,18 @@ export function Inspector({
 				label="Tab bar"
 				checked={showTabBar}
 				onCheckedChange={onShowTabBarChange}
+      />
+      <OptionSwitch
+				label="Bounding box"
+				checked={showBoundingBox}
+				onCheckedChange={onShowBoundingBoxChange}
 			/>
 			<OptionSwitch
 				label="Status bar"
 				checked={showStatusBar}
 				onCheckedChange={onShowStatusBarChange}
-			/>
-			<OptionSwitch
-				label="Bounding box"
-				checked={showBoundingBox}
-				onCheckedChange={onShowBoundingBoxChange}
-			/>
-
+      />
+			
 			<RadiusControl radii={radii} onRadiiChange={onRadiiChange} />
 
 			<OptionSwitch
