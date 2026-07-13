@@ -1,10 +1,15 @@
 import { Button } from "@base-ui/react/button";
-import { Input } from "@base-ui/react/input";
+import { NumberField } from "@base-ui/react/number-field";
 import { Select } from "@base-ui/react/select";
 import { Separator } from "@base-ui/react/separator";
+import { Slider } from "@base-ui/react/slider";
 import { Switch } from "@base-ui/react/switch";
 import { Tabs } from "@base-ui/react/tabs";
-import { CaretDownIcon, UploadSimpleIcon } from "@phosphor-icons/react";
+import {
+	CaretDownIcon,
+	CornersOutIcon,
+	UploadSimpleIcon,
+} from "@phosphor-icons/react";
 import { useState } from "react";
 import { useHaptics } from "../lib/haptics";
 import { THEMES } from "../lib/highlighter";
@@ -38,15 +43,33 @@ export interface CornerRadii {
 	br: number;
 }
 
-type CornerScope = "all" | keyof CornerRadii;
+const RADIUS_MIN = 0;
+const RADIUS_MAX = 16;
 
-const CORNER_TABS: { id: CornerScope; label: string }[] = [
-	{ id: "all", label: "All" },
-	{ id: "tl", label: "TL" },
-	{ id: "tr", label: "TR" },
-	{ id: "bl", label: "BL" },
-	{ id: "br", label: "BR" },
+const CORNERS: { id: keyof CornerRadii; label: string; glyph: string }[] = [
+	{ id: "tl", label: "Top left", glyph: "M1 9 V5 Q1 1 5 1 H9" },
+	{ id: "tr", label: "Top right", glyph: "M1 1 H5 Q9 1 9 5 V9" },
+	{ id: "bl", label: "Bottom left", glyph: "M1 1 V5 Q1 9 5 9 H9" },
+	{ id: "br", label: "Bottom right", glyph: "M9 1 V5 Q9 9 5 9 H1" },
 ];
+
+const RADIUS_TICKS = [0, 25, 50, 75, 100];
+
+function CornerGlyph({ path }: { path: string }) {
+	return (
+		<svg
+			width={10}
+			height={10}
+			viewBox="0 0 10 10"
+			fill="none"
+			stroke="currentColor"
+			strokeWidth={1.5}
+			aria-hidden="true"
+		>
+			<path d={path} />
+		</svg>
+	);
+}
 
 function RadiusControl({
 	radii,
@@ -55,64 +78,109 @@ function RadiusControl({
 	radii: CornerRadii;
 	onRadiiChange: (value: CornerRadii) => void;
 }) {
-	const [scope, setScope] = useState<CornerScope>("all");
-	const current = scope === "all" ? radii.tl : radii[scope];
 	const { trigger: haptic } = useHaptics();
+	const [split, setSplit] = useState(false);
 
-	function apply(value: number) {
-		if (scope === "all") {
-			onRadiiChange({ tl: value, tr: value, bl: value, br: value });
-		} else {
-			onRadiiChange({ ...radii, [scope]: value });
-		}
+	const values = [radii.tl, radii.tr, radii.bl, radii.br];
+	const uniform = values.every((value) => value === values[0]);
+
+	function setAll(value: number) {
+		onRadiiChange({ tl: value, tr: value, bl: value, br: value });
+	}
+
+	function setCorner(corner: keyof CornerRadii, value: number) {
+		onRadiiChange({ ...radii, [corner]: value });
 		haptic("success");
 	}
 
 	return (
-		<div className="d-f fd-c g-1 px-2 pt-1 pb-4">
+		<div className="d-f fd-c g-2 px-2 pt-1 pb-4">
 			<span className="fs-sm ff-m c-accent-dim us-none">Border radius</span>
-			<Tabs.Root
-				value={scope}
-				onValueChange={(value) => setScope(value as CornerScope)}
-				className="bw-1 bs-s bc-border br-3xl"
-			>
-				<Tabs.List className="d-f p-r g-1 p-1">
-					{CORNER_TABS.map(({ id, label }) => (
-						<Tabs.Tab
-							key={id}
-							value={id}
-							className={(state) =>
-								`p-r zi-10 f-1 px-1 py-1 fs-xs ff-m ta-c us-none c-p bw-0 br-xxl fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "c-page bg-accent fw-700" : "c-accent-dim bg-transparent h:bg-page"}`
-							}
-						>
-							{label}
-						</Tabs.Tab>
-					))}
-					<Tabs.Indicator
-						className="p-a l-0 zi-0 bg-accent br-xxl bs-o-xs"
-						style={{
-							translate: "var(--active-tab-left) 0",
-							width: "var(--active-tab-width)",
-							top: "var(--active-tab-top)",
-							height: "var(--active-tab-height)",
-						}}
-					/>
-				</Tabs.List>
-			</Tabs.Root>
-			<div className="d-f ai-c g-2 px-2 pt-1">
-				<Input
-					type="number"
-					value={current}
-					min={0}
-					max={16}
+
+			<div className="d-f ai-c g-2">
+				<Slider.Root
+					value={uniform ? radii.tl : Math.max(...values)}
+					onValueChange={(value) => setAll(value)}
+					onValueCommitted={() => haptic("success")}
+					min={RADIUS_MIN}
+					max={RADIUS_MAX}
 					step={1}
-					onChange={(event) => {
-						const v = Number.parseInt(event.target.value, 10);
-						if (!Number.isNaN(v) && v >= 0 && v <= 16) apply(v);
+					className="d-f ai-c g-2 f-1"
+				>
+					<Slider.Control className="p-r d-f ai-c h-5 f-1 c-p">
+						<div
+							className="p-a l-0 r-0 h-px"
+							style={{ top: "50%" }}
+							aria-hidden="true"
+						>
+							{RADIUS_TICKS.map((pct) => (
+								<span
+									key={pct}
+									className="p-a w-px h-1 bg-border"
+									style={{ left: `${pct}%`, top: -2 }}
+								/>
+							))}
+						</div>
+						<Slider.Track className="p-r f-1 h-px bg-border">
+							<Slider.Indicator className="h-px bg-accent" />
+							<Slider.Thumb className="w-2 h-4 bg-accent bs-o-xs fv:os-s fv:oo-2 fv:oc-accent" />
+						</Slider.Track>
+					</Slider.Control>
+
+					<Slider.Value
+						className={`ff-m fs-xs ta-c w-9 py-1 bw-1 bs-s bc-border us-none ${
+							uniform ? "c-accent-dim" : "c-border"
+						}`}
+					>
+						{(formatted) => (uniform ? formatted[0] : "—")}
+					</Slider.Value>
+				</Slider.Root>
+
+				<button
+					type="button"
+					onClick={() => {
+						setSplit((value) => !value);
+						haptic("success");
 					}}
-					className="ff-m fs-xs c-accent-dim bg-transparent bw-1 bs-s bc-border br-xxl px-2 py-1 w-100% ta-c"
-				/>
+					aria-pressed={split}
+					title="Per-corner radii"
+					className={`d-f ai-c jc-c w-7 h-7 fs-0 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent ${
+						split
+							? "bg-accent bc-accent c-page"
+							: "bg-transparent bc-border c-accent-dim h:c-accent h:bc-accent"
+					}`}
+				>
+					<CornersOutIcon size={14} weight="bold" />
+				</button>
 			</div>
+
+			{split && (
+				<div
+					className="g-1"
+					style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}
+				>
+					{CORNERS.map(({ id, label, glyph }) => (
+						<div key={id} className="d-f bw-1 bs-s bc-border">
+							<span className="d-f ai-c jc-c w-6 fs-0 c-accent-dim brw-1 bs-s bc-border">
+								<CornerGlyph path={glyph} />
+							</span>
+							<NumberField.Root
+								value={radii[id]}
+								onValueChange={(value) => {
+									if (value != null) setCorner(id, value);
+								}}
+								min={RADIUS_MIN}
+								max={RADIUS_MAX}
+								step={1}
+								aria-label={`${label} radius`}
+								className="f-1"
+							>
+								<NumberField.Input className="ff-m fs-xs c-accent-dim bg-transparent bw-0 px-1 py-1 w-100% ta-c" />
+							</NumberField.Root>
+						</div>
+					))}
+				</div>
+			)}
 		</div>
 	);
 }
@@ -147,12 +215,12 @@ function OptionSwitch({
 					onCheckedChange(value);
 					haptic("success");
 				}}
-				className={`p-r d-f ai-c h-5 w-9 m-0 px-1 bw-1 bs-s c-p br-xxl fv:os-s fv:oo-2 fv:oc-accent ${
+				className={`p-r d-f ai-c h-5 w-9 m-0 px-1 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent ${
 					checked ? "bg-accent bc-accent" : "bg-page bc-border"
 				}`}
 			>
 				<Switch.Thumb
-					className={`w-4 h-3 br-xxl bs-o-xs ${checked ? "bg-page ml-3" : "bg-accent-dim ml-0"}`}
+					className={`w-4 h-3 bs-o-xs ${checked ? "bg-page ml-3" : "bg-accent-dim ml-0"}`}
 				/>
 			</Switch.Root>
 		</div>
@@ -178,7 +246,7 @@ function ThemePicker({
 				}
 			}}
 		>
-			<Select.Trigger className="d-f ai-c jc-sb g-1 w-100% px-2 py-1 c-accent-dim fs-sm ff-m us-none c-p bw-1 bs-s bc-border br-xxl fv:os-s fv:oo-2 fv:oc-accent h:bg-page">
+			<Select.Trigger className="d-f ai-c jc-sb g-1 w-100% px-2 py-1 c-accent-dim fs-sm ff-m us-none c-p bw-1 bs-s bc-border fv:os-s fv:oo-2 fv:oc-accent h:bg-page">
 				<Select.Value>
 					{() => <span className="min-w-0 o-h to-e ws-nw">{value}</span>}
 				</Select.Value>
@@ -192,14 +260,14 @@ function ThemePicker({
 					alignItemWithTrigger={false}
 					className="zi-90 p-0 ow-0 us-none"
 				>
-					<Select.Popup className="w-48 bw-1 bc-border bg-surface br-xl py-1 bs-o-xs">
+					<Select.Popup className="w-48 bw-1 bc-border bg-surface py-1 bs-o-xs">
 						<Select.List>
 							{(Object.keys(THEMES) as (keyof typeof THEMES)[]).map((id) => (
 								<Select.Item
 									key={id}
 									value={id}
 									className={(state) =>
-										`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-page c-accent" : "c-accent-dim"}`
+										`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-accent c-page" : "c-accent-dim"}`
 									}
 								>
 									<Select.ItemText>{id}</Select.ItemText>
@@ -261,7 +329,7 @@ export function Inspector({
 	const { trigger: haptic } = useHaptics();
 
 	return (
-		<aside className="d-none @lg:d-f fd-c w-72 fs-0 m-4 bw-1 bs-s bc-border bg-surface br-xl bs-o-lg p-3">
+		<aside className="d-none @lg:d-f fd-c w-72 fs-0 blw-1 bs-s bc-border bg-surface p-3">
 			<SectionSeparator label="Frame" />
 
 			<OptionSwitch
@@ -299,39 +367,61 @@ export function Inspector({
 
 			<div className="d-f fd-c g-1 px-2 pb-4">
 				<span className="fs-sm ff-m c-accent-dim us-none">Font</span>
-				<Tabs.Root
+				<Select.Root
 					value={font}
-					onValueChange={(value) => {
-						onFontChange(value as FontId);
-						haptic("success");
+					onValueChange={(next) => {
+						if (next) {
+							onFontChange(next as FontId);
+							haptic("success");
+						}
 					}}
-					className="bw-1 bs-s bc-border br-3xl"
 				>
-					<Tabs.List className="d-f p-r g-1 p-1">
-						{(Object.keys(FONTS) as FontId[]).map((id) => (
-							<Tabs.Tab
-								key={id}
-								value={id}
-								title={FONTS[id].label}
-								style={
-									FONTS[id].stack ? { fontFamily: FONTS[id].stack } : undefined
-								}
-								className={`p-r zi-10 f-1 px-1 py-1 fs-xs ff-m ta-c us-none c-p bw-0 br-xxl fv:os-s fv:oo--2 fv:oc-accent ${font === id ? "c-page bg-accent fw-700" : "c-accent-dim bg-transparent h:bg-page"}`}
-							>
-								Aa
-							</Tabs.Tab>
-						))}
-						<Tabs.Indicator
-							className="p-a l-0 zi-0 bg-accent br-xxl bs-o-xs"
-							style={{
-								translate: "var(--active-tab-left) 0",
-								width: "var(--active-tab-width)",
-								top: "var(--active-tab-top)",
-								height: "var(--active-tab-height)",
-							}}
-						/>
-					</Tabs.List>
-				</Tabs.Root>
+					<Select.Trigger className="d-f ai-c jc-sb g-1 w-100% px-2 py-1 c-accent-dim fs-sm ff-m us-none c-p bw-1 bs-s bc-border fv:os-s fv:oo-2 fv:oc-accent h:bg-page">
+						<Select.Value>
+							{() => (
+								<span className="min-w-0 o-h to-e ws-nw">
+									{FONTS[font].label}
+								</span>
+							)}
+						</Select.Value>
+						<Select.Icon className="d-f c-accent-dim">
+							<CaretDownIcon size={12} weight="fill" />
+						</Select.Icon>
+					</Select.Trigger>
+					<Select.Portal>
+						<Select.Positioner
+							sideOffset={8}
+							alignItemWithTrigger={false}
+							className="zi-90 p-0 ow-0 us-none"
+						>
+							<Select.Popup className="w-48 bw-1 bc-border bg-surface py-1 bs-o-xs">
+								<Select.List>
+									{(Object.keys(FONTS) as FontId[]).map((id) => (
+										<Select.Item
+											key={id}
+											value={id}
+											className={(state) =>
+												`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-accent c-page" : "c-accent-dim"}`
+											}
+										>
+											<Select.ItemText>
+												<span
+													style={
+														FONTS[id].stack
+															? { fontFamily: FONTS[id].stack }
+															: undefined
+													}
+												>
+													{FONTS[id].label}
+												</span>
+											</Select.ItemText>
+										</Select.Item>
+									))}
+								</Select.List>
+							</Select.Popup>
+						</Select.Positioner>
+					</Select.Portal>
+				</Select.Root>
 			</div>
 
 			<SectionSeparator label="Background" />
@@ -352,23 +442,23 @@ export function Inspector({
 							haptic("success");
 						}
 					}}
-					className="bw-1 bs-s bc-border br-3xl"
+					className="bw-1 bs-s bc-border"
 				>
 					<Tabs.List className="d-f p-r g-1 p-1">
 						<Tabs.Tab
 							value="stripes"
-							className={`p-r zi-10 f-1 px-2 py-1 fs-xs ff-m ta-c us-none c-p bw-0 br-xxl fv:os-s fv:oo--2 fv:oc-accent ${background === "stripes" ? "c-page bg-accent fw-700" : "c-accent-dim bg-transparent h:bg-page"}`}
+							className={`p-r zi-10 f-1 px-2 py-1 fs-xs ff-m ta-c us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${background === "stripes" ? "c-page bg-accent fw-700" : "c-accent-dim bg-transparent h:bg-page"}`}
 						>
 							Stripes
 						</Tabs.Tab>
 						<Tabs.Tab
 							value="solid"
-							className={`p-r zi-10 f-1 px-2 py-1 fs-xs ff-m ta-c us-none c-p bw-0 br-xxl fv:os-s fv:oo--2 fv:oc-accent ${background === "solid" ? "c-page bg-accent fw-700" : "c-accent-dim bg-transparent h:bg-page"}`}
+							className={`p-r zi-10 f-1 px-2 py-1 fs-xs ff-m ta-c us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${background === "solid" ? "c-page bg-accent fw-700" : "c-accent-dim bg-transparent h:bg-page"}`}
 						>
 							Solid
 						</Tabs.Tab>
 						<Tabs.Indicator
-							className="p-a l-0 zi-0 bg-accent br-xxl bs-o-xs"
+							className="p-a l-0 zi-0 bg-accent bs-o-xs"
 							style={{
 								translate: "var(--active-tab-left) 0",
 								width: "var(--active-tab-width)",
@@ -402,10 +492,10 @@ export function Inspector({
 						};
 						input.click();
 					}}
-					className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bc-border bg-transparent c-accent-dim fs-xs ff-m us-none c-p br-xxl h:c-accent h:bc-accent-dim fv:os-s fv:oo-2 fv:oc-accent"
+					className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bc-border bg-transparent c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bc-accent-dim fv:os-s fv:oo-2 fv:oc-accent"
 				>
 					<UploadSimpleIcon size={14} weight="fill" />
-					Upload .json theme
+					Import VS Code theme
 				</Button>
 			</div>
 

@@ -30,10 +30,10 @@ export function StatusBar({
 					haptic("success");
 					onOpenPalette();
 				}}
-				className="d-f ai-c jc-sb g-2 w-64 my-1 px-3 py-1 bg-page c-accent-dim fs-xs ff-m us-none c-p bw-0 br-xxl bs-i-xs h:c-accent fv:os-s fv:oo--2 fv:oc-accent"
+				className="d-f ai-c jc-sb g-2 w-64 my-1 px-3 py-1 bg-page bw-1 bc-border c-accent-dim fs-xs ff-m us-none c-p bw-0 bs-i-xs h:c-accent fv:os-s fv:oo--2 fv:oc-accent"
 			>
 				Search commands...
-				<span className="px-1 bw-1 bs-s bc-border br-xxl fs-xs c-accent-dim ws-nw">
+				<span className=" px-1 bw-1 bs-s bc-border fs-xs c-accent-dim ws-nw">
 					{modKey}K
 				</span>
 			</Button>

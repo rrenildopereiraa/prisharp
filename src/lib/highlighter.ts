@@ -44,7 +44,12 @@ export type LanguageId = keyof typeof LANGUAGES;
 
 export const THEME_NAME = defaultTheme.name;
 
-const BUILTIN_THEMES = [defaultTheme, eclipsa, monochrome, amber] as ThemeInput[];
+const BUILTIN_THEMES = [
+	defaultTheme,
+	eclipsa,
+	monochrome,
+	amber,
+] as ThemeInput[];
 
 export const THEMES = {
 	[THEME_NAME]: defaultTheme.name,

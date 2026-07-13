@@ -239,7 +239,7 @@ function App() {
 				onFormatChange={setFormat}
 				exporting={exporting}
 				onCopy={() => {
-					navigator.clipboard.writeText(code);
+					handleCopyImage();
 					toast.add({ title: "Copied" });
 				}}
 				onExport={handleExport}
