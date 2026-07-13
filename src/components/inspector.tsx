@@ -6,11 +6,8 @@ import { Slider } from "@base-ui/react/slider";
 import { Switch } from "@base-ui/react/switch";
 import { Tabs } from "@base-ui/react/tabs";
 import {
-	ArrowDownLeftIcon,
-	ArrowDownRightIcon,
-	ArrowUpLeftIcon,
-	ArrowUpRightIcon,
 	CaretDownIcon,
+	CaretUpIcon,
 	CornersOutIcon,
 	UploadSimpleIcon,
 } from "@phosphor-icons/react";
@@ -53,12 +50,13 @@ const RADIUS_MAX = 16;
 const CORNERS: {
 	id: keyof CornerRadii;
 	label: string;
-	Icon: typeof ArrowUpLeftIcon;
+	Icon: typeof CaretUpIcon;
+	rotate: string;
 }[] = [
-	{ id: "tl", label: "Top left", Icon: ArrowUpLeftIcon },
-	{ id: "tr", label: "Top right", Icon: ArrowUpRightIcon },
-	{ id: "bl", label: "Bottom left", Icon: ArrowDownLeftIcon },
-	{ id: "br", label: "Bottom right", Icon: ArrowDownRightIcon },
+	{ id: "tl", label: "Top left", Icon: CaretUpIcon, rotate: "ro-63" },
+	{ id: "tr", label: "Top right", Icon: CaretUpIcon, rotate: "ro--63" },
+	{ id: "bl", label: "Bottom left", Icon: CaretUpIcon, rotate: "ro--27" },
+	{ id: "br", label: "Bottom right", Icon: CaretUpIcon, rotate: "ro-27" },
 ];
 
 const RADIUS_TICKS = [0, 25, 50, 75, 100];
@@ -134,7 +132,7 @@ function RadiusControl({
 						haptic("success");
 					}}
 					aria-pressed={split}
-					className={`d-f ai-c jc-c w-7 h-7 fs-0 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent ${
+					className={`d-f ai-c jc-c w-7 h-7 fs-0 p-0 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent ${
 						split
 							? "bg-accent bc-accent c-page"
 							: "bg-transparent bc-border c-accent-dim h:c-accent h:bc-accent"
@@ -149,10 +147,10 @@ function RadiusControl({
 					className="g-1"
 					style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}
 				>
-					{CORNERS.map(({ id, label, Icon }) => (
+					{CORNERS.map(({ id, label, Icon, rotate }) => (
 						<div key={id} className="d-f bw-1 bs-s bc-border">
 							<span className="d-f ai-c jc-c w-6 fs-0 c-accent-dim brw-1 bs-s bc-border">
-								<Icon size={12} weight="bold" aria-hidden />
+								<Icon size={12} weight="bold" aria-hidden className={rotate} />
 							</span>
 							<NumberField.Root
 								value={radii[id]}
