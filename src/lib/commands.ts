@@ -2,6 +2,7 @@ import type { ExportFormat } from "../components/format-picker";
 import { FONTS, type FontId } from "../components/inspector";
 import type { Background } from "../components/toolbar";
 import { LANGUAGES, type LanguageId } from "./highlighter";
+import { modLabel } from "./platform";
 
 export interface Command {
 	id: string;
@@ -42,11 +43,16 @@ export function buildCommands({
 	onCopyImage: () => void;
 }): Command[] {
 	return [
-		{ id: "export", label: "Export image", kbd: "Ctrl S", run: onExport },
+		{
+			id: "export",
+			label: "Export image",
+			kbd: `${modLabel} S`,
+			run: onExport,
+		},
 		{
 			id: "copy-image",
 			label: "Copy image to clipboard",
-			kbd: "Ctrl Shift C",
+			kbd: `${modLabel} Shift C`,
 			run: onCopyImage,
 		},
 		{
@@ -67,7 +73,7 @@ export function buildCommands({
 		{
 			id: "toggle-background",
 			label: `Background: switch to ${background === "stripes" ? "solid" : "stripes"}`,
-			kbd: "Ctrl B",
+			kbd: `${modLabel} B`,
 			run: () =>
 				onBackgroundChange(background === "stripes" ? "solid" : "stripes"),
 		},

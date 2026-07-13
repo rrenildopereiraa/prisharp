@@ -1,5 +1,4 @@
 import { Toast } from "@base-ui/react/toast";
-import { motion } from "motion/react";
 import { createContext, type ReactNode, useContext } from "react";
 
 interface ToastOptions {
@@ -37,15 +36,7 @@ function ToastInner({ children }: { children: ReactNode }) {
 					<Toast.Root
 						key={toast.id}
 						toast={toast}
-						render={
-							<motion.div
-								initial={{ opacity: 0, y: 8, scale: 0.97 }}
-								animate={{ opacity: 1, y: 0, scale: 1 }}
-								exit={{ opacity: 0, y: 8, scale: 0.97 }}
-								transition={{ duration: 0.15, ease: "easeOut" }}
-							/>
-						}
-						className="d-f fd-c g-1 w-72 px-4 py-3 bg-surface bw-1 bs-s bc-border bs-o-xs"
+						className="d-f fd-c g-1 w-72 px-4 py-3 bg-surface bw-1 bs-s bc-border br-xl bs-o-xs"
 					>
 						<Toast.Title className="ff-m fs-sm c-accent fw-700">
 							{toast.title}

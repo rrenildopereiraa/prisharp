@@ -20,6 +20,7 @@ import typescript from "@shikijs/langs/typescript";
 import vue from "@shikijs/langs/vue";
 import type { FrameColors } from "../components/frame";
 import amber from "../themes/amber-theme.json";
+import defaultTheme from "../themes/default-theme.json";
 import eclipsa from "../themes/eclipsa-theme.json";
 import monochrome from "../themes/monochrome-theme.json";
 
@@ -41,12 +42,13 @@ export const LANGUAGES = {
 
 export type LanguageId = keyof typeof LANGUAGES;
 
-export const THEME_NAME = eclipsa.name;
+export const THEME_NAME = defaultTheme.name;
 
-const BUILTIN_THEMES = [eclipsa, monochrome, amber] as ThemeInput[];
+const BUILTIN_THEMES = [defaultTheme, eclipsa, monochrome, amber] as ThemeInput[];
 
 export const THEMES = {
-	[THEME_NAME]: eclipsa.name,
+	[THEME_NAME]: defaultTheme.name,
+	[eclipsa.name]: eclipsa.name,
 	[monochrome.name]: monochrome.name,
 	[amber.name]: amber.name,
 } as const;
@@ -85,6 +87,16 @@ function getColor(
 }
 
 export const THEME_FRAME_COLORS: Record<string, FrameColors> = {
+	[defaultTheme.name]: {
+		page: "#ffffff",
+		surface: "#f1f5f9",
+		border: "#cbd5e1",
+		accentDim: "#64748b",
+		tabBar: "#f1f5f9",
+		tabActive: "#ffffff",
+		statusBarBg: "#f1f5f9",
+		activeTabBorder: "#2563eb",
+	},
 	[eclipsa.name]: readThemeFrameColors(
 		eclipsa as unknown as {
 			name: string;

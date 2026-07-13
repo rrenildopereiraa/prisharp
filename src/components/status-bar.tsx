@@ -1,6 +1,7 @@
 import { Button } from "@base-ui/react/button";
 import { Separator } from "@base-ui/react/separator";
 import { useHaptics } from "../lib/haptics";
+import { modKey } from "../lib/platform";
 
 export function StatusBar({
 	onOpenPalette,
@@ -29,11 +30,11 @@ export function StatusBar({
 					haptic("success");
 					onOpenPalette();
 				}}
-				className="d-f ai-c jc-sb g-2 w-64 my-1 px-3 py-1 bg-page c-accent-dim fs-xs ff-m us-none c-p bw-0 h:c-accent fv:os-s fv:oo--2 fv:oc-accent"
+				className="d-f ai-c jc-sb g-2 w-64 my-1 px-3 py-1 bg-page c-accent-dim fs-xs ff-m us-none c-p bw-0 br-xxl bs-i-xs h:c-accent fv:os-s fv:oo--2 fv:oc-accent"
 			>
 				Search commands...
-				<span className="px-1 bw-1 bs-s bc-border fs-xs c-accent-dim ws-nw">
-					Ctrl K
+				<span className="px-1 bw-1 bs-s bc-border br-xxl fs-xs c-accent-dim ws-nw">
+					{modKey}K
 				</span>
 			</Button>
 

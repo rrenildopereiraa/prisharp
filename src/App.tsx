@@ -12,7 +12,7 @@ import {
 	Inspector,
 } from "./components/inspector";
 import { StatusBar } from "./components/status-bar";
-import { ToastProvider, useToast } from "./components/toast-provider";
+import { useToast } from "./components/toast-provider";
 import type { Background } from "./components/toolbar";
 import { Toolbar } from "./components/toolbar";
 import { buildCommands } from "./lib/commands";
@@ -58,16 +58,9 @@ function App() {
 	const [font, setFont] = useState<FontId>("default");
 	const [themeName, setThemeName] = useState(THEME_NAME);
 	const [paletteOpen, setPaletteOpen] = useState(false);
-	const [frameColors, setFrameColors] = useState<FrameColors>({
-		page: "#151724",
-		surface: "#1a1d2e",
-		border: "#232741",
-		accentDim: "#9aa5ef",
-		tabBar: "#151724",
-		tabActive: "#1a1d2e",
-		statusBarBg: "#2d3151",
-		activeTabBorder: "#00000000",
-	});
+	const [frameColors, setFrameColors] = useState<FrameColors>(
+		THEME_FRAME_COLORS[THEME_NAME],
+	);
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const frameRef = useRef<HTMLDivElement>(null);
 	const { trigger: haptic } = useHaptics();
@@ -133,6 +126,7 @@ function App() {
 			link.download = `${fileName || "aperture"}.${format}`;
 			link.href = dataUrl;
 			link.click();
+			toast.add({ title: "Exported" });
 		} finally {
 			setExporting(false);
 		}
@@ -143,6 +137,7 @@ function App() {
 		const blob = await toBlob(frameRef.current, { pixelRatio: 2 });
 		if (!blob) return;
 		await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+		toast.add({ title: "Copied", description: "Image copied to clipboard" });
 	}
 
 	useHotkey("Mod+K", (event) => {
@@ -174,84 +169,88 @@ function App() {
 		onSetLanguage: setLanguage,
 		onSetFormat: setFormat,
 		onSetFont: setFont,
-		onCopyCode: () => navigator.clipboard.writeText(code),
+		onCopyCode: () => {
+			navigator.clipboard.writeText(code);
+			toast.add({ title: "Copied" });
+		},
 		onExport: handleExport,
 		onCopyImage: handleCopyImage,
 	});
 
 	return (
-		<ToastProvider>
-			<div className="d-f fd-c min-h-vh bg-page">
-				<StatusBar
-					onOpenPalette={() => setPaletteOpen(true)}
-					width={dimensions.width}
-					height={dimensions.height}
-				/>
+		<div className="d-f fd-c min-h-vh bg-page">
+			<StatusBar
+				onOpenPalette={() => setPaletteOpen(true)}
+				width={dimensions.width}
+				height={dimensions.height}
+			/>
 
-				<div className="h-px bg-border" />
+			<div className="h-px bg-border" />
 
-				<div className="f-1 d-f">
-					<Canvas
-						code={code}
-						onCodeChange={setCode}
-						language={language}
-						fileName={fileName}
-						onFileNameChange={setFileName}
-						showTabBar={showTabBar}
-						showStatusBar={showStatusBar}
-						showGridLines={showGridLines}
-						showActiveTabBorder={showActiveTabBorder}
-						background={background}
-						radii={radii}
-						font={FONTS[font].stack}
-						themeName={themeName}
-						colors={frameColors}
-						showBoundingBox={showBoundingBox}
-						frameRef={frameRef}
-					/>
-
-					<Inspector
-						showTabBar={showTabBar}
-						onShowTabBarChange={setShowTabBar}
-						showStatusBar={showStatusBar}
-						onShowStatusBarChange={setShowStatusBar}
-						showGridLines={showGridLines}
-						onShowGridLinesChange={setShowGridLines}
-						showBoundingBox={showBoundingBox}
-						onShowBoundingBoxChange={setShowBoundingBox}
-						showActiveTabBorder={showActiveTabBorder}
-						onShowActiveTabBorderChange={setShowActiveTabBorder}
-						background={background}
-						onBackgroundChange={setBackground}
-						radii={radii}
-						onRadiiChange={setRadii}
-						font={font}
-						onFontChange={setFont}
-						themeName={themeName}
-						onThemeChange={handleThemeChange}
-						frameColors={frameColors}
-						onFrameColorsChange={setFrameColors}
-						onUploadTheme={handleUploadTheme}
-					/>
-				</div>
-
-				<Toolbar
+			<div className="f-1 d-f">
+				<Canvas
+					code={code}
+					onCodeChange={setCode}
 					language={language}
-					onLanguageChange={setLanguage}
-					format={format}
-					onFormatChange={setFormat}
-					exporting={exporting}
-					onCopy={() => navigator.clipboard.writeText(code)}
-					onExport={handleExport}
+					fileName={fileName}
+					onFileNameChange={setFileName}
+					showTabBar={showTabBar}
+					showStatusBar={showStatusBar}
+					showGridLines={showGridLines}
+					showActiveTabBorder={showActiveTabBorder}
+					background={background}
+					radii={radii}
+					font={FONTS[font].stack}
+					themeName={themeName}
+					colors={frameColors}
+					showBoundingBox={showBoundingBox}
+					frameRef={frameRef}
 				/>
 
-				<CommandPalette
-					open={paletteOpen}
-					onOpenChange={setPaletteOpen}
-					commands={commands}
+				<Inspector
+					showTabBar={showTabBar}
+					onShowTabBarChange={setShowTabBar}
+					showStatusBar={showStatusBar}
+					onShowStatusBarChange={setShowStatusBar}
+					showGridLines={showGridLines}
+					onShowGridLinesChange={setShowGridLines}
+					showBoundingBox={showBoundingBox}
+					onShowBoundingBoxChange={setShowBoundingBox}
+					showActiveTabBorder={showActiveTabBorder}
+					onShowActiveTabBorderChange={setShowActiveTabBorder}
+					background={background}
+					onBackgroundChange={setBackground}
+					radii={radii}
+					onRadiiChange={setRadii}
+					font={font}
+					onFontChange={setFont}
+					themeName={themeName}
+					onThemeChange={handleThemeChange}
+					frameColors={frameColors}
+					onFrameColorsChange={setFrameColors}
+					onUploadTheme={handleUploadTheme}
 				/>
 			</div>
-		</ToastProvider>
+
+			<Toolbar
+				language={language}
+				onLanguageChange={setLanguage}
+				format={format}
+				onFormatChange={setFormat}
+				exporting={exporting}
+				onCopy={() => {
+					navigator.clipboard.writeText(code);
+					toast.add({ title: "Copied" });
+				}}
+				onExport={handleExport}
+			/>
+
+			<CommandPalette
+				open={paletteOpen}
+				onOpenChange={setPaletteOpen}
+				commands={commands}
+			/>
+		</div>
 	);
 }
 
