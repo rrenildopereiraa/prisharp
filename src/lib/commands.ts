@@ -27,6 +27,8 @@ export function buildCommands({
 	onCopyCode,
 	onExport,
 	onCopyImage,
+	onNewDocument,
+	onCloseDocument,
 }: {
 	showTabBar: boolean;
 	onShowTabBarChange: (value: boolean) => void;
@@ -43,6 +45,8 @@ export function buildCommands({
 	onCopyCode: () => void;
 	onExport: () => void;
 	onCopyImage: () => void;
+	onNewDocument: () => void;
+	onCloseDocument: () => void;
 }): Command[] {
 	const BACKGROUND_PATTERNS: Record<BackgroundPattern, string> = {
 		"stripes-right": "Stripes Right",
@@ -50,6 +54,16 @@ export function buildCommands({
 	};
 
 	return [
+		{
+			id: "new-snippet",
+			label: "New snippet",
+			run: onNewDocument,
+		},
+		{
+			id: "close-snippet",
+			label: "Close snippet",
+			run: onCloseDocument,
+		},
 		{
 			id: "export",
 			label: "Export image",

@@ -18,12 +18,11 @@ import { buildCommands } from "./lib/commands";
 import { captureDataUrl } from "./lib/export";
 import { useHaptics } from "./lib/haptics";
 import {
-	type LanguageId,
 	loadCustomTheme,
 	THEME_FRAME_COLORS,
 	THEME_NAME,
 } from "./lib/highlighter";
-import type { BackgroundPattern } from "./lib/types";
+import type { BackgroundPattern, EditorDocument } from "./lib/types";
 
 const defaultCode = `import { defineConfig } from "yummacss";
 
@@ -38,9 +37,15 @@ export default defineConfig({
 `;
 
 function App() {
-	const [code, setCode] = useState(defaultCode);
-	const [language, setLanguage] = useState<LanguageId>("mjs");
-	const [fileName, setFileName] = useState("yumma.config.mjs");
+	const [documents, setDocuments] = useState<EditorDocument[]>(() => [
+		{
+			id: crypto.randomUUID(),
+			fileName: "yumma.config.mjs",
+			code: defaultCode,
+			language: "mjs",
+		},
+	]);
+	const [activeId, setActiveId] = useState(() => documents[0].id);
 	const [format, setFormat] = useState<ExportFormat>("png");
 	const [exporting, setExporting] = useState(false);
 	const [showTabBar, setShowTabBar] = useState(true);
@@ -67,6 +72,42 @@ function App() {
 	const frameRef = useRef<HTMLDivElement>(null);
 	const { trigger: haptic } = useHaptics();
 	const toast = useToast();
+
+	const active = documents.find((doc) => doc.id === activeId) ?? documents[0];
+
+	function updateActive(patch: Partial<EditorDocument>) {
+		setDocuments((docs) =>
+			docs.map((doc) => (doc.id === activeId ? { ...doc, ...patch } : doc)),
+		);
+	}
+
+	function addDocument() {
+		const doc: EditorDocument = {
+			id: crypto.randomUUID(),
+			fileName: "Untitled",
+			code: "",
+			language: active.language,
+		};
+		setDocuments((docs) => [...docs, doc]);
+		setActiveId(doc.id);
+		haptic("success");
+	}
+
+	function closeDocument(id: string) {
+		if (documents.length <= 1) return;
+		const index = documents.findIndex((doc) => doc.id === id);
+		const remaining = documents.filter((doc) => doc.id !== id);
+		setDocuments(remaining);
+		if (id === activeId) {
+			setActiveId(remaining[Math.min(index, remaining.length - 1)].id);
+		}
+		haptic("success");
+	}
+
+	function selectDocument(id: string) {
+		setActiveId(id);
+		haptic("success");
+	}
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: fire on dims change
 	useEffect(() => {
@@ -117,7 +158,14 @@ function App() {
 		const observer = new ResizeObserver(([entry]) => measure(entry.target));
 		observer.observe(node);
 		return () => observer.disconnect();
-	}, [code, fileName, language, showTabBar, showStatusBar, font]);
+	}, [
+		active.code,
+		active.fileName,
+		active.language,
+		showTabBar,
+		showStatusBar,
+		font,
+	]);
 
 	async function handleExport() {
 		if (!frameRef.current || exporting) return;
@@ -125,7 +173,7 @@ function App() {
 		try {
 			const dataUrl = await captureDataUrl(frameRef.current, format);
 			const link = document.createElement("a");
-			link.download = `${fileName || "aperture"}.${format}`;
+			link.download = `${active.fileName || "aperture"}.${format}`;
 			link.href = dataUrl;
 			link.click();
 			toast.add({ title: "Exported" });
@@ -169,21 +217,27 @@ function App() {
 		showGridLines,
 		onShowGridLinesChange: (value) => setShowGridLines(value),
 		onBackgroundChange: setBackground,
-		onSetLanguage: setLanguage,
+		onSetLanguage: (value) => updateActive({ language: value }),
 		onSetFormat: setFormat,
 		onSetFont: setFont,
 		onCopyCode: () => {
-			navigator.clipboard.writeText(code);
+			navigator.clipboard.writeText(active.code);
 			toast.add({ title: "Copied" });
 		},
 		onExport: handleExport,
 		onCopyImage: handleCopyImage,
+		onNewDocument: addDocument,
+		onCloseDocument: () => closeDocument(activeId),
 	});
 
 	return (
 		<div className="d-f fd-c min-h-vh bg-page">
 			<EditorTabBar
-				fileName={fileName}
+				documents={documents}
+				activeId={activeId}
+				onSelect={selectDocument}
+				onClose={closeDocument}
+				onAdd={addDocument}
 				onOpenPalette={() => setPaletteOpen(true)}
 				onCopy={handleCopyImage}
 				onExport={handleExport}
@@ -194,11 +248,11 @@ function App() {
 
 			<div className="f-1 d-f">
 				<Canvas
-					code={code}
-					onCodeChange={setCode}
-					language={language}
-					fileName={fileName}
-					onFileNameChange={setFileName}
+					code={active.code}
+					onCodeChange={(value) => updateActive({ code: value })}
+					language={active.language}
+					fileName={active.fileName}
+					onFileNameChange={(value) => updateActive({ fileName: value })}
 					showTabBar={showTabBar}
 					showStatusBar={showStatusBar}
 					showGridLines={showGridLines}
@@ -241,8 +295,8 @@ function App() {
 			</div>
 
 			<StatusBar
-				language={language}
-				onLanguageChange={setLanguage}
+				language={active.language}
+				onLanguageChange={(value) => updateActive({ language: value })}
 				background={background}
 				onBackgroundChange={setBackground}
 				themeName={themeName}

@@ -4,15 +4,22 @@ import {
 	ClipboardTextIcon,
 	FileCodeIcon,
 	MagnifyingGlassIcon,
+	PlusIcon,
+	XIcon,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { useHaptics } from "../lib/haptics";
 import { modKey } from "../lib/platform";
+import type { EditorDocument } from "../lib/types";
 import { ExportButton } from "./export-button";
 import type { ExportFormat } from "./format-picker";
 
 export function EditorTabBar({
-	fileName,
+	documents,
+	activeId,
+	onSelect,
+	onClose,
+	onAdd,
 	onOpenPalette,
 	onCopy,
 	onExport,
@@ -20,7 +27,11 @@ export function EditorTabBar({
 	format,
 	onFormatChange,
 }: {
-	fileName: string;
+	documents: EditorDocument[];
+	activeId: string;
+	onSelect: (id: string) => void;
+	onClose: (id: string) => void;
+	onAdd: () => void;
 	onOpenPalette: () => void;
 	onCopy: () => void;
 	onExport: () => void;
@@ -30,6 +41,7 @@ export function EditorTabBar({
 }) {
 	const { trigger: haptic } = useHaptics();
 	const [copied, setCopied] = useState(false);
+	const canClose = documents.length > 1;
 
 	return (
 		<header className="d-f ai-c bbw-1 bs-s bc-border bg-surface">
@@ -37,11 +49,52 @@ export function EditorTabBar({
 				<img src="/favicon.svg" className="w-4 h-4" alt="" />
 			</div>
 
-			<div className="d-f ai-c g-2 px-3 py-2 bg-page brw-1 bs-s bc-border">
-				<FileCodeIcon size={14} weight="fill" className="c-accent" />
-				<span className="fs-sm ff-m c-accent-dim us-none ws-nw">
-					{fileName || "Untitled-1"}
-				</span>
+			<div className="d-f ai-c min-w-0 o-x-auto">
+				{documents.map((doc) => {
+					const isActive = doc.id === activeId;
+					return (
+						<div
+							key={doc.id}
+							className={`d-f ai-c g-2 pl-3 pr-2 py-2 brw-1 bs-s bc-border ${
+								isActive ? "bg-page" : "bg-transparent h:bg-page"
+							}`}
+						>
+							<button
+								type="button"
+								onClick={() => onSelect(doc.id)}
+								className="d-f ai-c g-2 p-0 bg-transparent bw-0 us-none c-p fv:os-s fv:oo-2 fv:oc-accent"
+							>
+								<FileCodeIcon
+									size={14}
+									weight="fill"
+									className={isActive ? "c-accent" : "c-accent-dim"}
+								/>
+								<span className="fs-sm ff-m c-accent-dim ws-nw">
+									{doc.fileName || "Untitled"}
+								</span>
+							</button>
+							{canClose && (
+								<button
+									type="button"
+									onClick={() => onClose(doc.id)}
+									title="Close snippet"
+									className="d-f ai-c jc-c p-0 c-accent-dim bg-transparent bw-0 c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+								>
+									<XIcon size={12} weight="bold" />
+								</button>
+							)}
+						</div>
+					);
+				})}
+
+				<button
+					type="button"
+					onClick={onAdd}
+					title="New snippet"
+					className="d-f ai-c jc-c as-s w-8 brw-1 bs-s bc-border c-accent-dim bg-transparent c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
+				>
+					<PlusIcon size={14} weight="bold" />
+				</button>
 			</div>
 
 			<div className="f-1" />

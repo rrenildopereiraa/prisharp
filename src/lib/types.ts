@@ -1,1 +1,10 @@
+import type { LanguageId } from "./highlighter";
+
 export type BackgroundPattern = "stripes-right" | "stripes-left";
+
+export interface EditorDocument {
+	id: string;
+	fileName: string;
+	code: string;
+	language: LanguageId;
+}
