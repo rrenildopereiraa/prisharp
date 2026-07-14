@@ -255,7 +255,7 @@ function ThemePicker({
 									key={id}
 									value={id}
 									className={(state) =>
-										`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-accent c-page" : "c-accent-dim"}`
+										`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-accent c-page" : state.selected ? "c-accent h:c-white fw-700 tdl-u" : "c-accent-dim"}`
 									}
 								>
 									<Select.ItemText>{id}</Select.ItemText>
@@ -389,7 +389,7 @@ export function Inspector({
 											key={id}
 											value={id}
 											className={(state) =>
-												`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-accent c-page" : "c-accent-dim"}`
+												`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-accent c-page" : state.selected ? "c-accent h:c-white fw-700 tdl-u" : "c-accent-dim"}`
 											}
 										>
 											<Select.ItemText>

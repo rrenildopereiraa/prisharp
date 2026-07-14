@@ -1,11 +1,12 @@
 import { Select } from "@base-ui/react/select";
-import { CaretDownIcon, SquareIcon } from "@phosphor-icons/react";
+import { CaretDownIcon } from "@phosphor-icons/react";
 import { useHaptics } from "../lib/haptics";
 import { LANGUAGES, type LanguageId } from "../lib/highlighter";
 
 const SHORT_LABELS: Record<LanguageId, string> = {
 	html: "HTML",
 	javascript: "JS",
+	mjs: "MJS",
 	jsx: "JSX",
 	typescript: "TS",
 	tsx: "TSX",
@@ -68,13 +69,10 @@ export function LanguagePicker({
 									key={id}
 									value={id}
 									className={(state) =>
-										`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-accent c-page" : "c-accent-dim"}`
+										`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-accent c-page" : state.selected ? "c-accent h:c-white fw-700 tdl-u" : "c-accent-dim"}`
 									}
 								>
 									<Select.ItemText>{label}</Select.ItemText>
-									<Select.ItemIndicator className="d-f ai-c c-page">
-										<SquareIcon size={14} weight="fill" />
-									</Select.ItemIndicator>
 								</Select.Item>
 							))}
 						</Select.List>

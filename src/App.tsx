@@ -39,7 +39,7 @@ export default defineConfig({
 
 function App() {
 	const [code, setCode] = useState(defaultCode);
-	const [language, setLanguage] = useState<LanguageId>("typescript");
+	const [language, setLanguage] = useState<LanguageId>("mjs");
 	const [fileName, setFileName] = useState("yumma.config.mjs");
 	const [format, setFormat] = useState<ExportFormat>("png");
 	const [exporting, setExporting] = useState(false);

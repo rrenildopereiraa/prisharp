@@ -27,6 +27,7 @@ import monochrome from "../themes/monochrome-theme.json";
 export const LANGUAGES = {
 	html: "HTML",
 	javascript: "JavaScript",
+	mjs: "MJS",
 	jsx: "JSX",
 	typescript: "TypeScript",
 	tsx: "TSX",

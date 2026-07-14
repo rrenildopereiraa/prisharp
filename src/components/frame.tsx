@@ -169,8 +169,8 @@ export const Frame = forwardRef<
 									}}
 								>
 									<span
-										className="ff-m fs-xs"
-										style={{ color: colors.accentDim, ...fontStyle }}
+										className="ff-m fs-xs c-accent h:c-white tds-u fw-700"
+										style={fontStyle}
 									>
 										{LANGUAGES[language]}
 									</span>
