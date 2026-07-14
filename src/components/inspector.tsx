@@ -238,7 +238,7 @@ function ThemePicker({
 				}
 			}}
 		>
-			<Select.Trigger className="d-f ai-c jc-sb g-1 w-100% px-2 py-1 c-accent-dim fs-sm ff-m us-none c-p bw-1 bs-s bc-border fv:os-s fv:oo-2 fv:oc-accent h:bg-page">
+			<Select.Trigger className="d-f ai-c jc-sb g-1 w-100% px-2 py-1 c-accent-dim fs-sm ff-m us-none c-p bw-1 bs-s bc-border bg-page bs-i-xs fv:os-s fv:oo-2 fv:oc-accent">
 				<Select.Value>
 					{() => <span className="min-w-0 o-h to-e ws-nw">{value}</span>}
 				</Select.Value>
@@ -353,7 +353,7 @@ export function Inspector({
 			/>
 			{showActiveTabBorder && (
 				<ColorInput
-					label="Tab border"
+					label="Color"
 					value={frameColors.activeTabBorder}
 					onChange={(activeTabBorder) =>
 						onFrameColorsChange({ ...frameColors, activeTabBorder })
@@ -372,7 +372,7 @@ export function Inspector({
 						}
 					}}
 				>
-					<Select.Trigger className="d-f ai-c jc-sb g-1 w-100% px-2 py-1 c-accent-dim fs-sm ff-m us-none c-p bw-1 bs-s bc-border fv:os-s fv:oo-2 fv:oc-accent h:bg-page">
+					<Select.Trigger className="d-f ai-c jc-sb g-1 w-100% px-2 py-1 c-accent-dim fs-sm ff-m us-none c-p bw-1 bs-s bc-border fv:os-s fv:oo-2 fv:oc-accent bg-page bs-i-xs">
 						<Select.Value>
 							{() => (
 								<span className="min-w-0 o-h to-e ws-nw">
@@ -436,7 +436,6 @@ export function Inspector({
 
 			{showBackgroundPattern && (
 				<div className="d-f fd-c g-1 px-2 pb-4">
-					<span className="fs-sm ff-m c-accent-dim us-none">Pattern</span>
 					<Select.Root
 						value={background}
 						onValueChange={(next) => {
@@ -446,7 +445,7 @@ export function Inspector({
 							}
 						}}
 					>
-						<Select.Trigger className="d-f ai-c jc-sb g-1 w-100% px-2 py-1 c-accent-dim fs-sm ff-m us-none c-p bw-1 bs-s bc-border fv:os-s fv:oo-2 fv:oc-accent h:bg-page">
+						<Select.Trigger className="d-f ai-c jc-sb g-1 w-100% px-2 py-1 c-accent-dim fs-sm ff-m us-none c-p bw-1 bs-s bc-border fv:os-s fv:oo-2 fv:oc-accent bg-page bs-i-xs">
 							<Select.Value>
 								{() => (
 									<span className="min-w-0 o-h to-e ws-nw">
@@ -511,7 +510,7 @@ export function Inspector({
 						};
 						input.click();
 					}}
-					className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bc-border bg-transparent c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bc-accent-dim fv:os-s fv:oo-2 fv:oc-accent"
+					className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bc-border bg-transparent c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bc-accent fv:os-s fv:oo-2 fv:oc-accent"
 				>
 					<UploadSimpleIcon size={14} weight="fill" />
 					Import VS Code theme
