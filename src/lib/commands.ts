@@ -2,7 +2,7 @@ import type { ExportFormat } from "../components/format-picker";
 import { FONTS, type FontId } from "../components/inspector";
 import { LANGUAGES, type LanguageId } from "./highlighter";
 import { modLabel } from "./platform";
-import type { Background } from "./types";
+import type { BackgroundPattern } from "./types";
 
 export interface Command {
 	id: string;
@@ -16,9 +16,10 @@ export function buildCommands({
 	onShowTabBarChange,
 	showStatusBar,
 	onShowStatusBarChange,
+	showBackgroundPattern,
+	onShowBackgroundPatternChange,
 	showGridLines,
 	onShowGridLinesChange,
-	background,
 	onBackgroundChange,
 	onSetLanguage,
 	onSetFormat,
@@ -31,10 +32,11 @@ export function buildCommands({
 	onShowTabBarChange: (value: boolean) => void;
 	showStatusBar: boolean;
 	onShowStatusBarChange: (value: boolean) => void;
+	showBackgroundPattern: boolean;
+	onShowBackgroundPatternChange: (value: boolean) => void;
 	showGridLines: boolean;
 	onShowGridLinesChange: (value: boolean) => void;
-	background: Background;
-	onBackgroundChange: (value: Background) => void;
+	onBackgroundChange: (value: BackgroundPattern) => void;
 	onSetLanguage: (value: LanguageId) => void;
 	onSetFormat: (value: ExportFormat) => void;
 	onSetFont: (value: FontId) => void;
@@ -42,6 +44,11 @@ export function buildCommands({
 	onExport: () => void;
 	onCopyImage: () => void;
 }): Command[] {
+	const BACKGROUND_PATTERNS: Record<BackgroundPattern, string> = {
+		"stripes-right": "Stripes Right",
+		"stripes-left": "Stripes Left",
+	};
+
 	return [
 		{
 			id: "export",
@@ -71,17 +78,33 @@ export function buildCommands({
 			run: () => onShowStatusBarChange(!showStatusBar),
 		},
 		{
-			id: "toggle-background",
-			label: `Background: switch to ${background === "stripes" ? "solid" : "stripes"}`,
+			id: "toggle-background-pattern",
+			label: `${showBackgroundPattern ? "Hide" : "Show"} background pattern`,
 			kbd: `${modLabel} B`,
-			run: () =>
-				onBackgroundChange(background === "stripes" ? "solid" : "stripes"),
+			run: () => onShowBackgroundPatternChange(!showBackgroundPattern),
 		},
 		{
 			id: "toggle-grid-lines",
 			label: `${showGridLines ? "Hide" : "Show"} grid lines`,
 			run: () => onShowGridLinesChange(!showGridLines),
 		},
+		{
+			id: "set-background-stripes-right",
+			label: `Background: Stripes Right`,
+			run: () => onBackgroundChange("stripes-right"),
+		},
+		{
+			id: "set-background-stripes-left",
+			label: `Background: Stripes Left`,
+			run: () => onBackgroundChange("stripes-left"),
+		},
+		...(Object.keys(BACKGROUND_PATTERNS) as BackgroundPattern[]).map(
+			(id): Command => ({
+				id: `background-${id}`,
+				label: `Background: ${BACKGROUND_PATTERNS[id]}`,
+				run: () => onBackgroundChange(id),
+			}),
+		),
 		...(Object.keys(FONTS) as FontId[]).map(
 			(id): Command => ({
 				id: `font-${id}`,

@@ -2,7 +2,7 @@ import { Input } from "@base-ui/react/input";
 import { forwardRef } from "react";
 import type { LanguageId } from "../lib/highlighter";
 import { LANGUAGES } from "../lib/highlighter";
-import type { Background } from "../lib/types";
+import type { BackgroundPattern } from "../lib/types";
 import { CodeEditor } from "./code-editor";
 import type { CornerRadii } from "./inspector";
 
@@ -18,8 +18,24 @@ export interface FrameColors {
 }
 
 // Diagonal hatch texture
-const hatchBackground = (border: string) =>
-	`repeating-linear-gradient(45deg, transparent 0, transparent 7px, ${border}80 7px, ${border}80 9px)`;
+function getPatternStyle(
+	pattern: BackgroundPattern,
+	border: string,
+	page: string,
+): React.CSSProperties | null {
+	switch (pattern) {
+		case "stripes-right":
+			return {
+				backgroundImage: `repeating-linear-gradient(45deg, transparent 0, transparent 7px, ${border}80 7px, ${border}80 9px)`,
+				backgroundColor: page,
+			};
+		case "stripes-left":
+			return {
+				backgroundImage: `repeating-linear-gradient(-45deg, transparent 0, transparent 7px, ${border}80 7px, ${border}80 9px)`,
+				backgroundColor: page,
+			};
+	}
+}
 
 const FRAME_PADDING = 64;
 
@@ -34,8 +50,9 @@ export const Frame = forwardRef<
 		showTabBar: boolean;
 		showStatusBar: boolean;
 		showGridLines: boolean;
+		showBackgroundPattern: boolean;
 		showActiveTabBorder: boolean;
-		background: Background;
+		background: BackgroundPattern;
 		radii: CornerRadii;
 		font?: string;
 		themeName: string;
@@ -51,6 +68,7 @@ export const Frame = forwardRef<
 		showTabBar,
 		showStatusBar,
 		showGridLines,
+		showBackgroundPattern,
 		showActiveTabBorder,
 		background,
 		radii,
@@ -62,6 +80,7 @@ export const Frame = forwardRef<
 ) {
 	const fontStyle = font ? { fontFamily: font } : undefined;
 	const borderRadius = `${radii.tl}px ${radii.tr}px ${radii.br}px ${radii.bl}px`;
+	const patternStyle = getPatternStyle(background, colors.border, colors.page);
 
 	return (
 		<div
@@ -73,13 +92,10 @@ export const Frame = forwardRef<
 				className="p-r zi-10 w-192 max-w-100% o-v"
 				style={{ backgroundColor: colors.surface, borderRadius }}
 			>
-				{background === "stripes" && (
+				{showBackgroundPattern && patternStyle && (
 					<div
 						className="p-a t--16 r--16 b--16 l--16 o-h zi--10"
-						style={{
-							backgroundImage: hatchBackground(colors.border),
-							backgroundColor: colors.page,
-						}}
+						style={patternStyle}
 						aria-hidden="true"
 					/>
 				)}

@@ -4,8 +4,13 @@ import { Separator } from "@base-ui/react/separator";
 import { CaretDownIcon } from "@phosphor-icons/react";
 import { useHaptics } from "../lib/haptics";
 import { type LanguageId, THEMES } from "../lib/highlighter";
-import type { Background } from "../lib/types";
+import type { BackgroundPattern } from "../lib/types";
 import { LanguagePicker } from "./language-picker";
+
+const PATTERN_LABELS: Record<BackgroundPattern, string> = {
+	"stripes-right": "Stripes Right",
+	"stripes-left": "Stripes Left",
+};
 
 export function StatusBar({
 	language,
@@ -19,14 +24,23 @@ export function StatusBar({
 }: {
 	language: LanguageId;
 	onLanguageChange: (value: LanguageId) => void;
-	background: Background;
-	onBackgroundChange: (value: Background) => void;
+	background: BackgroundPattern;
+	onBackgroundChange: (value: BackgroundPattern) => void;
 	themeName: string;
 	onThemeChange: (value: string) => void;
 	width: number;
 	height: number;
 }) {
 	const { trigger: haptic } = useHaptics();
+
+	const PATTERNS = Object.keys(PATTERN_LABELS) as BackgroundPattern[];
+
+	function cycleBackground() {
+		const idx = PATTERNS.indexOf(background);
+		const next = PATTERNS[(idx + 1) % PATTERNS.length];
+		onBackgroundChange(next);
+		haptic("success");
+	}
 
 	return (
 		<footer className="d-f ai-c btw-1 bs-s bc-border bg-surface">
@@ -35,13 +49,10 @@ export function StatusBar({
 			<Separator orientation="vertical" className="h-4 w-px bg-border" />
 
 			<Button
-				onClick={() => {
-					onBackgroundChange(background === "stripes" ? "solid" : "stripes");
-					haptic("success");
-				}}
+				onClick={cycleBackground}
 				className="px-3 py-1 bg-transparent c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
 			>
-				{background === "stripes" ? "Stripes" : "Solid"}
+				{PATTERN_LABELS[background]}
 			</Button>
 
 			<Separator orientation="vertical" className="h-4 w-px bg-border" />

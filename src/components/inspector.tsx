@@ -4,7 +4,6 @@ import { Select } from "@base-ui/react/select";
 import { Separator } from "@base-ui/react/separator";
 import { Slider } from "@base-ui/react/slider";
 import { Switch } from "@base-ui/react/switch";
-import { Tabs } from "@base-ui/react/tabs";
 import {
 	CaretDownIcon,
 	CaretUpIcon,
@@ -14,9 +13,14 @@ import {
 import { useState } from "react";
 import { useHaptics } from "../lib/haptics";
 import { THEMES } from "../lib/highlighter";
-import type { Background } from "../lib/types";
+import type { BackgroundPattern } from "../lib/types";
 import { ColorInput } from "./color-input";
 import type { FrameColors } from "./frame";
+
+const PATTERN_LABELS: Record<BackgroundPattern, string> = {
+	"stripes-right": "Stripes Right",
+	"stripes-left": "Stripes Left",
+};
 
 export type FontId =
 	| "default"
@@ -274,6 +278,8 @@ export function Inspector({
 	onShowTabBarChange,
 	showStatusBar,
 	onShowStatusBarChange,
+	showBackgroundPattern,
+	onShowBackgroundPatternChange,
 	showGridLines,
 	onShowGridLinesChange,
 	showBoundingBox,
@@ -296,14 +302,16 @@ export function Inspector({
 	onShowTabBarChange: (value: boolean) => void;
 	showStatusBar: boolean;
 	onShowStatusBarChange: (value: boolean) => void;
+	showBackgroundPattern: boolean;
+	onShowBackgroundPatternChange: (value: boolean) => void;
 	showGridLines: boolean;
 	onShowGridLinesChange: (value: boolean) => void;
 	showBoundingBox: boolean;
 	onShowBoundingBoxChange: (value: boolean) => void;
 	showActiveTabBorder: boolean;
 	onShowActiveTabBorderChange: (value: boolean) => void;
-	background: Background;
-	onBackgroundChange: (value: Background) => void;
+	background: BackgroundPattern;
+	onBackgroundChange: (value: BackgroundPattern) => void;
 	radii: CornerRadii;
 	onRadiiChange: (value: CornerRadii) => void;
 	font: FontId;
@@ -420,43 +428,66 @@ export function Inspector({
 				onCheckedChange={onShowGridLinesChange}
 			/>
 
-			<div className="px-2 pb-4">
-				<Tabs.Root
-					value={background}
-					onValueChange={(value) => {
-						const next = value as Background | undefined;
-						if (next) {
-							onBackgroundChange(next);
-							haptic("success");
-						}
-					}}
-					className="bw-1 bs-s bc-border"
-				>
-					<Tabs.List className="d-f p-r g-1 p-1">
-						<Tabs.Tab
-							value="stripes"
-							className={`p-r zi-10 f-1 px-2 py-1 fs-xs ff-m ta-c us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${background === "stripes" ? "c-page bg-accent fw-700" : "c-accent-dim bg-transparent h:bg-page"}`}
-						>
-							Stripes
-						</Tabs.Tab>
-						<Tabs.Tab
-							value="solid"
-							className={`p-r zi-10 f-1 px-2 py-1 fs-xs ff-m ta-c us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${background === "solid" ? "c-page bg-accent fw-700" : "c-accent-dim bg-transparent h:bg-page"}`}
-						>
-							Solid
-						</Tabs.Tab>
-						<Tabs.Indicator
-							className="p-a l-0 zi-0 bg-accent bs-o-xs"
-							style={{
-								translate: "var(--active-tab-left) 0",
-								width: "var(--active-tab-width)",
-								top: "var(--active-tab-top)",
-								height: "var(--active-tab-height)",
-							}}
-						/>
-					</Tabs.List>
-				</Tabs.Root>
-			</div>
+			<OptionSwitch
+				label="Background patterns"
+				checked={showBackgroundPattern}
+				onCheckedChange={onShowBackgroundPatternChange}
+			/>
+
+			{showBackgroundPattern && (
+				<div className="d-f fd-c g-1 px-2 pb-4">
+					<span className="fs-sm ff-m c-accent-dim us-none">Pattern</span>
+					<Select.Root
+						value={background}
+						onValueChange={(next) => {
+							if (next) {
+								onBackgroundChange(next as BackgroundPattern);
+								haptic("success");
+							}
+						}}
+					>
+						<Select.Trigger className="d-f ai-c jc-sb g-1 w-100% px-2 py-1 c-accent-dim fs-sm ff-m us-none c-p bw-1 bs-s bc-border fv:os-s fv:oo-2 fv:oc-accent h:bg-page">
+							<Select.Value>
+								{() => (
+									<span className="min-w-0 o-h to-e ws-nw">
+										{PATTERN_LABELS[background]}
+									</span>
+								)}
+							</Select.Value>
+							<Select.Icon className="d-f c-accent-dim">
+								<CaretDownIcon size={12} weight="fill" />
+							</Select.Icon>
+						</Select.Trigger>
+						<Select.Portal>
+							<Select.Positioner
+								sideOffset={8}
+								alignItemWithTrigger={false}
+								className="zi-90 p-0 ow-0 us-none"
+							>
+								<Select.Popup className="w-48 bw-1 bc-border bg-surface py-1 bs-o-xs">
+									<Select.List>
+										{(Object.keys(PATTERN_LABELS) as BackgroundPattern[]).map(
+											(id) => (
+												<Select.Item
+													key={id}
+													value={id}
+													className={(state) =>
+														`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-accent c-page" : state.selected ? "c-accent h:c-white fw-700 tdl-u" : "c-accent-dim"}`
+													}
+												>
+													<Select.ItemText>
+														{PATTERN_LABELS[id]}
+													</Select.ItemText>
+												</Select.Item>
+											),
+										)}
+									</Select.List>
+								</Select.Popup>
+							</Select.Positioner>
+						</Select.Portal>
+					</Select.Root>
+				</div>
+			)}
 
 			<SectionSeparator label="Appearance" />
 

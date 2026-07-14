@@ -23,7 +23,7 @@ import {
 	THEME_FRAME_COLORS,
 	THEME_NAME,
 } from "./lib/highlighter";
-import type { Background } from "./lib/types";
+import type { BackgroundPattern } from "./lib/types";
 
 const defaultCode = `import { defineConfig } from "yummacss";
 
@@ -45,7 +45,9 @@ function App() {
 	const [exporting, setExporting] = useState(false);
 	const [showTabBar, setShowTabBar] = useState(true);
 	const [showStatusBar, setShowStatusBar] = useState(false);
-	const [background, setBackground] = useState<Background>("stripes");
+	const [background, setBackground] =
+		useState<BackgroundPattern>("stripes-right");
+	const [showBackgroundPattern, setShowBackgroundPattern] = useState(true);
 	const [showGridLines, setShowGridLines] = useState(true);
 	const [showBoundingBox, setShowBoundingBox] = useState(true);
 	const [showActiveTabBorder, setShowActiveTabBorder] = useState(true);
@@ -154,7 +156,7 @@ function App() {
 	});
 	useHotkey("Mod+B", (event) => {
 		event.preventDefault();
-		setBackground((current) => (current === "stripes" ? "solid" : "stripes"));
+		setShowBackgroundPattern((current) => !current);
 	});
 
 	const commands = buildCommands({
@@ -162,9 +164,10 @@ function App() {
 		onShowTabBarChange: (value) => setShowTabBar(value),
 		showStatusBar,
 		onShowStatusBarChange: (value) => setShowStatusBar(value),
+		showBackgroundPattern,
+		onShowBackgroundPatternChange: (value) => setShowBackgroundPattern(value),
 		showGridLines,
 		onShowGridLinesChange: (value) => setShowGridLines(value),
-		background,
 		onBackgroundChange: setBackground,
 		onSetLanguage: setLanguage,
 		onSetFormat: setFormat,
@@ -199,6 +202,7 @@ function App() {
 					showTabBar={showTabBar}
 					showStatusBar={showStatusBar}
 					showGridLines={showGridLines}
+					showBackgroundPattern={showBackgroundPattern}
 					showActiveTabBorder={showActiveTabBorder}
 					background={background}
 					radii={radii}
@@ -216,6 +220,8 @@ function App() {
 					onShowStatusBarChange={setShowStatusBar}
 					showGridLines={showGridLines}
 					onShowGridLinesChange={setShowGridLines}
+					showBackgroundPattern={showBackgroundPattern}
+					onShowBackgroundPatternChange={setShowBackgroundPattern}
 					showBoundingBox={showBoundingBox}
 					onShowBoundingBoxChange={setShowBoundingBox}
 					showActiveTabBorder={showActiveTabBorder}

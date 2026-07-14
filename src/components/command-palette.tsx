@@ -104,7 +104,9 @@ export function CommandPalette({
 								>
 									<span>{command.label}</span>
 									{command.kbd && (
-										<span className={`px-1 bw-1 bs-s bc-border fs-xs ws-nw ${index === highlighted ? "c-white" : "c-accent-dim"}`}>
+										<span
+											className={`px-1 bw-1 bs-s bc-border fs-xs ws-nw ${index === highlighted ? "c-white" : "c-accent-dim"}`}
+										>
 											{command.kbd}
 										</span>
 									)}

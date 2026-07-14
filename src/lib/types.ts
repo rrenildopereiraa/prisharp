@@ -1,1 +1,1 @@
-export type Background = "stripes" | "solid";
+export type BackgroundPattern = "stripes-right" | "stripes-left";

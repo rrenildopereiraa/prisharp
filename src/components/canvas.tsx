@@ -1,5 +1,5 @@
 import type { LanguageId } from "../lib/highlighter";
-import type { Background } from "../lib/types";
+import type { BackgroundPattern } from "../lib/types";
 import { BoundingBox } from "./bounding-box";
 import { Frame, type FrameColors } from "./frame";
 import type { CornerRadii } from "./inspector";
@@ -13,6 +13,7 @@ export function Canvas({
 	showTabBar,
 	showStatusBar,
 	showGridLines,
+	showBackgroundPattern,
 	showActiveTabBorder,
 	background,
 	radii,
@@ -30,8 +31,9 @@ export function Canvas({
 	showTabBar: boolean;
 	showStatusBar: boolean;
 	showGridLines: boolean;
+	showBackgroundPattern: boolean;
 	showActiveTabBorder: boolean;
-	background: Background;
+	background: BackgroundPattern;
 	radii: CornerRadii;
 	font?: string;
 	themeName: string;
@@ -52,6 +54,7 @@ export function Canvas({
 					showTabBar={showTabBar}
 					showStatusBar={showStatusBar}
 					showGridLines={showGridLines}
+					showBackgroundPattern={showBackgroundPattern}
 					showActiveTabBorder={showActiveTabBorder}
 					background={background}
 					radii={radii}
