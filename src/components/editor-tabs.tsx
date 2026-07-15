@@ -1,4 +1,5 @@
 import { Button } from "@base-ui/react/button";
+import { useGSAP } from "@gsap/react";
 import {
 	ClipboardIcon,
 	ClipboardTextIcon,
@@ -7,12 +8,81 @@ import {
 	PlusIcon,
 	XIcon,
 } from "@phosphor-icons/react";
-import { useState } from "react";
+import gsap from "gsap";
+import { useRef, useState } from "react";
 import { useHaptics } from "../lib/haptics";
 import { modKey } from "../lib/platform";
 import { type EditorDocument, MAX_DOCUMENTS } from "../lib/types";
 import { ExportButton } from "./export-button";
 import type { ExportFormat } from "./format-picker";
+
+function TabItem({
+	doc,
+	isActive,
+	canClose,
+	onSelect,
+	onClose,
+}: {
+	doc: EditorDocument;
+	isActive: boolean;
+	canClose: boolean;
+	onSelect: (id: string) => void;
+	onClose: (id: string) => void;
+}) {
+	const ref = useRef<HTMLDivElement>(null);
+
+	// GSAP entrance for a freshly-added tab. Skipped while hidden (rAF is
+	// paused), which would otherwise leave it stuck at opacity 0.
+	useGSAP(
+		() => {
+			const el = ref.current;
+			if (!el || document.hidden) return;
+			gsap.set(el, { opacity: 0, scale: 0.9, transformOrigin: "left center" });
+			gsap.to(el, {
+				opacity: 1,
+				scale: 1,
+				duration: 0.25,
+				ease: "power2.out",
+				clearProps: "opacity,transform,scale",
+			});
+		},
+		{ scope: ref },
+	);
+
+	return (
+		<div
+			ref={ref}
+			className={`d-f ai-c g-2 pl-3 pr-2 py-2 brw-1 bs-s bc-border ${
+				isActive ? "bg-page" : "bg-transparent h:bg-page"
+			}`}
+		>
+			<button
+				type="button"
+				onClick={() => onSelect(doc.id)}
+				className="d-f ai-c g-2 p-0 bg-transparent bw-0 us-none c-p fv:os-s fv:oo-2 fv:oc-accent"
+			>
+				<FileCodeIcon
+					size={14}
+					weight="fill"
+					className={isActive ? "c-accent" : "c-accent-dim"}
+				/>
+				<span className="fs-sm ff-m c-accent-dim ws-nw">
+					{doc.fileName || "Untitled"}
+				</span>
+			</button>
+			{canClose && (
+				<button
+					type="button"
+					onClick={() => onClose(doc.id)}
+					title="Close snippet"
+					className="d-f ai-c jc-c p-0 c-accent-dim bg-transparent bw-0 c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+				>
+					<XIcon size={12} weight="bold" />
+				</button>
+			)}
+		</div>
+	);
+}
 
 export function EditorTabBar({
 	documents,
@@ -51,42 +121,16 @@ export function EditorTabBar({
 			</div>
 
 			<div className="d-f ai-c min-w-0 o-x-auto">
-				{documents.map((doc) => {
-					const isActive = doc.id === activeId;
-					return (
-						<div
-							key={doc.id}
-							className={`d-f ai-c g-2 pl-3 pr-2 py-2 brw-1 bs-s bc-border ${
-								isActive ? "bg-page" : "bg-transparent h:bg-page"
-							}`}
-						>
-							<button
-								type="button"
-								onClick={() => onSelect(doc.id)}
-								className="d-f ai-c g-2 p-0 bg-transparent bw-0 us-none c-p fv:os-s fv:oo-2 fv:oc-accent"
-							>
-								<FileCodeIcon
-									size={14}
-									weight="fill"
-									className={isActive ? "c-accent" : "c-accent-dim"}
-								/>
-								<span className="fs-sm ff-m c-accent-dim ws-nw">
-									{doc.fileName || "Untitled"}
-								</span>
-							</button>
-							{canClose && (
-								<button
-									type="button"
-									onClick={() => onClose(doc.id)}
-									title="Close snippet"
-									className="d-f ai-c jc-c p-0 c-accent-dim bg-transparent bw-0 c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
-								>
-									<XIcon size={12} weight="bold" />
-								</button>
-							)}
-						</div>
-					);
-				})}
+				{documents.map((doc) => (
+					<TabItem
+						key={doc.id}
+						doc={doc}
+						isActive={doc.id === activeId}
+						canClose={canClose}
+						onSelect={onSelect}
+						onClose={onClose}
+					/>
+				))}
 
 				<button
 					type="button"
