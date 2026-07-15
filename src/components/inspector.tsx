@@ -141,7 +141,7 @@ export function Inspector({
 	const { trigger: haptic } = useHaptics();
 
 	return (
-		<aside className="d-none @lg:d-f fd-c w-72 fs-0 blw-1 bs-s bc-border bg-surface p-3">
+		<aside className="d-none @lg:d-f fd-c w-72 fs-0 min-h-0 oy-auto blw-1 bs-s bc-border bg-surface p-3">
 			<SectionSeparator label="Frame" />
 
 			<OptionSwitch

@@ -245,7 +245,7 @@ function App() {
 	});
 
 	return (
-		<div className="d-f fd-c min-h-vh bg-page">
+		<div className="d-f fd-c h-vh o-h bg-page">
 			<EditorTabBar
 				documents={documents}
 				activeId={activeId}
@@ -260,7 +260,7 @@ function App() {
 				onFormatChange={setFormat}
 			/>
 
-			<div className="f-1 d-f">
+			<div className="f-1 d-f min-h-0">
 				<Canvas
 					code={active.code}
 					onCodeChange={(value) => updateActive({ code: value })}
