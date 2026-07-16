@@ -173,6 +173,7 @@ export const Frame = forwardRef<
 								language={language}
 								themeName={themeName}
 								font={font}
+								background={colors.surface}
 							/>
 						</div>
 

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { contrastColor } from "../lib/color";
 import { getHighlighter, type LanguageId } from "../lib/highlighter";
 
 const TAB = "\t";
@@ -9,12 +10,14 @@ export function CodeEditor({
 	language,
 	themeName,
 	font,
+	background,
 }: {
 	code: string;
 	onCodeChange: (value: string) => void;
 	language: LanguageId;
 	themeName: string;
 	font?: string;
+	background: string;
 }) {
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const [tokens, setTokens] = useState<{ content: string; color?: string }[][]>(
@@ -39,6 +42,7 @@ export function CodeEditor({
 
 	const lines = code.split("\n");
 	const editorStyle = { tabSize: 2, ...(font ? { fontFamily: font } : {}) };
+	const caretColor = contrastColor(background);
 
 	const setSelection = useCallback(
 		(textarea: HTMLTextAreaElement, start: number, end: number) => {
@@ -131,8 +135,8 @@ export function CodeEditor({
 				autoCorrect="off"
 				ref={textareaRef}
 				onKeyDown={handleKeyDown}
-				className="p-a t-0 l-0 w-100% h-100% p-0 m-0 bg-transparent c-transparent cc-accent bw-0 os-none o-h r-none ff-m fs-sm lh-4 ws-pw"
-				style={editorStyle}
+				className="p-a t-0 l-0 w-100% h-100% p-0 m-0 bg-transparent c-transparent bw-0 os-none o-h r-none ff-m fs-sm lh-4 ws-pw"
+				style={{ ...editorStyle, caretColor }}
 			/>
 		</div>
 	);
