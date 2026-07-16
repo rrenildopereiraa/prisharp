@@ -1,6 +1,5 @@
 import { Popover } from "@base-ui/react/popover";
 import { HexColorInput, HexColorPicker } from "react-colorful";
-import { useHaptics } from "../lib/haptics";
 
 export function ColorInput({
 	label,
@@ -11,20 +10,13 @@ export function ColorInput({
 	value: string;
 	onChange: (value: string) => void;
 }) {
-	const { trigger: haptic } = useHaptics();
-
-	function commit(next: string) {
-		onChange(next);
-		haptic("success");
-	}
-
 	return (
 		<div className="d-f ai-c jc-sb g-2 px-2 pb-2">
 			<span className="fs-sm ff-m c-accent-dim us-none">{label}</span>
 			<div className="d-f g-2">
 				<HexColorInput
 					color={value}
-					onChange={commit}
+					onChange={onChange}
 					prefixed
 					spellCheck={false}
 					className="ff-m fs-xs c-accent-dim bg-page bs-i-xs bw-1 bs-s bc-border px-2 py-1 w-20"
@@ -38,7 +30,7 @@ export function ColorInput({
 					<Popover.Portal>
 						<Popover.Positioner sideOffset={8} align="end" className="zi-90">
 							<Popover.Popup className="popup-anim p-2 bw-1 bc-border bg-surface bs-o-xs">
-								<HexColorPicker color={value} onChange={commit} />
+								<HexColorPicker color={value} onChange={onChange} />
 							</Popover.Popup>
 						</Popover.Positioner>
 					</Popover.Portal>

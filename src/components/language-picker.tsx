@@ -1,6 +1,5 @@
 import { Select } from "@base-ui/react/select";
 import { CaretDownIcon } from "@phosphor-icons/react";
-import { useHaptics } from "../lib/haptics";
 import { LANGUAGES, type LanguageId } from "../lib/highlighter";
 
 const SHORT_LABELS: Record<LanguageId, string> = {
@@ -32,16 +31,11 @@ export function LanguagePicker({
 	value: LanguageId;
 	onValueChange: (value: LanguageId) => void;
 }) {
-	const { trigger: haptic } = useHaptics();
-
 	return (
 		<Select.Root
 			value={value}
 			onValueChange={(next) => {
-				if (next) {
-					onValueChange(next);
-					haptic("success");
-				}
+				if (next) onValueChange(next);
 			}}
 		>
 			<Select.Trigger className="d-f ai-c jc-sb g-1 px-3 py-1 bg-transparent c-accent-dim fs-xs ff-m us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent h:c-accent h:bg-page">

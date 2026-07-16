@@ -2,7 +2,6 @@ import { Button } from "@base-ui/react/button";
 import { Select } from "@base-ui/react/select";
 import { Separator } from "@base-ui/react/separator";
 import { CaretDownIcon } from "@phosphor-icons/react";
-import { useHaptics } from "../lib/haptics";
 import { type LanguageId, THEMES } from "../lib/highlighter";
 import type { BackgroundPattern } from "../lib/types";
 import { LanguagePicker } from "./language-picker";
@@ -31,15 +30,12 @@ export function StatusBar({
 	width: number;
 	height: number;
 }) {
-	const { trigger: haptic } = useHaptics();
-
 	const PATTERNS = Object.keys(PATTERN_LABELS) as BackgroundPattern[];
 
 	function cycleBackground() {
 		const idx = PATTERNS.indexOf(background);
 		const next = PATTERNS[(idx + 1) % PATTERNS.length];
 		onBackgroundChange(next);
-		haptic("success");
 	}
 
 	return (
@@ -60,10 +56,7 @@ export function StatusBar({
 			<Select.Root
 				value={themeName}
 				onValueChange={(next) => {
-					if (next) {
-						onThemeChange(next);
-						haptic("success");
-					}
+					if (next) onThemeChange(next);
 				}}
 			>
 				<Select.Trigger className="d-f ai-c g-1 px-3 py-1 bg-transparent c-accent-dim fs-xs ff-m us-none c-p bw-0 h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent">

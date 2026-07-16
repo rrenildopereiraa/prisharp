@@ -1,6 +1,6 @@
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { toBlob } from "html-to-image";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Canvas } from "./components/canvas";
 import { CommandPalette } from "./components/command-palette";
 import { EditorTabBar } from "./components/editor-tabs";
@@ -16,7 +16,6 @@ import { StatusBar } from "./components/status-bar";
 import { useToast } from "./components/toast-provider";
 import { buildCommands } from "./lib/commands";
 import { captureDataUrl } from "./lib/export";
-import { useHaptics } from "./lib/haptics";
 import {
 	loadCustomTheme,
 	THEME_FRAME_COLORS,
@@ -66,7 +65,6 @@ function App() {
 	);
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const frameRef = useRef<HTMLDivElement>(null);
-	const { trigger: haptic } = useHaptics();
 	const toast = useToast();
 
 	const active = documents.find((doc) => doc.id === activeId) ?? documents[0];
@@ -96,7 +94,6 @@ function App() {
 			docs.length >= MAX_DOCUMENTS ? docs : [...docs, doc],
 		);
 		setActiveId(doc.id);
-		haptic("success");
 	}
 
 	function closeDocument(id: string) {
@@ -107,20 +104,11 @@ function App() {
 		if (id === activeId) {
 			setActiveId(remaining[Math.min(index, remaining.length - 1)].id);
 		}
-		haptic("success");
 	}
 
 	function selectDocument(id: string) {
 		setActiveId(id);
-		haptic("success");
 	}
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: fire on dims change
-	useEffect(() => {
-		if (dimensions.width > 0 || dimensions.height > 0) {
-			haptic("success");
-		}
-	}, [dimensions.width, dimensions.height]);
 
 	async function handleUploadTheme(file: File) {
 		try {

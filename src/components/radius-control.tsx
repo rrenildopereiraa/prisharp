@@ -3,7 +3,6 @@ import { NumberField } from "@base-ui/react/number-field";
 import { Slider } from "@base-ui/react/slider";
 import { CaretUpIcon, CornersOutIcon } from "@phosphor-icons/react";
 import { useState } from "react";
-import { useHaptics } from "../lib/haptics";
 import type { CornerRadii } from "../lib/types";
 
 const RADIUS_MIN = 0;
@@ -29,7 +28,6 @@ export function RadiusControl({
 	radii: CornerRadii;
 	onRadiiChange: (value: CornerRadii) => void;
 }) {
-	const { trigger: haptic } = useHaptics();
 	const [split, setSplit] = useState(false);
 
 	const values = [radii.tl, radii.tr, radii.bl, radii.br];
@@ -41,7 +39,6 @@ export function RadiusControl({
 
 	function setCorner(corner: keyof CornerRadii, value: number) {
 		onRadiiChange({ ...radii, [corner]: value });
-		haptic("success");
 	}
 
 	return (
@@ -52,7 +49,6 @@ export function RadiusControl({
 				<Slider.Root
 					value={uniform ? radii.tl : Math.max(...values)}
 					onValueChange={(value) => setAll(value)}
-					onValueCommitted={() => haptic("success")}
 					min={RADIUS_MIN}
 					max={RADIUS_MAX}
 					step={1}
@@ -88,10 +84,7 @@ export function RadiusControl({
 				</Slider.Root>
 
 				<Button
-					onClick={() => {
-						setSplit((value) => !value);
-						haptic("success");
-					}}
+					onClick={() => setSplit((value) => !value)}
 					aria-pressed={split}
 					className={`d-f ai-c jc-c w-7 h-7 fs-0 p-0 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent ${
 						split

@@ -2,7 +2,6 @@ import { Button } from "@base-ui/react/button";
 import { Separator } from "@base-ui/react/separator";
 import { Switch } from "@base-ui/react/switch";
 import { UploadSimpleIcon } from "@phosphor-icons/react";
-import { useHaptics } from "../lib/haptics";
 import { THEMES } from "../lib/highlighter";
 import type { BackgroundPattern, CornerRadii } from "../lib/types";
 import { ColorInput } from "./color-input";
@@ -66,17 +65,12 @@ function OptionSwitch({
 	checked: boolean;
 	onCheckedChange: (value: boolean) => void;
 }) {
-	const { trigger: haptic } = useHaptics();
-
 	return (
 		<div className="d-f ai-c jc-sb g-2 px-2 pb-3">
 			<span className="fs-sm ff-m c-accent-dim us-none">{label}</span>
 			<Switch.Root
 				checked={checked}
-				onCheckedChange={(value) => {
-					onCheckedChange(value);
-					haptic("success");
-				}}
+				onCheckedChange={onCheckedChange}
 				className={`p-r d-f ai-c h-5 w-9 m-0 px-1 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent ${
 					checked ? "bg-accent bc-accent" : "bg-page bc-border"
 				}`}
@@ -138,8 +132,6 @@ export function Inspector({
 	onFrameColorsChange: (value: FrameColors) => void;
 	onUploadTheme: (file: File) => void;
 }) {
-	const { trigger: haptic } = useHaptics();
-
 	return (
 		<aside className="d-none @lg:d-f fd-c w-72 fs-0 min-h-0 oy-auto blw-1 bs-s bc-border bg-surface p-3">
 			<SectionSeparator label="Frame" />
@@ -229,10 +221,7 @@ export function Inspector({
 						input.accept = ".json";
 						input.onchange = () => {
 							const file = input.files?.[0];
-							if (file) {
-								onUploadTheme(file);
-								haptic("success");
-							}
+							if (file) onUploadTheme(file);
 						};
 						input.click();
 					}}

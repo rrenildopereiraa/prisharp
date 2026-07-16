@@ -3,7 +3,6 @@ import { Dialog } from "@base-ui/react/dialog";
 import { Input } from "@base-ui/react/input";
 import { MagnifyingGlassIcon } from "@phosphor-icons/react";
 import { useEffect, useState } from "react";
-import { useHaptics } from "../lib/haptics";
 
 export interface Command {
 	id: string;
@@ -23,7 +22,6 @@ export function CommandPalette({
 }) {
 	const [query, setQuery] = useState("");
 	const [highlighted, setHighlighted] = useState(0);
-	const { trigger: haptic } = useHaptics();
 
 	const matches = commands.filter((command) =>
 		command.label.toLowerCase().includes(query.toLowerCase()),
@@ -49,7 +47,6 @@ export function CommandPalette({
 	function runCommand(command: Command) {
 		onOpenChange(false);
 		command.run();
-		haptic("success");
 	}
 
 	return (

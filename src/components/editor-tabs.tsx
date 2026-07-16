@@ -8,7 +8,6 @@ import {
 	XIcon,
 } from "@phosphor-icons/react";
 import { useState } from "react";
-import { useHaptics } from "../lib/haptics";
 import { modKey } from "../lib/platform";
 import { type EditorDocument, MAX_DOCUMENTS } from "../lib/types";
 import { ExportButton } from "./export-button";
@@ -86,7 +85,6 @@ export function EditorTabBar({
 	format: ExportFormat;
 	onFormatChange: (value: ExportFormat) => void;
 }) {
-	const { trigger: haptic } = useHaptics();
 	const [copied, setCopied] = useState(false);
 	const canClose = documents.length > 1;
 	const atLimit = documents.length >= MAX_DOCUMENTS;
@@ -129,10 +127,7 @@ export function EditorTabBar({
 
 			<div className="d-f ai-c g-1 px-2">
 				<Button
-					onClick={() => {
-						haptic("success");
-						onOpenPalette();
-					}}
+					onClick={onOpenPalette}
 					className="d-f ai-c g-2 h-7 px-3 bg-page bw-1 bc-border c-accent-dim fs-xs ff-m us-none c-p bs-i-xs h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
 				>
 					<MagnifyingGlassIcon size={12} weight="bold" />
@@ -145,7 +140,6 @@ export function EditorTabBar({
 				<Button
 					onClick={() => {
 						onCopy();
-						haptic("success");
 						setCopied(true);
 						setTimeout(() => setCopied(false), 1500);
 					}}

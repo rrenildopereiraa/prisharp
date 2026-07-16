@@ -1,7 +1,6 @@
 import { Select } from "@base-ui/react/select";
 import { CaretDownIcon } from "@phosphor-icons/react";
 import type { CSSProperties } from "react";
-import { useHaptics } from "../lib/haptics";
 
 export interface PickerOption<T extends string> {
 	id: T;
@@ -20,7 +19,6 @@ export function PickerField<T extends string>({
 	options: PickerOption<T>[];
 	onValueChange: (value: T) => void;
 }) {
-	const { trigger: haptic } = useHaptics();
 	const selected = options.find((option) => option.id === value);
 
 	return (
@@ -31,10 +29,7 @@ export function PickerField<T extends string>({
 			<Select.Root
 				value={value}
 				onValueChange={(next) => {
-					if (next) {
-						onValueChange(next as T);
-						haptic("success");
-					}
+					if (next) onValueChange(next as T);
 				}}
 			>
 				<Select.Trigger className="d-f ai-c jc-sb g-1 w-100% px-2 py-1 c-accent-dim fs-sm ff-m us-none c-p bw-1 bs-s bc-border bg-page bs-i-xs fv:os-s fv:oo-2 fv:oc-accent">
