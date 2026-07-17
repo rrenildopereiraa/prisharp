@@ -1,7 +1,7 @@
 import { Button } from "@base-ui/react/button";
 import { Select } from "@base-ui/react/select";
 import { Separator } from "@base-ui/react/separator";
-import { CaretDownIcon } from "@phosphor-icons/react";
+import { CaretDownIcon, ShuffleIcon } from "@phosphor-icons/react";
 import { type LanguageId, THEMES } from "../lib/highlighter";
 import type { BackgroundPattern } from "../lib/types";
 import { LanguagePicker } from "./language-picker";
@@ -31,11 +31,18 @@ export function StatusBar({
 	height: number;
 }) {
 	const PATTERNS = Object.keys(PATTERN_LABELS) as BackgroundPattern[];
+	const THEME_IDS = Object.keys(THEMES);
 
 	function cycleBackground() {
 		const idx = PATTERNS.indexOf(background);
 		const next = PATTERNS[(idx + 1) % PATTERNS.length];
 		onBackgroundChange(next);
+	}
+
+	function shuffleTheme() {
+		const others = THEME_IDS.filter((id) => id !== themeName);
+		const pool = others.length > 0 ? others : THEME_IDS;
+		onThemeChange(pool[Math.floor(Math.random() * pool.length)]);
 	}
 
 	return (
@@ -79,7 +86,7 @@ export function StatusBar({
 					>
 						<Select.Popup className="w-48 max-h-60 oy-auto bw-1 bc-border bg-surface py-1 bs-o-xs">
 							<Select.List>
-								{(Object.keys(THEMES) as (keyof typeof THEMES)[]).map((id) => (
+								{THEME_IDS.map((id) => (
 									<Select.Item
 										key={id}
 										value={id}
@@ -95,6 +102,15 @@ export function StatusBar({
 					</Select.Positioner>
 				</Select.Portal>
 			</Select.Root>
+
+			<Button
+				onClick={shuffleTheme}
+				title="Shuffle theme"
+				aria-label="Shuffle theme"
+				className="d-f ai-c jc-c px-2 py-1 bg-transparent c-accent-dim bw-0 c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
+			>
+				<ShuffleIcon size={13} weight="bold" />
+			</Button>
 
 			<div className="f-1" />
 
