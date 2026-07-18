@@ -5,7 +5,6 @@ import {
 	DownloadSimpleIcon,
 	SpinnerIcon,
 } from "@phosphor-icons/react";
-import { useHaptics } from "../lib/haptics";
 import { type ExportFormat, FORMAT_LABELS } from "./format-picker";
 
 export function ExportButton({
@@ -19,15 +18,10 @@ export function ExportButton({
 	format: ExportFormat;
 	onFormatChange: (value: ExportFormat) => void;
 }) {
-	const { trigger } = useHaptics();
-
 	return (
 		<div className="d-f">
 			<Button
-				onClick={() => {
-					onExport();
-					trigger("success");
-				}}
+				onClick={onExport}
 				disabled={exporting}
 				focusableWhenDisabled
 				className="d-f ai-c jc-c g-2 w-8 @sm:w-24 h-7 px-2 bg-accent c-page fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent"
@@ -56,10 +50,7 @@ export function ExportButton({
 							{(Object.keys(FORMAT_LABELS) as ExportFormat[]).map((key) => (
 								<Menu.Item
 									key={key}
-									onClick={() => {
-										onFormatChange(key);
-										trigger("success");
-									}}
+									onClick={() => onFormatChange(key)}
 									className={(state) =>
 										`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-accent c-page" : format === key ? "c-accent h:c-white fw-700 tdl-u" : "c-accent-dim"}`
 									}

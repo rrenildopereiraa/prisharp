@@ -3,12 +3,10 @@ import { NumberField } from "@base-ui/react/number-field";
 import { Slider } from "@base-ui/react/slider";
 import { CaretUpIcon, CornersOutIcon } from "@phosphor-icons/react";
 import { useState } from "react";
-import { useHaptics } from "../lib/haptics";
 import type { CornerRadii } from "../lib/types";
 
-const RADIUS_MIN = 0;
-const RADIUS_MAX = 16;
-const RADIUS_TICKS = [0, 25, 50, 75, 100];
+export const RADIUS_MIN = 0;
+export const RADIUS_MAX = 16;
 
 const CORNERS: {
 	id: keyof CornerRadii;
@@ -29,7 +27,6 @@ export function RadiusControl({
 	radii: CornerRadii;
 	onRadiiChange: (value: CornerRadii) => void;
 }) {
-	const { trigger: haptic } = useHaptics();
 	const [split, setSplit] = useState(false);
 
 	const values = [radii.tl, radii.tr, radii.bl, radii.br];
@@ -41,67 +38,44 @@ export function RadiusControl({
 
 	function setCorner(corner: keyof CornerRadii, value: number) {
 		onRadiiChange({ ...radii, [corner]: value });
-		haptic("success");
 	}
 
 	return (
 		<div className="d-f fd-c g-2 px-2 pt-1 pb-4">
-			<span className="fs-sm ff-m c-accent-dim us-none">Border radius</span>
-
-			<div className="d-f ai-c g-2">
-				<Slider.Root
-					value={uniform ? radii.tl : Math.max(...values)}
-					onValueChange={(value) => setAll(value)}
-					onValueCommitted={() => haptic("success")}
-					min={RADIUS_MIN}
-					max={RADIUS_MAX}
-					step={1}
-					className="d-f ai-c g-2 f-1"
-				>
-					<Slider.Control className="p-r d-f ai-c h-5 f-1 c-p">
-						<div
-							className="p-a l-0 r-0 h-px"
-							style={{ top: "50%" }}
-							aria-hidden="true"
-						>
-							{RADIUS_TICKS.map((pct) => (
-								<span
-									key={pct}
-									className="p-a w-px h-1 bg-border"
-									style={{ left: `${pct}%`, top: -2 }}
-								/>
-							))}
-						</div>
-						<Slider.Track className="p-r f-1 h-px bg-border">
-							<Slider.Indicator className="h-px bg-accent" />
-							<Slider.Thumb className="w-2 h-4 bg-accent bs-o-xs fv:os-s fv:oo-2 fv:oc-accent" />
-						</Slider.Track>
-					</Slider.Control>
-
-					<Slider.Value
-						className={`ff-m fs-xs ta-c w-9 py-1 bw-1 bs-s bc-border us-none ${
-							uniform ? "c-accent-dim" : "c-border"
-						}`}
-					>
-						{(formatted) => (uniform ? formatted[0] : "—")}
-					</Slider.Value>
-				</Slider.Root>
-
-				<Button
-					onClick={() => {
-						setSplit((value) => !value);
-						haptic("success");
-					}}
-					aria-pressed={split}
-					className={`d-f ai-c jc-c w-7 h-7 fs-0 p-0 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent ${
-						split
-							? "bg-accent bc-accent c-page"
-							: "bg-transparent bc-border c-accent-dim h:c-accent h:bc-accent"
-					}`}
-				>
-					<CornersOutIcon size={14} weight="bold" />
-				</Button>
+			<div className="d-f jc-sb ai-c">
+				<span className="fs-sm ff-m c-accent-dim us-none">Border Radius</span>
+				<span className="fs-sm ff-m c-accent-dim us-none">
+					{uniform ? `${radii.tl}px` : "Mixed"}
+				</span>
 			</div>
+
+			<Slider.Root
+				value={uniform ? radii.tl : Math.max(...values)}
+				onValueChange={(value) => setAll(value)}
+				min={RADIUS_MIN}
+				max={RADIUS_MAX}
+				step={1}
+			>
+				<Slider.Control className="d-f ai-c py-3 us-none ta-none">
+					<Slider.Track className="p-r h-2 w-100% bg-border">
+						<Slider.Indicator className="bg-accent" />
+						<Slider.Thumb className="w-5 h-5 bg-page bw-1 bs-s bc-border bs-o-xs fv:os-s fv:oo-2 fv:oc-accent" />
+					</Slider.Track>
+				</Slider.Control>
+			</Slider.Root>
+
+			<Button
+				onClick={() => setSplit((value) => !value)}
+				aria-pressed={split}
+				className={`d-f ai-c jc-c as-s g-1 px-2 py-1 fs-xs ff-m us-none c-p bw-1 bs-s fv:os-s fv:oo-2 fv:oc-accent ${
+					split
+						? "bg-accent bc-accent c-page"
+						: "bg-transparent bc-border c-accent-dim h:c-accent h:bc-accent"
+				}`}
+			>
+				<CornersOutIcon size={12} weight="bold" />
+				Per-corner
+			</Button>
 
 			{split && (
 				<div

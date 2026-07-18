@@ -1,11 +1,11 @@
 import { Button } from "@base-ui/react/button";
 import { Select } from "@base-ui/react/select";
 import { Separator } from "@base-ui/react/separator";
-import { CaretDownIcon } from "@phosphor-icons/react";
-import { useHaptics } from "../lib/haptics";
+import { CaretDownIcon, ShuffleIcon } from "@phosphor-icons/react";
 import { type LanguageId, THEMES } from "../lib/highlighter";
 import type { BackgroundPattern } from "../lib/types";
 import { LanguagePicker } from "./language-picker";
+import { Tooltip } from "./tooltip";
 
 const PATTERN_LABELS: Record<BackgroundPattern, string> = {
 	"stripes-right": "Stripes Right",
@@ -19,6 +19,8 @@ export function StatusBar({
 	onBackgroundChange,
 	themeName,
 	onThemeChange,
+	themeIsRandom,
+	onRandomize,
 	width,
 	height,
 }: {
@@ -28,18 +30,18 @@ export function StatusBar({
 	onBackgroundChange: (value: BackgroundPattern) => void;
 	themeName: string;
 	onThemeChange: (value: string) => void;
+	themeIsRandom: boolean;
+	onRandomize: () => void;
 	width: number;
 	height: number;
 }) {
-	const { trigger: haptic } = useHaptics();
-
 	const PATTERNS = Object.keys(PATTERN_LABELS) as BackgroundPattern[];
+	const THEME_IDS = Object.keys(THEMES);
 
 	function cycleBackground() {
 		const idx = PATTERNS.indexOf(background);
 		const next = PATTERNS[(idx + 1) % PATTERNS.length];
 		onBackgroundChange(next);
-		haptic("success");
 	}
 
 	return (
@@ -50,7 +52,7 @@ export function StatusBar({
 
 			<Button
 				onClick={cycleBackground}
-				className="px-3 py-1 bg-transparent c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
+				className="w-28 ta-c py-1 bg-transparent c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
 			>
 				{PATTERN_LABELS[background]}
 			</Button>
@@ -60,17 +62,19 @@ export function StatusBar({
 			<Select.Root
 				value={themeName}
 				onValueChange={(next) => {
-					if (next) {
-						onThemeChange(next);
-						haptic("success");
-					}
+					if (next) onThemeChange(next);
 				}}
 			>
 				<Select.Trigger className="d-f ai-c g-1 px-3 py-1 bg-transparent c-accent-dim fs-xs ff-m us-none c-p bw-0 h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent">
 					<Select.Value>
 						{() => (
-							<span className="min-w-0 max-w-28 o-h to-e ws-nw">
+							<span className="d-if w-28 o-h to-e ws-nw">
 								{themeName}
+								{themeIsRandom && (
+									<Tooltip content="Randomly selected theme">
+										<span className="c-accent"> *</span>
+									</Tooltip>
+								)}
 							</span>
 						)}
 					</Select.Value>
@@ -84,9 +88,9 @@ export function StatusBar({
 						alignItemWithTrigger={false}
 						className="zi-90 p-0 ow-0 us-none"
 					>
-						<Select.Popup className="popup-anim w-48 max-h-60 oy-auto bw-1 bc-border bg-surface py-1 bs-o-xs">
+						<Select.Popup className="w-48 max-h-60 oy-auto bw-1 bc-border bg-surface py-1 bs-o-xs">
 							<Select.List>
-								{(Object.keys(THEMES) as (keyof typeof THEMES)[]).map((id) => (
+								{THEME_IDS.map((id) => (
 									<Select.Item
 										key={id}
 										value={id}
@@ -103,9 +107,22 @@ export function StatusBar({
 				</Select.Portal>
 			</Select.Root>
 
+			<Separator orientation="vertical" className="h-4 w-px bg-border" />
+
+			<Tooltip content="Randomize appearance">
+				<Button
+					onClick={onRandomize}
+					aria-label="Randomize appearance"
+					className="d-f ai-c jc-c g-1 px-2 py-1 bg-transparent c-accent-dim fs-xs ff-m us-none bw-0 c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
+				>
+					<ShuffleIcon size={13} weight="bold" />
+					Randomize
+				</Button>
+			</Tooltip>
+
 			<div className="f-1" />
 
-			<span className="px-3 py-1 ff-m fs-xs c-accent-dim">
+			<span className="d-if w-28 ta-c py-1 ff-m fs-xs c-accent-dim">
 				{width} × {height}
 			</span>
 			<Separator orientation="vertical" className="h-4 w-px bg-border" />

@@ -1,33 +1,31 @@
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { toBlob } from "html-to-image";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useQueryStates } from "nuqs";
+import { useLayoutEffect, useRef, useState } from "react";
 import { Canvas } from "./components/canvas";
 import { CommandPalette } from "./components/command-palette";
 import { EditorTabBar } from "./components/editor-tabs";
 import type { ExportFormat } from "./components/format-picker";
-import type { FrameColors } from "./components/frame";
 import {
-	type CornerRadii,
-	FONTS,
-	type FontId,
+	FONT_FAMILIES,
+	type FontFamilyId,
 	Inspector,
 } from "./components/inspector";
+import { RADIUS_MAX, RADIUS_MIN } from "./components/radius-control";
 import { StatusBar } from "./components/status-bar";
 import { useToast } from "./components/toast-provider";
 import { buildCommands } from "./lib/commands";
 import { captureDataUrl } from "./lib/export";
-import { useHaptics } from "./lib/haptics";
-import {
-	loadCustomTheme,
-	THEME_FRAME_COLORS,
-	THEME_NAME,
-} from "./lib/highlighter";
+import { loadCustomTheme, THEME_FRAME_COLORS } from "./lib/highlighter";
 import { randomSnippet } from "./lib/snippets";
 import {
 	type BackgroundPattern,
+	type CanvasMode,
+	type CornerRadii,
 	type EditorDocument,
 	MAX_DOCUMENTS,
 } from "./lib/types";
+import { settingsParsers } from "./lib/url-state";
 
 function App() {
 	const [documents, setDocuments] = useState<EditorDocument[]>(() => {
@@ -42,34 +40,31 @@ function App() {
 		];
 	});
 	const [activeId, setActiveId] = useState(() => documents[0].id);
+	const [mode, setMode] = useState<CanvasMode>("static");
 	const [format, setFormat] = useState<ExportFormat>("png");
 	const [exporting, setExporting] = useState(false);
-	const [showTabBar, setShowTabBar] = useState(true);
-	const [showStatusBar, setShowStatusBar] = useState(true);
-	const [background, setBackground] =
-		useState<BackgroundPattern>("stripes-right");
-	const [showBackgroundPattern, setShowBackgroundPattern] = useState(true);
-	const [showGridLines, setShowGridLines] = useState(true);
 	const [showBoundingBox, setShowBoundingBox] = useState(true);
-	const [showActiveTabBorder, setShowActiveTabBorder] = useState(true);
-	const [radii, setRadii] = useState<CornerRadii>({
-		tl: 0,
-		tr: 0,
-		bl: 0,
-		br: 0,
-	});
-	const [font, setFont] = useState<FontId>("default");
-	const [themeName, setThemeName] = useState(THEME_NAME);
+	const [themeIsRandom, setThemeIsRandom] = useState(false);
 	const [paletteOpen, setPaletteOpen] = useState(false);
-	const [frameColors, setFrameColors] = useState<FrameColors>(
-		THEME_FRAME_COLORS[THEME_NAME],
-	);
+	const [settings, setSettings] = useQueryStates(settingsParsers, {
+		history: "replace",
+	});
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const frameRef = useRef<HTMLDivElement>(null);
-	const { trigger: haptic } = useHaptics();
 	const toast = useToast();
 
 	const active = documents.find((doc) => doc.id === activeId) ?? documents[0];
+
+	const radii: CornerRadii = {
+		tl: settings.rtl,
+		tr: settings.rtr,
+		bl: settings.rbl,
+		br: settings.rbr,
+	};
+
+	function setRadii(next: CornerRadii) {
+		setSettings({ rtl: next.tl, rtr: next.tr, rbl: next.bl, rbr: next.br });
+	}
 
 	function updateActive(patch: Partial<EditorDocument>) {
 		setDocuments((docs) =>
@@ -86,17 +81,17 @@ function App() {
 			});
 			return;
 		}
+		const snippet = randomSnippet();
 		const doc: EditorDocument = {
 			id: crypto.randomUUID(),
-			fileName: "Untitled",
-			code: "",
-			language: active.language,
+			fileName: snippet.fileName,
+			code: snippet.code,
+			language: snippet.language,
 		};
 		setDocuments((docs) =>
 			docs.length >= MAX_DOCUMENTS ? docs : [...docs, doc],
 		);
 		setActiveId(doc.id);
-		haptic("success");
 	}
 
 	function closeDocument(id: string) {
@@ -107,27 +102,22 @@ function App() {
 		if (id === activeId) {
 			setActiveId(remaining[Math.min(index, remaining.length - 1)].id);
 		}
-		haptic("success");
 	}
 
 	function selectDocument(id: string) {
 		setActiveId(id);
-		haptic("success");
 	}
-
-	// biome-ignore lint/correctness/useExhaustiveDependencies: fire on dims change
-	useEffect(() => {
-		if (dimensions.width > 0 || dimensions.height > 0) {
-			haptic("success");
-		}
-	}, [dimensions.width, dimensions.height]);
 
 	async function handleUploadTheme(file: File) {
 		try {
 			const result = await loadCustomTheme(await file.text());
-			setThemeName(result.name);
-			setFrameColors(result.frameColors);
-			toast.add({ title: "Theme loaded", description: result.name });
+			setSettings({ theme: result.name, colors: result.frameColors });
+			setThemeIsRandom(false);
+			toast.add({
+				title: "Theme loaded",
+				description: result.name,
+				type: "success",
+			});
 		} catch (_error) {
 			toast.add({
 				title: "Invalid theme",
@@ -139,9 +129,45 @@ function App() {
 	}
 
 	function handleThemeChange(name: string) {
-		setThemeName(name);
 		const colors = THEME_FRAME_COLORS[name];
-		if (colors) setFrameColors(colors);
+		setSettings({ theme: name, ...(colors ? { colors } : {}) });
+	}
+
+	function handleManualThemeChange(name: string) {
+		handleThemeChange(name);
+		setThemeIsRandom(false);
+	}
+
+	function randomizeAll() {
+		const randomBool = () => Math.random() < 0.5;
+		const fontFamilyIds = Object.keys(FONT_FAMILIES) as FontFamilyId[];
+		const patterns: BackgroundPattern[] = ["stripes-right", "stripes-left"];
+		const radius =
+			RADIUS_MIN + Math.floor(Math.random() * (RADIUS_MAX - RADIUS_MIN + 1));
+
+		// Colors are randomized by picking among the curated themes rather
+		// than generating independent random hex values per token - arbitrary
+		// colors have no contrast or taste guarantees, real themes do.
+		const themeNames = Object.keys(THEME_FRAME_COLORS);
+		const themePool = themeNames.filter((name) => name !== settings.theme);
+		const pool = themePool.length > 0 ? themePool : themeNames;
+		const nextTheme = pool[Math.floor(Math.random() * pool.length)];
+
+		setSettings({
+			tabBar: randomBool(),
+			gridLines: randomBool(),
+			bgPattern: randomBool(),
+			pattern: patterns[Math.floor(Math.random() * patterns.length)],
+			rtl: radius,
+			rtr: radius,
+			rbl: radius,
+			rbr: radius,
+			tabBorder: randomBool(),
+			font: fontFamilyIds[Math.floor(Math.random() * fontFamilyIds.length)],
+			theme: nextTheme,
+			colors: THEME_FRAME_COLORS[nextTheme],
+		});
+		setThemeIsRandom(true);
 	}
 
 	// biome-ignore lint/correctness/useExhaustiveDependencies: deps are size triggers
@@ -168,9 +194,9 @@ function App() {
 		active.code,
 		active.fileName,
 		active.language,
-		showTabBar,
-		showStatusBar,
-		font,
+		settings.tabBar,
+		settings.statusBar,
+		settings.font,
 	]);
 
 	async function handleExport() {
@@ -182,7 +208,7 @@ function App() {
 			link.download = `${active.fileName || "aperture"}.${format}`;
 			link.href = dataUrl;
 			link.click();
-			toast.add({ title: "Exported" });
+			toast.add({ title: "Exported", type: "success" });
 		} finally {
 			setExporting(false);
 		}
@@ -193,7 +219,20 @@ function App() {
 		const blob = await toBlob(frameRef.current, { pixelRatio: 2 });
 		if (!blob) return;
 		await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-		toast.add({ title: "Copied", description: "Image copied to clipboard" });
+		toast.add({
+			title: "Copied",
+			description: "Image copied to clipboard",
+			type: "success",
+		});
+	}
+
+	async function handleShare() {
+		await navigator.clipboard.writeText(window.location.href);
+		toast.add({
+			title: "Link copied",
+			description: "Anyone with this link sees the same settings",
+			type: "success",
+		});
 	}
 
 	useHotkey("Mod+K", (event) => {
@@ -210,22 +249,26 @@ function App() {
 	});
 	useHotkey("Mod+B", (event) => {
 		event.preventDefault();
-		setShowBackgroundPattern((current) => !current);
+		setSettings((current) => ({ bgPattern: !current.bgPattern }));
+	});
+	useHotkey("Mod+Shift+R", (event) => {
+		event.preventDefault();
+		randomizeAll();
 	});
 
 	const commands = buildCommands({
-		showTabBar,
-		onShowTabBarChange: (value) => setShowTabBar(value),
-		showStatusBar,
-		onShowStatusBarChange: (value) => setShowStatusBar(value),
-		showBackgroundPattern,
-		onShowBackgroundPatternChange: (value) => setShowBackgroundPattern(value),
-		showGridLines,
-		onShowGridLinesChange: (value) => setShowGridLines(value),
-		onBackgroundChange: setBackground,
+		showTabBar: settings.tabBar,
+		onShowTabBarChange: (value) => setSettings({ tabBar: value }),
+		showStatusBar: settings.statusBar,
+		onShowStatusBarChange: (value) => setSettings({ statusBar: value }),
+		showBackgroundPattern: settings.bgPattern,
+		onShowBackgroundPatternChange: (value) => setSettings({ bgPattern: value }),
+		showGridLines: settings.gridLines,
+		onShowGridLinesChange: (value) => setSettings({ gridLines: value }),
+		onBackgroundChange: (value) => setSettings({ pattern: value }),
 		onSetLanguage: (value) => updateActive({ language: value }),
 		onSetFormat: setFormat,
-		onSetFont: setFont,
+		onSetFontFamily: (value) => setSettings({ font: value }),
 		onCopyCode: () => {
 			navigator.clipboard.writeText(active.code);
 			toast.add({ title: "Copied" });
@@ -234,6 +277,7 @@ function App() {
 		onCopyImage: handleCopyImage,
 		onNewDocument: addDocument,
 		onCloseDocument: () => closeDocument(activeId),
+		onRandomizeAll: randomizeAll,
 	});
 
 	return (
@@ -247,6 +291,7 @@ function App() {
 				onOpenPalette={() => setPaletteOpen(true)}
 				onCopy={handleCopyImage}
 				onExport={handleExport}
+				onShare={handleShare}
 				exporting={exporting}
 				format={format}
 				onFormatChange={setFormat}
@@ -259,43 +304,51 @@ function App() {
 					language={active.language}
 					fileName={active.fileName}
 					onFileNameChange={(value) => updateActive({ fileName: value })}
-					showTabBar={showTabBar}
-					showStatusBar={showStatusBar}
-					showGridLines={showGridLines}
-					showBackgroundPattern={showBackgroundPattern}
-					showActiveTabBorder={showActiveTabBorder}
-					background={background}
+					showTabBar={settings.tabBar}
+					showStatusBar={settings.statusBar}
+					showGridLines={settings.gridLines}
+					showBackgroundPattern={settings.bgPattern}
+					showActiveTabBorder={settings.tabBorder}
+					background={settings.pattern}
 					radii={radii}
-					font={FONTS[font].stack}
-					themeName={themeName}
-					colors={frameColors}
+					fontFamily={FONT_FAMILIES[settings.font].stack}
+					themeName={settings.theme}
+					colors={settings.colors}
 					showBoundingBox={showBoundingBox}
 					frameRef={frameRef}
+					mode={mode}
 				/>
 
 				<Inspector
-					showTabBar={showTabBar}
-					onShowTabBarChange={setShowTabBar}
-					showStatusBar={showStatusBar}
-					onShowStatusBarChange={setShowStatusBar}
-					showGridLines={showGridLines}
-					onShowGridLinesChange={setShowGridLines}
-					showBackgroundPattern={showBackgroundPattern}
-					onShowBackgroundPatternChange={setShowBackgroundPattern}
+					mode={mode}
+					onModeChange={setMode}
+					showTabBar={settings.tabBar}
+					onShowTabBarChange={(value) => setSettings({ tabBar: value })}
+					showStatusBar={settings.statusBar}
+					onShowStatusBarChange={(value) => setSettings({ statusBar: value })}
+					showGridLines={settings.gridLines}
+					onShowGridLinesChange={(value) => setSettings({ gridLines: value })}
+					showBackgroundPattern={settings.bgPattern}
+					onShowBackgroundPatternChange={(value) =>
+						setSettings({ bgPattern: value })
+					}
 					showBoundingBox={showBoundingBox}
 					onShowBoundingBoxChange={setShowBoundingBox}
-					showActiveTabBorder={showActiveTabBorder}
-					onShowActiveTabBorderChange={setShowActiveTabBorder}
-					background={background}
-					onBackgroundChange={setBackground}
+					showActiveTabBorder={settings.tabBorder}
+					onShowActiveTabBorderChange={(value) =>
+						setSettings({ tabBorder: value })
+					}
+					background={settings.pattern}
+					onBackgroundChange={(value) => setSettings({ pattern: value })}
 					radii={radii}
 					onRadiiChange={setRadii}
-					font={font}
-					onFontChange={setFont}
-					themeName={themeName}
-					onThemeChange={handleThemeChange}
-					frameColors={frameColors}
-					onFrameColorsChange={setFrameColors}
+					fontFamily={settings.font}
+					onFontFamilyChange={(value) => setSettings({ font: value })}
+					themeName={settings.theme}
+					onThemeChange={handleManualThemeChange}
+					themeIsRandom={themeIsRandom}
+					frameColors={settings.colors}
+					onFrameColorsChange={(value) => setSettings({ colors: value })}
 					onUploadTheme={handleUploadTheme}
 				/>
 			</div>
@@ -303,10 +356,12 @@ function App() {
 			<StatusBar
 				language={active.language}
 				onLanguageChange={(value) => updateActive({ language: value })}
-				background={background}
-				onBackgroundChange={setBackground}
-				themeName={themeName}
-				onThemeChange={handleThemeChange}
+				background={settings.pattern}
+				onBackgroundChange={(value) => setSettings({ pattern: value })}
+				themeName={settings.theme}
+				onThemeChange={handleManualThemeChange}
+				themeIsRandom={themeIsRandom}
+				onRandomize={randomizeAll}
 				width={dimensions.width}
 				height={dimensions.height}
 			/>

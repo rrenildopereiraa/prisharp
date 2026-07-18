@@ -1,5 +1,6 @@
 import { Input } from "@base-ui/react/input";
 import { forwardRef } from "react";
+import { patternLineColor } from "../lib/color";
 import type { LanguageId } from "../lib/highlighter";
 import { LANGUAGES } from "../lib/highlighter";
 import type { BackgroundPattern } from "../lib/types";
@@ -18,21 +19,23 @@ export interface FrameColors {
 	activeTabBorder: string;
 }
 
-// Diagonal hatch texture
+// Diagonal hatch texture. The line color is derived from the page color
+// itself (not the independently-editable border color) so it always stays
+// visible, live, no matter what page color is picked.
 function getPatternStyle(
 	pattern: BackgroundPattern,
-	border: string,
 	page: string,
 ): React.CSSProperties | null {
+	const line = patternLineColor(page);
 	switch (pattern) {
 		case "stripes-right":
 			return {
-				backgroundImage: `repeating-linear-gradient(45deg, transparent 0, transparent 7px, ${border}80 7px, ${border}80 9px)`,
+				backgroundImage: `repeating-linear-gradient(45deg, transparent 0, transparent 7px, ${line} 7px, ${line} 9px)`,
 				backgroundColor: page,
 			};
 		case "stripes-left":
 			return {
-				backgroundImage: `repeating-linear-gradient(-45deg, transparent 0, transparent 7px, ${border}80 7px, ${border}80 9px)`,
+				backgroundImage: `repeating-linear-gradient(-45deg, transparent 0, transparent 7px, ${line} 7px, ${line} 9px)`,
 				backgroundColor: page,
 			};
 	}
@@ -55,7 +58,7 @@ export const Frame = forwardRef<
 		showActiveTabBorder: boolean;
 		background: BackgroundPattern;
 		radii: CornerRadii;
-		font?: string;
+		fontFamily?: string;
 		themeName: string;
 		colors: FrameColors;
 	}
@@ -73,15 +76,15 @@ export const Frame = forwardRef<
 		showActiveTabBorder,
 		background,
 		radii,
-		font,
+		fontFamily,
 		themeName,
 		colors,
 	},
 	ref,
 ) {
-	const fontStyle = font ? { fontFamily: font } : undefined;
+	const fontStyle = fontFamily ? { fontFamily } : undefined;
 	const borderRadius = `${radii.tl}px ${radii.tr}px ${radii.br}px ${radii.bl}px`;
-	const patternStyle = getPatternStyle(background, colors.border, colors.page);
+	const patternStyle = getPatternStyle(background, colors.page);
 
 	return (
 		<div
@@ -172,7 +175,7 @@ export const Frame = forwardRef<
 								onCodeChange={onCodeChange}
 								language={language}
 								themeName={themeName}
-								font={font}
+								fontFamily={fontFamily}
 								background={colors.surface}
 							/>
 						</div>

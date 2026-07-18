@@ -1,6 +1,5 @@
 import { Select } from "@base-ui/react/select";
 import { CaretDownIcon } from "@phosphor-icons/react";
-import { useHaptics } from "../lib/haptics";
 import { LANGUAGES, type LanguageId } from "../lib/highlighter";
 
 const SHORT_LABELS: Record<LanguageId, string> = {
@@ -32,22 +31,17 @@ export function LanguagePicker({
 	value: LanguageId;
 	onValueChange: (value: LanguageId) => void;
 }) {
-	const { trigger: haptic } = useHaptics();
-
 	return (
 		<Select.Root
 			value={value}
 			onValueChange={(next) => {
-				if (next) {
-					onValueChange(next);
-					haptic("success");
-				}
+				if (next) onValueChange(next);
 			}}
 		>
 			<Select.Trigger className="d-f ai-c jc-sb g-1 px-3 py-1 bg-transparent c-accent-dim fs-xs ff-m us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent h:c-accent h:bg-page">
 				<Select.Value>
 					{() => (
-						<span className="min-w-0 o-h to-e ws-nw">
+						<span className="d-if w-12 ta-c o-h to-e ws-nw">
 							{SHORT_LABELS[value]}
 						</span>
 					)}
@@ -62,7 +56,7 @@ export function LanguagePicker({
 					alignItemWithTrigger={false}
 					className="zi-90 p-0 ow-0 us-none"
 				>
-					<Select.Popup className="popup-anim w-40 max-h-40 oy-auto bw-1 bc-border bg-surface py-1 bs-o-xs">
+					<Select.Popup className="w-40 max-h-40 oy-auto bw-1 bc-border bg-surface py-1 bs-o-xs">
 						<Select.List className="p-r o-auto">
 							{options.map(({ id, label }) => (
 								<Select.Item
