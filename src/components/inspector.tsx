@@ -55,18 +55,18 @@ function CanvasModeTabs({
 	onModeChange: (value: CanvasMode) => void;
 }) {
 	return (
-		<div className="px-2 pb-4 bbw-1 bs-s bc-border">
+		<div className="mt--3 mx--3 mb-3 bbw-1 bs-s bc-border">
 			<Tabs.Root
 				value={mode}
 				onValueChange={(value) => {
 					if (value) onModeChange(value as CanvasMode);
 				}}
 			>
-				<Tabs.List className="d-f p-r g-1">
+				<Tabs.List className="d-f">
 					<Tabs.Tab
 						value="static"
 						className={(state) =>
-							`p-r zi-10 f-1 px-2 py-1 fs-xs ff-m ta-c us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "c-page fw-700" : "c-accent-dim bg-transparent h:c-accent"}`
+							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p brw-1 bs-s bc-border fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-page c-accent-dim fw-700" : "bg-transparent c-accent-dim h:bg-page"}`
 						}
 					>
 						Static
@@ -74,20 +74,11 @@ function CanvasModeTabs({
 					<Tabs.Tab
 						value="animated"
 						className={(state) =>
-							`p-r zi-10 f-1 px-2 py-1 fs-xs ff-m ta-c us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "c-page fw-700" : "c-accent-dim bg-transparent h:c-accent"}`
+							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-page c-accent-dim fw-700" : "bg-transparent c-accent-dim h:bg-page"}`
 						}
 					>
 						Animated
 					</Tabs.Tab>
-					<Tabs.Indicator
-						className="p-a l-0 zi-0 bg-accent bs-o-xs"
-						style={{
-							translate: "var(--active-tab-left) 0",
-							width: "var(--active-tab-width)",
-							top: "var(--active-tab-top)",
-							height: "var(--active-tab-height)",
-						}}
-					/>
 				</Tabs.List>
 			</Tabs.Root>
 		</div>
