@@ -33,6 +33,8 @@
 		"border": "#3d2e1a",
 		"accentDim": "#b8935a",
 		"tabBar": "#1a1206",
-		"tabActive": "#261e12"
+		"tabActive": "#261e12",
+		"statusBarBg": "#261e12",
+		"statusBarText": "#ffb86c"
 	}
 }
