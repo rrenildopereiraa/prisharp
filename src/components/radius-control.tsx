@@ -1,19 +1,12 @@
 import { Button } from "@base-ui/react/button";
 import { NumberField } from "@base-ui/react/number-field";
+import { Slider } from "@base-ui/react/slider";
 import { CaretUpIcon, CornersOutIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import type { CornerRadii } from "../lib/types";
 
 export const RADIUS_MIN = 0;
 export const RADIUS_MAX = 16;
-
-const RADIUS_PRESETS: { label: string; value: number }[] = [
-	{ label: "None", value: 0 },
-	{ label: "Small", value: 4 },
-	{ label: "Medium", value: 8 },
-	{ label: "Large", value: 12 },
-	{ label: "Full", value: 16 },
-];
 
 const CORNERS: {
 	id: keyof CornerRadii;
@@ -38,7 +31,6 @@ export function RadiusControl({
 
 	const values = [radii.tl, radii.tr, radii.bl, radii.br];
 	const uniform = values.every((value) => value === values[0]);
-	const activeValue = uniform ? radii.tl : null;
 
 	function setAll(value: number) {
 		onRadiiChange({ tl: value, tr: value, bl: value, br: value });
@@ -50,25 +42,27 @@ export function RadiusControl({
 
 	return (
 		<div className="d-f fd-c g-2 px-2 pt-1 pb-4">
-			<span className="fs-sm ff-m c-accent-dim us-none">Border Radius</span>
-
-			<div className="d-f w-100% bw-1 bs-s bc-border">
-				{RADIUS_PRESETS.map(({ label, value }, index) => (
-					<button
-						key={label}
-						type="button"
-						onClick={() => setAll(value)}
-						aria-pressed={activeValue === value}
-						className={`f-1 min-w-0 px-1 py-1 fs-xs ff-m ws-nw us-none c-p fv:os-s fv:oo--2 fv:oc-accent ${index > 0 ? "blw-1 bs-s bc-border" : ""} ${
-							activeValue === value
-								? "bg-accent c-page"
-								: "bg-transparent c-accent-dim h:c-accent"
-						}`}
-					>
-						{label}
-					</button>
-				))}
+			<div className="d-f jc-sb ai-c">
+				<span className="fs-sm ff-m c-accent-dim us-none">Border Radius</span>
+				<span className="fs-sm ff-m c-accent-dim us-none">
+					{uniform ? `${radii.tl}px` : "Mixed"}
+				</span>
 			</div>
+
+			<Slider.Root
+				value={uniform ? radii.tl : Math.max(...values)}
+				onValueChange={(value) => setAll(value)}
+				min={RADIUS_MIN}
+				max={RADIUS_MAX}
+				step={1}
+			>
+				<Slider.Control className="d-f ai-c py-3 us-none ta-none">
+					<Slider.Track className="p-r h-2 w-100% bg-border">
+						<Slider.Indicator className="bg-accent" />
+						<Slider.Thumb className="w-5 h-5 bg-page bw-1 bs-s bc-border bs-o-xs fv:os-s fv:oo-2 fv:oc-accent" />
+					</Slider.Track>
+				</Slider.Control>
+			</Slider.Root>
 
 			<Button
 				onClick={() => setSplit((value) => !value)}
