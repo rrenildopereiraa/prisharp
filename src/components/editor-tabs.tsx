@@ -120,7 +120,7 @@ export function EditorTabBar({
 				</span>
 			</div>
 
-			<div className="d-f min-w-0 o-x-auto">
+			<div className="d-none @lg:d-f min-w-0 o-x-auto">
 				{documents.map((doc) => (
 					<TabItem
 						key={doc.id}
@@ -159,11 +159,11 @@ export function EditorTabBar({
 				<Button
 					onClick={onOpenPalette}
 					aria-label="Search commands"
-					className="d-f ai-c jc-c g-2 w-8 @sm:w-fc h-7 px-2 @sm:px-3 bg-page bw-1 bc-border c-accent-dim fs-xs ff-m us-none c-p bs-i-xs h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+					className="d-none @lg:d-f ai-c jc-c g-2 h-7 px-3 bg-page bw-1 bc-border c-accent-dim fs-xs ff-m us-none c-p bs-i-xs h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
 				>
 					<MagnifyingGlassIcon size={12} weight="bold" />
-					<span className="d-none @sm:d-if">Search</span>
-					<span className="d-none @sm:d-if px-1 bw-1 bs-s bc-border fs-xs c-accent-dim ws-nw">
+					Search
+					<span className="px-1 bw-1 bs-s bc-border fs-xs c-accent-dim ws-nw">
 						{modKey}K
 					</span>
 				</Button>
@@ -174,14 +174,14 @@ export function EditorTabBar({
 						setShared(true);
 						setTimeout(() => setShared(false), 1500);
 					}}
-					className="d-f ai-c jc-c g-2 w-8 @sm:w-24 h-7 px-2 c-accent-dim bg-transparent bw-1 bc-border bs-i-xs us-none c-p h:bg-page h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+					className="d-f ai-c jc-c g-2 w-24 h-7 px-2 c-accent-dim bg-transparent bw-1 bc-border bs-i-xs us-none c-p h:bg-page h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
 				>
 					{shared ? (
 						<CheckIcon size={14} className="c-diff-add" weight="bold" />
 					) : (
 						<LinkSimpleIcon size={14} />
 					)}
-					<span className="d-none @sm:d-if">{shared ? "Copied" : "Share"}</span>
+					<span>{shared ? "Copied" : "Share"}</span>
 				</Button>
 
 				<Button
@@ -190,14 +190,14 @@ export function EditorTabBar({
 						setCopied(true);
 						setTimeout(() => setCopied(false), 1500);
 					}}
-					className="d-f ai-c jc-c g-2 w-8 @sm:w-24 h-7 px-2 c-accent-dim bg-transparent bw-1 bc-border bs-i-xs us-none c-p h:bg-page h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+					className="d-f ai-c jc-c g-2 w-24 h-7 px-2 c-accent-dim bg-transparent bw-1 bc-border bs-i-xs us-none c-p h:bg-page h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
 				>
 					{copied ? (
 						<ClipboardTextIcon size={14} className="c-diff-add" weight="fill" />
 					) : (
 						<ClipboardIcon size={14} weight="fill" />
 					)}
-					<span className="d-none @sm:d-if">{copied ? "Copied" : "Copy"}</span>
+					<span>{copied ? "Copied" : "Copy"}</span>
 				</Button>
 
 				<ExportButton

@@ -24,7 +24,7 @@ export function ExportButton({
 				onClick={onExport}
 				disabled={exporting}
 				focusableWhenDisabled
-				className="d-f ai-c jc-c g-2 w-8 @sm:w-24 h-7 px-2 bg-accent c-page fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent"
+				className="d-f ai-c jc-c g-2 w-24 h-7 px-2 bg-accent c-page fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent"
 			>
 				{exporting ? (
 					<span className="d-f">
@@ -33,9 +33,7 @@ export function ExportButton({
 				) : (
 					<DownloadSimpleIcon size={14} weight="fill" />
 				)}
-				<span className="d-none @sm:d-if">
-					{exporting ? "Exporting" : "Export"}
-				</span>
+				<span>{exporting ? "Exporting" : "Export"}</span>
 			</Button>
 
 			<div className="w-px bg-page/40" aria-hidden="true" />

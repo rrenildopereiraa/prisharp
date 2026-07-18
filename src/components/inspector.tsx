@@ -339,15 +339,9 @@ export function Inspector({
 				<Drawer.Portal>
 					<Drawer.Backdrop className="drawer-backdrop @lg:d-none p-f i-0 zi-80 bg-page/60" />
 					<Drawer.Viewport className="@lg:d-none p-f i-0 zi-90">
-						<Drawer.Popup
-							className="drawer-popup d-f fd-c p-f l-0 r-0 b-0 max-h-80% bg-surface btw-1 bs-s bc-border"
-							style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
-						>
+						<Drawer.Popup className="drawer-popup d-f fd-c p-f l-0 r-0 b-0 max-h-80% bg-surface btw-1 bs-s bc-border">
 							<div className="d-f jc-c pt-2" aria-hidden="true">
-								<div
-									className="w-9 h-1 bg-border"
-									style={{ borderRadius: 2 }}
-								/>
+								<div className="w-9 h-1 bg-border" />
 							</div>
 							<div className="d-f ai-c jc-sb px-3 py-2 bbw-1 bs-s bc-border">
 								<Drawer.Title className="fs-sm ff-m fw-700 c-accent-dim us-none">
