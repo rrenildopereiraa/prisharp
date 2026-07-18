@@ -46,6 +46,7 @@ function App() {
 	const [showBoundingBox, setShowBoundingBox] = useState(true);
 	const [themeIsRandom, setThemeIsRandom] = useState(false);
 	const [paletteOpen, setPaletteOpen] = useState(false);
+	const [inspectorOpen, setInspectorOpen] = useState(false);
 	const [settings, setSettings] = useQueryStates(settingsParsers, {
 		history: "replace",
 	});
@@ -320,6 +321,8 @@ function App() {
 				/>
 
 				<Inspector
+					open={inspectorOpen}
+					onOpenChange={setInspectorOpen}
 					mode={mode}
 					onModeChange={setMode}
 					showTabBar={settings.tabBar}
@@ -362,6 +365,7 @@ function App() {
 				onThemeChange={handleManualThemeChange}
 				themeIsRandom={themeIsRandom}
 				onRandomize={randomizeAll}
+				onOpenSettings={() => setInspectorOpen(true)}
 				width={dimensions.width}
 				height={dimensions.height}
 			/>

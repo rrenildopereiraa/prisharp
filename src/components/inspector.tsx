@@ -1,8 +1,9 @@
 import { Button } from "@base-ui/react/button";
+import { Drawer } from "@base-ui/react/drawer";
 import { Separator } from "@base-ui/react/separator";
 import { Switch } from "@base-ui/react/switch";
 import { Tabs } from "@base-ui/react/tabs";
-import { UploadSimpleIcon } from "@phosphor-icons/react";
+import { UploadSimpleIcon, XIcon } from "@phosphor-icons/react";
 import { THEMES } from "../lib/highlighter";
 import type { BackgroundPattern, CanvasMode, CornerRadii } from "../lib/types";
 import { ColorInput } from "./color-input";
@@ -125,34 +126,7 @@ function OptionSwitch({
 	);
 }
 
-export function Inspector({
-	mode,
-	onModeChange,
-	showTabBar,
-	onShowTabBarChange,
-	showStatusBar,
-	onShowStatusBarChange,
-	showBackgroundPattern,
-	onShowBackgroundPatternChange,
-	showGridLines,
-	onShowGridLinesChange,
-	showBoundingBox,
-	onShowBoundingBoxChange,
-	showActiveTabBorder,
-	onShowActiveTabBorderChange,
-	background,
-	onBackgroundChange,
-	radii,
-	onRadiiChange,
-	fontFamily,
-	onFontFamilyChange,
-	themeName,
-	onThemeChange,
-	themeIsRandom,
-	frameColors,
-	onFrameColorsChange,
-	onUploadTheme,
-}: {
+interface InspectorContentProps {
 	mode: CanvasMode;
 	onModeChange: (value: CanvasMode) => void;
 	showTabBar: boolean;
@@ -179,9 +153,38 @@ export function Inspector({
 	frameColors: FrameColors;
 	onFrameColorsChange: (value: FrameColors) => void;
 	onUploadTheme: (file: File) => void;
-}) {
+}
+
+function InspectorContent({
+	mode,
+	onModeChange,
+	showTabBar,
+	onShowTabBarChange,
+	showStatusBar,
+	onShowStatusBarChange,
+	showBackgroundPattern,
+	onShowBackgroundPatternChange,
+	showGridLines,
+	onShowGridLinesChange,
+	showBoundingBox,
+	onShowBoundingBoxChange,
+	showActiveTabBorder,
+	onShowActiveTabBorderChange,
+	background,
+	onBackgroundChange,
+	radii,
+	onRadiiChange,
+	fontFamily,
+	onFontFamilyChange,
+	themeName,
+	onThemeChange,
+	themeIsRandom,
+	frameColors,
+	onFrameColorsChange,
+	onUploadTheme,
+}: InspectorContentProps) {
 	return (
-		<aside className="d-none @lg:d-f fd-c w-72 fs-0 min-h-0 oy-auto blw-1 bs-s bc-border bg-surface p-3">
+		<>
 			<CanvasModeTabs mode={mode} onModeChange={onModeChange} />
 
 			{mode === "animated" && (
@@ -314,6 +317,56 @@ export function Inspector({
 					))}
 				</>
 			)}
-		</aside>
+		</>
+	);
+}
+
+export function Inspector({
+	open,
+	onOpenChange,
+	...contentProps
+}: InspectorContentProps & {
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+}) {
+	return (
+		<>
+			<aside className="d-none @lg:d-f fd-c w-72 fs-0 min-h-0 oy-auto blw-1 bs-s bc-border bg-surface p-3">
+				<InspectorContent {...contentProps} />
+			</aside>
+
+			<Drawer.Root open={open} onOpenChange={onOpenChange}>
+				<Drawer.Portal>
+					<Drawer.Backdrop className="drawer-backdrop @lg:d-none p-f i-0 zi-80 bg-page/60" />
+					<Drawer.Viewport className="@lg:d-none p-f i-0 zi-90">
+						<Drawer.Popup
+							className="drawer-popup d-f fd-c p-f l-0 r-0 b-0 max-h-80% bg-surface btw-1 bs-s bc-border"
+							style={{ borderTopLeftRadius: 16, borderTopRightRadius: 16 }}
+						>
+							<div className="d-f jc-c pt-2" aria-hidden="true">
+								<div
+									className="w-9 h-1 bg-border"
+									style={{ borderRadius: 2 }}
+								/>
+							</div>
+							<div className="d-f ai-c jc-sb px-3 py-2 bbw-1 bs-s bc-border">
+								<Drawer.Title className="fs-sm ff-m fw-700 c-accent-dim us-none">
+									Settings
+								</Drawer.Title>
+								<Drawer.Close
+									aria-label="Close settings"
+									className="d-f ai-c jc-c w-6 h-6 c-accent-dim bg-transparent bw-0 c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+								>
+									<XIcon size={14} weight="bold" />
+								</Drawer.Close>
+							</div>
+							<Drawer.Content className="oy-auto p-3">
+								<InspectorContent {...contentProps} />
+							</Drawer.Content>
+						</Drawer.Popup>
+					</Drawer.Viewport>
+				</Drawer.Portal>
+			</Drawer.Root>
+		</>
 	);
 }

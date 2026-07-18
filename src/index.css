@@ -24,3 +24,21 @@ body {
 	opacity: 0;
 	transform: translateY(-4px);
 }
+
+.drawer-backdrop {
+	transition: opacity 200ms ease;
+}
+
+.drawer-backdrop[data-starting-style],
+.drawer-backdrop[data-ending-style] {
+	opacity: 0;
+}
+
+.drawer-popup {
+	transition: transform 200ms ease;
+}
+
+.drawer-popup[data-starting-style],
+.drawer-popup[data-ending-style] {
+	transform: translateY(100%);
+}

@@ -99,7 +99,7 @@ export function EditorTabBar({
 
 	return (
 		<header className="d-f bbw-1 bs-s bc-border bg-surface">
-			<div className="d-f ai-c g-2 px-3 py-2 brw-1 bs-s bc-border">
+			<div className="d-f ai-c g-2 px-2 @sm:px-3 py-2 brw-1 bs-s bc-border">
 				<svg
 					width="22"
 					height="22"
@@ -115,7 +115,7 @@ export function EditorTabBar({
 					/>
 					<polygon points="50,18 64,50 50,82" fill="#93b4f5" />
 				</svg>
-				<span className="fs-sm ff-m fw-700 us-none ws-nw">
+				<span className="d-none @sm:d-if fs-sm ff-m fw-700 us-none ws-nw">
 					Pri<span className="c-accent">sharp</span>
 				</span>
 			</div>
@@ -158,11 +158,12 @@ export function EditorTabBar({
 			<div className="d-f ai-c g-1 px-2">
 				<Button
 					onClick={onOpenPalette}
-					className="d-f ai-c g-2 h-7 px-3 bg-page bw-1 bc-border c-accent-dim fs-xs ff-m us-none c-p bs-i-xs h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+					aria-label="Search commands"
+					className="d-f ai-c jc-c g-2 w-8 @sm:w-fc h-7 px-2 @sm:px-3 bg-page bw-1 bc-border c-accent-dim fs-xs ff-m us-none c-p bs-i-xs h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
 				>
 					<MagnifyingGlassIcon size={12} weight="bold" />
-					Search
-					<span className="px-1 bw-1 bs-s bc-border fs-xs c-accent-dim ws-nw">
+					<span className="d-none @sm:d-if">Search</span>
+					<span className="d-none @sm:d-if px-1 bw-1 bs-s bc-border fs-xs c-accent-dim ws-nw">
 						{modKey}K
 					</span>
 				</Button>
