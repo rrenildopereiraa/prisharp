@@ -98,11 +98,11 @@ export function EditorTabBar({
 	const atLimit = documents.length >= MAX_DOCUMENTS;
 
 	return (
-		<header className="d-f ai-c bbw-1 bs-s bc-border bg-surface">
+		<header className="d-f bbw-1 bs-s bc-border bg-surface">
 			<div className="d-f ai-c g-2 px-3 py-2 brw-1 bs-s bc-border">
 				<svg
-					width="16"
-					height="16"
+					width="22"
+					height="22"
 					viewBox="0 0 100 100"
 					aria-hidden="true"
 					className="fs-0"
@@ -120,7 +120,7 @@ export function EditorTabBar({
 				</span>
 			</div>
 
-			<div className="d-f ai-c min-w-0 o-x-auto">
+			<div className="d-f min-w-0 o-x-auto">
 				{documents.map((doc) => (
 					<TabItem
 						key={doc.id}
