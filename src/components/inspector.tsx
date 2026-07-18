@@ -55,18 +55,18 @@ function CanvasModeTabs({
 	onModeChange: (value: CanvasMode) => void;
 }) {
 	return (
-		<div className="px-2 pb-4">
+		<div className="px-2 pb-4 bbw-1 bs-s bc-border">
 			<Tabs.Root
 				value={mode}
 				onValueChange={(value) => {
 					if (value) onModeChange(value as CanvasMode);
 				}}
 			>
-				<Tabs.List className="d-f p-r g-1 p-1 bw-1 bs-s bc-border bg-page">
+				<Tabs.List className="d-f p-r g-1">
 					<Tabs.Tab
 						value="static"
 						className={(state) =>
-							`p-r zi-10 f-1 px-2 py-1 fs-xs ff-m ta-c us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "c-page fw-700" : "c-accent-dim bg-transparent h:bg-surface"}`
+							`p-r zi-10 f-1 px-2 py-1 fs-xs ff-m ta-c us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "c-page fw-700" : "c-accent-dim bg-transparent h:c-accent"}`
 						}
 					>
 						Static
@@ -74,7 +74,7 @@ function CanvasModeTabs({
 					<Tabs.Tab
 						value="animated"
 						className={(state) =>
-							`p-r zi-10 f-1 px-2 py-1 fs-xs ff-m ta-c us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "c-page fw-700" : "c-accent-dim bg-transparent h:bg-surface"}`
+							`p-r zi-10 f-1 px-2 py-1 fs-xs ff-m ta-c us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "c-page fw-700" : "c-accent-dim bg-transparent h:c-accent"}`
 						}
 					>
 						Animated
@@ -190,119 +190,133 @@ export function Inspector({
 		<aside className="d-none @lg:d-f fd-c w-72 fs-0 min-h-0 oy-auto blw-1 bs-s bc-border bg-surface p-3">
 			<CanvasModeTabs mode={mode} onModeChange={onModeChange} />
 
-			<SectionSeparator label="Frame" />
-
-			<OptionSwitch
-				label="Tab Bar"
-				checked={showTabBar}
-				onCheckedChange={onShowTabBarChange}
-			/>
-			<OptionSwitch
-				label="Bounding Box"
-				checked={showBoundingBox}
-				onCheckedChange={onShowBoundingBoxChange}
-			/>
-			<OptionSwitch
-				label="Status Bar"
-				checked={showStatusBar}
-				onCheckedChange={onShowStatusBarChange}
-			/>
-
-			<RadiusControl radii={radii} onRadiiChange={onRadiiChange} />
-
-			<OptionSwitch
-				label="Tab Border"
-				checked={showActiveTabBorder}
-				onCheckedChange={onShowActiveTabBorderChange}
-			/>
-			{showActiveTabBorder && (
-				<ColorInput
-					label="Tab Border"
-					value={frameColors.activeTabBorder}
-					onChange={(activeTabBorder) =>
-						onFrameColorsChange({ ...frameColors, activeTabBorder })
-					}
-				/>
+			{mode === "animated" && (
+				<div className="d-f ai-c jc-c px-2 py-8">
+					<span className="fs-sm ff-m c-accent-dim us-none ta-c">
+						Animated export is coming soon.
+					</span>
+				</div>
 			)}
 
-			<PickerField
-				label="Font"
-				value={font}
-				options={(Object.keys(FONTS) as FontId[]).map((id) => ({
-					id,
-					label: FONTS[id].label,
-					style: FONTS[id].stack ? { fontFamily: FONTS[id].stack } : undefined,
-				}))}
-				onValueChange={onFontChange}
-			/>
+			{mode === "static" && (
+				<>
+					<SectionSeparator label="Frame" />
 
-			<SectionSeparator label="Background" />
+					<OptionSwitch
+						label="Tab Bar"
+						checked={showTabBar}
+						onCheckedChange={onShowTabBarChange}
+					/>
+					<OptionSwitch
+						label="Bounding Box"
+						checked={showBoundingBox}
+						onCheckedChange={onShowBoundingBoxChange}
+					/>
+					<OptionSwitch
+						label="Status Bar"
+						checked={showStatusBar}
+						onCheckedChange={onShowStatusBarChange}
+					/>
 
-			<OptionSwitch
-				label="Grid Lines"
-				checked={showGridLines}
-				onCheckedChange={onShowGridLinesChange}
-			/>
+					<RadiusControl radii={radii} onRadiiChange={onRadiiChange} />
 
-			<OptionSwitch
-				label="Background Patterns"
-				checked={showBackgroundPattern}
-				onCheckedChange={onShowBackgroundPatternChange}
-			/>
-
-			{showBackgroundPattern && (
-				<PickerField
-					value={background}
-					options={(Object.keys(PATTERN_LABELS) as BackgroundPattern[]).map(
-						(id) => ({ id, label: PATTERN_LABELS[id] }),
+					<OptionSwitch
+						label="Tab Border"
+						checked={showActiveTabBorder}
+						onCheckedChange={onShowActiveTabBorderChange}
+					/>
+					{showActiveTabBorder && (
+						<ColorInput
+							label="Tab Border"
+							value={frameColors.activeTabBorder}
+							onChange={(activeTabBorder) =>
+								onFrameColorsChange({ ...frameColors, activeTabBorder })
+							}
+						/>
 					)}
-					onValueChange={onBackgroundChange}
-				/>
+
+					<PickerField
+						label="Font"
+						value={font}
+						options={(Object.keys(FONTS) as FontId[]).map((id) => ({
+							id,
+							label: FONTS[id].label,
+							style: FONTS[id].stack
+								? { fontFamily: FONTS[id].stack }
+								: undefined,
+						}))}
+						onValueChange={onFontChange}
+					/>
+
+					<SectionSeparator label="Background" />
+
+					<OptionSwitch
+						label="Grid Lines"
+						checked={showGridLines}
+						onCheckedChange={onShowGridLinesChange}
+					/>
+
+					<OptionSwitch
+						label="Background Patterns"
+						checked={showBackgroundPattern}
+						onCheckedChange={onShowBackgroundPatternChange}
+					/>
+
+					{showBackgroundPattern && (
+						<PickerField
+							value={background}
+							options={(Object.keys(PATTERN_LABELS) as BackgroundPattern[]).map(
+								(id) => ({ id, label: PATTERN_LABELS[id] }),
+							)}
+							onValueChange={onBackgroundChange}
+						/>
+					)}
+
+					<SectionSeparator label="Appearance" />
+
+					<PickerField
+						label="Theme"
+						value={themeName}
+						options={Object.keys(THEMES).map((id) => ({ id, label: id }))}
+						onValueChange={onThemeChange}
+						badge={
+							themeIsRandom
+								? { text: "*", title: "Randomly selected theme" }
+								: undefined
+						}
+					/>
+
+					<div className="px-2 pb-4">
+						<Button
+							onClick={() => {
+								const input = document.createElement("input");
+								input.type = "file";
+								input.accept = ".json";
+								input.onchange = () => {
+									const file = input.files?.[0];
+									if (file) onUploadTheme(file);
+								};
+								input.click();
+							}}
+							className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bc-border bg-transparent c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bc-accent fv:os-s fv:oo-2 fv:oc-accent"
+						>
+							<UploadSimpleIcon size={14} weight="fill" />
+							Import VS Code Theme
+						</Button>
+					</div>
+
+					{FRAME_COLOR_FIELDS.map(({ key, label }) => (
+						<ColorInput
+							key={key}
+							label={label}
+							value={frameColors[key]}
+							onChange={(value) =>
+								onFrameColorsChange({ ...frameColors, [key]: value })
+							}
+						/>
+					))}
+				</>
 			)}
-
-			<SectionSeparator label="Appearance" />
-
-			<PickerField
-				label="Theme"
-				value={themeName}
-				options={Object.keys(THEMES).map((id) => ({ id, label: id }))}
-				onValueChange={onThemeChange}
-				badge={
-					themeIsRandom
-						? { text: "*", title: "Randomly selected theme" }
-						: undefined
-				}
-			/>
-
-			<div className="px-2 pb-4">
-				<Button
-					onClick={() => {
-						const input = document.createElement("input");
-						input.type = "file";
-						input.accept = ".json";
-						input.onchange = () => {
-							const file = input.files?.[0];
-							if (file) onUploadTheme(file);
-						};
-						input.click();
-					}}
-					className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bc-border bg-transparent c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bc-accent fv:os-s fv:oo-2 fv:oc-accent"
-				>
-					<UploadSimpleIcon size={14} weight="fill" />
-					Import VS Code Theme
-				</Button>
-			</div>
-
-			{FRAME_COLOR_FIELDS.map(({ key, label }) => (
-				<ColorInput
-					key={key}
-					label={label}
-					value={frameColors[key]}
-					onChange={(value) =>
-						onFrameColorsChange({ ...frameColors, [key]: value })
-					}
-				/>
-			))}
 		</aside>
 	);
 }
