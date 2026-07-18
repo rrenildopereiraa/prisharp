@@ -69,6 +69,7 @@ export function buildCommands({
 		{
 			id: "randomize",
 			label: "Randomize appearance",
+			kbd: `${modLabel} Shift R`,
 			run: onRandomizeAll,
 		},
 		{

@@ -66,7 +66,7 @@ function CanvasModeTabs({
 					<Tabs.Tab
 						value="static"
 						className={(state) =>
-							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p brw-1 bs-s bc-border fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-page c-accent-dim fw-700" : "bg-transparent c-accent-dim h:bg-page"}`
+							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p brw-1 bs-s bc-border fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-surface c-accent-dim fw-700" : "bg-page c-accent-dim h:bg-surface"}`
 						}
 					>
 						Static
@@ -74,7 +74,7 @@ function CanvasModeTabs({
 					<Tabs.Tab
 						value="animated"
 						className={(state) =>
-							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-page c-accent-dim fw-700" : "bg-transparent c-accent-dim h:bg-page"}`
+							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-surface c-accent-dim fw-700" : "bg-page c-accent-dim h:bg-surface"}`
 						}
 					>
 						Animated

@@ -110,14 +110,11 @@ export function EditorTabBar({
 				<button
 					type="button"
 					onClick={onAdd}
-					disabled={atLimit}
 					title={
 						atLimit ? `Snippet limit reached (${MAX_DOCUMENTS})` : "New snippet"
 					}
 					style={atLimit ? { opacity: 0.4 } : undefined}
-					className={`d-f ai-c jc-c as-s w-8 brw-1 bs-s bc-border c-accent-dim bg-transparent fv:os-s fv:oo--2 fv:oc-accent ${
-						atLimit ? "" : "c-p h:c-accent h:bg-page"
-					}`}
+					className="d-f ai-c jc-c as-s w-8 brw-1 bs-s bc-border c-accent-dim bg-transparent c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
 				>
 					<PlusIcon size={14} weight="bold" />
 				</button>

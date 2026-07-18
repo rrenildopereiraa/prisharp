@@ -236,6 +236,10 @@ function App() {
 		event.preventDefault();
 		setShowBackgroundPattern((current) => !current);
 	});
+	useHotkey("Mod+Shift+R", (event) => {
+		event.preventDefault();
+		randomizeAll();
+	});
 
 	const commands = buildCommands({
 		showTabBar,

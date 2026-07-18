@@ -43,7 +43,7 @@ export function RadiusControl({
 
 	return (
 		<div className="d-f fd-c g-2 px-2 pt-1 pb-4">
-			<span className="fs-sm ff-m c-accent-dim us-none">Border radius</span>
+			<span className="fs-sm ff-m c-accent-dim us-none">Border Radius</span>
 
 			<div className="d-f ai-c g-2">
 				<Slider.Root
