@@ -1,13 +1,19 @@
 import { Button } from "@base-ui/react/button";
 import { NumberField } from "@base-ui/react/number-field";
-import { Slider } from "@base-ui/react/slider";
 import { CaretUpIcon, CornersOutIcon } from "@phosphor-icons/react";
 import { useState } from "react";
 import type { CornerRadii } from "../lib/types";
 
 export const RADIUS_MIN = 0;
 export const RADIUS_MAX = 16;
-const RADIUS_TICKS = [0, 25, 50, 75, 100];
+
+const RADIUS_PRESETS: { label: string; value: number }[] = [
+	{ label: "None", value: 0 },
+	{ label: "Small", value: 4 },
+	{ label: "Medium", value: 8 },
+	{ label: "Large", value: 12 },
+	{ label: "Full", value: 16 },
+];
 
 const CORNERS: {
 	id: keyof CornerRadii;
@@ -32,6 +38,8 @@ export function RadiusControl({
 
 	const values = [radii.tl, radii.tr, radii.bl, radii.br];
 	const uniform = values.every((value) => value === values[0]);
+	const activeValue = uniform ? radii.tl : null;
+	const previewRadius = `${radii.tl}px ${radii.tr}px ${radii.br}px ${radii.bl}px`;
 
 	function setAll(value: number) {
 		onRadiiChange({ tl: value, tr: value, bl: value, br: value });
@@ -46,41 +54,29 @@ export function RadiusControl({
 			<span className="fs-sm ff-m c-accent-dim us-none">Border Radius</span>
 
 			<div className="d-f ai-c g-2">
-				<Slider.Root
-					value={uniform ? radii.tl : Math.max(...values)}
-					onValueChange={(value) => setAll(value)}
-					min={RADIUS_MIN}
-					max={RADIUS_MAX}
-					step={1}
-					className="d-f ai-c g-2 f-1"
-				>
-					<Slider.Control className="p-r d-f ai-c h-5 f-1 c-p">
-						<Slider.Track className="p-r f-1 h-px bg-border">
-							{RADIUS_TICKS.map((pct) => (
-								<span
-									key={pct}
-									aria-hidden="true"
-									className="p-a w-px h-2 bg-accent-dim"
-									style={{
-										left: `${pct}%`,
-										top: "50%",
-										transform: "translate(-50%, -50%)",
-									}}
-								/>
-							))}
-							<Slider.Indicator className="h-px bg-accent" />
-							<Slider.Thumb className="w-2 h-4 bg-accent bs-o-xs fv:os-s fv:oo-2 fv:oc-accent" />
-						</Slider.Track>
-					</Slider.Control>
+				<div
+					aria-hidden="true"
+					className="w-7 h-7 fs-0 bg-page bw-1 bs-s bc-border"
+					style={{ borderRadius: previewRadius }}
+				/>
 
-					<Slider.Value
-						className={`ff-m fs-xs ta-c w-9 py-1 bw-1 bs-s bc-border us-none ${
-							uniform ? "c-accent-dim" : "c-border"
-						}`}
-					>
-						{(formatted) => (uniform ? formatted[0] : "—")}
-					</Slider.Value>
-				</Slider.Root>
+				<div className="d-f f-1 bw-1 bs-s bc-border">
+					{RADIUS_PRESETS.map(({ label, value }, index) => (
+						<button
+							key={label}
+							type="button"
+							onClick={() => setAll(value)}
+							aria-pressed={activeValue === value}
+							className={`f-1 py-1 fs-xs ff-m us-none c-p fv:os-s fv:oo--2 fv:oc-accent ${index > 0 ? "blw-1 bs-s bc-border" : ""} ${
+								activeValue === value
+									? "bg-accent c-page"
+									: "bg-transparent c-accent-dim h:c-accent"
+							}`}
+						>
+							{label}
+						</button>
+					))}
+				</div>
 
 				<Button
 					onClick={() => setSplit((value) => !value)}
