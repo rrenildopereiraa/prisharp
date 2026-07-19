@@ -23,7 +23,7 @@ export function ColorInput({
 					onChange={onChange}
 					prefixed
 					spellCheck={false}
-					className="ff-m fs-xs c-accent-dim bg-page bs-i-xs bw-1 bs-s bc-border px-2 py-1 w-20"
+					className="ff-m fs-sm c-accent-dim bg-page bs-i-xs bw-1 bs-s bc-border px-2 py-1 w-20"
 				/>
 				<Popover.Root>
 					<Popover.Trigger
