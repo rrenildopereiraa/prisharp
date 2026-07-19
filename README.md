@@ -1,6 +1,6 @@
 # Prisharp
 
-Beautiful code screenshots & videos.
+Code screenshots & videos
 
 ## Tech stack
 
