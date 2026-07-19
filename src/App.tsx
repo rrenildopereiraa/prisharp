@@ -14,6 +14,10 @@ import {
 import { RADIUS_MAX, RADIUS_MIN } from "./components/radius-control";
 import { StatusBar } from "./components/status-bar";
 import { useToast } from "./components/toast-provider";
+import {
+	isAnimatedExportSupported,
+	recordAnimatedVideo,
+} from "./lib/animated-export";
 import { buildCommands } from "./lib/commands";
 import { captureDataUrl } from "./lib/export";
 import { loadCustomTheme, THEME_FRAME_COLORS } from "./lib/highlighter";
@@ -51,7 +55,9 @@ function App() {
 		history: "replace",
 	});
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+	const [exportingVideo, setExportingVideo] = useState(false);
 	const frameRef = useRef<HTMLDivElement>(null);
+	const codeRef = useRef<HTMLDivElement>(null);
 	const toast = useToast();
 
 	const active = documents.find((doc) => doc.id === activeId) ?? documents[0];
@@ -215,6 +221,42 @@ function App() {
 		}
 	}
 
+	async function handleExportVideo() {
+		if (!frameRef.current || !codeRef.current || exportingVideo) return;
+		if (!isAnimatedExportSupported()) {
+			toast.add({
+				title: "Not supported",
+				description: "Animated export isn't supported in this browser.",
+				type: "error",
+			});
+			return;
+		}
+		setExportingVideo(true);
+		try {
+			const blob = await recordAnimatedVideo({
+				frameEl: frameRef.current,
+				codeEl: codeRef.current,
+				code: active.code,
+				background: settings.colors.surface,
+			});
+			const url = URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			link.download = `${active.fileName || "prisharp"}.webm`;
+			link.href = url;
+			link.click();
+			URL.revokeObjectURL(url);
+			toast.add({ title: "Exported", type: "success" });
+		} catch (_error) {
+			toast.add({
+				title: "Export failed",
+				description: "Could not record the animated video.",
+				type: "error",
+			});
+		} finally {
+			setExportingVideo(false);
+		}
+	}
+
 	async function handleCopyImage() {
 		if (!frameRef.current) return;
 		const blob = await toBlob(frameRef.current, { pixelRatio: 2 });
@@ -242,7 +284,11 @@ function App() {
 	});
 	useHotkey("Mod+S", (event) => {
 		event.preventDefault();
-		handleExport();
+		if (mode === "animated") {
+			handleExportVideo();
+		} else {
+			handleExport();
+		}
 	});
 	useHotkey("Mod+Shift+C", (event) => {
 		event.preventDefault();
@@ -296,6 +342,9 @@ function App() {
 				exporting={exporting}
 				format={format}
 				onFormatChange={setFormat}
+				mode={mode}
+				onExportVideo={handleExportVideo}
+				exportingVideo={exportingVideo}
 			/>
 
 			<div className="f-1 d-f min-h-0">
@@ -316,8 +365,8 @@ function App() {
 					themeName={settings.theme}
 					colors={settings.colors}
 					showBoundingBox={showBoundingBox}
+					codeRef={codeRef}
 					frameRef={frameRef}
-					mode={mode}
 				/>
 
 				<Inspector

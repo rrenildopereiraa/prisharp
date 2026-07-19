@@ -61,6 +61,7 @@ export const Frame = forwardRef<
 		fontFamily?: string;
 		themeName: string;
 		colors: FrameColors;
+		codeRef?: React.Ref<HTMLDivElement>;
 	}
 >(function Frame(
 	{
@@ -79,6 +80,7 @@ export const Frame = forwardRef<
 		fontFamily,
 		themeName,
 		colors,
+		codeRef,
 	},
 	ref,
 ) {
@@ -177,6 +179,7 @@ export const Frame = forwardRef<
 								themeName={themeName}
 								fontFamily={fontFamily}
 								background={colors.surface}
+								codeRef={codeRef}
 							/>
 						</div>
 

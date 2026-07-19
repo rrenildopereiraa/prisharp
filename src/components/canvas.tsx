@@ -1,5 +1,5 @@
 import type { LanguageId } from "../lib/highlighter";
-import type { BackgroundPattern, CanvasMode } from "../lib/types";
+import type { BackgroundPattern } from "../lib/types";
 import { BoundingBox } from "./bounding-box";
 import { Frame, type FrameColors } from "./frame";
 import type { CornerRadii } from "./inspector";
@@ -22,7 +22,7 @@ export function Canvas({
 	colors,
 	showBoundingBox,
 	frameRef,
-	mode,
+	codeRef,
 }: {
 	code: string;
 	onCodeChange: (value: string) => void;
@@ -41,38 +41,33 @@ export function Canvas({
 	colors: FrameColors;
 	showBoundingBox: boolean;
 	frameRef: React.RefObject<HTMLDivElement | null>;
-	mode: CanvasMode;
+	codeRef: React.RefObject<HTMLDivElement | null>;
 }) {
 	return (
 		<main className="f-1 d-f min-h-0 min-w-0 o-auto px-2 @sm:px-4 py-8 @sm:py-16">
-			{mode === "static" ? (
-				<div className="m-auto p-r min-w-0">
-					<Frame
-						ref={frameRef}
-						code={code}
-						onCodeChange={onCodeChange}
-						language={language}
-						fileName={fileName}
-						onFileNameChange={onFileNameChange}
-						showTabBar={showTabBar}
-						showStatusBar={showStatusBar}
-						showGridLines={showGridLines}
-						showBackgroundPattern={showBackgroundPattern}
-						showActiveTabBorder={showActiveTabBorder}
-						background={background}
-						radii={radii}
-						fontFamily={fontFamily}
-						themeName={themeName}
-						colors={colors}
-					/>
+			<div className="m-auto p-r min-w-0">
+				<Frame
+					ref={frameRef}
+					codeRef={codeRef}
+					code={code}
+					onCodeChange={onCodeChange}
+					language={language}
+					fileName={fileName}
+					onFileNameChange={onFileNameChange}
+					showTabBar={showTabBar}
+					showStatusBar={showStatusBar}
+					showGridLines={showGridLines}
+					showBackgroundPattern={showBackgroundPattern}
+					showActiveTabBorder={showActiveTabBorder}
+					background={background}
+					radii={radii}
+					fontFamily={fontFamily}
+					themeName={themeName}
+					colors={colors}
+				/>
 
-					{showBoundingBox && <BoundingBox />}
-				</div>
-			) : (
-				<span className="m-auto fs-lg ff-m c-accent-dim us-none">
-					Coming Soon
-				</span>
-			)}
+				{showBoundingBox && <BoundingBox />}
+			</div>
 		</main>
 	);
 }
