@@ -41,8 +41,7 @@ function getPatternStyle(
 	}
 }
 
-// temp change
-const FRAME_PADDING = 32;
+const FRAME_PADDING = 64;
 
 export const Frame = forwardRef<
 	HTMLDivElement,
