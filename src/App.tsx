@@ -5,10 +5,16 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { Canvas } from "./components/canvas";
 import { CommandPalette } from "./components/command-palette";
 import { EditorTabBar } from "./components/editor-tabs";
-import { type ExportFormat, isVideoFormat } from "./components/format-picker";
+import {
+	type ExportFormat,
+	type ImageFormat,
+	isVideoFormat,
+	type VideoFormat,
+} from "./components/format-picker";
 import {
 	FONT_FAMILIES,
 	type FontFamilyId,
+	type FormatCategory,
 	Inspector,
 } from "./components/inspector";
 import { RADIUS_MAX, RADIUS_MIN } from "./components/radius-control";
@@ -45,6 +51,8 @@ function App() {
 	});
 	const [activeId, setActiveId] = useState(() => documents[0].id);
 	const [format, setFormat] = useState<ExportFormat>("png");
+	const [lastImageFormat, setLastImageFormat] = useState<ImageFormat>("png");
+	const [lastVideoFormat, setLastVideoFormat] = useState<VideoFormat>("webm");
 	const [exporting, setExporting] = useState(false);
 	const [showBoundingBox, setShowBoundingBox] = useState(true);
 	const [themeIsRandom, setThemeIsRandom] = useState(false);
@@ -204,6 +212,21 @@ function App() {
 		settings.font,
 	]);
 
+	function handleFormatChange(next: ExportFormat) {
+		setFormat(next);
+		if (isVideoFormat(next)) {
+			setLastVideoFormat(next);
+		} else {
+			setLastImageFormat(next);
+		}
+	}
+
+	function handleCategoryChange(category: FormatCategory) {
+		handleFormatChange(
+			category === "video" ? lastVideoFormat : lastImageFormat,
+		);
+	}
+
 	async function handleExport() {
 		if (!frameRef.current || exporting) return;
 		setExporting(true);
@@ -331,7 +354,7 @@ function App() {
 		onShowGridLinesChange: (value) => setSettings({ gridLines: value }),
 		onBackgroundChange: (value) => setSettings({ pattern: value }),
 		onSetLanguage: (value) => updateActive({ language: value }),
-		onSetFormat: setFormat,
+		onSetFormat: handleFormatChange,
 		onSetFontFamily: (value) => setSettings({ font: value }),
 		onCopyCode: () => {
 			navigator.clipboard.writeText(active.code);
@@ -358,7 +381,7 @@ function App() {
 				onShare={handleShare}
 				exporting={exporting}
 				format={format}
-				onFormatChange={setFormat}
+				onFormatChange={handleFormatChange}
 			/>
 
 			<div className="f-1 d-f min-h-0">
@@ -387,6 +410,7 @@ function App() {
 					open={inspectorOpen}
 					onOpenChange={setInspectorOpen}
 					format={format}
+					onCategoryChange={handleCategoryChange}
 					videoStyle={settings.videoStyle}
 					onVideoStyleChange={(value) => setSettings({ videoStyle: value })}
 					videoSpeed={settings.videoSpeed}
@@ -437,7 +461,6 @@ function App() {
 				onThemeChange={handleManualThemeChange}
 				themeIsRandom={themeIsRandom}
 				onRandomize={randomizeAll}
-				onOpenSettings={() => setInspectorOpen(true)}
 				width={dimensions.width}
 				height={dimensions.height}
 			/>

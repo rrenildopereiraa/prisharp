@@ -36,11 +36,25 @@ body {
 
 .drawer-popup {
 	transition: transform 200ms ease;
+	transform: translateY(
+		calc(
+			var(--drawer-snap-point-offset, 0px) +
+			var(--drawer-swipe-movement-y, 0px)
+		)
+	);
+}
+
+.drawer-popup[data-swiping] {
+	transition: none;
 }
 
 .drawer-popup[data-starting-style],
 .drawer-popup[data-ending-style] {
 	transform: translateY(100%);
+}
+
+.bottom-sheet-handle {
+	bottom: max(0.5rem, env(safe-area-inset-bottom));
 }
 
 .dialog-backdrop {

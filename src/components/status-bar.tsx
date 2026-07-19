@@ -1,11 +1,7 @@
 import { Button } from "@base-ui/react/button";
 import { Select } from "@base-ui/react/select";
 import { Separator } from "@base-ui/react/separator";
-import {
-	CaretDownIcon,
-	ShuffleIcon,
-	SlidersHorizontalIcon,
-} from "@phosphor-icons/react";
+import { CaretDownIcon, ShuffleIcon } from "@phosphor-icons/react";
 import { type LanguageId, THEMES } from "../lib/highlighter";
 import type { BackgroundPattern } from "../lib/types";
 import { LanguagePicker } from "./language-picker";
@@ -25,7 +21,6 @@ export function StatusBar({
 	onThemeChange,
 	themeIsRandom,
 	onRandomize,
-	onOpenSettings,
 	width,
 	height,
 }: {
@@ -37,7 +32,6 @@ export function StatusBar({
 	onThemeChange: (value: string) => void;
 	themeIsRandom: boolean;
 	onRandomize: () => void;
-	onOpenSettings: () => void;
 	width: number;
 	height: number;
 }) {
@@ -129,16 +123,6 @@ export function StatusBar({
 			</Tooltip>
 
 			<div className="f-1" />
-
-			<Tooltip content="Settings">
-				<Button
-					onClick={onOpenSettings}
-					aria-label="Open settings"
-					className="d-f @lg:d-none ai-c jc-c w-8 h-7 bg-transparent c-accent-dim bw-0 c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
-				>
-					<SlidersHorizontalIcon size={14} weight="bold" />
-				</Button>
-			</Tooltip>
 
 			<div className="d-none @lg:d-f ai-c">
 				<span className="d-if w-28 ta-c py-1 ff-m fs-xs c-accent-dim">

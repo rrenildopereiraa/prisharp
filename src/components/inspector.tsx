@@ -1,12 +1,13 @@
 import { Button } from "@base-ui/react/button";
-import { Drawer } from "@base-ui/react/drawer";
 import { NumberField } from "@base-ui/react/number-field";
 import { Separator } from "@base-ui/react/separator";
 import { Switch } from "@base-ui/react/switch";
-import { UploadSimpleIcon, XIcon } from "@phosphor-icons/react";
+import { Tabs } from "@base-ui/react/tabs";
+import { UploadSimpleIcon } from "@phosphor-icons/react";
 import type { RevealStyle } from "../lib/animated-export";
 import { THEMES } from "../lib/highlighter";
 import type { BackgroundPattern, CornerRadii } from "../lib/types";
+import { BottomSheet } from "./bottom-sheet";
 import { ColorInput } from "./color-input";
 import type { ExportFormat } from "./format-picker";
 import { isVideoFormat } from "./format-picker";
@@ -53,6 +54,46 @@ const FRAME_COLOR_FIELDS: { key: keyof FrameColors; label: string }[] = [
 	{ key: "statusBarBg", label: "Status Bar" },
 	{ key: "statusBarText", label: "Status Bar Text" },
 ];
+
+export type FormatCategory = "image" | "video";
+
+function CategoryTabs({
+	category,
+	onCategoryChange,
+}: {
+	category: FormatCategory;
+	onCategoryChange: (value: FormatCategory) => void;
+}) {
+	return (
+		<div className="mt--3 mx--3 mb-3">
+			<Tabs.Root
+				value={category}
+				onValueChange={(value) => {
+					if (value) onCategoryChange(value as FormatCategory);
+				}}
+			>
+				<Tabs.List className="d-f">
+					<Tabs.Tab
+						value="image"
+						className={(state) =>
+							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p brw-1 bs-s bc-border fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-surface c-accent-dim fw-700" : "bg-page c-accent-dim bbw-1 bc-border"}`
+						}
+					>
+						Image
+					</Tabs.Tab>
+					<Tabs.Tab
+						value="video"
+						className={(state) =>
+							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-surface c-accent-dim fw-700" : "bg-page c-accent-dim bbw-1 bc-border"}`
+						}
+					>
+						Video
+					</Tabs.Tab>
+				</Tabs.List>
+			</Tabs.Root>
+		</div>
+	);
+}
 
 function SectionSeparator({ label }: { label: string }) {
 	return (
@@ -201,6 +242,7 @@ function VideoSettings({
 
 interface InspectorContentProps {
 	format: ExportFormat;
+	onCategoryChange: (value: FormatCategory) => void;
 	videoStyle: RevealStyle;
 	onVideoStyleChange: (value: RevealStyle) => void;
 	videoSpeed: number;
@@ -237,6 +279,7 @@ interface InspectorContentProps {
 
 function InspectorContent({
 	format,
+	onCategoryChange,
 	videoStyle,
 	onVideoStyleChange,
 	videoSpeed,
@@ -272,6 +315,11 @@ function InspectorContent({
 }: InspectorContentProps) {
 	return (
 		<>
+			<CategoryTabs
+				category={isVideoFormat(format) ? "video" : "image"}
+				onCategoryChange={onCategoryChange}
+			/>
+
 			{isVideoFormat(format) && (
 				<VideoSettings
 					videoStyle={videoStyle}
@@ -419,32 +467,9 @@ export function Inspector({
 				<InspectorContent {...contentProps} />
 			</aside>
 
-			<Drawer.Root open={open} onOpenChange={onOpenChange}>
-				<Drawer.Portal>
-					<Drawer.Backdrop className="drawer-backdrop @lg:d-none p-f i-0 zi-80 bg-page/60" />
-					<Drawer.Viewport className="@lg:d-none p-f i-0 zi-90">
-						<Drawer.Popup className="drawer-popup d-f fd-c p-f l-0 r-0 b-0 max-h-80% bg-surface btw-1 bs-s bc-border">
-							<div className="d-f jc-c pt-2" aria-hidden="true">
-								<div className="w-9 h-1 bg-border" />
-							</div>
-							<div className="d-f ai-c jc-sb px-3 py-2 bbw-1 bs-s bc-border">
-								<Drawer.Title className="fs-sm ff-m fw-700 c-accent-dim us-none">
-									Settings
-								</Drawer.Title>
-								<Drawer.Close
-									aria-label="Close settings"
-									className="d-f ai-c jc-c p-0 w-6 h-6 c-accent-dim bg-transparent bw-0 c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
-								>
-									<XIcon size={14} weight="bold" />
-								</Drawer.Close>
-							</div>
-							<Drawer.Content className="oy-auto p-3">
-								<InspectorContent {...contentProps} />
-							</Drawer.Content>
-						</Drawer.Popup>
-					</Drawer.Viewport>
-				</Drawer.Portal>
-			</Drawer.Root>
+			<BottomSheet open={open} onOpenChange={onOpenChange} title="Settings">
+				<InspectorContent {...contentProps} />
+			</BottomSheet>
 		</>
 	);
 }
