@@ -1,9 +1,11 @@
 import { Button } from "@base-ui/react/button";
 import { Drawer } from "@base-ui/react/drawer";
+import { NumberField } from "@base-ui/react/number-field";
 import { Separator } from "@base-ui/react/separator";
 import { Switch } from "@base-ui/react/switch";
 import { Tabs } from "@base-ui/react/tabs";
 import { UploadSimpleIcon, XIcon } from "@phosphor-icons/react";
+import type { RevealStyle } from "../lib/animated-export";
 import { THEMES } from "../lib/highlighter";
 import type { BackgroundPattern, CanvasMode, CornerRadii } from "../lib/types";
 import { ColorInput } from "./color-input";
@@ -68,20 +70,20 @@ function CanvasModeTabs({
 			>
 				<Tabs.List className="d-f">
 					<Tabs.Tab
-						value="static"
+						value="image"
 						className={(state) =>
 							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p brw-1 bs-s bc-border fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-surface c-accent-dim fw-700" : "bg-page c-accent-dim bbw-1 bc-border"}`
 						}
 					>
-						Static
+						Image
 					</Tabs.Tab>
 					<Tabs.Tab
-						value="animated"
+						value="video"
 						className={(state) =>
 							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-surface c-accent-dim fw-700" : "bg-page c-accent-dim bbw-1 bc-border"}`
 						}
 					>
-						Animated
+						Video
 					</Tabs.Tab>
 				</Tabs.List>
 			</Tabs.Root>
@@ -114,21 +116,137 @@ function OptionSwitch({
 			<Switch.Root
 				checked={checked}
 				onCheckedChange={onCheckedChange}
-				className={`p-r d-f ai-c h-5 w-9 m-0 px-1 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent ${
+				className={`switch-root p-r d-f ai-c h-5 w-9 m-0 px-1 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent ${
 					checked ? "bg-accent bc-accent" : "bg-page bc-border"
 				}`}
 			>
 				<Switch.Thumb
-					className={`w-4 h-3 bs-o-xs ${checked ? "bg-page ml-3" : "bg-accent-dim ml-0"}`}
+					className={`switch-thumb w-4 h-3 bs-o-xs ${checked ? "bg-page ml-3" : "bg-accent-dim ml-0"}`}
 				/>
 			</Switch.Root>
 		</div>
 	);
 }
 
+function NumberRow({
+	label,
+	value,
+	onValueChange,
+	min,
+	max,
+	step,
+	suffix,
+}: {
+	label: string;
+	value: number;
+	onValueChange: (value: number) => void;
+	min: number;
+	max: number;
+	step: number;
+	suffix: string;
+}) {
+	return (
+		<div className="d-f ai-c jc-sb g-2 px-2 pb-3">
+			<span className="fs-sm ff-m c-accent-dim us-none">{label}</span>
+			<div className="d-f ai-c bw-1 bs-s bc-border bg-page bs-i-xs">
+				<NumberField.Root
+					value={value}
+					onValueChange={(next) => {
+						if (next != null) onValueChange(next);
+					}}
+					min={min}
+					max={max}
+					step={step}
+					aria-label={label}
+					className="w-14"
+				>
+					<NumberField.Input className="ff-m fs-xs c-accent-dim bg-transparent bw-0 px-2 py-1 w-100% ta-c" />
+				</NumberField.Root>
+				<span className="fs-xs ff-m c-accent-dim us-none pr-2">{suffix}</span>
+			</div>
+		</div>
+	);
+}
+
+const REVEAL_STYLE_LABELS: Record<RevealStyle, string> = {
+	typewriter: "Typewriter",
+	natural: "Natural",
+};
+
+function VideoSettings({
+	videoStyle,
+	onVideoStyleChange,
+	videoSpeed,
+	onVideoSpeedChange,
+	videoStartDelay,
+	onVideoStartDelayChange,
+	videoHold,
+	onVideoHoldChange,
+}: {
+	videoStyle: RevealStyle;
+	onVideoStyleChange: (value: RevealStyle) => void;
+	videoSpeed: number;
+	onVideoSpeedChange: (value: number) => void;
+	videoStartDelay: number;
+	onVideoStartDelayChange: (value: number) => void;
+	videoHold: number;
+	onVideoHoldChange: (value: number) => void;
+}) {
+	return (
+		<>
+			<SectionSeparator label="Typing" />
+
+			<PickerField
+				label="Style"
+				value={videoStyle}
+				options={(Object.keys(REVEAL_STYLE_LABELS) as RevealStyle[]).map(
+					(id) => ({ id, label: REVEAL_STYLE_LABELS[id] }),
+				)}
+				onValueChange={onVideoStyleChange}
+			/>
+
+			<NumberRow
+				label="Type Speed"
+				value={videoSpeed}
+				onValueChange={onVideoSpeedChange}
+				min={10}
+				max={100}
+				step={5}
+				suffix="ms/char"
+			/>
+			<NumberRow
+				label="Start Delay"
+				value={videoStartDelay / 1000}
+				onValueChange={(value) => onVideoStartDelayChange(value * 1000)}
+				min={0}
+				max={5}
+				step={0.5}
+				suffix="s"
+			/>
+			<NumberRow
+				label="End Hold"
+				value={videoHold / 1000}
+				onValueChange={(value) => onVideoHoldChange(value * 1000)}
+				min={0}
+				max={5}
+				step={0.5}
+				suffix="s"
+			/>
+		</>
+	);
+}
+
 interface InspectorContentProps {
 	mode: CanvasMode;
 	onModeChange: (value: CanvasMode) => void;
+	videoStyle: RevealStyle;
+	onVideoStyleChange: (value: RevealStyle) => void;
+	videoSpeed: number;
+	onVideoSpeedChange: (value: number) => void;
+	videoStartDelay: number;
+	onVideoStartDelayChange: (value: number) => void;
+	videoHold: number;
+	onVideoHoldChange: (value: number) => void;
 	showTabBar: boolean;
 	onShowTabBarChange: (value: boolean) => void;
 	showStatusBar: boolean;
@@ -158,6 +276,14 @@ interface InspectorContentProps {
 function InspectorContent({
 	mode,
 	onModeChange,
+	videoStyle,
+	onVideoStyleChange,
+	videoSpeed,
+	onVideoSpeedChange,
+	videoStartDelay,
+	onVideoStartDelayChange,
+	videoHold,
+	onVideoHoldChange,
 	showTabBar,
 	onShowTabBarChange,
 	showStatusBar,
@@ -186,6 +312,19 @@ function InspectorContent({
 	return (
 		<>
 			<CanvasModeTabs mode={mode} onModeChange={onModeChange} />
+
+			{mode === "video" && (
+				<VideoSettings
+					videoStyle={videoStyle}
+					onVideoStyleChange={onVideoStyleChange}
+					videoSpeed={videoSpeed}
+					onVideoSpeedChange={onVideoSpeedChange}
+					videoStartDelay={videoStartDelay}
+					onVideoStartDelayChange={onVideoStartDelayChange}
+					videoHold={videoHold}
+					onVideoHoldChange={onVideoHoldChange}
+				/>
+			)}
 
 			<SectionSeparator label="Frame" />
 

@@ -53,8 +53,8 @@ export function CommandPalette({
 		<Dialog.Root open={open} onOpenChange={onOpenChange}>
 			{open && (
 				<Dialog.Portal keepMounted>
-					<Dialog.Backdrop className="p-f i-0 zi-80 bg-page/60" />
-					<Dialog.Popup className="p-f t-24 l-50% ttx--half zi-90 w-112 max-w-100% bg-surface bw-1 bs-s bc-border bs-o-xs">
+					<Dialog.Backdrop className="dialog-backdrop p-f i-0 zi-80 bg-page/60" />
+					<Dialog.Popup className="dialog-popup p-f t-24 l-50% ttx--half zi-90 w-112 max-w-100% bg-surface bw-1 bs-s bc-border bs-o-xs">
 						<div className="d-f ai-c g-2 px-3 py-2 bbw-1 bs-s bc-border">
 							<MagnifyingGlassIcon size={14} className="c-accent-dim" />
 							<Input

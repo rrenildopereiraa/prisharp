@@ -42,3 +42,65 @@ body {
 .drawer-popup[data-ending-style] {
 	transform: translateY(100%);
 }
+
+.dialog-backdrop {
+	transition: opacity 150ms ease;
+}
+
+.dialog-backdrop[data-starting-style],
+.dialog-backdrop[data-ending-style] {
+	opacity: 0;
+}
+
+.dialog-popup {
+	transition:
+		opacity 150ms ease,
+		transform 150ms ease;
+}
+
+.dialog-popup[data-starting-style],
+.dialog-popup[data-ending-style] {
+	opacity: 0;
+	transform: translate(-50%, -8px);
+}
+
+.select-popup,
+.popover-popup,
+.menu-popup {
+	transition:
+		opacity 120ms ease,
+		transform 120ms ease;
+	transform-origin: top;
+}
+
+.select-popup[data-starting-style],
+.select-popup[data-ending-style],
+.popover-popup[data-starting-style],
+.popover-popup[data-ending-style],
+.menu-popup[data-starting-style],
+.menu-popup[data-ending-style] {
+	opacity: 0;
+	transform: scale(0.96) translateY(-4px);
+}
+
+.tooltip-popup {
+	transition:
+		opacity 100ms ease,
+		transform 100ms ease;
+}
+
+.tooltip-popup[data-starting-style],
+.tooltip-popup[data-ending-style] {
+	opacity: 0;
+	transform: translateY(2px) scale(0.98);
+}
+
+.switch-root {
+	transition:
+		background-color 150ms ease,
+		border-color 150ms ease;
+}
+
+.switch-thumb {
+	transition: margin-left 150ms ease;
+}

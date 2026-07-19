@@ -44,7 +44,7 @@ export function ExportButton({
 				</Menu.Trigger>
 				<Menu.Portal keepMounted>
 					<Menu.Positioner sideOffset={8} align="end" className="zi-90 ow-0">
-						<Menu.Popup className="py-1 w-28 bw-1 bc-border bg-surface bs-o-xs">
+						<Menu.Popup className="menu-popup py-1 w-28 bw-1 bc-border bg-surface bs-o-xs">
 							{(Object.keys(FORMAT_LABELS) as ExportFormat[]).map((key) => (
 								<Menu.Item
 									key={key}

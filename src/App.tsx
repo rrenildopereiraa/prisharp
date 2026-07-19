@@ -15,6 +15,7 @@ import { RADIUS_MAX, RADIUS_MIN } from "./components/radius-control";
 import { StatusBar } from "./components/status-bar";
 import { useToast } from "./components/toast-provider";
 import {
+	extensionForMimeType,
 	isAnimatedExportSupported,
 	recordAnimatedVideo,
 } from "./lib/animated-export";
@@ -44,7 +45,7 @@ function App() {
 		];
 	});
 	const [activeId, setActiveId] = useState(() => documents[0].id);
-	const [mode, setMode] = useState<CanvasMode>("static");
+	const [mode, setMode] = useState<CanvasMode>("image");
 	const [format, setFormat] = useState<ExportFormat>("png");
 	const [exporting, setExporting] = useState(false);
 	const [showBoundingBox, setShowBoundingBox] = useState(true);
@@ -238,10 +239,15 @@ function App() {
 				codeEl: codeRef.current,
 				code: active.code,
 				background: settings.colors.surface,
+				msPerChar: settings.videoSpeed,
+				startDelayMs: settings.videoStartDelay,
+				holdMs: settings.videoHold,
+				style: settings.videoStyle,
 			});
 			const url = URL.createObjectURL(blob);
 			const link = document.createElement("a");
-			link.download = `${active.fileName || "prisharp"}.webm`;
+			const extension = extensionForMimeType(blob.type);
+			link.download = `${active.fileName || "prisharp"}.${extension}`;
 			link.href = url;
 			link.click();
 			URL.revokeObjectURL(url);
@@ -284,7 +290,7 @@ function App() {
 	});
 	useHotkey("Mod+S", (event) => {
 		event.preventDefault();
-		if (mode === "animated") {
+		if (mode === "video") {
 			handleExportVideo();
 		} else {
 			handleExport();
@@ -374,6 +380,16 @@ function App() {
 					onOpenChange={setInspectorOpen}
 					mode={mode}
 					onModeChange={setMode}
+					videoStyle={settings.videoStyle}
+					onVideoStyleChange={(value) => setSettings({ videoStyle: value })}
+					videoSpeed={settings.videoSpeed}
+					onVideoSpeedChange={(value) => setSettings({ videoSpeed: value })}
+					videoStartDelay={settings.videoStartDelay}
+					onVideoStartDelayChange={(value) =>
+						setSettings({ videoStartDelay: value })
+					}
+					videoHold={settings.videoHold}
+					onVideoHoldChange={(value) => setSettings({ videoHold: value })}
 					showTabBar={settings.tabBar}
 					onShowTabBarChange={(value) => setSettings({ tabBar: value })}
 					showStatusBar={settings.statusBar}

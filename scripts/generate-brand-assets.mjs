@@ -11,7 +11,9 @@ function markSvg({ size = 100, background = null } = {}) {
 	return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 100 100">${bg}<polygon points="${MARK_OUTER}" fill="#2563eb" stroke="#1d4ed8" stroke-width="1"/><polygon points="${MARK_INNER}" fill="#93b4f5"/></svg>`;
 }
 
-function ogImageSvg({ tagline = "Beautiful code, screenshots and videos." } = {}) {
+function ogImageSvg({
+	tagline = "Beautiful code, screenshots and videos.",
+} = {}) {
 	const W = 1200;
 	const H = 630;
 	const FONT = "JetBrains Mono, Consolas, monospace";
@@ -38,7 +40,8 @@ function ogImageSvg({ tagline = "Beautiful code, screenshots and videos." } = {}
 	const wordmarkBaselineY = markY + markSize / 2 + titleFontSize * 0.35;
 
 	const taglineX = (W - taglineWidth) / 2;
-	const taglineBaselineY = blockTop + lockupHeight + taglineGap + taglineFontSize * 0.75;
+	const taglineBaselineY =
+		blockTop + lockupHeight + taglineGap + taglineFontSize * 0.75;
 
 	const gridSize = 48;
 	let grid = "";

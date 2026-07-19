@@ -2,7 +2,7 @@ import type { LanguageId } from "./highlighter";
 
 export type BackgroundPattern = "stripes-right" | "stripes-left";
 
-export type CanvasMode = "static" | "animated";
+export type CanvasMode = "image" | "video";
 
 export const MAX_DOCUMENTS = 5;
 
