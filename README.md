@@ -1,8 +1,6 @@
 # Prisharp
 
-Beautiful code screenshots, instantly.
-
-Paste your code, pick a language, and export a polished screenshot.
+Beautiful code screenshots & videos.
 
 ## Tech stack
 
