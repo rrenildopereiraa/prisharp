@@ -7,17 +7,11 @@ import {
 	LinkSimpleIcon,
 	MagnifyingGlassIcon,
 	PlusIcon,
-	SpinnerIcon,
-	VideoCameraIcon,
 	XIcon,
 } from "@phosphor-icons/react";
 import { useState } from "react";
 import { modKey } from "../lib/platform";
-import {
-	type CanvasMode,
-	type EditorDocument,
-	MAX_DOCUMENTS,
-} from "../lib/types";
+import { type EditorDocument, MAX_DOCUMENTS } from "../lib/types";
 import { ExportButton } from "./export-button";
 import type { ExportFormat } from "./format-picker";
 import { Tooltip } from "./tooltip";
@@ -84,9 +78,6 @@ export function EditorTabBar({
 	exporting,
 	format,
 	onFormatChange,
-	mode,
-	onExportVideo,
-	exportingVideo,
 }: {
 	documents: EditorDocument[];
 	activeId: string;
@@ -100,9 +91,6 @@ export function EditorTabBar({
 	exporting: boolean;
 	format: ExportFormat;
 	onFormatChange: (value: ExportFormat) => void;
-	mode: CanvasMode;
-	onExportVideo: () => void;
-	exportingVideo: boolean;
 }) {
 	const [copied, setCopied] = useState(false);
 	const [shared, setShared] = useState(false);
@@ -212,30 +200,12 @@ export function EditorTabBar({
 					<span className="d-none @lg:d-if">{copied ? "Copied" : "Copy"}</span>
 				</Button>
 
-				{mode === "video" ? (
-					<Button
-						onClick={onExportVideo}
-						disabled={exportingVideo}
-						focusableWhenDisabled
-						className="d-f ai-c jc-c g-2 w-24 h-7 px-2 bg-accent c-page fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent"
-					>
-						{exportingVideo ? (
-							<span className="d-f">
-								<SpinnerIcon size={14} />
-							</span>
-						) : (
-							<VideoCameraIcon size={14} weight="fill" />
-						)}
-						<span>{exportingVideo ? "Recording" : "Export"}</span>
-					</Button>
-				) : (
-					<ExportButton
-						exporting={exporting}
-						onExport={onExport}
-						format={format}
-						onFormatChange={onFormatChange}
-					/>
-				)}
+				<ExportButton
+					exporting={exporting}
+					onExport={onExport}
+					format={format}
+					onFormatChange={onFormatChange}
+				/>
 			</div>
 		</header>
 	);

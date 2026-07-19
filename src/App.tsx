@@ -5,7 +5,7 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { Canvas } from "./components/canvas";
 import { CommandPalette } from "./components/command-palette";
 import { EditorTabBar } from "./components/editor-tabs";
-import type { ExportFormat } from "./components/format-picker";
+import { type ExportFormat, isVideoFormat } from "./components/format-picker";
 import {
 	FONT_FAMILIES,
 	type FontFamilyId,
@@ -25,7 +25,6 @@ import { loadCustomTheme, THEME_FRAME_COLORS } from "./lib/highlighter";
 import { randomSnippet } from "./lib/snippets";
 import {
 	type BackgroundPattern,
-	type CanvasMode,
 	type CornerRadii,
 	type EditorDocument,
 	MAX_DOCUMENTS,
@@ -45,7 +44,6 @@ function App() {
 		];
 	});
 	const [activeId, setActiveId] = useState(() => documents[0].id);
-	const [mode, setMode] = useState<CanvasMode>("image");
 	const [format, setFormat] = useState<ExportFormat>("png");
 	const [exporting, setExporting] = useState(false);
 	const [showBoundingBox, setShowBoundingBox] = useState(true);
@@ -56,7 +54,6 @@ function App() {
 		history: "replace",
 	});
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
-	const [exportingVideo, setExportingVideo] = useState(false);
 	const frameRef = useRef<HTMLDivElement>(null);
 	const codeRef = useRef<HTMLDivElement>(null);
 	const toast = useToast();
@@ -223,7 +220,8 @@ function App() {
 	}
 
 	async function handleExportVideo() {
-		if (!frameRef.current || !codeRef.current || exportingVideo) return;
+		if (!frameRef.current || !codeRef.current || exporting) return;
+		if (!isVideoFormat(format)) return;
 		if (!isAnimatedExportSupported()) {
 			toast.add({
 				title: "Not supported",
@@ -232,13 +230,14 @@ function App() {
 			});
 			return;
 		}
-		setExportingVideo(true);
+		setExporting(true);
 		try {
 			const blob = await recordAnimatedVideo({
 				frameEl: frameRef.current,
 				codeEl: codeRef.current,
 				code: active.code,
 				background: settings.colors.surface,
+				format,
 				msPerChar: settings.videoSpeed,
 				startDelayMs: settings.videoStartDelay,
 				holdMs: settings.videoHold,
@@ -251,7 +250,15 @@ function App() {
 			link.href = url;
 			link.click();
 			URL.revokeObjectURL(url);
-			toast.add({ title: "Exported", type: "success" });
+			if (extension === format) {
+				toast.add({ title: "Exported", type: "success" });
+			} else {
+				toast.add({
+					title: `Exported as ${extension.toUpperCase()}`,
+					description: `${format.toUpperCase()} isn't supported in this browser.`,
+					type: "warning",
+				});
+			}
 		} catch (_error) {
 			toast.add({
 				title: "Export failed",
@@ -259,7 +266,15 @@ function App() {
 				type: "error",
 			});
 		} finally {
-			setExportingVideo(false);
+			setExporting(false);
+		}
+	}
+
+	async function handleExportClick() {
+		if (isVideoFormat(format)) {
+			await handleExportVideo();
+		} else {
+			await handleExport();
 		}
 	}
 
@@ -290,11 +305,7 @@ function App() {
 	});
 	useHotkey("Mod+S", (event) => {
 		event.preventDefault();
-		if (mode === "video") {
-			handleExportVideo();
-		} else {
-			handleExport();
-		}
+		handleExportClick();
 	});
 	useHotkey("Mod+Shift+C", (event) => {
 		event.preventDefault();
@@ -326,7 +337,7 @@ function App() {
 			navigator.clipboard.writeText(active.code);
 			toast.add({ title: "Copied" });
 		},
-		onExport: handleExport,
+		onExport: handleExportClick,
 		onCopyImage: handleCopyImage,
 		onNewDocument: addDocument,
 		onCloseDocument: () => closeDocument(activeId),
@@ -334,7 +345,7 @@ function App() {
 	});
 
 	return (
-		<div className="d-f fd-c h-vh o-h bg-page">
+		<div className="app-root d-f fd-c h-vh o-h bg-page">
 			<EditorTabBar
 				documents={documents}
 				activeId={activeId}
@@ -343,14 +354,11 @@ function App() {
 				onAdd={addDocument}
 				onOpenPalette={() => setPaletteOpen(true)}
 				onCopy={handleCopyImage}
-				onExport={handleExport}
+				onExport={handleExportClick}
 				onShare={handleShare}
 				exporting={exporting}
 				format={format}
 				onFormatChange={setFormat}
-				mode={mode}
-				onExportVideo={handleExportVideo}
-				exportingVideo={exportingVideo}
 			/>
 
 			<div className="f-1 d-f min-h-0">
@@ -378,8 +386,7 @@ function App() {
 				<Inspector
 					open={inspectorOpen}
 					onOpenChange={setInspectorOpen}
-					mode={mode}
-					onModeChange={setMode}
+					format={format}
 					videoStyle={settings.videoStyle}
 					onVideoStyleChange={(value) => setSettings({ videoStyle: value })}
 					videoSpeed={settings.videoSpeed}

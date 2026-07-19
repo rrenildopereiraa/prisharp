@@ -3,12 +3,13 @@ import { Drawer } from "@base-ui/react/drawer";
 import { NumberField } from "@base-ui/react/number-field";
 import { Separator } from "@base-ui/react/separator";
 import { Switch } from "@base-ui/react/switch";
-import { Tabs } from "@base-ui/react/tabs";
 import { UploadSimpleIcon, XIcon } from "@phosphor-icons/react";
 import type { RevealStyle } from "../lib/animated-export";
 import { THEMES } from "../lib/highlighter";
-import type { BackgroundPattern, CanvasMode, CornerRadii } from "../lib/types";
+import type { BackgroundPattern, CornerRadii } from "../lib/types";
 import { ColorInput } from "./color-input";
+import type { ExportFormat } from "./format-picker";
+import { isVideoFormat } from "./format-picker";
 import type { FrameColors } from "./frame";
 import { PickerField } from "./picker-field";
 import { RadiusControl } from "./radius-control";
@@ -52,44 +53,6 @@ const FRAME_COLOR_FIELDS: { key: keyof FrameColors; label: string }[] = [
 	{ key: "statusBarBg", label: "Status Bar" },
 	{ key: "statusBarText", label: "Status Bar Text" },
 ];
-
-function CanvasModeTabs({
-	mode,
-	onModeChange,
-}: {
-	mode: CanvasMode;
-	onModeChange: (value: CanvasMode) => void;
-}) {
-	return (
-		<div className="mt--3 mx--3 mb-3">
-			<Tabs.Root
-				value={mode}
-				onValueChange={(value) => {
-					if (value) onModeChange(value as CanvasMode);
-				}}
-			>
-				<Tabs.List className="d-f">
-					<Tabs.Tab
-						value="image"
-						className={(state) =>
-							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p brw-1 bs-s bc-border fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-surface c-accent-dim fw-700" : "bg-page c-accent-dim bbw-1 bc-border"}`
-						}
-					>
-						Image
-					</Tabs.Tab>
-					<Tabs.Tab
-						value="video"
-						className={(state) =>
-							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-surface c-accent-dim fw-700" : "bg-page c-accent-dim bbw-1 bc-border"}`
-						}
-					>
-						Video
-					</Tabs.Tab>
-				</Tabs.List>
-			</Tabs.Root>
-		</div>
-	);
-}
 
 function SectionSeparator({ label }: { label: string }) {
 	return (
@@ -237,8 +200,7 @@ function VideoSettings({
 }
 
 interface InspectorContentProps {
-	mode: CanvasMode;
-	onModeChange: (value: CanvasMode) => void;
+	format: ExportFormat;
 	videoStyle: RevealStyle;
 	onVideoStyleChange: (value: RevealStyle) => void;
 	videoSpeed: number;
@@ -274,8 +236,7 @@ interface InspectorContentProps {
 }
 
 function InspectorContent({
-	mode,
-	onModeChange,
+	format,
 	videoStyle,
 	onVideoStyleChange,
 	videoSpeed,
@@ -311,9 +272,7 @@ function InspectorContent({
 }: InspectorContentProps) {
 	return (
 		<>
-			<CanvasModeTabs mode={mode} onModeChange={onModeChange} />
-
-			{mode === "video" && (
+			{isVideoFormat(format) && (
 				<VideoSettings
 					videoStyle={videoStyle}
 					onVideoStyleChange={onVideoStyleChange}

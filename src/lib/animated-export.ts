@@ -1,6 +1,8 @@
 import gsap from "gsap";
 import { toCanvas } from "html-to-image";
 
+import type { VideoFormat } from "../components/format-picker";
+
 export type RevealStyle = "typewriter" | "natural";
 
 export interface RecordAnimatedVideoOptions {
@@ -8,20 +10,18 @@ export interface RecordAnimatedVideoOptions {
 	codeEl: HTMLElement;
 	code: string;
 	background: string;
+	format: VideoFormat;
 	msPerChar?: number;
 	startDelayMs?: number;
 	holdMs?: number;
 	style?: RevealStyle;
 }
 
-function pickMimeType() {
-	const candidates = [
-		"video/mp4;codecs=avc1",
-		"video/mp4",
-		"video/webm;codecs=vp9",
-		"video/webm;codecs=vp8",
-		"video/webm",
-	];
+function pickMimeType(preferred: VideoFormat) {
+	const webm = ["video/webm;codecs=vp9", "video/webm;codecs=vp8", "video/webm"];
+	const mp4 = ["video/mp4;codecs=avc1", "video/mp4"];
+	const candidates =
+		preferred === "mp4" ? [...mp4, ...webm] : [...webm, ...mp4];
 	for (const type of candidates) {
 		if (MediaRecorder.isTypeSupported(type)) return type;
 	}
@@ -82,6 +82,7 @@ export async function recordAnimatedVideo({
 	codeEl,
 	code,
 	background,
+	format,
 	msPerChar = 35,
 	startDelayMs = 800,
 	holdMs = 2800,
@@ -156,7 +157,7 @@ export async function recordAnimatedVideo({
 	draw(0);
 
 	const stream = recordCanvas.captureStream(30);
-	const mimeType = pickMimeType();
+	const mimeType = pickMimeType(format);
 	const recorder = new MediaRecorder(stream, { mimeType });
 	const chunks: Blob[] = [];
 	recorder.ondataavailable = (event) => {
