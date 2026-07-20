@@ -46,7 +46,7 @@ export function BottomSheet({
 							</Drawer.Title>
 							<Drawer.Close
 								aria-label={`Close ${title.toLowerCase()}`}
-								className="d-f ai-c jc-c w-6 h-6 c-accent-dim bg-transparent bw-0 c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+								className="d-f ai-c jc-c w-6 h-6 p-0 c-accent-dim bg-transparent bw-0 c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
 							>
 								<XIcon size={14} weight="bold" />
 							</Drawer.Close>

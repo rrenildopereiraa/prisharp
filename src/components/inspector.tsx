@@ -279,7 +279,6 @@ interface InspectorContentProps {
 
 function InspectorContent({
 	format,
-	onCategoryChange,
 	videoStyle,
 	onVideoStyleChange,
 	videoSpeed,
@@ -315,11 +314,6 @@ function InspectorContent({
 }: InspectorContentProps) {
 	return (
 		<>
-			<CategoryTabs
-				category={isVideoFormat(format) ? "video" : "image"}
-				onCategoryChange={onCategoryChange}
-			/>
-
 			<OptionSwitch
 				label="Bounding Box"
 				checked={showBoundingBox}
@@ -472,13 +466,28 @@ export function Inspector({
 	onLanguageChange: (value: LanguageId) => void;
 	onRandomize: () => void;
 }) {
+	const category: FormatCategory = isVideoFormat(contentProps.format)
+		? "video"
+		: "image";
+
 	return (
 		<>
 			<aside className="d-none @lg:d-f fd-c w-72 fs-0 min-h-0 oy-auto blw-1 bs-s bc-border bg-surface p-3">
+				<CategoryTabs
+					category={category}
+					onCategoryChange={contentProps.onCategoryChange}
+				/>
 				<InspectorContent {...contentProps} />
 			</aside>
 
 			<BottomSheet open={open} onOpenChange={onOpenChange} title="Settings">
+				<CategoryTabs
+					category={category}
+					onCategoryChange={contentProps.onCategoryChange}
+				/>
+
+				<SectionSeparator label="Quick Actions" />
+
 				<PickerField
 					label="Language"
 					value={language}

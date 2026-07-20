@@ -27,7 +27,7 @@ export function ColorInput({
 				/>
 				<Popover.Root>
 					<Popover.Trigger
-						className="w-5 bw-1 bs-s bc-border fs-0 c-p fv:os-s fv:oo-2 fv:oc-accent"
+						className="w-5 h-5 bw-1 bs-s bc-border fs-0 c-p fv:os-s fv:oo-2 fv:oc-accent"
 						style={{ backgroundColor: value }}
 						aria-label={`${label} color picker`}
 					/>
