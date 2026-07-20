@@ -1,11 +1,7 @@
 import { Button } from "@base-ui/react/button";
 import { Menu } from "@base-ui/react/menu";
 import { Separator } from "@base-ui/react/separator";
-import {
-	CaretDownIcon,
-	DownloadSimpleIcon,
-	SpinnerIcon,
-} from "@phosphor-icons/react";
+import { CaretDownIcon, DownloadSimpleIcon } from "@phosphor-icons/react";
 import {
 	type ExportFormat,
 	FORMAT_LABELS,
@@ -37,13 +33,11 @@ function FormatMenuItem({
 
 export function ExportButton({
 	exporting,
-	exportProgress,
 	onExport,
 	format,
 	onFormatChange,
 }: {
 	exporting: boolean;
-	exportProgress: number | null;
 	onExport: () => void;
 	format: ExportFormat;
 	onFormatChange: (value: ExportFormat) => void;
@@ -51,10 +45,6 @@ export function ExportButton({
 	const recording = exporting && isVideoFormat(format);
 
 	if (exporting) {
-		const percent =
-			recording && exportProgress != null
-				? ` ${Math.round(exportProgress * 100)}%`
-				: "";
 		return (
 			<Button
 				disabled
@@ -65,10 +55,7 @@ export function ExportButton({
 						: "bg-accent c-page bw-0"
 				}`}
 			>
-				<span className="d-f">
-					<SpinnerIcon size={14} />
-				</span>
-				<span>{recording ? `Recording${percent}` : "Exporting"}</span>
+				<span>{recording ? "Recording" : "Exporting"}</span>
 			</Button>
 		);
 	}

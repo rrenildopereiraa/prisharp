@@ -54,7 +54,6 @@ function App() {
 	const [lastImageFormat, setLastImageFormat] = useState<ImageFormat>("png");
 	const [lastVideoFormat, setLastVideoFormat] = useState<VideoFormat>("webm");
 	const [exporting, setExporting] = useState(false);
-	const [exportProgress, setExportProgress] = useState<number | null>(null);
 	const [showBoundingBox, setShowBoundingBox] = useState(true);
 	const [themeIsRandom, setThemeIsRandom] = useState(false);
 	const [paletteOpen, setPaletteOpen] = useState(false);
@@ -259,7 +258,6 @@ function App() {
 			return;
 		}
 		setExporting(true);
-		setExportProgress(0);
 		try {
 			const blob = await recordAnimatedVideo({
 				frameEl: frameRef.current,
@@ -271,7 +269,6 @@ function App() {
 				startDelayMs: settings.videoStartDelay,
 				holdMs: settings.videoHold,
 				style: settings.videoStyle,
-				onProgress: setExportProgress,
 			});
 			const url = URL.createObjectURL(blob);
 			const link = document.createElement("a");
@@ -301,7 +298,6 @@ function App() {
 			});
 		} finally {
 			setExporting(false);
-			setExportProgress(null);
 		}
 	}
 
@@ -396,7 +392,6 @@ function App() {
 				onExport={handleExportClick}
 				onShare={handleShare}
 				exporting={exporting}
-				exportProgress={exportProgress}
 				format={format}
 				onFormatChange={handleFormatChange}
 			/>

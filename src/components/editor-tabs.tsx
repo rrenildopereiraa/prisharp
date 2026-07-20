@@ -76,7 +76,6 @@ export function EditorTabBar({
 	onExport,
 	onShare,
 	exporting,
-	exportProgress,
 	format,
 	onFormatChange,
 }: {
@@ -90,7 +89,6 @@ export function EditorTabBar({
 	onExport: () => void;
 	onShare: () => void;
 	exporting: boolean;
-	exportProgress: number | null;
 	format: ExportFormat;
 	onFormatChange: (value: ExportFormat) => void;
 }) {
@@ -204,7 +202,6 @@ export function EditorTabBar({
 
 				<ExportButton
 					exporting={exporting}
-					exportProgress={exportProgress}
 					onExport={onExport}
 					format={format}
 					onFormatChange={onFormatChange}
