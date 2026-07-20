@@ -86,7 +86,7 @@ export async function recordAnimatedVideo({
 	msPerChar = 35,
 	startDelayMs = 800,
 	holdMs = 2800,
-	style = "typewriter",
+	style = "natural",
 }: RecordAnimatedVideoOptions): Promise<Blob> {
 	if (!isAnimatedExportSupported()) {
 		throw new Error("Animated export isn't supported in this browser.");

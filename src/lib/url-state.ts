@@ -56,7 +56,7 @@ export const settingsParsers = {
 	videoStyle: parseAsStringEnum<RevealStyle>([
 		"typewriter",
 		"natural",
-	]).withDefault("typewriter"),
+	]).withDefault("natural"),
 	videoSpeed: parseAsInteger.withDefault(35),
 	videoStartDelay: parseAsInteger.withDefault(800),
 	videoHold: parseAsInteger.withDefault(2800),

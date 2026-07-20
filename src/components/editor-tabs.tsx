@@ -31,7 +31,7 @@ function TabItem({
 }) {
 	return (
 		<div
-			className={`d-f ai-c g-2 pl-3 pr-2 py-2 brw-1 bs-s bc-border c-p ${
+			className={`tab-enter d-f ai-c g-2 pl-3 pr-2 py-2 brw-1 bs-s bc-border c-p ${
 				isActive ? "bg-page" : "bg-transparent h:bg-page"
 			}`}
 		>

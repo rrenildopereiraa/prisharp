@@ -139,9 +139,11 @@ export const Frame = forwardRef<
 						borderRadius,
 					}}
 				>
-					<div className="f-1 min-w-0">
-						{showTabBar && (
-							<div className="o-h">
+					<div className="f-1 min-w-0 min-h-0">
+						<div
+							className={`frame-collapsible ${showTabBar ? "frame-collapsible-open" : ""}`}
+						>
+							<div className="o-h min-h-0">
 								<div
 									className="d-f ai-c bbw-1 bs-s"
 									style={{
@@ -169,7 +171,7 @@ export const Frame = forwardRef<
 									</div>
 								</div>
 							</div>
-						)}
+						</div>
 
 						<div className="p-4">
 							<CodeEditor
@@ -183,8 +185,10 @@ export const Frame = forwardRef<
 							/>
 						</div>
 
-						{showStatusBar && (
-							<div className="o-h">
+						<div
+							className={`frame-collapsible ${showStatusBar ? "frame-collapsible-open" : ""}`}
+						>
+							<div className="o-h min-h-0">
 								<div
 									className="d-f ai-c jc-fe px-4 py-2 btw-1 bs-s"
 									style={{
@@ -200,7 +204,7 @@ export const Frame = forwardRef<
 									</span>
 								</div>
 							</div>
-						)}
+						</div>
 					</div>
 				</div>
 			</div>
