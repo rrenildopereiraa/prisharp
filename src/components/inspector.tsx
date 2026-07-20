@@ -3,15 +3,21 @@ import { NumberField } from "@base-ui/react/number-field";
 import { Separator } from "@base-ui/react/separator";
 import { Switch } from "@base-ui/react/switch";
 import { Tabs } from "@base-ui/react/tabs";
-import { UploadSimpleIcon } from "@phosphor-icons/react";
+import {
+	CaretRightIcon,
+	ShuffleIcon,
+	UploadSimpleIcon,
+} from "@phosphor-icons/react";
+import { useState } from "react";
 import type { RevealStyle } from "../lib/animated-export";
-import { THEMES } from "../lib/highlighter";
+import { type LanguageId, THEMES } from "../lib/highlighter";
 import type { BackgroundPattern, CornerRadii } from "../lib/types";
 import { BottomSheet } from "./bottom-sheet";
 import { ColorInput } from "./color-input";
 import type { ExportFormat } from "./format-picker";
 import { isVideoFormat } from "./format-picker";
 import type { FrameColors } from "./frame";
+import { LanguagePicker } from "./language-picker";
 import { PickerField } from "./picker-field";
 import { RadiusControl } from "./radius-control";
 
@@ -461,11 +467,19 @@ function InspectorContent({
 export function Inspector({
 	open,
 	onOpenChange,
+	language,
+	onLanguageChange,
+	onRandomize,
 	...contentProps
 }: InspectorContentProps & {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
+	language: LanguageId;
+	onLanguageChange: (value: LanguageId) => void;
+	onRandomize: () => void;
 }) {
+	const [quickActionsOpen, setQuickActionsOpen] = useState(false);
+
 	return (
 		<>
 			<aside className="d-none @lg:d-f fd-c w-72 fs-0 min-h-0 oy-auto blw-1 bs-s bc-border bg-surface p-3">
@@ -473,7 +487,41 @@ export function Inspector({
 			</aside>
 
 			<BottomSheet open={open} onOpenChange={onOpenChange} title="Settings">
+				<Button
+					onClick={() => setQuickActionsOpen(true)}
+					className="d-f ai-c jc-sb g-2 w-100% px-2 py-2 mb-3 bw-1 bs-s bc-border bg-transparent c-accent-dim fs-sm ff-m us-none c-p h:c-accent h:bc-accent"
+				>
+					<span>Language &amp; Randomize</span>
+					<CaretRightIcon size={12} weight="bold" />
+				</Button>
+
 				<InspectorContent {...contentProps} />
+
+				<BottomSheet
+					open={quickActionsOpen}
+					onOpenChange={setQuickActionsOpen}
+					title="Quick Actions"
+					showHandle={false}
+				>
+					<div className="d-f fd-c g-3">
+						<div className="d-f fd-c g-1 px-2">
+							<span className="fs-sm ff-m c-accent-dim us-none">Language</span>
+							<LanguagePicker
+								value={language}
+								onValueChange={onLanguageChange}
+							/>
+						</div>
+						<div className="px-2">
+							<Button
+								onClick={onRandomize}
+								className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-s bc-border bg-transparent c-accent-dim fs-sm ff-m us-none c-p h:c-accent h:bc-accent"
+							>
+								<ShuffleIcon size={13} weight="bold" />
+								Randomize
+							</Button>
+						</div>
+					</div>
+				</BottomSheet>
 			</BottomSheet>
 		</>
 	);

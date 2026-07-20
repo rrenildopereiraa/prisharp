@@ -409,6 +409,9 @@ function App() {
 				<Inspector
 					open={inspectorOpen}
 					onOpenChange={setInspectorOpen}
+					language={active.language}
+					onLanguageChange={(value) => updateActive({ language: value })}
+					onRandomize={randomizeAll}
 					format={format}
 					onCategoryChange={handleCategoryChange}
 					videoStyle={settings.videoStyle}

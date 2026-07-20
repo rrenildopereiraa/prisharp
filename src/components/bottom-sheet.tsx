@@ -1,5 +1,5 @@
 import { Drawer } from "@base-ui/react/drawer";
-import { CaretUpIcon, XIcon } from "@phosphor-icons/react";
+import { XIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
 
 export function BottomSheet({
@@ -7,11 +7,13 @@ export function BottomSheet({
 	onOpenChange,
 	title,
 	children,
+	showHandle = true,
 }: {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	title: string;
 	children: ReactNode;
+	showHandle?: boolean;
 }) {
 	return (
 		<Drawer.Root
@@ -21,17 +23,17 @@ export function BottomSheet({
 			snapPoints={[0.5, 1]}
 			defaultSnapPoint={1}
 		>
-			<Drawer.SwipeArea className="bottom-sheet-handle @lg:d-none p-f l-50% ttx--half zi-10 w-16 h-8">
-				<button
-					type="button"
-					onClick={() => onOpenChange(true)}
-					aria-label={`Open ${title.toLowerCase()}`}
-					aria-expanded={open}
-					className="d-f ai-c jc-c w-100% h-100% bg-surface bw-1 bs-s bc-border c-accent-dim c-p h:c-accent"
-				>
-					<CaretUpIcon size={14} weight="bold" />
-				</button>
-			</Drawer.SwipeArea>
+			{showHandle && (
+				<Drawer.SwipeArea className="bottom-sheet-handle @lg:d-none p-f l-50% ttx--half zi-10 w-16 h-8">
+					<button
+						type="button"
+						onClick={() => onOpenChange(true)}
+						aria-label={`Open ${title.toLowerCase()}`}
+						aria-expanded={open}
+						className="w-100% h-100% bg-transparent bw-1 bs-d bc-border c-p h:bc-accent"
+					/>
+				</Drawer.SwipeArea>
+			)}
 
 			<Drawer.Portal>
 				<Drawer.Backdrop className="drawer-backdrop @lg:d-none p-f i-0 zi-80 bg-page/60" />

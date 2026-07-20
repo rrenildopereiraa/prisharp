@@ -45,7 +45,7 @@ export function StatusBar({
 	}
 
 	return (
-		<footer className="d-f ai-c btw-1 bs-s bc-border bg-surface">
+		<footer className="d-none @lg:d-f ai-c btw-1 bs-s bc-border bg-surface">
 			<LanguagePicker value={language} onValueChange={onLanguageChange} />
 
 			<div className="d-none @lg:d-f ai-c">
