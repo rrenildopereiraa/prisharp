@@ -5,14 +5,13 @@ import { Switch } from "@base-ui/react/switch";
 import { Tabs } from "@base-ui/react/tabs";
 import { ShuffleIcon, UploadSimpleIcon } from "@phosphor-icons/react";
 import type { RevealStyle } from "../lib/animated-export";
-import { type LanguageId, THEMES } from "../lib/highlighter";
+import { LANGUAGES, type LanguageId, THEMES } from "../lib/highlighter";
 import type { BackgroundPattern, CornerRadii } from "../lib/types";
 import { BottomSheet } from "./bottom-sheet";
 import { ColorInput } from "./color-input";
 import type { ExportFormat } from "./format-picker";
 import { isVideoFormat } from "./format-picker";
 import type { FrameColors } from "./frame";
-import { LanguagePicker } from "./language-picker";
 import { PickerField } from "./picker-field";
 import { RadiusControl } from "./radius-control";
 
@@ -480,15 +479,22 @@ export function Inspector({
 			</aside>
 
 			<BottomSheet open={open} onOpenChange={onOpenChange} title="Settings">
-				<div className="d-f ai-c g-2 pb-3">
-					<div className="f-1 d-f bw-1 bs-s bc-border">
-						<LanguagePicker value={language} onValueChange={onLanguageChange} />
-					</div>
+				<PickerField
+					label="Language"
+					value={language}
+					options={Object.entries(LANGUAGES).map(([id, label]) => ({
+						id: id as LanguageId,
+						label,
+					}))}
+					onValueChange={onLanguageChange}
+				/>
+
+				<div className="px-2 pb-4">
 					<Button
 						onClick={onRandomize}
-						className="d-f ai-c jc-c g-1 px-3 py-1 bw-1 bs-s bc-border bg-transparent c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bc-accent"
+						className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bc-border bg-transparent c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bc-accent fv:os-s fv:oo-2 fv:oc-accent"
 					>
-						<ShuffleIcon size={13} weight="bold" />
+						<ShuffleIcon size={14} weight="bold" />
 						Randomize
 					</Button>
 				</div>
