@@ -7,13 +7,11 @@ export function BottomSheet({
 	onOpenChange,
 	title,
 	children,
-	showHandle = true,
 }: {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	title: string;
 	children: ReactNode;
-	showHandle?: boolean;
 }) {
 	return (
 		<Drawer.Root
@@ -23,17 +21,17 @@ export function BottomSheet({
 			snapPoints={[0.5, 1]}
 			defaultSnapPoint={1}
 		>
-			{showHandle && (
-				<Drawer.SwipeArea className="bottom-sheet-handle @lg:d-none p-f l-50% ttx--half zi-10 w-16 h-8">
-					<button
-						type="button"
-						onClick={() => onOpenChange(true)}
-						aria-label={`Open ${title.toLowerCase()}`}
-						aria-expanded={open}
-						className="w-100% h-100% bg-transparent bw-1 bs-d bc-border c-p h:bc-accent"
-					/>
-				</Drawer.SwipeArea>
-			)}
+			<Drawer.SwipeArea className="bottom-sheet-handle @lg:d-none p-f l-0 r-0 zi-10 h-8">
+				<button
+					type="button"
+					onClick={() => onOpenChange(true)}
+					aria-label={`Open ${title.toLowerCase()}`}
+					aria-expanded={open}
+					className="d-f ai-c jc-c w-100% h-100% bg-surface btw-1 bs-d bc-border c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bg-page"
+				>
+					Swipe up for {title}
+				</button>
+			</Drawer.SwipeArea>
 
 			<Drawer.Portal>
 				<Drawer.Backdrop className="drawer-backdrop @lg:d-none p-f i-0 zi-80 bg-page/60" />
