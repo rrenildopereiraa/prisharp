@@ -7,7 +7,7 @@ import {
 	ShuffleIcon,
 	SunIcon,
 } from "@phosphor-icons/react";
-import { useChromeTheme } from "../lib/chrome-theme";
+import { useChromeTheme, useHover } from "../lib/chrome-theme";
 import { type LanguageId, THEMES } from "../lib/highlighter";
 import type { BackgroundPattern } from "../lib/types";
 import { LanguagePicker } from "./language-picker";
@@ -40,6 +40,14 @@ export function StatusBar({
 	const { mode, colors, toggle } = useChromeTheme();
 	const PATTERNS = Object.keys(PATTERN_LABELS) as BackgroundPattern[];
 	const THEME_IDS = Object.keys(THEMES);
+	const { hovered: patternHovered, hoverHandlers: patternHoverHandlers } =
+		useHover();
+	const { hovered: themeHovered, hoverHandlers: themeHoverHandlers } =
+		useHover();
+	const { hovered: randomizeHovered, hoverHandlers: randomizeHoverHandlers } =
+		useHover();
+	const { hovered: darkModeHovered, hoverHandlers: darkModeHoverHandlers } =
+		useHover();
 
 	function cycleBackground() {
 		const idx = PATTERNS.indexOf(background);
@@ -63,8 +71,12 @@ export function StatusBar({
 
 				<Button
 					onClick={cycleBackground}
-					className="w-28 ta-c py-1 bg-transparent fs-xs ff-m us-none c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
-					style={{ color: colors.accentDim }}
+					className="w-28 ta-c py-1 bg-transparent fs-xs ff-m us-none c-p fv:os-s fv:oo--2 fv:oc-accent"
+					style={{
+						color: patternHovered ? colors.accent : colors.accentDim,
+						backgroundColor: patternHovered ? colors.page : undefined,
+					}}
+					{...patternHoverHandlers}
 				>
 					{PATTERN_LABELS[background]}
 				</Button>
@@ -82,8 +94,12 @@ export function StatusBar({
 					}}
 				>
 					<Select.Trigger
-						className="d-f ai-c g-1 px-3 py-1 bg-transparent fs-xs ff-m us-none c-p bw-0 h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
-						style={{ color: colors.accentDim }}
+						className="d-f ai-c g-1 px-3 py-1 bg-transparent fs-xs ff-m us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent"
+						style={{
+							color: themeHovered ? colors.accent : colors.accentDim,
+							backgroundColor: themeHovered ? colors.page : undefined,
+						}}
+						{...themeHoverHandlers}
 					>
 						<Select.Value>
 							{() => (
@@ -149,8 +165,12 @@ export function StatusBar({
 				<Button
 					onClick={onRandomize}
 					aria-label="Randomize appearance"
-					className="d-f ai-c jc-c g-1 px-2 py-1 bg-transparent fs-xs ff-m us-none bw-0 c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
-					style={{ color: colors.accentDim }}
+					className="d-f ai-c jc-c g-1 px-2 py-1 bg-transparent fs-xs ff-m us-none bw-0 c-p fv:os-s fv:oo--2 fv:oc-accent"
+					style={{
+						color: randomizeHovered ? colors.accent : colors.accentDim,
+						backgroundColor: randomizeHovered ? colors.page : undefined,
+					}}
+					{...randomizeHoverHandlers}
 				>
 					<ShuffleIcon size={13} weight="bold" />
 					Randomize
@@ -170,8 +190,12 @@ export function StatusBar({
 						aria-label={
 							mode === "dark" ? "Switch to light mode" : "Switch to dark mode"
 						}
-						className="d-f ai-c jc-c px-3 py-1 bg-transparent bw-0 c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
-						style={{ color: colors.accentDim }}
+						className="d-f ai-c jc-c px-3 py-1 bg-transparent bw-0 c-p fv:os-s fv:oo--2 fv:oc-accent"
+						style={{
+							color: darkModeHovered ? colors.accent : colors.accentDim,
+							backgroundColor: darkModeHovered ? colors.page : undefined,
+						}}
+						{...darkModeHoverHandlers}
 					>
 						{mode === "dark" ? (
 							<SunIcon size={13} weight="bold" />

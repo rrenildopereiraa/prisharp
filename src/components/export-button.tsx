@@ -1,8 +1,8 @@
 import { Button } from "@base-ui/react/button";
 import { Menu } from "@base-ui/react/menu";
 import { CaretDownIcon, DownloadSimpleIcon } from "@phosphor-icons/react";
-import { useChromeTheme } from "../lib/chrome-theme";
-import { overlayColor } from "../lib/color";
+import { useChromeTheme, useHover } from "../lib/chrome-theme";
+import { hoverShade, overlayColor } from "../lib/color";
 import {
 	type ExportFormat,
 	FORMAT_LABELS,
@@ -51,6 +51,9 @@ export function ExportButton({
 	onFormatChange: (value: ExportFormat) => void;
 }) {
 	const { colors } = useChromeTheme();
+	const { hovered: exportHovered, hoverHandlers: exportHoverHandlers } =
+		useHover();
+	const { hovered: menuHovered, hoverHandlers: menuHoverHandlers } = useHover();
 	if (exporting) {
 		return (
 			<Button
@@ -68,8 +71,14 @@ export function ExportButton({
 		<div className="d-f">
 			<Button
 				onClick={onExport}
-				className="d-f ai-c jc-c g-2 w-24 h-7 px-2 fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent"
-				style={{ backgroundColor: colors.accent, color: colors.onAccent }}
+				className="d-f ai-c jc-c g-2 w-24 h-7 px-2 fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs fv:os-s fv:oo-2 fv:oc-accent"
+				style={{
+					backgroundColor: exportHovered
+						? hoverShade(colors.accent)
+						: colors.accent,
+					color: colors.onAccent,
+				}}
+				{...exportHoverHandlers}
 			>
 				<DownloadSimpleIcon size={14} weight="fill" />
 				<span>Export</span>
@@ -83,8 +92,14 @@ export function ExportButton({
 
 			<Menu.Root>
 				<Menu.Trigger
-					className="d-f ai-c jc-c w-6 h-7 px-1 fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent"
-					style={{ backgroundColor: colors.accent, color: colors.onAccent }}
+					className="d-f ai-c jc-c w-6 h-7 px-1 fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs fv:os-s fv:oo-2 fv:oc-accent"
+					style={{
+						backgroundColor: menuHovered
+							? hoverShade(colors.accent)
+							: colors.accent,
+						color: colors.onAccent,
+					}}
+					{...menuHoverHandlers}
 				>
 					<CaretDownIcon size={12} weight="fill" />
 				</Menu.Trigger>

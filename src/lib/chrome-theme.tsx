@@ -69,6 +69,20 @@ export function useChromeTheme() {
 	return ctx;
 }
 
+// Yumma's `h:` hover-variant classes bake in the light theme's colors, so a
+// hover state in dark mode would show the wrong (light) tint - track hover
+// as JS state instead so hover colors can come from the current theme too.
+export function useHover() {
+	const [hovered, setHovered] = useState(false);
+	return {
+		hovered,
+		hoverHandlers: {
+			onMouseEnter: () => setHovered(true),
+			onMouseLeave: () => setHovered(false),
+		},
+	};
+}
+
 export function ChromeThemeProvider({ children }: { children: ReactNode }) {
 	const [mode, setMode] = useState<ChromeMode>(readStoredMode);
 

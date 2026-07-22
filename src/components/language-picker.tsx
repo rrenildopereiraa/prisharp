@@ -1,6 +1,6 @@
 import { Select } from "@base-ui/react/select";
 import { CaretDownIcon } from "@phosphor-icons/react";
-import { useChromeTheme } from "../lib/chrome-theme";
+import { useChromeTheme, useHover } from "../lib/chrome-theme";
 import { LANGUAGES, type LanguageId } from "../lib/highlighter";
 
 const SHORT_LABELS: Record<LanguageId, string> = {
@@ -33,6 +33,7 @@ export function LanguagePicker({
 	onValueChange: (value: LanguageId) => void;
 }) {
 	const { colors } = useChromeTheme();
+	const { hovered, hoverHandlers } = useHover();
 	return (
 		<Select.Root
 			value={value}
@@ -41,8 +42,12 @@ export function LanguagePicker({
 			}}
 		>
 			<Select.Trigger
-				className="d-f ai-c jc-sb g-1 px-3 py-1 bg-transparent fs-xs ff-m us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent h:c-accent h:bg-page"
-				style={{ color: colors.accentDim }}
+				className="d-f ai-c jc-sb g-1 px-3 py-1 bg-transparent fs-xs ff-m us-none c-p bw-0 fv:os-s fv:oo--2 fv:oc-accent"
+				style={{
+					color: hovered ? colors.accent : colors.accentDim,
+					backgroundColor: hovered ? colors.page : undefined,
+				}}
+				{...hoverHandlers}
 			>
 				<Select.Value>
 					{() => (

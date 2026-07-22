@@ -11,7 +11,7 @@ import {
 } from "@phosphor-icons/react";
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
-import { useChromeTheme } from "../lib/chrome-theme";
+import { useChromeTheme, useHover } from "../lib/chrome-theme";
 import { modKey } from "../lib/platform";
 import { type EditorDocument, MAX_DOCUMENTS } from "../lib/types";
 import { ExportButton } from "./export-button";
@@ -32,6 +32,9 @@ function TabItem({
 	onClose: (id: string) => void;
 }) {
 	const { colors } = useChromeTheme();
+	const { hovered, hoverHandlers } = useHover();
+	const { hovered: closeHovered, hoverHandlers: closeHoverHandlers } =
+		useHover();
 	const ref = useRef<HTMLDivElement>(null);
 	const closingRef = useRef(false);
 
@@ -72,13 +75,12 @@ function TabItem({
 	return (
 		<div
 			ref={ref}
-			className={`d-f ai-c g-2 pl-3 pr-2 py-2 brw-1 bs-s c-p o-h ${
-				isActive ? "" : "bg-transparent h:bg-page"
-			}`}
+			className="d-f ai-c g-2 pl-3 pr-2 py-2 brw-1 bs-s c-p o-h"
 			style={{
 				borderColor: colors.border,
-				backgroundColor: isActive ? colors.page : undefined,
+				backgroundColor: isActive || hovered ? colors.page : undefined,
 			}}
+			{...hoverHandlers}
 		>
 			<button
 				type="button"
@@ -100,8 +102,9 @@ function TabItem({
 						type="button"
 						onClick={handleClose}
 						aria-label="Close snippet"
-						className="d-f ai-c jc-c p-0 bg-transparent bw-0 c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
-						style={{ color: colors.accentDim }}
+						className="d-f ai-c jc-c p-0 bg-transparent bw-0 c-p fv:os-s fv:oo-2 fv:oc-accent"
+						style={{ color: closeHovered ? colors.accent : colors.accentDim }}
+						{...closeHoverHandlers}
 					>
 						<XIcon size={12} weight="bold" />
 					</button>
@@ -143,6 +146,12 @@ export function EditorTabBar({
 	const [shared, setShared] = useState(false);
 	const canClose = documents.length > 1;
 	const atLimit = documents.length >= MAX_DOCUMENTS;
+	const { hovered: addHovered, hoverHandlers: addHoverHandlers } = useHover();
+	const { hovered: searchHovered, hoverHandlers: searchHoverHandlers } =
+		useHover();
+	const { hovered: shareHovered, hoverHandlers: shareHoverHandlers } =
+		useHover();
+	const { hovered: copyHovered, hoverHandlers: copyHoverHandlers } = useHover();
 
 	return (
 		<header
@@ -168,7 +177,10 @@ export function EditorTabBar({
 					/>
 					<polygon points="50,18 64,50 50,82" fill="#93b4f5" />
 				</svg>
-				<span className="fs-sm ff-m fw-700 us-none ws-nw">
+				<span
+					className="fs-sm ff-m fw-700 us-none ws-nw"
+					style={{ color: colors.accentDim }}
+				>
 					Pri<span style={{ color: colors.accent }}>sharp</span>
 				</span>
 			</div>
@@ -201,9 +213,11 @@ export function EditorTabBar({
 						style={{
 							opacity: atLimit ? 0.4 : undefined,
 							borderColor: colors.border,
-							color: colors.accentDim,
+							color: addHovered ? colors.accent : colors.accentDim,
+							backgroundColor: addHovered ? colors.page : undefined,
 						}}
-						className="d-f ai-c jc-c as-s w-8 brw-1 bs-s bg-transparent c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
+						className="d-f ai-c jc-c as-s w-8 brw-1 bs-s bg-transparent c-p fv:os-s fv:oo--2 fv:oc-accent"
+						{...addHoverHandlers}
 					>
 						<PlusIcon size={14} weight="bold" />
 					</button>
@@ -216,12 +230,13 @@ export function EditorTabBar({
 				<Button
 					onClick={onOpenPalette}
 					aria-label="Search commands"
-					className="d-none @lg:d-f ai-c jc-c g-2 h-7 px-3 bw-1 fs-xs ff-m us-none c-p bs-i-xs h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+					className="d-none @lg:d-f ai-c jc-c g-2 h-7 px-3 bw-1 fs-xs ff-m us-none c-p bs-i-xs fv:os-s fv:oo-2 fv:oc-accent"
 					style={{
 						backgroundColor: colors.page,
 						borderColor: colors.border,
-						color: colors.accentDim,
+						color: searchHovered ? colors.accent : colors.accentDim,
 					}}
+					{...searchHoverHandlers}
 				>
 					<MagnifyingGlassIcon size={12} weight="bold" />
 					Search
@@ -239,8 +254,13 @@ export function EditorTabBar({
 						setShared(true);
 						setTimeout(() => setShared(false), 1500);
 					}}
-					className="d-f ai-c jc-c g-2 w-8 @lg:w-24 h-7 px-2 bg-transparent bw-1 bs-i-xs us-none c-p h:bg-page h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
-					style={{ color: colors.accentDim, borderColor: colors.border }}
+					className="d-f ai-c jc-c g-2 w-8 @lg:w-24 h-7 px-2 bg-transparent bw-1 bs-i-xs us-none c-p fv:os-s fv:oo-2 fv:oc-accent"
+					style={{
+						color: shareHovered ? colors.accent : colors.accentDim,
+						borderColor: colors.border,
+						backgroundColor: shareHovered ? colors.page : undefined,
+					}}
+					{...shareHoverHandlers}
 				>
 					{shared ? (
 						<CheckIcon
@@ -260,8 +280,13 @@ export function EditorTabBar({
 						setCopied(true);
 						setTimeout(() => setCopied(false), 1500);
 					}}
-					className="d-f ai-c jc-c g-2 w-8 @lg:w-24 h-7 px-2 bg-transparent bw-1 bs-i-xs us-none c-p h:bg-page h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
-					style={{ color: colors.accentDim, borderColor: colors.border }}
+					className="d-f ai-c jc-c g-2 w-8 @lg:w-24 h-7 px-2 bg-transparent bw-1 bs-i-xs us-none c-p fv:os-s fv:oo-2 fv:oc-accent"
+					style={{
+						color: copyHovered ? colors.accent : colors.accentDim,
+						borderColor: colors.border,
+						backgroundColor: copyHovered ? colors.page : undefined,
+					}}
+					{...copyHoverHandlers}
 				>
 					{copied ? (
 						<ClipboardTextIcon

@@ -3,7 +3,7 @@ import { NumberField } from "@base-ui/react/number-field";
 import { Slider } from "@base-ui/react/slider";
 import { CaretUpIcon, CornersOutIcon } from "@phosphor-icons/react";
 import { useState } from "react";
-import { useChromeTheme } from "../lib/chrome-theme";
+import { useChromeTheme, useHover } from "../lib/chrome-theme";
 import type { CornerRadii } from "../lib/types";
 
 export const RADIUS_MIN = 0;
@@ -29,6 +29,7 @@ export function RadiusControl({
 	onRadiiChange: (value: CornerRadii) => void;
 }) {
 	const { colors } = useChromeTheme();
+	const { hovered, hoverHandlers } = useHover();
 	const [split, setSplit] = useState(false);
 
 	const values = [radii.tl, radii.tr, radii.bl, radii.br];
@@ -86,12 +87,17 @@ export function RadiusControl({
 			<Button
 				onClick={() => setSplit((value) => !value)}
 				aria-pressed={split}
-				className="d-f ai-c jc-c as-s g-1 px-2 py-1 fs-xs ff-m us-none c-p bw-1 bs-s fv:os-s fv:oo-2 fv:oc-accent h:c-accent h:bc-accent"
+				className="d-f ai-c jc-c as-s g-1 px-2 py-1 fs-xs ff-m us-none c-p bw-1 bs-s fv:os-s fv:oo-2 fv:oc-accent"
 				style={{
 					backgroundColor: split ? colors.accent : "transparent",
-					borderColor: split ? colors.accent : colors.border,
-					color: split ? colors.onAccent : colors.accentDim,
+					borderColor: split || hovered ? colors.accent : colors.border,
+					color: split
+						? colors.onAccent
+						: hovered
+							? colors.accent
+							: colors.accentDim,
 				}}
+				{...hoverHandlers}
 			>
 				<CornersOutIcon size={12} weight="bold" />
 				Per-corner

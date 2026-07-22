@@ -1,7 +1,7 @@
 import { Drawer } from "@base-ui/react/drawer";
 import { XIcon } from "@phosphor-icons/react";
 import type { ReactNode } from "react";
-import { useChromeTheme } from "../lib/chrome-theme";
+import { useChromeTheme, useHover } from "../lib/chrome-theme";
 import { overlayColor } from "../lib/color";
 
 export function BottomSheet({
@@ -16,6 +16,10 @@ export function BottomSheet({
 	children: ReactNode;
 }) {
 	const { colors } = useChromeTheme();
+	const { hovered: handleHovered, hoverHandlers: handleHoverHandlers } =
+		useHover();
+	const { hovered: closeHovered, hoverHandlers: closeHoverHandlers } =
+		useHover();
 	return (
 		<Drawer.Root
 			open={open}
@@ -30,12 +34,13 @@ export function BottomSheet({
 					onClick={() => onOpenChange(true)}
 					aria-label={`Open ${title.toLowerCase()}`}
 					aria-expanded={open}
-					className="d-f ai-c jc-c w-100% h-100% btw-1 bs-d fs-xs ff-m us-none c-p h:c-accent h:bg-page"
+					className="d-f ai-c jc-c w-100% h-100% btw-1 bs-d fs-xs ff-m us-none c-p"
 					style={{
-						backgroundColor: colors.surface,
+						backgroundColor: handleHovered ? colors.page : colors.surface,
 						borderColor: colors.border,
-						color: colors.accentDim,
+						color: handleHovered ? colors.accent : colors.accentDim,
 					}}
+					{...handleHoverHandlers}
 				>
 					Swipe up for {title}
 				</button>
@@ -72,8 +77,11 @@ export function BottomSheet({
 							</Drawer.Title>
 							<Drawer.Close
 								aria-label={`Close ${title.toLowerCase()}`}
-								className="d-f ai-c jc-c w-6 h-6 p-0 bg-transparent bw-0 c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
-								style={{ color: colors.accentDim }}
+								className="d-f ai-c jc-c w-6 h-6 p-0 bg-transparent bw-0 c-p fv:os-s fv:oo-2 fv:oc-accent"
+								style={{
+									color: closeHovered ? colors.accent : colors.accentDim,
+								}}
+								{...closeHoverHandlers}
 							>
 								<XIcon size={14} weight="bold" />
 							</Drawer.Close>

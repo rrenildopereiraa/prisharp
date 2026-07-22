@@ -4,7 +4,7 @@ import { Switch } from "@base-ui/react/switch";
 import { Tabs } from "@base-ui/react/tabs";
 import { ShuffleIcon, UploadSimpleIcon } from "@phosphor-icons/react";
 import { useState } from "react";
-import { useChromeTheme } from "../lib/chrome-theme";
+import { useChromeTheme, useHover } from "../lib/chrome-theme";
 import { LANGUAGES, type LanguageId, THEMES } from "../lib/highlighter";
 import type { BackgroundPattern, CornerRadii } from "../lib/types";
 import { BottomSheet } from "./bottom-sheet";
@@ -228,6 +228,8 @@ function InspectorContent({
 	onUploadTheme,
 }: InspectorContentProps) {
 	const { colors } = useChromeTheme();
+	const { hovered: uploadHovered, hoverHandlers: uploadHoverHandlers } =
+		useHover();
 	if (tab === "layout") {
 		return (
 			<>
@@ -334,8 +336,12 @@ function InspectorContent({
 						};
 						input.click();
 					}}
-					className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bg-transparent fs-xs ff-m us-none c-p h:c-accent h:bc-accent fv:os-s fv:oo-2 fv:oc-accent"
-					style={{ borderColor: colors.border, color: colors.accentDim }}
+					className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bg-transparent fs-xs ff-m us-none c-p fv:os-s fv:oo-2 fv:oc-accent"
+					style={{
+						borderColor: uploadHovered ? colors.accent : colors.border,
+						color: uploadHovered ? colors.accent : colors.accentDim,
+					}}
+					{...uploadHoverHandlers}
 				>
 					<UploadSimpleIcon size={14} weight="fill" />
 					Import VS Code Theme
@@ -372,6 +378,8 @@ export function Inspector({
 }) {
 	const [tab, setTab] = useState<SettingsTab>("layout");
 	const { colors } = useChromeTheme();
+	const { hovered: randomizeHovered, hoverHandlers: randomizeHoverHandlers } =
+		useHover();
 
 	return (
 		<>
@@ -401,8 +409,12 @@ export function Inspector({
 				<div className="px-2 pb-4">
 					<Button
 						onClick={onRandomize}
-						className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bg-transparent fs-xs ff-m us-none c-p h:c-accent h:bc-accent fv:os-s fv:oo-2 fv:oc-accent"
-						style={{ borderColor: colors.border, color: colors.accentDim }}
+						className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bg-transparent fs-xs ff-m us-none c-p fv:os-s fv:oo-2 fv:oc-accent"
+						style={{
+							borderColor: randomizeHovered ? colors.accent : colors.border,
+							color: randomizeHovered ? colors.accent : colors.accentDim,
+						}}
+						{...randomizeHoverHandlers}
 					>
 						<ShuffleIcon size={14} weight="bold" />
 						Randomize
