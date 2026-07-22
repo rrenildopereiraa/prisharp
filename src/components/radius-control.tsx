@@ -59,7 +59,7 @@ export function RadiusControl({
 				<Slider.Control className="d-f ai-c py-3 us-none ta-none">
 					<Slider.Track className="p-r h-2 w-100% bg-border">
 						<Slider.Indicator className="bg-accent" />
-						<Slider.Thumb className="w-5 h-5 bg-page bw-1 bs-s bc-border bs-o-xs fv:os-s fv:oo-2 fv:oc-accent" />
+						<Slider.Thumb className="w-6 h-4 bg-page bw-1 bs-s bc-border bs-o-xs fv:os-s fv:oo-2 fv:oc-accent" />
 					</Slider.Track>
 				</Slider.Control>
 			</Slider.Root>

@@ -44,7 +44,7 @@ export function ExportButton({
 			<Button
 				disabled
 				focusableWhenDisabled
-				className="export-pulse d-f ai-c jc-c g-2 min-w-24 h-7 px-2 fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs fv:os-s fv:oo-2 fv:oc-accent bg-accent c-page"
+				className="d-f ai-c jc-c g-2 min-w-24 h-7 px-2 fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs fv:os-s fv:oo-2 fv:oc-accent bg-accent c-page"
 			>
 				<span>Exporting</span>
 			</Button>
