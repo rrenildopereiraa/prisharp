@@ -1,8 +1,85 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { contrastColor } from "../lib/color";
 import { getHighlighter, type LanguageId } from "../lib/highlighter";
+import type { HighlightedWord } from "../lib/types";
 
 const TAB = "\t";
+
+function lineElementAt(
+	clientX: number,
+	clientY: number,
+): HTMLElement | undefined {
+	return document
+		.elementsFromPoint(clientX, clientY)
+		.find(
+			(el): el is HTMLElement =>
+				el instanceof HTMLElement && el.dataset.lineIndex !== undefined,
+		);
+}
+
+function tokenElementAt(
+	clientX: number,
+	clientY: number,
+): HTMLElement | undefined {
+	return document
+		.elementsFromPoint(clientX, clientY)
+		.find(
+			(el): el is HTMLElement =>
+				el instanceof HTMLElement && el.dataset.tokenIndex !== undefined,
+		);
+}
+
+function CodeLine({
+	lineIndex,
+	line,
+	lineTokens,
+	isHighlighted,
+	isPreview,
+	highlightedWords,
+}: {
+	lineIndex: number;
+	line: string;
+	lineTokens: { content: string; color?: string }[];
+	isHighlighted: boolean;
+	isPreview: boolean;
+	highlightedWords: HighlightedWord[];
+}) {
+	return (
+		<div
+			data-line-index={lineIndex}
+			className={`ws-pw d-b mx--4 px-4 ${
+				isHighlighted ? "bg-accent-dim/10" : isPreview ? "bg-accent-dim/5" : ""
+			}`}
+		>
+			{/* Fall back to the plain line while Shiki tokens load, so
+			    lines keep their real height from the first paint */}
+			{lineTokens.map((token, tokenIndex) => {
+				const isWordHighlighted = highlightedWords.some(
+					(w) => w.line === lineIndex && w.tokenIndex === tokenIndex,
+				);
+				return (
+					<span
+						// biome-ignore lint/suspicious/noArrayIndexKey: index is stable, tokens are purely positional within a line
+						key={tokenIndex}
+						data-token-index={tokenIndex}
+						style={{
+							color: token.color,
+							// bc-accent-dim/50 doesn't get picked up by Yumma's scanner
+							// from this file for some reason - bg-accent-dim/10 and
+							// bw-1 (both confirmed working) stay as classes below,
+							// only the border color itself falls back to inline.
+							...(isWordHighlighted ? { borderColor: "#64748b80" } : {}),
+						}}
+						className={isWordHighlighted ? "bg-accent-dim/10 bw-1" : ""}
+					>
+						{token.content}
+					</span>
+				);
+			})}
+			{line.length === 0 && " "}
+		</div>
+	);
+}
 
 export function CodeEditor({
 	code,
@@ -11,6 +88,10 @@ export function CodeEditor({
 	themeName,
 	fontFamily,
 	background,
+	highlightedLines,
+	highlightedWords,
+	onToggleLineHighlight,
+	onToggleWordHighlight,
 }: {
 	code: string;
 	onCodeChange: (value: string) => void;
@@ -18,11 +99,16 @@ export function CodeEditor({
 	themeName: string;
 	fontFamily?: string;
 	background: string;
+	highlightedLines: number[];
+	highlightedWords: HighlightedWord[];
+	onToggleLineHighlight: (line: number) => void;
+	onToggleWordHighlight: (line: number, tokenIndex: number) => void;
 }) {
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const [tokens, setTokens] = useState<{ content: string; color?: string }[][]>(
 		[],
 	);
+	const [altHoverLine, setAltHoverLine] = useState<number | null>(null);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -112,23 +198,67 @@ export function CodeEditor({
 		[code, onCodeChange, setSelection],
 	);
 
+	// Alt+hover previews which line would be highlighted; Alt+click commits
+	// it. Held separately from word highlighting (double-click, no modifier
+	// needed) so the two mechanics never fight over the same gesture.
+	const handleMouseMove = useCallback(
+		(event: React.MouseEvent<HTMLTextAreaElement>) => {
+			if (!event.altKey) {
+				setAltHoverLine(null);
+				return;
+			}
+			const lineEl = lineElementAt(event.clientX, event.clientY);
+			setAltHoverLine(lineEl ? Number(lineEl.dataset.lineIndex) : null);
+		},
+		[],
+	);
+
+	const handleMouseLeave = useCallback(() => setAltHoverLine(null), []);
+
+	const handleMouseDown = useCallback(
+		(event: React.MouseEvent<HTMLTextAreaElement>) => {
+			if (!event.altKey) return;
+			// Alt+click toggles the line highlight instead of moving the caret.
+			event.preventDefault();
+			const lineEl = lineElementAt(event.clientX, event.clientY);
+			if (lineEl) onToggleLineHighlight(Number(lineEl.dataset.lineIndex));
+		},
+		[onToggleLineHighlight],
+	);
+
+	const handleDoubleClick = useCallback(
+		(event: React.MouseEvent<HTMLTextAreaElement>) => {
+			// Double-click a token to highlight that word instead of the
+			// browser's native "select this word" behavior.
+			event.preventDefault();
+			const lineEl = lineElementAt(event.clientX, event.clientY);
+			const tokenEl = tokenElementAt(event.clientX, event.clientY);
+			if (!lineEl || !tokenEl) return;
+			onToggleWordHighlight(
+				Number(lineEl.dataset.lineIndex),
+				Number(tokenEl.dataset.tokenIndex),
+			);
+		},
+		[onToggleWordHighlight],
+	);
+
 	return (
 		<div className="p-r ff-m fs-sm lh-4" style={editorStyle}>
 			{lines.map((line, lineIndex) => (
-				// biome-ignore lint: index is stable, lines are purely positional
-				<div key={lineIndex} className="ws-pw">
-					{/* Fall back to the plain line while Shiki tokens load, so
-					    lines keep their real height from the first paint */}
-					{(tokens[lineIndex] ?? [{ content: line, color: undefined }]).map(
-						(token, tokenIndex) => (
-							// biome-ignore lint: index is stable, tokens are purely positional within a line
-							<span key={tokenIndex} style={{ color: token.color }}>
-								{token.content}
-							</span>
-						),
-					)}
-					{line.length === 0 && " "}
-				</div>
+				<CodeLine
+					// biome-ignore lint/suspicious/noArrayIndexKey: index is stable, lines are purely positional
+					key={lineIndex}
+					lineIndex={lineIndex}
+					line={line}
+					lineTokens={
+						tokens[lineIndex] ?? [{ content: line, color: undefined }]
+					}
+					isHighlighted={highlightedLines.includes(lineIndex)}
+					isPreview={
+						!highlightedLines.includes(lineIndex) && altHoverLine === lineIndex
+					}
+					highlightedWords={highlightedWords}
+				/>
 			))}
 			<textarea
 				value={code}
@@ -138,6 +268,10 @@ export function CodeEditor({
 				autoCorrect="off"
 				ref={textareaRef}
 				onKeyDown={handleKeyDown}
+				onMouseMove={handleMouseMove}
+				onMouseLeave={handleMouseLeave}
+				onMouseDown={handleMouseDown}
+				onDoubleClick={handleDoubleClick}
 				className="p-a t-0 l-0 w-100% h-100% p-0 m-0 bg-transparent c-transparent bw-0 os-none o-h r-none ff-m fs-sm lh-4 ws-pw"
 				style={{ ...editorStyle, caretColor }}
 			/>

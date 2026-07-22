@@ -1,5 +1,5 @@
 import type { LanguageId } from "../lib/highlighter";
-import type { BackgroundPattern } from "../lib/types";
+import type { BackgroundPattern, HighlightedWord } from "../lib/types";
 import { BoundingBox } from "./bounding-box";
 import { Frame, type FrameColors } from "./frame";
 import type { CornerRadii } from "./inspector";
@@ -10,6 +10,10 @@ export function Canvas({
 	language,
 	fileName,
 	onFileNameChange,
+	highlightedLines,
+	highlightedWords,
+	onToggleLineHighlight,
+	onToggleWordHighlight,
 	showTabBar,
 	showStatusBar,
 	showGridLines,
@@ -28,6 +32,10 @@ export function Canvas({
 	language: LanguageId;
 	fileName: string;
 	onFileNameChange: (value: string) => void;
+	highlightedLines: number[];
+	highlightedWords: HighlightedWord[];
+	onToggleLineHighlight: (line: number) => void;
+	onToggleWordHighlight: (line: number, tokenIndex: number) => void;
 	showTabBar: boolean;
 	showStatusBar: boolean;
 	showGridLines: boolean;
@@ -51,6 +59,10 @@ export function Canvas({
 					language={language}
 					fileName={fileName}
 					onFileNameChange={onFileNameChange}
+					highlightedLines={highlightedLines}
+					highlightedWords={highlightedWords}
+					onToggleLineHighlight={onToggleLineHighlight}
+					onToggleWordHighlight={onToggleWordHighlight}
 					showTabBar={showTabBar}
 					showStatusBar={showStatusBar}
 					showGridLines={showGridLines}

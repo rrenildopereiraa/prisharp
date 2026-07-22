@@ -30,6 +30,7 @@ export function buildCommands({
 	onNewDocument,
 	onCloseDocument,
 	onRandomizeAll,
+	onClearHighlights,
 }: {
 	showTabBar: boolean;
 	onShowTabBarChange: (value: boolean) => void;
@@ -49,6 +50,7 @@ export function buildCommands({
 	onNewDocument: () => void;
 	onCloseDocument: () => void;
 	onRandomizeAll: () => void;
+	onClearHighlights: () => void;
 }): Command[] {
 	const BACKGROUND_PATTERNS: Record<BackgroundPattern, string> = {
 		"stripes-right": "Stripes Right",
@@ -71,6 +73,11 @@ export function buildCommands({
 			label: "Randomize appearance",
 			kbd: `${modLabel} Shift R`,
 			run: onRandomizeAll,
+		},
+		{
+			id: "clear-highlights",
+			label: "Clear highlights",
+			run: onClearHighlights,
 		},
 		{
 			id: "export",

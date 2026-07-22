@@ -3,7 +3,7 @@ import { forwardRef } from "react";
 import { patternLineColor } from "../lib/color";
 import type { LanguageId } from "../lib/highlighter";
 import { LANGUAGES } from "../lib/highlighter";
-import type { BackgroundPattern } from "../lib/types";
+import type { BackgroundPattern, HighlightedWord } from "../lib/types";
 import { CodeEditor } from "./code-editor";
 import type { CornerRadii } from "./inspector";
 
@@ -51,6 +51,10 @@ export const Frame = forwardRef<
 		language: LanguageId;
 		fileName: string;
 		onFileNameChange: (value: string) => void;
+		highlightedLines: number[];
+		highlightedWords: HighlightedWord[];
+		onToggleLineHighlight: (line: number) => void;
+		onToggleWordHighlight: (line: number, tokenIndex: number) => void;
 		showTabBar: boolean;
 		showStatusBar: boolean;
 		showGridLines: boolean;
@@ -69,6 +73,10 @@ export const Frame = forwardRef<
 		language,
 		fileName,
 		onFileNameChange,
+		highlightedLines,
+		highlightedWords,
+		onToggleLineHighlight,
+		onToggleWordHighlight,
 		showTabBar,
 		showStatusBar,
 		showGridLines,
@@ -179,6 +187,10 @@ export const Frame = forwardRef<
 								themeName={themeName}
 								fontFamily={fontFamily}
 								background={colors.surface}
+								highlightedLines={highlightedLines}
+								highlightedWords={highlightedWords}
+								onToggleLineHighlight={onToggleLineHighlight}
+								onToggleWordHighlight={onToggleWordHighlight}
 							/>
 						</div>
 

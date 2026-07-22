@@ -35,6 +35,8 @@ function App() {
 				fileName: snippet.fileName,
 				code: snippet.code,
 				language: snippet.language,
+				highlightedLines: [],
+				highlightedWords: [],
 			},
 		];
 	});
@@ -71,6 +73,33 @@ function App() {
 		);
 	}
 
+	function toggleLineHighlight(line: number) {
+		const current = active.highlightedLines;
+		updateActive({
+			highlightedLines: current.includes(line)
+				? current.filter((l) => l !== line)
+				: [...current, line],
+		});
+	}
+
+	function toggleWordHighlight(line: number, tokenIndex: number) {
+		const current = active.highlightedWords;
+		const exists = current.some(
+			(w) => w.line === line && w.tokenIndex === tokenIndex,
+		);
+		updateActive({
+			highlightedWords: exists
+				? current.filter(
+						(w) => !(w.line === line && w.tokenIndex === tokenIndex),
+					)
+				: [...current, { line, tokenIndex }],
+		});
+	}
+
+	function clearHighlights() {
+		updateActive({ highlightedLines: [], highlightedWords: [] });
+	}
+
 	function addDocument() {
 		if (documents.length >= MAX_DOCUMENTS) {
 			toast.add({
@@ -86,6 +115,8 @@ function App() {
 			fileName: snippet.fileName,
 			code: snippet.code,
 			language: snippet.language,
+			highlightedLines: [],
+			highlightedWords: [],
 		};
 		setDocuments((docs) =>
 			docs.length >= MAX_DOCUMENTS ? docs : [...docs, doc],
@@ -285,6 +316,7 @@ function App() {
 		onNewDocument: addDocument,
 		onCloseDocument: () => closeDocument(activeId),
 		onRandomizeAll: randomizeAll,
+		onClearHighlights: clearHighlights,
 	});
 
 	return (
@@ -311,6 +343,10 @@ function App() {
 					language={active.language}
 					fileName={active.fileName}
 					onFileNameChange={(value) => updateActive({ fileName: value })}
+					highlightedLines={active.highlightedLines}
+					highlightedWords={active.highlightedWords}
+					onToggleLineHighlight={toggleLineHighlight}
+					onToggleWordHighlight={toggleWordHighlight}
 					showTabBar={settings.tabBar}
 					showStatusBar={settings.statusBar}
 					showGridLines={settings.gridLines}
