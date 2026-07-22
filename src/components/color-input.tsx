@@ -42,8 +42,8 @@ export function ColorInput({
 						aria-label={`${label} color picker`}
 					>
 						<CaretDownIcon
-							size={10}
-							weight="bold"
+							size={12}
+							weight="fill"
 							style={{ color: colors.accentDim }}
 						/>
 					</Popover.Trigger>
