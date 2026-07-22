@@ -141,7 +141,7 @@ export function buildCommands({
 				run: () => onSetLanguage(id),
 			}),
 		),
-		...(["png", "jpg", "webp", "svg", "webm", "mp4"] as ExportFormat[]).map(
+		...(["png", "jpg", "webp", "svg"] as ExportFormat[]).map(
 			(id): Command => ({
 				id: `format-${id}`,
 				label: `Set format: ${id.toUpperCase()}`,

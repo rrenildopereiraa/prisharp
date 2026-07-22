@@ -11,7 +11,6 @@ export function CodeEditor({
 	themeName,
 	fontFamily,
 	background,
-	codeRef,
 }: {
 	code: string;
 	onCodeChange: (value: string) => void;
@@ -19,7 +18,6 @@ export function CodeEditor({
 	themeName: string;
 	fontFamily?: string;
 	background: string;
-	codeRef?: React.Ref<HTMLDivElement>;
 }) {
 	const textareaRef = useRef<HTMLTextAreaElement>(null);
 	const [tokens, setTokens] = useState<{ content: string; color?: string }[][]>(
@@ -115,7 +113,7 @@ export function CodeEditor({
 	);
 
 	return (
-		<div ref={codeRef} className="p-r ff-m fs-sm lh-4" style={editorStyle}>
+		<div className="p-r ff-m fs-sm lh-4" style={editorStyle}>
 			{lines.map((line, lineIndex) => (
 				// biome-ignore lint: index is stable, lines are purely positional
 				<div key={lineIndex} className="ws-pw">

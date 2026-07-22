@@ -5,26 +5,15 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { Canvas } from "./components/canvas";
 import { CommandPalette } from "./components/command-palette";
 import { EditorTabBar } from "./components/editor-tabs";
-import {
-	type ExportFormat,
-	type ImageFormat,
-	isVideoFormat,
-	type VideoFormat,
-} from "./components/format-picker";
+import type { ExportFormat } from "./components/format-picker";
 import {
 	FONT_FAMILIES,
 	type FontFamilyId,
-	type FormatCategory,
 	Inspector,
 } from "./components/inspector";
 import { RADIUS_MAX, RADIUS_MIN } from "./components/radius-control";
 import { StatusBar } from "./components/status-bar";
 import { useToast } from "./components/toast-provider";
-import {
-	extensionForMimeType,
-	isAnimatedExportSupported,
-	recordAnimatedVideo,
-} from "./lib/animated-export";
 import { buildCommands } from "./lib/commands";
 import { captureDataUrl } from "./lib/export";
 import { loadCustomTheme, THEME_FRAME_COLORS } from "./lib/highlighter";
@@ -51,8 +40,6 @@ function App() {
 	});
 	const [activeId, setActiveId] = useState(() => documents[0].id);
 	const [format, setFormat] = useState<ExportFormat>("png");
-	const [lastImageFormat, setLastImageFormat] = useState<ImageFormat>("png");
-	const [lastVideoFormat, setLastVideoFormat] = useState<VideoFormat>("webm");
 	const [exporting, setExporting] = useState(false);
 	const [showBoundingBox, setShowBoundingBox] = useState(true);
 	const [themeIsRandom, setThemeIsRandom] = useState(false);
@@ -63,7 +50,6 @@ function App() {
 	});
 	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const frameRef = useRef<HTMLDivElement>(null);
-	const codeRef = useRef<HTMLDivElement>(null);
 	const toast = useToast();
 
 	const active = documents.find((doc) => doc.id === activeId) ?? documents[0];
@@ -212,21 +198,6 @@ function App() {
 		settings.font,
 	]);
 
-	function handleFormatChange(next: ExportFormat) {
-		setFormat(next);
-		if (isVideoFormat(next)) {
-			setLastVideoFormat(next);
-		} else {
-			setLastImageFormat(next);
-		}
-	}
-
-	function handleCategoryChange(category: FormatCategory) {
-		handleFormatChange(
-			category === "video" ? lastVideoFormat : lastImageFormat,
-		);
-	}
-
 	async function handleExport() {
 		if (!frameRef.current || exporting) return;
 		setExporting(true);
@@ -243,69 +214,6 @@ function App() {
 			});
 		} finally {
 			setExporting(false);
-		}
-	}
-
-	async function handleExportVideo() {
-		if (!frameRef.current || !codeRef.current || exporting) return;
-		if (!isVideoFormat(format)) return;
-		if (!isAnimatedExportSupported()) {
-			toast.add({
-				title: "Not supported",
-				description: "Animated export isn't supported in this browser.",
-				type: "error",
-			});
-			return;
-		}
-		setExporting(true);
-		try {
-			const blob = await recordAnimatedVideo({
-				frameEl: frameRef.current,
-				codeEl: codeRef.current,
-				code: active.code,
-				background: settings.colors.surface,
-				format,
-				msPerChar: settings.videoSpeed,
-				startDelayMs: settings.videoStartDelay,
-				holdMs: settings.videoHold,
-				style: settings.videoStyle,
-			});
-			const url = URL.createObjectURL(blob);
-			const link = document.createElement("a");
-			const extension = extensionForMimeType(blob.type);
-			link.download = `${active.fileName || "prisharp"}.${extension}`;
-			link.href = url;
-			link.click();
-			URL.revokeObjectURL(url);
-			if (extension === format) {
-				toast.add({
-					title: "Exported",
-					description: `Downloaded as ${extension.toUpperCase()}`,
-					type: "success",
-				});
-			} else {
-				toast.add({
-					title: `Exported as ${extension.toUpperCase()}`,
-					description: `${format.toUpperCase()} isn't supported in this browser.`,
-					type: "warning",
-				});
-			}
-		} catch (_error) {
-			toast.add({
-				title: "Export failed",
-				description: "Could not record the animated video.",
-				type: "error",
-			});
-		} finally {
-			setExporting(false);
-		}
-	}
-
-	async function handleExportClick() {
-		if (isVideoFormat(format)) {
-			await handleExportVideo();
-		} else {
-			await handleExport();
 		}
 	}
 
@@ -336,7 +244,7 @@ function App() {
 	});
 	useHotkey("Mod+S", (event) => {
 		event.preventDefault();
-		handleExportClick();
+		handleExport();
 	});
 	useHotkey("Mod+Shift+C", (event) => {
 		event.preventDefault();
@@ -362,7 +270,7 @@ function App() {
 		onShowGridLinesChange: (value) => setSettings({ gridLines: value }),
 		onBackgroundChange: (value) => setSettings({ pattern: value }),
 		onSetLanguage: (value) => updateActive({ language: value }),
-		onSetFormat: handleFormatChange,
+		onSetFormat: setFormat,
 		onSetFontFamily: (value) => setSettings({ font: value }),
 		onCopyCode: () => {
 			navigator.clipboard.writeText(active.code);
@@ -372,7 +280,7 @@ function App() {
 				type: "success",
 			});
 		},
-		onExport: handleExportClick,
+		onExport: handleExport,
 		onCopyImage: handleCopyImage,
 		onNewDocument: addDocument,
 		onCloseDocument: () => closeDocument(activeId),
@@ -389,11 +297,11 @@ function App() {
 				onAdd={addDocument}
 				onOpenPalette={() => setPaletteOpen(true)}
 				onCopy={handleCopyImage}
-				onExport={handleExportClick}
+				onExport={handleExport}
 				onShare={handleShare}
 				exporting={exporting}
 				format={format}
-				onFormatChange={handleFormatChange}
+				onFormatChange={setFormat}
 			/>
 
 			<div className="f-1 d-f min-h-0">
@@ -414,7 +322,6 @@ function App() {
 					themeName={settings.theme}
 					colors={settings.colors}
 					showBoundingBox={showBoundingBox}
-					codeRef={codeRef}
 					frameRef={frameRef}
 				/>
 
@@ -424,18 +331,6 @@ function App() {
 					language={active.language}
 					onLanguageChange={(value) => updateActive({ language: value })}
 					onRandomize={randomizeAll}
-					format={format}
-					onCategoryChange={handleCategoryChange}
-					videoStyle={settings.videoStyle}
-					onVideoStyleChange={(value) => setSettings({ videoStyle: value })}
-					videoSpeed={settings.videoSpeed}
-					onVideoSpeedChange={(value) => setSettings({ videoSpeed: value })}
-					videoStartDelay={settings.videoStartDelay}
-					onVideoStartDelayChange={(value) =>
-						setSettings({ videoStartDelay: value })
-					}
-					videoHold={settings.videoHold}
-					onVideoHoldChange={(value) => setSettings({ videoHold: value })}
 					showTabBar={settings.tabBar}
 					onShowTabBarChange={(value) => setSettings({ tabBar: value })}
 					showStatusBar={settings.statusBar}

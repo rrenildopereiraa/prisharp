@@ -11,9 +11,7 @@ function markSvg({ size = 100, background = null } = {}) {
 	return `<svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 100 100">${bg}<polygon points="${MARK_OUTER}" fill="#2563eb" stroke="#1d4ed8" stroke-width="1"/><polygon points="${MARK_INNER}" fill="#93b4f5"/></svg>`;
 }
 
-function ogImageSvg({
-	tagline = "Beautiful code, screenshots and videos.",
-} = {}) {
+function ogImageSvg({ tagline = "Beautiful code screenshots." } = {}) {
 	const W = 1200;
 	const H = 630;
 	const FONT = "JetBrains Mono, Consolas, monospace";

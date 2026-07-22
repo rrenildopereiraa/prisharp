@@ -22,7 +22,6 @@ export function Canvas({
 	colors,
 	showBoundingBox,
 	frameRef,
-	codeRef,
 }: {
 	code: string;
 	onCodeChange: (value: string) => void;
@@ -41,14 +40,12 @@ export function Canvas({
 	colors: FrameColors;
 	showBoundingBox: boolean;
 	frameRef: React.RefObject<HTMLDivElement | null>;
-	codeRef: React.RefObject<HTMLDivElement | null>;
 }) {
 	return (
 		<main className="f-1 d-f min-h-0 min-w-0 o-auto px-2 @sm:px-4 py-8 @sm:py-16">
 			<div className="m-auto p-r min-w-0">
 				<Frame
 					ref={frameRef}
-					codeRef={codeRef}
 					code={code}
 					onCodeChange={onCodeChange}
 					language={language}

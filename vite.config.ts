@@ -15,7 +15,7 @@ export default defineConfig({
 			manifest: {
 				name: "Prisharp",
 				short_name: "Prisharp",
-				description: "Beautiful code screenshots & videos.",
+				description: "Beautiful code screenshots.",
 				start_url: "/",
 				display: "standalone",
 				background_color: "#ffffff",

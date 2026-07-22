@@ -7,7 +7,6 @@ import {
 } from "nuqs";
 import type { FrameColors } from "../components/frame";
 import { FONT_FAMILIES, type FontFamilyId } from "../components/inspector";
-import type { RevealStyle } from "./animated-export";
 import { THEME_FRAME_COLORS, THEME_NAME } from "./highlighter";
 import type { BackgroundPattern } from "./types";
 
@@ -53,11 +52,4 @@ export const settingsParsers = {
 	colors: parseAsJson<FrameColors>(parseFrameColors).withDefault(
 		THEME_FRAME_COLORS[THEME_NAME],
 	),
-	videoStyle: parseAsStringEnum<RevealStyle>([
-		"typewriter",
-		"natural",
-	]).withDefault("natural"),
-	videoSpeed: parseAsInteger.withDefault(35),
-	videoStartDelay: parseAsInteger.withDefault(800),
-	videoHold: parseAsInteger.withDefault(2800),
 };

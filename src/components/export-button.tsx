@@ -1,13 +1,10 @@
 import { Button } from "@base-ui/react/button";
 import { Menu } from "@base-ui/react/menu";
-import { Separator } from "@base-ui/react/separator";
 import { CaretDownIcon, DownloadSimpleIcon } from "@phosphor-icons/react";
 import {
 	type ExportFormat,
 	FORMAT_LABELS,
 	IMAGE_FORMATS,
-	isVideoFormat,
-	VIDEO_FORMATS,
 } from "./format-picker";
 
 function FormatMenuItem({
@@ -42,20 +39,14 @@ export function ExportButton({
 	format: ExportFormat;
 	onFormatChange: (value: ExportFormat) => void;
 }) {
-	const recording = exporting && isVideoFormat(format);
-
 	if (exporting) {
 		return (
 			<Button
 				disabled
 				focusableWhenDisabled
-				className={`export-pulse d-f ai-c jc-c g-2 min-w-24 h-7 px-2 fw-600 fs-sm ff-m us-none c-p bs-i-xs fv:os-s fv:oo-2 fv:oc-accent ${
-					recording
-						? "bg-transparent c-diff-remove bw-1 bc-diff-remove"
-						: "bg-accent c-page bw-0"
-				}`}
+				className="export-pulse d-f ai-c jc-c g-2 min-w-24 h-7 px-2 fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs fv:os-s fv:oo-2 fv:oc-accent bg-accent c-page"
 			>
-				<span>{recording ? "Recording" : "Exporting"}</span>
+				<span>Exporting</span>
 			</Button>
 		);
 	}
@@ -80,18 +71,6 @@ export function ExportButton({
 					<Menu.Positioner sideOffset={8} align="end" className="zi-90 ow-0">
 						<Menu.Popup className="menu-popup py-1 w-28 bw-1 bc-border bg-surface bs-o-xs">
 							{IMAGE_FORMATS.map((key) => (
-								<FormatMenuItem
-									key={key}
-									format={key}
-									selected={format === key}
-									onSelect={() => onFormatChange(key)}
-								/>
-							))}
-							<Separator
-								orientation="horizontal"
-								className="my-1 mx-1 h-px bg-border"
-							/>
-							{VIDEO_FORMATS.map((key) => (
 								<FormatMenuItem
 									key={key}
 									format={key}
