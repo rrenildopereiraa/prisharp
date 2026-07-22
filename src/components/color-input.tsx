@@ -22,23 +22,14 @@ export function ColorInput({
 			>
 				{label}
 			</span>
-			<div className="d-f g-2">
-				<HexColorInput
-					color={value}
-					onChange={onChange}
-					prefixed
-					spellCheck={false}
-					className="ff-m fs-sm bs-i-xs bw-1 bs-s px-2 py-1 w-20"
-					style={{
-						color: colors.accentDim,
-						backgroundColor: colors.page,
-						borderColor: colors.border,
-					}}
-				/>
+			<div
+				className="d-f ai-c g-2 h-7 pl-1 pr-2 bw-1 bs-s bs-i-xs"
+				style={{ backgroundColor: colors.page, borderColor: colors.border }}
+			>
 				<Popover.Root>
 					<Popover.Trigger
-						className="w-5 h-5 bw-1 bs-s fs-0 c-p fv:os-s fv:oo-2 fv:oc-accent"
-						style={{ backgroundColor: value, borderColor: colors.border }}
+						className="as-s w-5 h-5 r-1 fs-0 c-p fv:os-s fv:oo-2 fv:oc-accent"
+						style={{ backgroundColor: value }}
 						aria-label={`${label} color picker`}
 					/>
 					<Popover.Portal>
@@ -55,6 +46,14 @@ export function ColorInput({
 						</Popover.Positioner>
 					</Popover.Portal>
 				</Popover.Root>
+				<HexColorInput
+					color={value}
+					onChange={onChange}
+					prefixed
+					spellCheck={false}
+					className="ff-m fs-sm bw-0 os-none p-0 w-16 bg-transparent"
+					style={{ color: colors.accentDim }}
+				/>
 			</div>
 		</div>
 	);

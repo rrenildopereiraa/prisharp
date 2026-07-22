@@ -377,7 +377,7 @@ export function Inspector({
 	onRandomize: () => void;
 }) {
 	const [tab, setTab] = useState<SettingsTab>("layout");
-	const { colors } = useChromeTheme();
+	const { mode, colors, toggle } = useChromeTheme();
 	const { hovered: randomizeHovered, hoverHandlers: randomizeHoverHandlers } =
 		useHover();
 
@@ -395,6 +395,12 @@ export function Inspector({
 				<SettingsTabs tab={tab} onTabChange={setTab} />
 
 				<SectionSeparator label="Quick Actions" />
+
+				<OptionSwitch
+					label="Dark Mode"
+					checked={mode === "dark"}
+					onCheckedChange={toggle}
+				/>
 
 				<PickerField
 					label="Language"
