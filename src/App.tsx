@@ -1,7 +1,7 @@
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { toBlob } from "html-to-image";
 import { useQueryStates } from "nuqs";
-import { useLayoutEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Canvas } from "./components/canvas";
 import { CommandPalette } from "./components/command-palette";
 import { EditorTabBar } from "./components/editor-tabs";
@@ -14,6 +14,7 @@ import {
 import { RADIUS_MAX, RADIUS_MIN } from "./components/radius-control";
 import { StatusBar } from "./components/status-bar";
 import { useToast } from "./components/toast-provider";
+import { useChromeTheme } from "./lib/chrome-theme";
 import { buildCommands } from "./lib/commands";
 import { captureDataUrl } from "./lib/export";
 import { loadCustomTheme, THEME_FRAME_COLORS } from "./lib/highlighter";
@@ -28,6 +29,7 @@ import {
 import { settingsParsers } from "./lib/url-state";
 
 function App() {
+	const { colors } = useChromeTheme();
 	const [documents, setDocuments] = useState<EditorDocument[]>(() => {
 		const snippet = randomSnippet();
 		return [
@@ -51,7 +53,6 @@ function App() {
 	const [settings, setSettings] = useQueryStates(settingsParsers, {
 		history: "replace",
 	});
-	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	const frameRef = useRef<HTMLDivElement>(null);
 	const codeTextareaRef = useRef<HTMLTextAreaElement>(null);
 	const toast = useToast();
@@ -287,35 +288,6 @@ function App() {
 		setThemeIsRandom(true);
 	}
 
-	// biome-ignore lint/correctness/useExhaustiveDependencies: deps are size triggers
-	useLayoutEffect(() => {
-		const node = frameRef.current;
-		if (!node) return;
-
-		function measure(target: Element) {
-			const rect = target.getBoundingClientRect();
-			setDimensions((current) => {
-				const width = Math.round(rect.width);
-				const height = Math.round(rect.height);
-				if (current.width === width && current.height === height)
-					return current;
-				return { width, height };
-			});
-		}
-
-		measure(node);
-		const observer = new ResizeObserver(([entry]) => measure(entry.target));
-		observer.observe(node);
-		return () => observer.disconnect();
-	}, [
-		active.code,
-		active.fileName,
-		active.language,
-		settings.tabBar,
-		settings.statusBar,
-		settings.font,
-	]);
-
 	async function handleExport() {
 		if (!frameRef.current || exporting) return;
 		setExporting(true);
@@ -408,7 +380,10 @@ function App() {
 	});
 
 	return (
-		<div className="app-root d-f fd-c h-vh o-h bg-page">
+		<div
+			className="app-root d-f fd-c h-vh o-h"
+			style={{ backgroundColor: colors.page }}
+		>
 			<EditorTabBar
 				documents={documents}
 				activeId={activeId}
@@ -498,8 +473,6 @@ function App() {
 				onThemeChange={handleManualThemeChange}
 				themeIsRandom={themeIsRandom}
 				onRandomize={randomizeAll}
-				width={dimensions.width}
-				height={dimensions.height}
 			/>
 
 			<CommandPalette

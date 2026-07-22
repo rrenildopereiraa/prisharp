@@ -4,15 +4,18 @@ import { createRoot } from "react-dom/client";
 import "./index.css";
 import App from "./App.tsx";
 import { ToastProvider } from "./components/toast-provider.tsx";
+import { ChromeThemeProvider } from "./lib/chrome-theme.tsx";
 
 const root = document.getElementById("root");
 if (!root) throw new Error("Root element not found");
 createRoot(root).render(
 	<StrictMode>
 		<NuqsAdapter>
-			<ToastProvider>
-				<App />
-			</ToastProvider>
+			<ChromeThemeProvider>
+				<ToastProvider>
+					<App />
+				</ToastProvider>
+			</ChromeThemeProvider>
 		</NuqsAdapter>
 	</StrictMode>,
 );

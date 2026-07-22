@@ -11,6 +11,7 @@ import {
 } from "@phosphor-icons/react";
 import gsap from "gsap";
 import { useEffect, useRef, useState } from "react";
+import { useChromeTheme } from "../lib/chrome-theme";
 import { modKey } from "../lib/platform";
 import { type EditorDocument, MAX_DOCUMENTS } from "../lib/types";
 import { ExportButton } from "./export-button";
@@ -30,6 +31,7 @@ function TabItem({
 	onSelect: (id: string) => void;
 	onClose: (id: string) => void;
 }) {
+	const { colors } = useChromeTheme();
 	const ref = useRef<HTMLDivElement>(null);
 	const closingRef = useRef(false);
 
@@ -70,9 +72,13 @@ function TabItem({
 	return (
 		<div
 			ref={ref}
-			className={`d-f ai-c g-2 pl-3 pr-2 py-2 brw-1 bs-s bc-border c-p o-h ${
-				isActive ? "bg-page" : "bg-transparent h:bg-page"
+			className={`d-f ai-c g-2 pl-3 pr-2 py-2 brw-1 bs-s c-p o-h ${
+				isActive ? "" : "bg-transparent h:bg-page"
 			}`}
+			style={{
+				borderColor: colors.border,
+				backgroundColor: isActive ? colors.page : undefined,
+			}}
 		>
 			<button
 				type="button"
@@ -82,9 +88,9 @@ function TabItem({
 				<FileCodeIcon
 					size={14}
 					weight="fill"
-					className={isActive ? "c-accent" : "c-accent-dim"}
+					style={{ color: isActive ? colors.accent : colors.accentDim }}
 				/>
-				<span className="fs-sm ff-m c-accent-dim ws-nw">
+				<span className="fs-sm ff-m ws-nw" style={{ color: colors.accentDim }}>
 					{doc.fileName || "Untitled"}
 				</span>
 			</button>
@@ -94,7 +100,8 @@ function TabItem({
 						type="button"
 						onClick={handleClose}
 						aria-label="Close snippet"
-						className="d-f ai-c jc-c p-0 c-accent-dim bg-transparent bw-0 c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+						className="d-f ai-c jc-c p-0 bg-transparent bw-0 c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+						style={{ color: colors.accentDim }}
 					>
 						<XIcon size={12} weight="bold" />
 					</button>
@@ -131,14 +138,21 @@ export function EditorTabBar({
 	format: ExportFormat;
 	onFormatChange: (value: ExportFormat) => void;
 }) {
+	const { colors } = useChromeTheme();
 	const [copied, setCopied] = useState(false);
 	const [shared, setShared] = useState(false);
 	const canClose = documents.length > 1;
 	const atLimit = documents.length >= MAX_DOCUMENTS;
 
 	return (
-		<header className="d-f p-st t-0 zi-10 bbw-1 bs-s bc-border bg-surface">
-			<div className="d-f ai-c g-2 px-3 py-2 brw-1 bs-s bc-border">
+		<header
+			className="d-f p-st t-0 zi-10 bbw-1 bs-s"
+			style={{ borderColor: colors.border, backgroundColor: colors.surface }}
+		>
+			<div
+				className="d-f ai-c g-2 px-3 py-2 brw-1 bs-s"
+				style={{ borderColor: colors.border }}
+			>
 				<svg
 					width="22"
 					height="22"
@@ -155,7 +169,7 @@ export function EditorTabBar({
 					<polygon points="50,18 64,50 50,82" fill="#93b4f5" />
 				</svg>
 				<span className="fs-sm ff-m fw-700 us-none ws-nw">
-					Pri<span className="c-accent">sharp</span>
+					Pri<span style={{ color: colors.accent }}>sharp</span>
 				</span>
 			</div>
 
@@ -184,8 +198,12 @@ export function EditorTabBar({
 								? `Snippet limit reached (${MAX_DOCUMENTS})`
 								: "New snippet"
 						}
-						style={atLimit ? { opacity: 0.4 } : undefined}
-						className="d-f ai-c jc-c as-s w-8 brw-1 bs-s bc-border c-accent-dim bg-transparent c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
+						style={{
+							opacity: atLimit ? 0.4 : undefined,
+							borderColor: colors.border,
+							color: colors.accentDim,
+						}}
+						className="d-f ai-c jc-c as-s w-8 brw-1 bs-s bg-transparent c-p h:c-accent h:bg-page fv:os-s fv:oo--2 fv:oc-accent"
 					>
 						<PlusIcon size={14} weight="bold" />
 					</button>
@@ -198,11 +216,19 @@ export function EditorTabBar({
 				<Button
 					onClick={onOpenPalette}
 					aria-label="Search commands"
-					className="d-none @lg:d-f ai-c jc-c g-2 h-7 px-3 bg-page bw-1 bc-border c-accent-dim fs-xs ff-m us-none c-p bs-i-xs h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+					className="d-none @lg:d-f ai-c jc-c g-2 h-7 px-3 bw-1 fs-xs ff-m us-none c-p bs-i-xs h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+					style={{
+						backgroundColor: colors.page,
+						borderColor: colors.border,
+						color: colors.accentDim,
+					}}
 				>
 					<MagnifyingGlassIcon size={12} weight="bold" />
 					Search
-					<span className="px-1 bw-1 bs-s bc-border fs-xs c-accent-dim ws-nw">
+					<span
+						className="px-1 bw-1 bs-s fs-xs ws-nw"
+						style={{ borderColor: colors.border, color: colors.accentDim }}
+					>
 						{modKey}K
 					</span>
 				</Button>
@@ -213,10 +239,15 @@ export function EditorTabBar({
 						setShared(true);
 						setTimeout(() => setShared(false), 1500);
 					}}
-					className="d-f ai-c jc-c g-2 w-8 @lg:w-24 h-7 px-2 c-accent-dim bg-transparent bw-1 bc-border bs-i-xs us-none c-p h:bg-page h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+					className="d-f ai-c jc-c g-2 w-8 @lg:w-24 h-7 px-2 bg-transparent bw-1 bs-i-xs us-none c-p h:bg-page h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+					style={{ color: colors.accentDim, borderColor: colors.border }}
 				>
 					{shared ? (
-						<CheckIcon size={14} className="c-diff-add" weight="bold" />
+						<CheckIcon
+							size={14}
+							weight="bold"
+							style={{ color: colors.diffAdd }}
+						/>
 					) : (
 						<LinkSimpleIcon size={14} />
 					)}
@@ -229,10 +260,15 @@ export function EditorTabBar({
 						setCopied(true);
 						setTimeout(() => setCopied(false), 1500);
 					}}
-					className="d-f ai-c jc-c g-2 w-8 @lg:w-24 h-7 px-2 c-accent-dim bg-transparent bw-1 bc-border bs-i-xs us-none c-p h:bg-page h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+					className="d-f ai-c jc-c g-2 w-8 @lg:w-24 h-7 px-2 bg-transparent bw-1 bs-i-xs us-none c-p h:bg-page h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+					style={{ color: colors.accentDim, borderColor: colors.border }}
 				>
 					{copied ? (
-						<ClipboardTextIcon size={14} className="c-diff-add" weight="fill" />
+						<ClipboardTextIcon
+							size={14}
+							weight="fill"
+							style={{ color: colors.diffAdd }}
+						/>
 					) : (
 						<ClipboardIcon size={14} weight="fill" />
 					)}

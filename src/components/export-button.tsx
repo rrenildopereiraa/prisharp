@@ -1,6 +1,8 @@
 import { Button } from "@base-ui/react/button";
 import { Menu } from "@base-ui/react/menu";
 import { CaretDownIcon, DownloadSimpleIcon } from "@phosphor-icons/react";
+import { useChromeTheme } from "../lib/chrome-theme";
+import { overlayColor } from "../lib/color";
 import {
 	type ExportFormat,
 	FORMAT_LABELS,
@@ -16,12 +18,21 @@ function FormatMenuItem({
 	selected: boolean;
 	onSelect: () => void;
 }) {
+	const { colors } = useChromeTheme();
 	return (
 		<Menu.Item
 			onClick={onSelect}
 			className={(state) =>
-				`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "bg-accent c-page" : selected ? "c-accent h:c-white fw-700 tdl-u" : "c-accent-dim"}`
+				`d-f ai-c jc-sb g-2 mx-1 px-3 py-2 fs-sm ff-m us-none c-p ${state.highlighted ? "" : selected ? "h:c-white fw-700 tdl-u" : ""}`
 			}
+			style={(state) => ({
+				backgroundColor: state.highlighted ? colors.accent : undefined,
+				color: state.highlighted
+					? colors.onAccent
+					: selected
+						? colors.accent
+						: colors.accentDim,
+			})}
 		>
 			{FORMAT_LABELS[format]}
 		</Menu.Item>
@@ -39,12 +50,14 @@ export function ExportButton({
 	format: ExportFormat;
 	onFormatChange: (value: ExportFormat) => void;
 }) {
+	const { colors } = useChromeTheme();
 	if (exporting) {
 		return (
 			<Button
 				disabled
 				focusableWhenDisabled
-				className="d-f ai-c jc-c g-2 min-w-24 h-7 px-2 fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs fv:os-s fv:oo-2 fv:oc-accent bg-accent c-page"
+				className="d-f ai-c jc-c g-2 min-w-24 h-7 px-2 fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs fv:os-s fv:oo-2 fv:oc-accent"
+				style={{ backgroundColor: colors.accent, color: colors.onAccent }}
 			>
 				<span>Exporting</span>
 			</Button>
@@ -55,21 +68,35 @@ export function ExportButton({
 		<div className="d-f">
 			<Button
 				onClick={onExport}
-				className="d-f ai-c jc-c g-2 w-24 h-7 px-2 bg-accent c-page fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent"
+				className="d-f ai-c jc-c g-2 w-24 h-7 px-2 fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent"
+				style={{ backgroundColor: colors.accent, color: colors.onAccent }}
 			>
 				<DownloadSimpleIcon size={14} weight="fill" />
 				<span>Export</span>
 			</Button>
 
-			<div className="w-px bg-page/40" aria-hidden="true" />
+			<div
+				className="w-px"
+				aria-hidden="true"
+				style={{ backgroundColor: overlayColor(colors.page, 0.4) }}
+			/>
 
 			<Menu.Root>
-				<Menu.Trigger className="d-f ai-c jc-c w-6 h-7 px-1 bg-accent c-page fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent">
+				<Menu.Trigger
+					className="d-f ai-c jc-c w-6 h-7 px-1 fw-600 fs-sm ff-m us-none c-p bw-0 bs-i-xs h:bg-accent-8 fv:os-s fv:oo-2 fv:oc-accent"
+					style={{ backgroundColor: colors.accent, color: colors.onAccent }}
+				>
 					<CaretDownIcon size={12} weight="fill" />
 				</Menu.Trigger>
 				<Menu.Portal keepMounted>
 					<Menu.Positioner sideOffset={8} align="end" className="zi-90 ow-0">
-						<Menu.Popup className="menu-popup py-1 w-28 bw-1 bc-border bg-surface bs-o-xs">
+						<Menu.Popup
+							className="menu-popup py-1 w-28 bw-1 bs-o-xs"
+							style={{
+								borderColor: colors.border,
+								backgroundColor: colors.surface,
+							}}
+						>
 							{IMAGE_FORMATS.map((key) => (
 								<FormatMenuItem
 									key={key}

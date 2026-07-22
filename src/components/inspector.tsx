@@ -4,6 +4,7 @@ import { Switch } from "@base-ui/react/switch";
 import { Tabs } from "@base-ui/react/tabs";
 import { ShuffleIcon, UploadSimpleIcon } from "@phosphor-icons/react";
 import { useState } from "react";
+import { useChromeTheme } from "../lib/chrome-theme";
 import { LANGUAGES, type LanguageId, THEMES } from "../lib/highlighter";
 import type { BackgroundPattern, CornerRadii } from "../lib/types";
 import { BottomSheet } from "./bottom-sheet";
@@ -64,6 +65,7 @@ function SettingsTabs({
 	tab: SettingsTab;
 	onTabChange: (value: SettingsTab) => void;
 }) {
+	const { colors } = useChromeTheme();
 	return (
 		<div className="mt--3 mx--3 mb-3">
 			<Tabs.Root
@@ -75,17 +77,27 @@ function SettingsTabs({
 				<Tabs.List className="d-f">
 					<Tabs.Tab
 						value="layout"
-						className={(state) =>
-							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p brw-1 bs-s bc-border fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-surface c-accent-dim fw-700" : "bg-page c-accent-dim bbw-1 bc-border"}`
-						}
+						className="f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p brw-1 bs-s fv:os-s fv:oo--2 fv:oc-accent"
+						style={(state) => ({
+							backgroundColor: state.active ? colors.surface : colors.page,
+							color: colors.accentDim,
+							fontWeight: state.active ? 700 : undefined,
+							borderBottomWidth: state.active ? undefined : 1,
+							borderColor: colors.border,
+						})}
 					>
 						Layout
 					</Tabs.Tab>
 					<Tabs.Tab
 						value="style"
-						className={(state) =>
-							`f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p fv:os-s fv:oo--2 fv:oc-accent ${state.active ? "bg-surface c-accent-dim fw-700" : "bg-page c-accent-dim bbw-1 bc-border"}`
-						}
+						className="f-1 px-3 py-2 fs-xs ff-m ta-c us-none c-p fv:os-s fv:oo--2 fv:oc-accent"
+						style={(state) => ({
+							backgroundColor: state.active ? colors.surface : colors.page,
+							color: colors.accentDim,
+							fontWeight: state.active ? 700 : undefined,
+							borderBottomWidth: state.active ? undefined : 1,
+							borderColor: colors.border,
+						})}
 					>
 						Style
 					</Tabs.Tab>
@@ -96,11 +108,25 @@ function SettingsTabs({
 }
 
 function SectionSeparator({ label }: { label: string }) {
+	const { colors } = useChromeTheme();
 	return (
 		<div className="d-f ai-c g-2 pb-2">
-			<Separator orientation="horizontal" className="w-3 h-px bg-border" />
-			<span className="fs-xs ff-m c-accent-dim us-none ws-nw">{label}</span>
-			<Separator orientation="horizontal" className="f-1 h-px bg-border" />
+			<Separator
+				orientation="horizontal"
+				className="w-3 h-px"
+				style={{ backgroundColor: colors.border }}
+			/>
+			<span
+				className="fs-xs ff-m us-none ws-nw"
+				style={{ color: colors.accentDim }}
+			>
+				{label}
+			</span>
+			<Separator
+				orientation="horizontal"
+				className="f-1 h-px"
+				style={{ backgroundColor: colors.border }}
+			/>
 		</div>
 	);
 }
@@ -116,22 +142,30 @@ function OptionSwitch({
 	onCheckedChange: (value: boolean) => void;
 	disabled?: boolean;
 }) {
+	const { colors } = useChromeTheme();
 	return (
 		<div
 			className="d-f ai-c jc-sb g-2 px-2 pb-3"
 			style={disabled ? { opacity: 0.5 } : undefined}
 		>
-			<span className="fs-sm ff-m c-accent-dim us-none">{label}</span>
+			<span className="fs-sm ff-m us-none" style={{ color: colors.accentDim }}>
+				{label}
+			</span>
 			<Switch.Root
 				checked={checked}
 				onCheckedChange={onCheckedChange}
 				disabled={disabled}
-				className={`switch-root p-r d-f ai-c h-5 w-9 m-0 px-1 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent ${
-					checked ? "bg-accent bc-accent" : "bg-page bc-border"
-				}`}
+				className="switch-root p-r d-f ai-c h-5 w-9 m-0 px-1 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent"
+				style={{
+					backgroundColor: checked ? colors.accent : colors.page,
+					borderColor: checked ? colors.accent : colors.border,
+				}}
 			>
 				<Switch.Thumb
-					className={`switch-thumb w-4 h-3 bs-o-xs ${checked ? "bg-page ml-3" : "bg-accent-dim ml-0"}`}
+					className={`switch-thumb w-4 h-3 bs-o-xs ${checked ? "ml-3" : "ml-0"}`}
+					style={{
+						backgroundColor: checked ? colors.page : colors.accentDim,
+					}}
 				/>
 			</Switch.Root>
 		</div>
@@ -193,6 +227,7 @@ function InspectorContent({
 	onFrameColorsChange,
 	onUploadTheme,
 }: InspectorContentProps) {
+	const { colors } = useChromeTheme();
 	if (tab === "layout") {
 		return (
 			<>
@@ -299,7 +334,8 @@ function InspectorContent({
 						};
 						input.click();
 					}}
-					className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bc-border bg-transparent c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bc-accent fv:os-s fv:oo-2 fv:oc-accent"
+					className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bg-transparent fs-xs ff-m us-none c-p h:c-accent h:bc-accent fv:os-s fv:oo-2 fv:oc-accent"
+					style={{ borderColor: colors.border, color: colors.accentDim }}
 				>
 					<UploadSimpleIcon size={14} weight="fill" />
 					Import VS Code Theme
@@ -335,10 +371,14 @@ export function Inspector({
 	onRandomize: () => void;
 }) {
 	const [tab, setTab] = useState<SettingsTab>("layout");
+	const { colors } = useChromeTheme();
 
 	return (
 		<>
-			<aside className="d-none @lg:d-f fd-c w-72 fs-0 min-h-0 oy-auto blw-1 bs-s bc-border bg-surface p-3">
+			<aside
+				className="d-none @lg:d-f fd-c w-72 fs-0 min-h-0 oy-auto blw-1 bs-s p-3"
+				style={{ borderColor: colors.border, backgroundColor: colors.surface }}
+			>
 				<SettingsTabs tab={tab} onTabChange={setTab} />
 				<InspectorContent tab={tab} {...contentProps} />
 			</aside>
@@ -361,7 +401,8 @@ export function Inspector({
 				<div className="px-2 pb-4">
 					<Button
 						onClick={onRandomize}
-						className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bc-border bg-transparent c-accent-dim fs-xs ff-m us-none c-p h:c-accent h:bc-accent fv:os-s fv:oo-2 fv:oc-accent"
+						className="d-f ai-c jc-c g-2 w-100% px-2 py-2 bw-1 bs-d bg-transparent fs-xs ff-m us-none c-p h:c-accent h:bc-accent fv:os-s fv:oo-2 fv:oc-accent"
+						style={{ borderColor: colors.border, color: colors.accentDim }}
 					>
 						<ShuffleIcon size={14} weight="bold" />
 						Randomize

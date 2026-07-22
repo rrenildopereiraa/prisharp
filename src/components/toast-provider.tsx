@@ -1,6 +1,7 @@
 import { Toast } from "@base-ui/react/toast";
 import { XIcon } from "@phosphor-icons/react";
 import { createContext, type ReactNode, useContext } from "react";
+import { useChromeTheme } from "../lib/chrome-theme";
 
 interface ToastOptions {
 	title: string;
@@ -39,6 +40,7 @@ function toastAccent(type: string | undefined) {
 
 function ToastInner({ children }: { children: ReactNode }) {
 	const { add, toasts } = Toast.useToastManager();
+	const { colors } = useChromeTheme();
 
 	return (
 		<ToastContext.Provider value={{ add }}>
@@ -50,8 +52,12 @@ function ToastInner({ children }: { children: ReactNode }) {
 						<Toast.Root
 							key={toast.id}
 							toast={toast}
-							style={{ borderLeftColor: accent }}
-							className="toast-root btw-1 brw-1 bbw-1 blw-3 p-r d-f fd-c g-1 w-72 pl-4 pr-8 py-3 bg-surface bs-s bc-border bs-o-xs"
+							style={{
+								backgroundColor: colors.surface,
+								borderColor: colors.border,
+								borderLeftColor: accent,
+							}}
+							className="toast-root btw-1 brw-1 bbw-1 blw-3 p-r d-f fd-c g-1 w-72 pl-4 pr-8 py-3 bs-s bs-o-xs"
 						>
 							<Toast.Title
 								className="ff-m fs-sm fw-700"
@@ -60,13 +66,17 @@ function ToastInner({ children }: { children: ReactNode }) {
 								{toast.title}
 							</Toast.Title>
 							{toast.description && (
-								<Toast.Description className="ff-m fs-xs c-accent-dim">
+								<Toast.Description
+									className="ff-m fs-xs"
+									style={{ color: colors.accentDim }}
+								>
 									{toast.description}
 								</Toast.Description>
 							)}
 							<Toast.Close
 								aria-label="Dismiss"
-								className="p-a t-2 r-2 d-f ai-c jc-c w-5 h-5 bg-transparent bw-0 p-0 c-accent-dim c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+								className="p-a t-2 r-2 d-f ai-c jc-c w-5 h-5 bg-transparent bw-0 p-0 c-p h:c-accent fv:os-s fv:oo-2 fv:oc-accent"
+								style={{ color: colors.accentDim }}
 							>
 								<XIcon size={12} weight="bold" />
 							</Toast.Close>
