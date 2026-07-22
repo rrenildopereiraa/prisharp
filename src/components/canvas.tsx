@@ -19,6 +19,7 @@ export function Canvas({
 	onCycleLineHighlight,
 	onSetLineRangeHighlight,
 	onCycleWordHighlight,
+	onSetWordRangeHighlight,
 	textareaRef,
 	showTabBar,
 	showStatusBar,
@@ -42,7 +43,14 @@ export function Canvas({
 	highlightedWords: HighlightedWord[];
 	onCycleLineHighlight: (line: number) => void;
 	onSetLineRangeHighlight: (startLine: number, endLine: number) => void;
-	onCycleWordHighlight: (line: number, tokenIndex: number) => void;
+	onCycleWordHighlight: (
+		line: number,
+		startCol: number,
+		endCol: number,
+	) => void;
+	onSetWordRangeHighlight: (
+		ranges: { line: number; startCol: number; endCol: number }[],
+	) => void;
 	textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 	showTabBar: boolean;
 	showStatusBar: boolean;
@@ -72,6 +80,7 @@ export function Canvas({
 					onCycleLineHighlight={onCycleLineHighlight}
 					onSetLineRangeHighlight={onSetLineRangeHighlight}
 					onCycleWordHighlight={onCycleWordHighlight}
+					onSetWordRangeHighlight={onSetWordRangeHighlight}
 					textareaRef={textareaRef}
 					showTabBar={showTabBar}
 					showStatusBar={showStatusBar}

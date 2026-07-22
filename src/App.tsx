@@ -121,19 +121,57 @@ function App() {
 		});
 	}
 
-	function cycleWordHighlight(line: number, tokenIndex: number) {
+	// A plain click (no drag) cycles whatever range sits exactly under the
+	// cursor - an existing highlight if there is one, otherwise the whole
+	// word - through mark -> add -> remove -> off.
+	function cycleWordHighlight(line: number, startCol: number, endCol: number) {
 		const current = active.highlightedWords;
 		const existing = current.find(
-			(w) => w.line === line && w.tokenIndex === tokenIndex,
+			(w) => w.line === line && w.startCol === startCol && w.endCol === endCol,
 		);
 		const next = nextHighlightType(existing?.type);
 		const withoutWord = current.filter(
-			(w) => !(w.line === line && w.tokenIndex === tokenIndex),
+			(w) =>
+				!(w.line === line && w.startCol === startCol && w.endCol === endCol),
 		);
 		updateActive({
 			highlightedWords: next
-				? [...withoutWord, { line, tokenIndex, type: next }]
+				? [...withoutWord, { line, startCol, endCol, type: next }]
 				: withoutWord,
+		});
+	}
+
+	// Dragging across text - possibly spanning multiple lines - marks the
+	// exact selected range with character precision instead of snapping to
+	// whole tokens; dragging back over an already-all-marked selection
+	// clears it, mirroring the line-range gesture.
+	function setWordRangeHighlight(
+		ranges: { line: number; startCol: number; endCol: number }[],
+	) {
+		if (ranges.length === 0) return;
+		const current = active.highlightedWords;
+		const allAlreadyMarked = ranges.every((r) =>
+			current.some(
+				(w) =>
+					w.line === r.line &&
+					w.startCol === r.startCol &&
+					w.endCol === r.endCol &&
+					w.type === "mark",
+			),
+		);
+		const overlaps = (w: { line: number; startCol: number; endCol: number }) =>
+			ranges.some(
+				(r) =>
+					r.line === w.line && r.startCol < w.endCol && r.endCol > w.startCol,
+			);
+		const withoutOverlaps = current.filter((w) => !overlaps(w));
+		updateActive({
+			highlightedWords: allAlreadyMarked
+				? withoutOverlaps
+				: [
+						...withoutOverlaps,
+						...ranges.map((r) => ({ ...r, type: "mark" as const })),
+					],
 		});
 	}
 
@@ -398,6 +436,7 @@ function App() {
 					onCycleLineHighlight={cycleLineHighlight}
 					onSetLineRangeHighlight={setLineRangeHighlight}
 					onCycleWordHighlight={cycleWordHighlight}
+					onSetWordRangeHighlight={setWordRangeHighlight}
 					textareaRef={codeTextareaRef}
 					showTabBar={settings.tabBar}
 					showStatusBar={settings.statusBar}

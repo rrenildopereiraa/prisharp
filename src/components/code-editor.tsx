@@ -15,6 +15,21 @@ export interface HighlightColors {
 	remove: string;
 }
 
+interface WordRange {
+	line: number;
+	startCol: number;
+	endCol: number;
+}
+
+interface Segment {
+	content: string;
+	color?: string;
+	type?: HighlightType;
+	isPreview?: boolean;
+	startCol: number;
+	endCol: number;
+}
+
 function lineElementAt(
 	clientX: number,
 	clientY: number,
@@ -27,7 +42,7 @@ function lineElementAt(
 		);
 }
 
-function tokenElementAt(
+function segmentElementAt(
 	clientX: number,
 	clientY: number,
 ): HTMLElement | undefined {
@@ -35,8 +50,94 @@ function tokenElementAt(
 		.elementsFromPoint(clientX, clientY)
 		.find(
 			(el): el is HTMLElement =>
-				el instanceof HTMLElement && el.dataset.tokenIndex !== undefined,
+				el instanceof HTMLElement && el.dataset.colStart !== undefined,
 		);
+}
+
+// Converts a flat character selection (as the textarea's native drag
+// reports it, possibly spanning multiple lines) into per-line column
+// ranges, so a single mouse drag can precisely highlight a fragment of
+// text regardless of token or line boundaries.
+function lineRangesFromSelection(
+	lines: string[],
+	start: number,
+	end: number,
+): WordRange[] {
+	const ranges: WordRange[] = [];
+	let offset = 0;
+	for (let line = 0; line < lines.length; line++) {
+		const lineStart = offset;
+		const lineEnd = offset + lines[line].length;
+		const rangeStart = Math.max(start, lineStart);
+		const rangeEnd = Math.min(end, lineEnd);
+		if (rangeStart < rangeEnd) {
+			ranges.push({
+				line,
+				startCol: rangeStart - lineStart,
+				endCol: rangeEnd - lineStart,
+			});
+		}
+		offset = lineEnd + 1; // +1 for the newline joining this line to the next
+	}
+	return ranges;
+}
+
+// Splits a line's Shiki tokens into finer segments wherever a highlight
+// range (committed or a live drag preview) starts or ends, so highlights
+// can land on an arbitrary character range instead of snapping to whole
+// tokens. A preview range always wins where it overlaps a committed one,
+// so mid-drag the user only ever sees the range they're actively drawing.
+function splitLineIntoSegments(
+	lineTokens: { content: string; color?: string }[],
+	committed: (WordRange & { type: HighlightType })[],
+	preview: WordRange | null,
+): Segment[] {
+	const ranges: {
+		startCol: number;
+		endCol: number;
+		type?: HighlightType;
+		isPreview?: boolean;
+	}[] = committed
+		.filter(
+			(r) =>
+				!preview ||
+				r.endCol <= preview.startCol ||
+				r.startCol >= preview.endCol,
+		)
+		.map((r) => ({ startCol: r.startCol, endCol: r.endCol, type: r.type }));
+	if (preview) ranges.push({ ...preview, isPreview: true });
+	ranges.sort((a, b) => a.startCol - b.startCol);
+
+	const segments: Segment[] = [];
+	let col = 0;
+	for (const token of lineTokens) {
+		const tokenStart = col;
+		const tokenEnd = col + token.content.length;
+		let pos = tokenStart;
+		while (pos < tokenEnd) {
+			const active = ranges.find((r) => pos >= r.startCol && pos < r.endCol);
+			const nextBoundary = active
+				? Math.min(active.endCol, tokenEnd)
+				: Math.min(
+						...ranges.map((r) => r.startCol).filter((s) => s > pos),
+						tokenEnd,
+					);
+			segments.push({
+				content: token.content.slice(
+					pos - tokenStart,
+					nextBoundary - tokenStart,
+				),
+				color: token.color,
+				type: active?.type,
+				isPreview: active?.isPreview,
+				startCol: pos,
+				endCol: nextBoundary,
+			});
+			pos = nextBoundary;
+		}
+		col = tokenEnd;
+	}
+	return segments;
 }
 
 function CodeLine({
@@ -46,6 +147,7 @@ function CodeLine({
 	highlightType,
 	isPreview,
 	highlightedWords,
+	wordPreview,
 	highlightColors,
 }: {
 	lineIndex: number;
@@ -54,6 +156,7 @@ function CodeLine({
 	highlightType: HighlightType | undefined;
 	isPreview: boolean;
 	highlightedWords: HighlightedWord[];
+	wordPreview: WordRange | null;
 	highlightColors: HighlightColors;
 }) {
 	const lineBackground = highlightType
@@ -61,6 +164,12 @@ function CodeLine({
 		: isPreview
 			? overlayColor(highlightColors.mark, 0.08)
 			: undefined;
+
+	const segments = splitLineIntoSegments(
+		lineTokens,
+		highlightedWords.filter((w) => w.line === lineIndex),
+		wordPreview,
+	);
 
 	return (
 		<div
@@ -70,36 +179,31 @@ function CodeLine({
 		>
 			{/* Fall back to the plain line while Shiki tokens load, so
 			    lines keep their real height from the first paint */}
-			{lineTokens.map((token, tokenIndex) => {
-				const wordHighlight = highlightedWords.find(
-					(w) => w.line === lineIndex && w.tokenIndex === tokenIndex,
-				);
-				return (
-					<span
-						// biome-ignore lint/suspicious/noArrayIndexKey: index is stable, tokens are purely positional within a line
-						key={tokenIndex}
-						data-token-index={tokenIndex}
-						style={{
-							color: token.color,
-							...(wordHighlight
-								? {
-										backgroundColor: overlayColor(
-											highlightColors[wordHighlight.type],
-											0.2,
-										),
-										borderColor: overlayColor(
-											highlightColors[wordHighlight.type],
-											0.6,
-										),
-									}
-								: {}),
-						}}
-						className={wordHighlight ? "bw-1" : ""}
-					>
-						{token.content}
-					</span>
-				);
-			})}
+			{segments.map((segment, segmentIndex) => (
+				<span
+					// biome-ignore lint/suspicious/noArrayIndexKey: index is stable, segments are purely positional within a line
+					key={segmentIndex}
+					data-col-start={segment.startCol}
+					data-col-end={segment.endCol}
+					style={{
+						color: segment.color,
+						...(segment.type
+							? {
+									backgroundColor: overlayColor(
+										highlightColors[segment.type],
+										segment.isPreview ? 0.12 : 0.2,
+									),
+									borderColor: segment.isPreview
+										? undefined
+										: overlayColor(highlightColors[segment.type], 0.6),
+								}
+							: {}),
+					}}
+					className={segment.type && !segment.isPreview ? "bw-1" : ""}
+				>
+					{segment.content}
+				</span>
+			))}
 			{line.length === 0 && " "}
 		</div>
 	);
@@ -117,6 +221,7 @@ export function CodeEditor({
 	onCycleLineHighlight,
 	onSetLineRangeHighlight,
 	onCycleWordHighlight,
+	onSetWordRangeHighlight,
 	textareaRef,
 	highlightColors,
 }: {
@@ -130,7 +235,12 @@ export function CodeEditor({
 	highlightedWords: HighlightedWord[];
 	onCycleLineHighlight: (line: number) => void;
 	onSetLineRangeHighlight: (startLine: number, endLine: number) => void;
-	onCycleWordHighlight: (line: number, tokenIndex: number) => void;
+	onCycleWordHighlight: (
+		line: number,
+		startCol: number,
+		endCol: number,
+	) => void;
+	onSetWordRangeHighlight: (ranges: WordRange[]) => void;
 	textareaRef: React.RefObject<HTMLTextAreaElement | null>;
 	highlightColors: HighlightColors;
 }) {
@@ -147,6 +257,12 @@ export function CodeEditor({
 	const dragMovedRef = useRef(false);
 	const dragPreviewRef = useRef(dragPreview);
 	dragPreviewRef.current = dragPreview;
+
+	const [wordDragActive, setWordDragActive] = useState(false);
+	const [wordSelection, setWordSelection] = useState<{
+		start: number;
+		end: number;
+	} | null>(null);
 
 	useEffect(() => {
 		let cancelled = false;
@@ -280,16 +396,58 @@ export function CodeEditor({
 		};
 	}, [dragActive, finishDrag]);
 
+	// Alt+Shift+drag hands the drag to the textarea's own native text
+	// selection, so the browser computes exact character boundaries as the
+	// user moves the mouse - real "fine-grained control" instead of our own
+	// pixel-to-character math. We just mirror that live selection into the
+	// highlight preview via onSelect, then commit it on mouseup. A drag with
+	// no movement (start === end) falls back to toggling the whole word/
+	// range under the cursor, so a quick click still works.
+	useEffect(() => {
+		if (!wordDragActive) return;
+		const handleWindowMouseUp = (event: MouseEvent) => {
+			const textarea = textareaRef.current;
+			setWordDragActive(false);
+			setWordSelection(null);
+			if (!textarea) return;
+			const { selectionStart: start, selectionEnd: end } = textarea;
+			if (start === end) {
+				const lineEl = lineElementAt(event.clientX, event.clientY);
+				const segmentEl = segmentElementAt(event.clientX, event.clientY);
+				if (lineEl && segmentEl) {
+					onCycleWordHighlight(
+						Number(lineEl.dataset.lineIndex),
+						Number(segmentEl.dataset.colStart),
+						Number(segmentEl.dataset.colEnd),
+					);
+				}
+			} else {
+				onSetWordRangeHighlight(lineRangesFromSelection(lines, start, end));
+			}
+			// Collapse the native selection so it doesn't linger visibly or
+			// interfere with subsequent typing.
+			textarea.setSelectionRange(start, start);
+		};
+		window.addEventListener("mouseup", handleWindowMouseUp);
+		return () => window.removeEventListener("mouseup", handleWindowMouseUp);
+	}, [
+		wordDragActive,
+		lines,
+		onCycleWordHighlight,
+		onSetWordRangeHighlight,
+		textareaRef,
+	]);
+
 	const handleMouseMove = useCallback(
 		(event: React.MouseEvent<HTMLTextAreaElement>) => {
-			if (dragActive || !event.altKey || event.shiftKey) {
+			if (dragActive || wordDragActive || !event.altKey || event.shiftKey) {
 				setAltHoverLine(null);
 				return;
 			}
 			const lineEl = lineElementAt(event.clientX, event.clientY);
 			setAltHoverLine(lineEl ? Number(lineEl.dataset.lineIndex) : null);
 		},
-		[dragActive],
+		[dragActive, wordDragActive],
 	);
 
 	const handleMouseLeave = useCallback(() => setAltHoverLine(null), []);
@@ -297,19 +455,20 @@ export function CodeEditor({
 	const handleMouseDown = useCallback(
 		(event: React.MouseEvent<HTMLTextAreaElement>) => {
 			if (!event.altKey) return;
+
+			// Alt+Shift: let the browser's native drag-select run so the
+			// resulting selection has real character precision; we only read
+			// the result, in onSelect (live) and mouseup (commit).
+			if (event.shiftKey) {
+				setAltHoverLine(null);
+				setWordDragActive(true);
+				return;
+			}
+
 			event.preventDefault();
 			const lineEl = lineElementAt(event.clientX, event.clientY);
 			if (!lineEl) return;
 			const line = Number(lineEl.dataset.lineIndex);
-
-			// Alt+Shift+Click highlights a single word instead of a line.
-			if (event.shiftKey) {
-				const tokenEl = tokenElementAt(event.clientX, event.clientY);
-				if (tokenEl) {
-					onCycleWordHighlight(line, Number(tokenEl.dataset.tokenIndex));
-				}
-				return;
-			}
 
 			setAltHoverLine(null);
 			dragStartLineRef.current = line;
@@ -317,11 +476,33 @@ export function CodeEditor({
 			setDragPreview({ start: line, end: line });
 			setDragActive(true);
 		},
-		[onCycleWordHighlight],
+		[],
 	);
+
+	const handleSelect = useCallback(
+		(event: React.SyntheticEvent<HTMLTextAreaElement>) => {
+			if (!wordDragActive) return;
+			const textarea = event.currentTarget;
+			setWordSelection({
+				start: textarea.selectionStart,
+				end: textarea.selectionEnd,
+			});
+		},
+		[wordDragActive],
+	);
+
+	const wordPreviewRanges = wordSelection
+		? lineRangesFromSelection(lines, wordSelection.start, wordSelection.end)
+		: [];
 
 	return (
 		<div className="p-r ff-m fs-sm lh-4" style={editorStyle}>
+			{/* Alt+Shift-drag drives native textarea selection for exact
+			    character precision; its default blue highlight would double up
+			    with our own colored overlay, so hide it while dragging. */}
+			{wordDragActive && (
+				<style>{".word-drag-active::selection{background:transparent}"}</style>
+			)}
 			{lines.map((line, lineIndex) => {
 				const committed = highlightedLines.find((h) => h.line === lineIndex);
 				const inDragRange =
@@ -344,6 +525,9 @@ export function CodeEditor({
 							!committed && (inDragRange || altHoverLine === lineIndex)
 						}
 						highlightedWords={highlightedWords}
+						wordPreview={
+							wordPreviewRanges.find((r) => r.line === lineIndex) ?? null
+						}
 						highlightColors={highlightColors}
 					/>
 				);
@@ -359,7 +543,8 @@ export function CodeEditor({
 				onMouseMove={handleMouseMove}
 				onMouseLeave={handleMouseLeave}
 				onMouseDown={handleMouseDown}
-				className="p-a t-0 l-0 w-100% h-100% p-0 m-0 bg-transparent c-transparent bw-0 os-none o-h r-none ff-m fs-sm lh-4 ws-pw"
+				onSelect={handleSelect}
+				className={`p-a t-0 l-0 w-100% h-100% p-0 m-0 bg-transparent c-transparent bw-0 os-none o-h r-none ff-m fs-sm lh-4 ws-pw ${wordDragActive ? "word-drag-active" : ""}`}
 				style={{ ...editorStyle, caretColor }}
 			/>
 		</div>

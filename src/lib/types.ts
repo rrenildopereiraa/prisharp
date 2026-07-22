@@ -13,7 +13,8 @@ export interface HighlightedLine {
 
 export interface HighlightedWord {
 	line: number;
-	tokenIndex: number;
+	startCol: number;
+	endCol: number;
 	type: HighlightType;
 }
 
