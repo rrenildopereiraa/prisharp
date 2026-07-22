@@ -54,30 +54,76 @@ function segmentElementAt(
 		);
 }
 
-// Converts a flat character selection (as the textarea's native drag
-// reports it, possibly spanning multiple lines) into per-line column
-// ranges, so a single mouse drag can precisely highlight a fragment of
-// text regardless of token or line boundaries.
-function lineRangesFromSelection(
-	lines: string[],
-	start: number,
-	end: number,
-): WordRange[] {
-	const ranges: WordRange[] = [];
+interface DocPosition {
+	line: number;
+	col: number;
+}
+
+// Resolves a screen point directly against the rendered Shiki spans (the
+// text the user actually sees) rather than the invisible textarea sitting
+// on top of them. The textarea has its own, separately-laid-out copy of
+// the same text purely so native caret/selection/typing works, and its
+// line-wrapping can drift a pixel or two from the visible spans - which is
+// enough for its own selectionStart/selectionEnd to land on the wrong
+// line. Hit-testing the visible DOM directly instead means what the user
+// drags over is always exactly what gets highlighted.
+function resolveCaretPosition(
+	clientX: number,
+	clientY: number,
+): DocPosition | null {
+	const doc = document as Document & {
+		caretRangeFromPoint?: (x: number, y: number) => Range | null;
+		caretPositionFromPoint?: (
+			x: number,
+			y: number,
+		) => { offsetNode: Node; offset: number } | null;
+	};
+	let node: Node | null = null;
 	let offset = 0;
-	for (let line = 0; line < lines.length; line++) {
-		const lineStart = offset;
-		const lineEnd = offset + lines[line].length;
-		const rangeStart = Math.max(start, lineStart);
-		const rangeEnd = Math.min(end, lineEnd);
-		if (rangeStart < rangeEnd) {
-			ranges.push({
-				line,
-				startCol: rangeStart - lineStart,
-				endCol: rangeEnd - lineStart,
-			});
-		}
-		offset = lineEnd + 1; // +1 for the newline joining this line to the next
+	if (doc.caretRangeFromPoint) {
+		const range = doc.caretRangeFromPoint(clientX, clientY);
+		if (!range) return null;
+		node = range.startContainer;
+		offset = range.startOffset;
+	} else if (doc.caretPositionFromPoint) {
+		const pos = doc.caretPositionFromPoint(clientX, clientY);
+		if (!pos) return null;
+		node = pos.offsetNode;
+		offset = pos.offset;
+	} else {
+		return null;
+	}
+	const el = node instanceof Element ? node : node.parentElement;
+	const lineEl = el?.closest<HTMLElement>("[data-line-index]");
+	if (!lineEl) return null;
+	const line = Number(lineEl.dataset.lineIndex);
+	const segmentEl = el?.closest<HTMLElement>("[data-col-start]");
+	if (!segmentEl) return { line, col: 0 };
+	const base = Number(segmentEl.dataset.colStart);
+	const col =
+		node instanceof Element
+			? base + (offset > 0 ? (segmentEl.textContent?.length ?? 0) : 0)
+			: base + offset;
+	return { line, col };
+}
+
+// Builds the per-line column ranges spanning two document positions,
+// normalizing whichever order they were dragged in and clamping each
+// touched line to its own length so a drag that crosses a line boundary
+// covers exactly the text between the two points, nothing more.
+function buildRangesBetween(
+	a: DocPosition,
+	b: DocPosition,
+	lines: string[],
+): WordRange[] {
+	const [from, to] =
+		a.line < b.line || (a.line === b.line && a.col <= b.col) ? [a, b] : [b, a];
+	const ranges: WordRange[] = [];
+	for (let line = from.line; line <= to.line; line++) {
+		const lineLen = lines[line]?.length ?? 0;
+		const startCol = line === from.line ? from.col : 0;
+		const endCol = line === to.line ? to.col : lineLen;
+		if (startCol < endCol) ranges.push({ line, startCol, endCol });
 	}
 	return ranges;
 }
@@ -105,7 +151,7 @@ function splitLineIntoSegments(
 				r.startCol >= preview.endCol,
 		)
 		.map((r) => ({ startCol: r.startCol, endCol: r.endCol, type: r.type }));
-	if (preview) ranges.push({ ...preview, isPreview: true });
+	if (preview) ranges.push({ ...preview, type: "mark", isPreview: true });
 	ranges.sort((a, b) => a.startCol - b.startCol);
 
 	const segments: Segment[] = [];
@@ -259,10 +305,13 @@ export function CodeEditor({
 	dragPreviewRef.current = dragPreview;
 
 	const [wordDragActive, setWordDragActive] = useState(false);
-	const [wordSelection, setWordSelection] = useState<{
-		start: number;
-		end: number;
-	} | null>(null);
+	const [wordDragCurrent, setWordDragCurrent] = useState<DocPosition | null>(
+		null,
+	);
+	const wordDragStartRef = useRef<DocPosition | null>(null);
+	const wordDragMovedRef = useRef(false);
+	const wordDragCurrentRef = useRef(wordDragCurrent);
+	wordDragCurrentRef.current = wordDragCurrent;
 
 	useEffect(() => {
 		let cancelled = false;
@@ -396,22 +445,29 @@ export function CodeEditor({
 		};
 	}, [dragActive, finishDrag]);
 
-	// Alt+Shift+drag hands the drag to the textarea's own native text
-	// selection, so the browser computes exact character boundaries as the
-	// user moves the mouse - real "fine-grained control" instead of our own
-	// pixel-to-character math. We just mirror that live selection into the
-	// highlight preview via onSelect, then commit it on mouseup. A drag with
-	// no movement (start === end) falls back to toggling the whole word/
-	// range under the cursor, so a quick click still works.
+	// Alt+Shift+drag hit-tests the visible spans directly (via
+	// resolveCaretPosition) on every mousemove, so the highlighted range
+	// tracks the cursor live instead of only appearing once the mouse is
+	// released. A drag that never actually moves falls back to toggling the
+	// whole word under the cursor, so a quick click still works.
 	useEffect(() => {
 		if (!wordDragActive) return;
+		const handleWindowMouseMove = (event: MouseEvent) => {
+			const pos = resolveCaretPosition(event.clientX, event.clientY);
+			if (!pos) return;
+			const start = wordDragStartRef.current;
+			if (start && (pos.line !== start.line || pos.col !== start.col)) {
+				wordDragMovedRef.current = true;
+			}
+			setWordDragCurrent(pos);
+		};
 		const handleWindowMouseUp = (event: MouseEvent) => {
-			const textarea = textareaRef.current;
+			const start = wordDragStartRef.current;
 			setWordDragActive(false);
-			setWordSelection(null);
-			if (!textarea) return;
-			const { selectionStart: start, selectionEnd: end } = textarea;
-			if (start === end) {
+			setWordDragCurrent(null);
+			wordDragStartRef.current = null;
+			if (!start) return;
+			if (!wordDragMovedRef.current) {
 				const lineEl = lineElementAt(event.clientX, event.clientY);
 				const segmentEl = segmentElementAt(event.clientX, event.clientY);
 				if (lineEl && segmentEl) {
@@ -421,22 +477,18 @@ export function CodeEditor({
 						Number(segmentEl.dataset.colEnd),
 					);
 				}
-			} else {
-				onSetWordRangeHighlight(lineRangesFromSelection(lines, start, end));
+				return;
 			}
-			// Collapse the native selection so it doesn't linger visibly or
-			// interfere with subsequent typing.
-			textarea.setSelectionRange(start, start);
+			const current = wordDragCurrentRef.current ?? start;
+			onSetWordRangeHighlight(buildRangesBetween(start, current, lines));
 		};
+		window.addEventListener("mousemove", handleWindowMouseMove);
 		window.addEventListener("mouseup", handleWindowMouseUp);
-		return () => window.removeEventListener("mouseup", handleWindowMouseUp);
-	}, [
-		wordDragActive,
-		lines,
-		onCycleWordHighlight,
-		onSetWordRangeHighlight,
-		textareaRef,
-	]);
+		return () => {
+			window.removeEventListener("mousemove", handleWindowMouseMove);
+			window.removeEventListener("mouseup", handleWindowMouseUp);
+		};
+	}, [wordDragActive, lines, onCycleWordHighlight, onSetWordRangeHighlight]);
 
 	const handleMouseMove = useCallback(
 		(event: React.MouseEvent<HTMLTextAreaElement>) => {
@@ -455,17 +507,30 @@ export function CodeEditor({
 	const handleMouseDown = useCallback(
 		(event: React.MouseEvent<HTMLTextAreaElement>) => {
 			if (!event.altKey) return;
+			event.preventDefault();
 
-			// Alt+Shift: let the browser's native drag-select run so the
-			// resulting selection has real character precision; we only read
-			// the result, in onSelect (live) and mouseup (commit).
+			// Alt+Shift: hit-test the visible spans at the cursor to start a
+			// character-precise word/range drag (see resolveCaretPosition).
+			// The textarea itself is what's under the pointer right now, so
+			// resolveCaretPosition would just hit it instead of the spans
+			// beneath it - step out of the way first. (The `wordDragActive`
+			// style takes over from here for the rest of the gesture.)
 			if (event.shiftKey) {
 				setAltHoverLine(null);
+				const textarea = event.currentTarget;
+				textarea.style.pointerEvents = "none";
+				const pos = resolveCaretPosition(event.clientX, event.clientY);
+				if (!pos) {
+					textarea.style.pointerEvents = "";
+					return;
+				}
+				wordDragStartRef.current = pos;
+				wordDragMovedRef.current = false;
+				setWordDragCurrent(pos);
 				setWordDragActive(true);
 				return;
 			}
 
-			event.preventDefault();
 			const lineEl = lineElementAt(event.clientX, event.clientY);
 			if (!lineEl) return;
 			const line = Number(lineEl.dataset.lineIndex);
@@ -479,30 +544,16 @@ export function CodeEditor({
 		[],
 	);
 
-	const handleSelect = useCallback(
-		(event: React.SyntheticEvent<HTMLTextAreaElement>) => {
-			if (!wordDragActive) return;
-			const textarea = event.currentTarget;
-			setWordSelection({
-				start: textarea.selectionStart,
-				end: textarea.selectionEnd,
-			});
-		},
-		[wordDragActive],
-	);
-
-	const wordPreviewRanges = wordSelection
-		? lineRangesFromSelection(lines, wordSelection.start, wordSelection.end)
-		: [];
+	const wordPreviewRanges =
+		wordDragActive &&
+		wordDragMovedRef.current &&
+		wordDragStartRef.current &&
+		wordDragCurrent
+			? buildRangesBetween(wordDragStartRef.current, wordDragCurrent, lines)
+			: [];
 
 	return (
 		<div className="p-r ff-m fs-sm lh-4" style={editorStyle}>
-			{/* Alt+Shift-drag drives native textarea selection for exact
-			    character precision; its default blue highlight would double up
-			    with our own colored overlay, so hide it while dragging. */}
-			{wordDragActive && (
-				<style>{".word-drag-active::selection{background:transparent}"}</style>
-			)}
 			{lines.map((line, lineIndex) => {
 				const committed = highlightedLines.find((h) => h.line === lineIndex);
 				const inDragRange =
@@ -543,9 +594,12 @@ export function CodeEditor({
 				onMouseMove={handleMouseMove}
 				onMouseLeave={handleMouseLeave}
 				onMouseDown={handleMouseDown}
-				onSelect={handleSelect}
-				className={`p-a t-0 l-0 w-100% h-100% p-0 m-0 bg-transparent c-transparent bw-0 os-none o-h r-none ff-m fs-sm lh-4 ws-pw ${wordDragActive ? "word-drag-active" : ""}`}
-				style={{ ...editorStyle, caretColor }}
+				className="p-a t-0 l-0 w-100% h-100% p-0 m-0 bg-transparent c-transparent bw-0 os-none o-h r-none ff-m fs-sm lh-4 ws-pw"
+				style={{
+					...editorStyle,
+					caretColor,
+					pointerEvents: wordDragActive ? "none" : undefined,
+				}}
 			/>
 		</div>
 	);
