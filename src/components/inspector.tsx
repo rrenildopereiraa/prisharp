@@ -109,17 +109,23 @@ function OptionSwitch({
 	label,
 	checked,
 	onCheckedChange,
+	disabled,
 }: {
 	label: string;
 	checked: boolean;
 	onCheckedChange: (value: boolean) => void;
+	disabled?: boolean;
 }) {
 	return (
-		<div className="d-f ai-c jc-sb g-2 px-2 pb-3">
+		<div
+			className="d-f ai-c jc-sb g-2 px-2 pb-3"
+			style={disabled ? { opacity: 0.5 } : undefined}
+		>
 			<span className="fs-sm ff-m c-accent-dim us-none">{label}</span>
 			<Switch.Root
 				checked={checked}
 				onCheckedChange={onCheckedChange}
+				disabled={disabled}
 				className={`switch-root p-r d-f ai-c h-5 w-9 m-0 px-1 bw-1 bs-s c-p fv:os-s fv:oo-2 fv:oc-accent ${
 					checked ? "bg-accent bc-accent" : "bg-page bc-border"
 				}`}
@@ -212,8 +218,9 @@ function InspectorContent({
 					label="Tab Border"
 					checked={showActiveTabBorder}
 					onCheckedChange={onShowActiveTabBorderChange}
+					disabled={!showTabBar}
 				/>
-				{showActiveTabBorder && (
+				{showActiveTabBorder && showTabBar && (
 					<ColorInput
 						label="Color"
 						indent
