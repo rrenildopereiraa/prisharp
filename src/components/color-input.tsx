@@ -1,4 +1,5 @@
 import { Popover } from "@base-ui/react/popover";
+import { CaretDownIcon } from "@phosphor-icons/react";
 import { HexColorInput, HexColorPicker } from "react-colorful";
 import { useChromeTheme } from "../lib/chrome-theme";
 
@@ -23,15 +24,29 @@ export function ColorInput({
 				{label}
 			</span>
 			<div
-				className="d-f ai-c g-2 h-7 pl-1 pr-2 bw-1 bs-s bs-i-xs"
+				className="d-f ai-c h-7 bw-1 bs-s"
 				style={{ backgroundColor: colors.page, borderColor: colors.border }}
 			>
+				<HexColorInput
+					color={value}
+					onChange={onChange}
+					prefixed
+					spellCheck={false}
+					className="ff-m fs-sm bw-0 os-none p-0 px-2 h-100% w-20 bg-transparent"
+					style={{ color: colors.accentDim }}
+				/>
 				<Popover.Root>
 					<Popover.Trigger
-						className="as-s w-5 h-5 r-1 fs-0 c-p fv:os-s fv:oo-2 fv:oc-accent"
-						style={{ backgroundColor: value }}
+						className="d-f ai-c jc-c h-100% w-6 bw-0 blw-1 bs-s fs-0 c-p fv:os-s fv:oo-2 fv:oc-accent"
+						style={{ borderColor: colors.border }}
 						aria-label={`${label} color picker`}
-					/>
+					>
+						<CaretDownIcon
+							size={10}
+							weight="bold"
+							style={{ color: colors.accentDim }}
+						/>
+					</Popover.Trigger>
 					<Popover.Portal>
 						<Popover.Positioner sideOffset={8} align="end" className="zi-90">
 							<Popover.Popup
@@ -46,14 +61,6 @@ export function ColorInput({
 						</Popover.Positioner>
 					</Popover.Portal>
 				</Popover.Root>
-				<HexColorInput
-					color={value}
-					onChange={onChange}
-					prefixed
-					spellCheck={false}
-					className="ff-m fs-sm bw-0 os-none p-0 w-16 bg-transparent"
-					style={{ color: colors.accentDim }}
-				/>
 			</div>
 		</div>
 	);
