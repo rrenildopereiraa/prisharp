@@ -34,16 +34,15 @@ export async function collect(probes) {
 		return true;
 	};
 
-	const fetchText = async (url, init = {}) => {
+	const fetchText = async (url, limit = textLimit) => {
 		try {
 			const response = await fetch(url, {
 				cache: "force-cache",
 				credentials: "same-origin",
 				signal: AbortSignal.timeout(timeout),
-				...init,
 			});
 			if (!response.ok) return "";
-			return (await response.text()).slice(0, textLimit);
+			return (await response.text()).slice(0, limit);
 		} catch {
 			return "";
 		}
@@ -87,6 +86,16 @@ export async function collect(probes) {
 					domKey.push(prefix);
 					wantedKeys.delete(prefix);
 				}
+			}
+		}
+	}
+
+	// Attribute names a library writes, some of them built at runtime.
+	const attrPrefix = new Set();
+	for (const element of elements) {
+		for (const name of element.getAttributeNames()) {
+			for (const prefix of probes.attrPrefix) {
+				if (name.startsWith(prefix)) attrPrefix.add(prefix);
 			}
 		}
 	}
@@ -138,20 +147,70 @@ export async function collect(probes) {
 		.map((style) => style.textContent)
 		.join("\n");
 
-	// The entry scripts carry the bundler's runtime.
+	// Every script the page loaded: the entry carries the bundler's runtime,
+	// and a library can sit in any chunk. The browser has them cached.
 	const scripts = [
-		...document.querySelectorAll('script[type="module"][src]'),
-		...document.querySelectorAll("script[src]"),
+		...[...document.querySelectorAll('script[type="module"][src]')].map(
+			(script) => script.src,
+		),
+		...[...document.querySelectorAll("script[src]")].map(
+			(script) => script.src,
+		),
+		...[...document.querySelectorAll('link[rel="modulepreload"]')].map(
+			(link) => link.href,
+		),
+		...performance
+			.getEntriesByType("resource")
+			.filter(
+				(entry) =>
+					entry.initiatorType === "script" || /\.m?js(\?|$)/.test(entry.name),
+			)
+			.map((entry) => entry.name),
 	]
-		.map((script) => script.src)
-		.filter((src, index, all) => all.indexOf(src) === index)
-		.slice(0, 6);
+		.filter((src, index, all) => src && all.indexOf(src) === index)
+		.slice(0, 40);
 
-	const [css, script] = await Promise.all([
+	const [css, sources] = await Promise.all([
 		Promise.all(stylesheets.map((href) => fetchText(href))),
-		Promise.all(scripts.map((src) => fetchText(src))),
+		Promise.all(scripts.map((src) => fetchText(src, 2_000_000))),
 		headersRequest,
 	]);
+
+	// Scripts are matched here, so megabytes of code never leave the page.
+	const script = {};
+	for (const { source, flags } of probes.script) {
+		const regex = new RegExp(source, flags);
+		for (const text of sources) {
+			const match = regex.exec(text);
+			if (!match) continue;
+			script[`${source}/${flags}`] = match[1] ?? true;
+			break;
+		}
+	}
+
+	// A dev server hands out the project's config files from its root. Only
+	// there: a deployed site never serves them, so it is not asked.
+	const file = [];
+	const local =
+		/^(localhost|127\.|\[::1\]|10\.|192\.168\.)|\.(local|localhost)$/.test(
+			location.hostname,
+		);
+	if (local) {
+		await Promise.all(
+			probes.file.map(async ({ path, source, flags }) => {
+				try {
+					const response = await fetch(new URL(path, location.origin), {
+						signal: AbortSignal.timeout(timeout),
+					});
+					// a missing file comes back as the app's own page
+					const type = response.headers.get("content-type") ?? "";
+					if (!response.ok || type.includes("html")) return;
+					const text = (await response.text()).slice(0, 50_000);
+					if (new RegExp(source, flags).test(text)) file.push(path);
+				} catch {}
+			}),
+		);
+	}
 
 	return {
 		url: location.href,
@@ -159,12 +218,14 @@ export async function collect(probes) {
 		jsPrefix,
 		dom,
 		domKey,
+		attrPrefix: [...attrPrefix],
 		classes: [...classes],
 		resources: [...resources],
 		meta,
 		headers,
 		html: document.documentElement.outerHTML.slice(0, textLimit * 2),
 		css: [inlineStyles.slice(0, textLimit), ...css].join("\n"),
-		script: script.join("\n"),
+		script,
+		file,
 	};
 }

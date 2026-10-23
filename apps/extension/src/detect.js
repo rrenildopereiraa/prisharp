@@ -4,6 +4,7 @@
 const threshold = 100;
 
 const domKey = ({ dom, attr, prop }) => `${dom}|${attr ?? prop ?? ""}`;
+const scriptKey = (regex) => `${regex.source}/${regex.flags}`;
 
 // What the collector should look for: the parts of each signal that can only
 // be read inside the page.
@@ -12,14 +13,31 @@ export function probes(technologies) {
 		js: new Set(),
 		jsPrefix: new Set(),
 		domKey: new Set(),
+		attrPrefix: new Set(),
 		classes: new Set(),
 	};
 	const dom = new Map();
+	const script = new Map();
+	const file = new Map();
 	for (const { signals } of technologies) {
 		for (const signal of signals) {
 			if (signal.js) found.js.add(signal.js);
 			if (signal.jsPrefix) found.jsPrefix.add(signal.jsPrefix);
 			if (signal.domKey) found.domKey.add(signal.domKey);
+			if (signal.attrPrefix) found.attrPrefix.add(signal.attrPrefix);
+			if (signal.file) {
+				file.set(signal.file, {
+					path: signal.file,
+					source: signal.content.source,
+					flags: signal.content.flags,
+				});
+			}
+			if (signal.script) {
+				script.set(scriptKey(signal.script), {
+					source: signal.script.source,
+					flags: signal.script.flags,
+				});
+			}
 			if (signal.classes)
 				for (const name of signal.classes) found.classes.add(name);
 			if (signal.dom) {
@@ -35,8 +53,11 @@ export function probes(technologies) {
 		js: [...found.js],
 		jsPrefix: [...found.jsPrefix],
 		domKey: [...found.domKey],
+		attrPrefix: [...found.attrPrefix],
 		classes: [...found.classes],
 		dom: [...dom.values()],
+		script: [...script.values()],
+		file: [...file.values()],
 	};
 }
 
@@ -62,6 +83,14 @@ function match(signal, page) {
 	}
 	if (signal.jsPrefix) return page.jsPrefix.includes(signal.jsPrefix) && {};
 	if (signal.domKey) return page.domKey.includes(signal.domKey) && {};
+	if (signal.file) return page.file.includes(signal.file) && {};
+	if (signal.attrPrefix) {
+		return page.attrPrefix.includes(signal.attrPrefix) && {};
+	}
+	if (signal.script) {
+		const value = page.script[scriptKey(signal.script)];
+		return value !== undefined && { version: version(value) };
+	}
 	if (signal.dom) {
 		const value = page.dom[domKey(signal)];
 		return value !== undefined && { version: version(value) };
@@ -83,7 +112,7 @@ function match(signal, page) {
 		return test(signal.meta[1], page.meta[signal.meta[0]]) || false;
 	if (signal.header)
 		return test(signal.header[1], page.headers[signal.header[0]]) || false;
-	for (const kind of ["html", "css", "script", "url"]) {
+	for (const kind of ["html", "css", "url"]) {
 		if (signal[kind]) return test(signal[kind], page[kind]) || false;
 	}
 	return false;
@@ -91,18 +120,29 @@ function match(signal, page) {
 
 export function detect(page, technologies, categories = []) {
 	const byId = new Map(technologies.map((tech) => [tech.id, tech]));
+	const position = new Map(technologies.map((tech, index) => [tech.id, index]));
 	const found = new Map();
 
-	for (const tech of technologies) {
-		let score = 0;
+	const score = (tech) => {
+		let total = 0;
 		let firstVersion;
 		for (const signal of tech.signals) {
-			const hit = match(signal, page);
+			const hit = signal.found
+				? signal.found.every((id) => found.has(id)) && {}
+				: match(signal, page);
 			if (!hit) continue;
-			score += signal.weight ?? 100;
+			total += signal.weight ?? 100;
 			firstVersion ??= hit.version;
 		}
-		if (score >= threshold) found.set(tech.id, { tech, version: firstVersion });
+		if (total >= threshold) found.set(tech.id, { tech, version: firstVersion });
+	};
+
+	// Page evidence first, then what other findings add up to.
+	for (const tech of technologies) score(tech);
+	for (const tech of technologies) {
+		if (!found.has(tech.id) && tech.signals.some((signal) => signal.found)) {
+			score(tech);
+		}
 	}
 
 	// A technology may imply one that implies another, so repeat until
@@ -132,8 +172,6 @@ export function detect(page, technologies, categories = []) {
 	return [...found.values()]
 		.map(({ tech, version }) => ({ ...tech, version }))
 		.sort(
-			(a, b) =>
-				order(a) - order(b) ||
-				technologies.indexOf(a) - technologies.indexOf(b),
+			(a, b) => order(a) - order(b) || position.get(a.id) - position.get(b.id),
 		);
 }

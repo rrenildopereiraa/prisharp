@@ -8,14 +8,18 @@
 //   dom       a selector matches:              { dom: "[ng-version]", attr: "ng-version" }
 //             (`attr` or `prop` reads the version off the element)
 //   domKey    an element carries an expando:   { domKey: "__reactFiber$" }
+//   attrPrefix an attribute name starts with:  { attrPrefix: "data-base-ui-" }
 //   resource  a script, stylesheet or loaded URL matches
 //   html      the rendered document matches
-//   script    the source of the page's entry scripts matches
+//   script    the source of any script the page loaded matches
 //   css       the page's stylesheets match
 //   meta      [name, regex] against a <meta name> or <meta property>
 //   header    [name, regex] against a response header of the page
 //   classes   at least `min` of these class names are in the DOM
 //   url       the page URL matches
+//   file      on a dev server, a file at the root whose content matches:
+//             { file: "/yumma.config.mjs", content: /yummacss/ }
+//   found     these technologies were all found too
 //
 // A regex with a capture group reads the version from it. Each signal weighs
 // 100 unless it says otherwise: a technology shows at 100, so a weak signal
@@ -314,10 +318,14 @@ export const technologies = [
 		website: "https://yummacss.com/ui",
 		category: "Components",
 		icon: "yummacss",
-		// Yumma UI is Base UI styled with Yumma CSS, copied into the project,
-		// so it leaves no mark of its own: the pair is the evidence.
-		requires: ["yummacss", "base-ui"],
-		signals: [{ classes: ["d:f", "ai:c"], min: 1 }],
+		implies: ["yummacss", "base-ui"],
+		signals: [
+			{ file: "/yummaui.json", content: /"componentsDir"|"registry"/ },
+			{ file: "/yummaui.config.mjs", content: /yummaui/ },
+			// Copied into the project, it leaves no mark of its own in a build:
+			// Base UI styled with Yumma CSS is the evidence.
+			{ found: ["yummacss", "base-ui"] },
+		],
 	},
 	{
 		id: "tailwind-plus",
@@ -339,9 +347,10 @@ export const technologies = [
 		website: "https://base-ui.com",
 		category: "Components",
 		signals: [
-			{
-				dom: "[data-base-ui-click-trigger], [data-base-ui-focusable], [data-base-ui-inert], [data-base-ui-portal], [data-base-ui-swipe-ignore], [data-base-ui-focus-guard]",
-			},
+			// Triggers carry one at rest; open parts add more.
+			{ attrPrefix: "data-base-ui-" },
+			// What survives minifying: its error URL and its event helper.
+			{ script: /base-ui\.com\/production-error|preventBaseUIHandler/ },
 		],
 	},
 	{
@@ -382,13 +391,28 @@ export const technologies = [
 		website: "https://yummacss.com",
 		category: "Styling",
 		signals: [
+			{ file: "/yumma.config.mjs", content: /yummacss/ },
+			{ file: "/yummacss.config.mjs", content: /yummacss/ },
 			// Property initials, a colon, value initials: no other framework
 			// generates `.d\:f{display:flex}`.
 			{
 				css: /\.(?:d\\:(?:f|g|b|if|none)\{display|ai\\:c\{align-items|jc\\:(?:sb|c)\{justify-content)/,
 			},
 			{
-				classes: ["d:f", "d:g", "ai:c", "jc:sb", "jc:c", "fd:c", "fw:600"],
+				classes: [
+					"d:f",
+					"d:g",
+					"d:if",
+					"ai:c",
+					"jc:sb",
+					"jc:c",
+					"fd:c",
+					"fw:500",
+					"fw:600",
+					"c:p",
+					"w:100%",
+					"td:none",
+				],
 				min: 2,
 			},
 		],
