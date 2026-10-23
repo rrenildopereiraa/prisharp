@@ -159,3 +159,17 @@ test("Yumma CSS shows from its config on a dev server", () => {
 	);
 	assert.deepEqual(found, ["Yumma CSS"]);
 });
+
+test("Tailwind CSS shows without its banner", () => {
+	// as Next.js minifies Tailwind v4, and as Tailwind v3 resets its variables
+	const v4 =
+		'@layer properties{@supports ((-webkit-hyphens:none)){*{--tw-font-weight:initial;--tw-shadow:0 0 #0000}}}@property --tw-shadow{syntax:"*";inherits:false}';
+	const v3 =
+		"*,:after,:before{--tw-border-spacing-x:0;--tw-ring-offset-shadow:0 0 #0000}";
+	assert.deepEqual(names(detect(page({ css: v4 }), technologies)), [
+		"Tailwind CSS",
+	]);
+	assert.deepEqual(names(detect(page({ css: v3 }), technologies)), [
+		"Tailwind CSS",
+	]);
+});
