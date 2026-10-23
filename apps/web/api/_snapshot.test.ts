@@ -2,7 +2,7 @@ import { createServer, type Server } from "node:http";
 import { detect, probes } from "extension/detect";
 import { categories, technologies } from "extension/technologies";
 import { afterAll, beforeAll, expect, it } from "vite-plus/test";
-import { snapshot } from "./_snapshot";
+import { snapshot } from "./_snapshot.js";
 
 const pages: Record<string, [string, string]> = {
 	"/": [
@@ -61,4 +61,15 @@ it("refuses an address that is not public", async () => {
 	await expect(snapshot(new URL(origin), probes(technologies))).rejects.toThrow(
 		"That address is not public.",
 	);
+});
+
+it("answers JSON from the route, refusing a private address", async () => {
+	const { GET } = await import("./detect.js");
+	const response = await GET(
+		new Request("https://prisharp.com/api/detect?url=http://127.0.0.1:1/"),
+	);
+	expect(response.status).toBe(422);
+	expect(await response.json()).toEqual({
+		error: "That address is not public.",
+	});
 });

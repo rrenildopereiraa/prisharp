@@ -1,6 +1,6 @@
 import { detect, probes } from "extension/detect";
 import { categories, technologies } from "extension/technologies";
-import { snapshot } from "./_snapshot";
+import { snapshot } from "./_snapshot.js";
 
 const asked = probes(technologies);
 
