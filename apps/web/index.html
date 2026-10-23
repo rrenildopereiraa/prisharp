@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" class="cs:ld">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Prisharp</title>
+		<meta
+			name="description"
+			content="A Chromium extension that shows the tech behind any site, in one click."
+		/>
+		<link rel="icon" type="image/png" href="/icon.png" />
+		<script>
+			// the saved theme, before the first paint
+			try {
+				const theme = localStorage.getItem("prisharp-theme");
+				const scheme = { light: "cs:l", dark: "cs:d" }[theme];
+				if (scheme) document.documentElement.className = scheme;
+			} catch {}
+		</script>
+	</head>
+	<body>
+		<div id="root"></div>
+		<script type="module" src="/src/main.tsx"></script>
+	</body>
+</html>

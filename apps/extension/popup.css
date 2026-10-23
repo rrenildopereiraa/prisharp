@@ -1,0 +1,521 @@
+*, :before, :after {
+  box-sizing: border-box;
+  border: 0 solid;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Noto Sans, Liberation Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  font-family: inherit;
+  line-height: 1.5;
+}
+
+canvas, img, picture, svg, video {
+  max-width: 100%;
+  display: block;
+}
+
+button, input, optgroup, select, textarea {
+  background-color: transparent;
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+:where(button, input, select, textarea):disabled {
+  cursor: not-allowed;
+  opacity: .5;
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  overflow-wrap: break-word;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  text-wrap: balance;
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+b, strong {
+  font-weight: 700;
+}
+
+pre, code, kbd, samp {
+  font-family: monospace;
+  font-size: 1em;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ol, ul {
+  padding: 0;
+  list-style: none;
+}
+
+hr {
+  border-top-width: 1px;
+  height: 0;
+}
+
+
+:root {
+  color-scheme: light dark;
+}
+
+.a\:s\:95:active {
+  scale: .95;
+}
+
+.ai\:b {
+  align-items: baseline;
+}
+
+.ai\:c {
+  align-items: center;
+}
+
+.as\:c {
+  align-self: center;
+}
+
+.b\:0 {
+  bottom: 0;
+}
+
+.b\:1 {
+  bottom: .25rem;
+}
+
+.bc\:capsule-edge {
+  border-color: light-dark(#3be68a, #3be68a);
+}
+
+.bc\:knob-edge {
+  border-color: light-dark(#e1e3e6, #3a3d45);
+}
+
+.bc\:transparent {
+  border-color: transparent;
+}
+
+.bg\:divider {
+  background-color: light-dark(#d3d5d9, #0d0e11);
+}
+
+.bg\:transparent {
+  background-color: transparent;
+}
+
+.br\:3xl {
+  border-radius: 1.5rem;
+}
+
+.br\:9999 {
+  border-radius: 9999px;
+}
+
+.br\:sm {
+  border-radius: 0.25rem;
+}
+
+.br\:xxl {
+  border-radius: 1rem;
+}
+
+.bs-o\:var\(--shadow-capsule\) {
+  box-shadow: var(--shadow-capsule);
+}
+
+.bs-o\:var\(--shadow-disc\) {
+  box-shadow: var(--shadow-disc);
+}
+
+.bs-o\:var\(--shadow-knob\) {
+  box-shadow: var(--shadow-knob);
+}
+
+.bs-o\:var\(--shadow-rim\) {
+  box-shadow: var(--shadow-rim);
+}
+
+.bs-o\:var\(--shadow-tile\) {
+  box-shadow: var(--shadow-tile);
+}
+
+.bs-o\:var\(--shadow-track\) {
+  box-shadow: var(--shadow-track);
+}
+
+.bs-o\:var\(--shadow-well\) {
+  box-shadow: var(--shadow-well);
+}
+
+.c\:accent {
+  color: light-dark(#5d68cc, #bec6f2);
+}
+
+.c\:capsule-ink {
+  color: light-dark(#0a5432, #0a5432);
+}
+
+.c\:capsule-ink-dim {
+  color: light-dark(#13723f, #13723f);
+}
+
+.c\:ink {
+  color: light-dark(#1f2227, #e8e9ec);
+}
+
+.c\:ink-dim {
+  color: light-dark(#61656e, #9a9ea8);
+}
+
+.c\:p {
+  cursor: pointer;
+}
+
+.cs\:ld {
+  color-scheme: light dark;
+}
+
+.d\:b {
+  display: block;
+}
+
+.d\:f {
+  display: flex;
+}
+
+.d\:g {
+  display: grid;
+}
+
+.fd\:c {
+  flex-direction: column;
+}
+
+.ff\:d {
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica Neue, Noto Sans, Liberation Sans, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji;
+}
+
+.ff\:m {
+  font-family: ui-monospace, Cascadia Code, Source Code Pro, Menlo, Roboto Mono, Ubuntu Mono, Consolas, Liberation Mono, Courier New, monospace;
+}
+
+.fg\:1 {
+  flex-grow: 1;
+}
+
+.fs\:0 {
+  flex-shrink: 0;
+}
+
+.fs\:sm {
+  font-size: 0.875rem;
+}
+
+.fs\:xs {
+  font-size: 0.75rem;
+}
+
+.fv\:oc\:glow:focus-visible {
+  outline-color: light-dark(#2fe381, #2fe381);
+}
+
+.fv\:oo\:-2:focus-visible {
+  outline-offset: -2px;
+}
+
+.fv\:oo\:2:focus-visible {
+  outline-offset: 2px;
+}
+
+.fv\:os\:s:focus-visible {
+  outline-style: solid;
+}
+
+.fv\:ow\:2:focus-visible {
+  outline-width: 2px;
+}
+
+.fw\:500 {
+  font-weight: 500;
+}
+
+.fw\:600 {
+  font-weight: 600;
+}
+
+.g\:1 {
+  gap: .25rem;
+}
+
+.g\:2 {
+  gap: .5rem;
+}
+
+.g\:3 {
+  gap: .75rem;
+}
+
+.g\:4 {
+  gap: 1rem;
+}
+
+.h\:0 {
+  height: 0;
+}
+
+.h\:10 {
+  height: 2.5rem;
+}
+
+.h\:5 {
+  height: 1.25rem;
+}
+
+.h\:6 {
+  height: 1.5rem;
+}
+
+.h\:8 {
+  height: 2rem;
+}
+
+.h\:9 {
+  height: 2.25rem;
+}
+
+.h\:auto {
+  height: auto;
+}
+
+.h\:c\:ink:hover {
+  color: light-dark(#1f2227, #e8e9ec);
+}
+
+.jc\:c {
+  justify-content: center;
+}
+
+.jc\:sb {
+  justify-content: space-between;
+}
+
+.m\:0 {
+  margin: 0;
+}
+
+.min-w\:0 {
+  min-width: 0;
+}
+
+.mx\:1 {
+  margin-inline: .25rem;
+}
+
+.o\:0 {
+  opacity: 0;
+}
+
+.o\:100 {
+  opacity: 1;
+}
+
+.o\:h {
+  overflow: hidden;
+}
+
+.of\:c {
+  object-fit: cover;
+}
+
+.p\:1 {
+  padding: .25rem;
+}
+
+.p\:4 {
+  padding: 1rem;
+}
+
+.pl\:1 {
+  padding-left: .25rem;
+}
+
+.pl\:2 {
+  padding-left: .5rem;
+}
+
+.pl\:3 {
+  padding-left: .75rem;
+}
+
+.pr\:1 {
+  padding-right: .25rem;
+}
+
+.pr\:3 {
+  padding-right: .75rem;
+}
+
+.pr\:4 {
+  padding-right: 1rem;
+}
+
+.pt\:3 {
+  padding-top: .75rem;
+}
+
+.px\:2 {
+  padding-inline: .5rem;
+}
+
+.px\:4 {
+  padding-inline: 1rem;
+}
+
+.py\:1 {
+  padding-block: .25rem;
+}
+
+.py\:2 {
+  padding-block: .5rem;
+}
+
+.ro\:36 {
+  rotate: 180deg;
+}
+
+.s\:100 {
+  scale: 1;
+}
+
+.td\:0 {
+  transition-delay: 0;
+}
+
+.td\:100 {
+  transition-delay: 100ms;
+}
+
+.td\:150 {
+  transition-delay: 150ms;
+}
+
+.td\:200 {
+  transition-delay: 200ms;
+}
+
+.td\:250 {
+  transition-delay: 250ms;
+}
+
+.td\:300 {
+  transition-delay: 300ms;
+}
+
+.td\:50 {
+  transition-delay: 50ms;
+}
+
+.td\:none {
+  text-decoration: none;
+}
+
+.tdu\:150 {
+  transition-duration: 150ms;
+}
+
+.tdu\:200 {
+  transition-duration: 200ms;
+}
+
+.tdu\:300 {
+  transition-duration: 300ms;
+}
+
+.tp\:a {
+  transition-property: all;
+}
+
+.tp\:o {
+  transition-property: opacity;
+}
+
+.tp\:t {
+  transition-property: transform, translate, scale, rotate;
+}
+
+.ttf\:eo {
+  transition-timing-function: ease-out;
+}
+
+.ttf\:io {
+  transition-timing-function: ease-in-out;
+}
+
+.w\:10 {
+  width: 2.5rem;
+}
+
+.w\:5 {
+  width: 1.25rem;
+}
+
+.w\:8 {
+  width: 2rem;
+}
+
+.w\:9 {
+  width: 2.25rem;
+}
+
+.w\:auto {
+  width: auto;
+}
+
+.w\:px {
+  width: 1px;
+}
+
+.w\:var\(--popup-width\) {
+  width: var(--popup-width);
+}
+
+.ws\:nw {
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .\@prm\:tp\:none {
+    transition-property: none;
+  }
+}
+
+@starting-style {
+  .\@st\:o\:0 {
+    opacity: 0;
+  }
+  
+  .\@st\:s\:75 {
+    scale: .75;
+  }
+}

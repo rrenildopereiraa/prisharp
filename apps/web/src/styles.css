@@ -1,0 +1,27 @@
+@yummacss;
+
+/* Shiki writes both themes as variables; the page's color scheme picks one. */
+.shiki,
+.shiki span {
+	color: light-dark(var(--shiki-light), var(--shiki-dark));
+	background-color: light-dark(var(--shiki-light-bg), var(--shiki-dark-bg));
+}
+
+html {
+	scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+}
+
+/* The reset clears list markers, and Yumma CSS has no decimal yet. */
+article ol {
+	list-style-type: decimal;
+}
+
+pre {
+	tab-size: 2;
+}
