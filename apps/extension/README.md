@@ -60,7 +60,7 @@ A technology without an svgl logo shows its site's favicon, then its first lette
 
 ## Develop
 
-The popup is styled with [Yumma CSS](https://yummacss.com). Its gradients live in `src/material.css` until Yumma CSS has background images; each surface picks one with `data-material`.
+The popup is styled with [Yumma CSS](https://yummacss.com), with Yumma UI's theme and recipes: its theme comes from `apps/web/yumma.config.mjs`, so the popup and prisharp.com always match.
 
 ```bash
 pnpm build      # popup.css from the classes in popup.html and src
