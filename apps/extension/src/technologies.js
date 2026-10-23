@@ -229,6 +229,8 @@ export const technologies = [
 			{ domKey: "__reactFiber$" },
 			{ domKey: "__reactContainer$" },
 			{ domKey: "_reactRootContainer" },
+			// The same keys, as react-dom writes them in its bundle.
+			{ script: /__reactFiber\$|__reactContainer\$/ },
 			{ js: "React.version", version: true },
 		],
 	},
@@ -241,6 +243,7 @@ export const technologies = [
 			{ dom: "[data-v-app]", prop: "__vue_app__.version" },
 			{ js: "__VUE__" },
 			{ domKey: "__vue_app__" },
+			{ script: /__vue_app__/ },
 			{ domKey: "__vue__" },
 		],
 	},
@@ -249,7 +252,14 @@ export const technologies = [
 		name: "Svelte",
 		website: "https://svelte.dev",
 		category: "Library",
-		signals: [{ js: "__svelte.v", version: true }],
+		signals: [
+			{ js: "__svelte.v", version: true },
+			// Every component adds its version to that set.
+			{
+				script:
+					/__svelte(?:\?\?|\|\|)=\{\}\)\.v(?:\?\?|\|\|)=new Set\)\.add\([`'"]([\d.]+)/,
+			},
+		],
 	},
 	{
 		id: "solid",
@@ -262,6 +272,7 @@ export const technologies = [
 			{ js: "_$HY" },
 			{ js: "document._$DX_DELEGATE" },
 			{ domKey: "$$click" },
+			{ script: /_\$DX_DELEGATE/ },
 		],
 	},
 	{
