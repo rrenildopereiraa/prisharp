@@ -42,9 +42,9 @@ export function Hero() {
 			<img
 				src={dark ? "/popup-dark.png" : "/popup-light.png"}
 				alt="The Prisharp popup on a Next.js app: a pill of logos, Next.js lit up with its version, and the stack opened below."
-				width={400}
-				height={356}
-				className="w:100% max-w:100 h:auto mt:6 br:3xl bs-o:xl"
+				width={369}
+				height={348}
+				className="w:100% max-w:92 h:auto mt:6 br:xl bw:1 btc:rim blc:rim brc:rim bbc:shadow bs-o:md"
 			/>
 		</section>
 	);

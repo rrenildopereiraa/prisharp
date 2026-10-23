@@ -4,73 +4,66 @@
 		<meta charset="utf-8" />
 		<title>Prisharp</title>
 		<link rel="stylesheet" href="popup.css" />
-		<link rel="stylesheet" href="src/material.css" />
+		<link rel="stylesheet" href="src/base.css" />
 		<script type="module" src="src/popup.js"></script>
 	</head>
-	<body data-material="shell" class="m:0 c:ink ff:d">
+	<body class="m:0 bg:raised c:label ff:d">
 		<main id="main" class="d:f fd:c p:4 w:var(--popup-width)">
-			<div data-material="rim" class="as:c p:1 br:9999 bs-o:var(--shadow-rim)">
-				<div
-					data-material="track"
-					class="d:f ai:c g:1 p:1 br:9999 bs-o:var(--shadow-track)"
+			<!-- Yumma UI's track: a well, its items raised out of it -->
+			<div id="track" class="as:c d:f ai:c g:1 p:1 br:9999 bg:well">
+				<nav
+					id="pill"
+					aria-label="Detected technologies"
+					aria-busy="true"
+					class="d:f ai:c g:1"
 				>
-					<nav
-						id="pill"
-						aria-label="Detected technologies"
-						aria-busy="true"
-						class="d:f ai:c g:1"
+					<span class="px:4 py:2 fs:sm c:hint ws:nw">Reading the page…</span>
+				</nav>
+				<span
+					id="divider"
+					hidden
+					class="w:0 h:5 mx:1 blw:1 brw:1 blc:groove brc:glint"
+				></span>
+				<button
+					id="toggle"
+					type="button"
+					hidden
+					aria-expanded="false"
+					aria-controls="stack"
+					aria-label="Show the stack"
+					class="d:f ai:c jc:c fs:0 w:9 h:9 br:9999 bw:1 bc:transparent bg:transparent c:hint h:c:label h:bg:raised c:p tp:a tdu:150 ttf:io @prm:tp:none fv:os:s fv:ow:3 fv:oo:0 fv:oc:focus/40 fv:bc:focus"
+				>
+					<svg
+						id="chevron"
+						aria-hidden="true"
+						width="14"
+						height="14"
+						viewBox="0 0 14 14"
+						fill="none"
+						stroke="currentColor"
+						stroke-width="1.8"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						class="tp:t tdu:300 ttf:out-quart @prm:tp:none"
 					>
-						<span class="px:4 py:2 fs:sm c:ink-dim ws:nw"
-							>Reading the page…</span
-						>
-					</nav>
-					<span id="divider" hidden class="w:px h:5 mx:1 bg:divider"></span>
-					<button
-						id="toggle"
-						type="button"
-						hidden
-						aria-expanded="false"
-						aria-controls="stack"
-						aria-label="Show the stack"
-						class="d:f ai:c jc:c fs:0 w:10 h:10 br:9999 b:0 bg:transparent c:ink-dim h:c:ink c:p fv:os:s fv:ow:2 fv:oo:2 fv:oc:glow"
-					>
-						<svg
-							id="chevron"
-							aria-hidden="true"
-							width="14"
-							height="14"
-							viewBox="0 0 14 14"
-							fill="none"
-							stroke="currentColor"
-							stroke-width="1.8"
-							stroke-linecap="round"
-							stroke-linejoin="round"
-							class="tp:t tdu:300 ttf:io @prm:tp:none"
-						>
-							<path d="M3.5 5.5L7 9l3.5-3.5" />
-						</svg>
-					</button>
-				</div>
+						<path d="M3.5 5.5L7 9l3.5-3.5" />
+					</svg>
+				</button>
 			</div>
 			<!-- Closed, the stack folds to no height; its padding sits inside. -->
 			<section
 				id="stack"
 				inert
-				class="h:0 o:0 o:h tp:a tdu:300 ttf:io @prm:tp:none"
+				class="h:0 o:0 o:h tp:a tdu:300 ttf:out-quart @prm:tp:none"
 			>
 				<div class="d:f fd:c g:3 pt:3">
-					<ul
-						id="list"
-						data-material="well"
-						class="d:f fd:c g:1 m:0 p:1 br:3xl bs-o:var(--shadow-well)"
-					></ul>
-					<div class="d:f ai:c jc:sb g:4 pl:3 pr:1">
-						<p id="summary" class="m:0 fs:xs c:ink-dim ws:nw"></p>
+					<ul id="list" class="d:f fd:c g:1 m:0 p:1 br:xl bg:well"></ul>
+					<div class="d:f ai:c jc:sb g:4 pl:2">
+						<p id="summary" class="m:0 fs:xs c:hint ws:nw"></p>
 						<button
 							id="copy"
 							type="button"
-							data-material="knob"
-							class="h:9 px:4 br:9999 b:1 bc:knob-edge bs-o:var(--shadow-knob) ff:d fs:xs fw:500 c:ink c:p tp:a tdu:150 a:s:95 @prm:tp:none fv:os:s fv:ow:2 fv:oo:2 fv:oc:glow"
+							class="d:if ai:c jc:c h:8 px:3 br:lg bw:1 bg:raised btc:rim blc:rim brc:rim bbc:shadow bs-o:xs c:label h:bg:well ff:d fs:xs fw:500 us:none c:p tp:a tdu:150 ttf:io a:s:95 @prm:tp:none fv:os:s fv:ow:3 fv:oo:0 fv:oc:focus/40 fv:bc:focus"
 						>
 							Copy stack
 						</button>
