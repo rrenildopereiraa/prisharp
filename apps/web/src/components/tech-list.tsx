@@ -15,6 +15,8 @@ interface Signal {
 	classes?: string[];
 	css?: RegExp;
 	script?: RegExp;
+	file?: string;
+	found?: string[];
 }
 
 const plain = (regex: RegExp) =>
@@ -22,6 +24,8 @@ const plain = (regex: RegExp) =>
 
 // a signal as a reader would look for it in DevTools
 function evidence(signal: Signal): string {
+	if (signal.file) return `${signal.file} on a dev server`;
+	if (signal.found) return `${signal.found.join(" + ")} together`;
 	if (signal.js) return `window.${signal.js}`;
 	if (signal.jsPrefix) return `window.${signal.jsPrefix}…`;
 	if (signal.domKey) return `${signal.domKey}… on elements`;

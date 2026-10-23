@@ -18,12 +18,20 @@ export function probes(technologies) {
 	};
 	const dom = new Map();
 	const script = new Map();
+	const file = new Map();
 	for (const { signals } of technologies) {
 		for (const signal of signals) {
 			if (signal.js) found.js.add(signal.js);
 			if (signal.jsPrefix) found.jsPrefix.add(signal.jsPrefix);
 			if (signal.domKey) found.domKey.add(signal.domKey);
 			if (signal.attrPrefix) found.attrPrefix.add(signal.attrPrefix);
+			if (signal.file) {
+				file.set(signal.file, {
+					path: signal.file,
+					source: signal.content.source,
+					flags: signal.content.flags,
+				});
+			}
 			if (signal.script) {
 				script.set(scriptKey(signal.script), {
 					source: signal.script.source,
@@ -49,6 +57,7 @@ export function probes(technologies) {
 		classes: [...found.classes],
 		dom: [...dom.values()],
 		script: [...script.values()],
+		file: [...file.values()],
 	};
 }
 
@@ -74,6 +83,7 @@ function match(signal, page) {
 	}
 	if (signal.jsPrefix) return page.jsPrefix.includes(signal.jsPrefix) && {};
 	if (signal.domKey) return page.domKey.includes(signal.domKey) && {};
+	if (signal.file) return page.file.includes(signal.file) && {};
 	if (signal.attrPrefix) {
 		return page.attrPrefix.includes(signal.attrPrefix) && {};
 	}
@@ -110,18 +120,29 @@ function match(signal, page) {
 
 export function detect(page, technologies, categories = []) {
 	const byId = new Map(technologies.map((tech) => [tech.id, tech]));
+	const position = new Map(technologies.map((tech, index) => [tech.id, index]));
 	const found = new Map();
 
-	for (const tech of technologies) {
-		let score = 0;
+	const score = (tech) => {
+		let total = 0;
 		let firstVersion;
 		for (const signal of tech.signals) {
-			const hit = match(signal, page);
+			const hit = signal.found
+				? signal.found.every((id) => found.has(id)) && {}
+				: match(signal, page);
 			if (!hit) continue;
-			score += signal.weight ?? 100;
+			total += signal.weight ?? 100;
 			firstVersion ??= hit.version;
 		}
-		if (score >= threshold) found.set(tech.id, { tech, version: firstVersion });
+		if (total >= threshold) found.set(tech.id, { tech, version: firstVersion });
+	};
+
+	// Page evidence first, then what other findings add up to.
+	for (const tech of technologies) score(tech);
+	for (const tech of technologies) {
+		if (!found.has(tech.id) && tech.signals.some((signal) => signal.found)) {
+			score(tech);
+		}
 	}
 
 	// A technology may imply one that implies another, so repeat until
@@ -151,8 +172,6 @@ export function detect(page, technologies, categories = []) {
 	return [...found.values()]
 		.map(({ tech, version }) => ({ ...tech, version }))
 		.sort(
-			(a, b) =>
-				order(a) - order(b) ||
-				technologies.indexOf(a) - technologies.indexOf(b),
+			(a, b) => order(a) - order(b) || position.get(a.id) - position.get(b.id),
 		);
 }

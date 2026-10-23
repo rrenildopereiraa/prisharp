@@ -188,6 +188,30 @@ export async function collect(probes) {
 		}
 	}
 
+	// A dev server hands out the project's config files from its root. Only
+	// there: a deployed site never serves them, so it is not asked.
+	const file = [];
+	const local =
+		/^(localhost|127\.|\[::1\]|10\.|192\.168\.)|\.(local|localhost)$/.test(
+			location.hostname,
+		);
+	if (local) {
+		await Promise.all(
+			probes.file.map(async ({ path, source, flags }) => {
+				try {
+					const response = await fetch(new URL(path, location.origin), {
+						signal: AbortSignal.timeout(timeout),
+					});
+					// a missing file comes back as the app's own page
+					const type = response.headers.get("content-type") ?? "";
+					if (!response.ok || type.includes("html")) return;
+					const text = (await response.text()).slice(0, 50_000);
+					if (new RegExp(source, flags).test(text)) file.push(path);
+				} catch {}
+			}),
+		);
+	}
+
 	return {
 		url: location.href,
 		js,
@@ -202,5 +226,6 @@ export async function collect(probes) {
 		html: document.documentElement.outerHTML.slice(0, textLimit * 2),
 		css: [inlineStyles.slice(0, textLimit), ...css].join("\n"),
 		script,
+		file,
 	};
 }

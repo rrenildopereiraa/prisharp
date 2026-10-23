@@ -17,6 +17,7 @@ const page = (overrides = {}) => ({
 	html: "",
 	css: "",
 	script: {},
+	file: [],
 	...overrides,
 });
 
@@ -104,7 +105,7 @@ test("Yumma CSS shows from its stylesheet or its classes", () => {
 	assert.deepEqual(names(detect(page({ classes: ["d:f"] }), technologies)), []);
 });
 
-test("a technology that requires another drops without it", () => {
+test("Yumma UI follows from Yumma CSS and Base UI together", () => {
 	const yumma = { css: ".d\\:f{display:flex}", classes: ["d:f", "ai:c"] };
 	assert.ok(!names(detect(page(yumma), technologies)).includes("Yumma UI"));
 
@@ -143,4 +144,18 @@ test("Base UI shows from a trigger at rest or from any chunk", () => {
 		),
 	});
 	assert.deepEqual(names(detect(chunk, technologies)), ["Base UI"]);
+});
+
+test("Yumma UI shows from its config on a dev server", () => {
+	const found = names(
+		detect(page({ file: ["/yummaui.json"] }), technologies, categories),
+	);
+	assert.deepEqual(found, ["Yumma UI", "Base UI", "Yumma CSS"]);
+});
+
+test("Yumma CSS shows from its config on a dev server", () => {
+	const found = names(
+		detect(page({ file: ["/yumma.config.mjs"] }), technologies),
+	);
+	assert.deepEqual(found, ["Yumma CSS"]);
 });

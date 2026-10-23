@@ -17,6 +17,9 @@
 //   header    [name, regex] against a response header of the page
 //   classes   at least `min` of these class names are in the DOM
 //   url       the page URL matches
+//   file      on a dev server, a file at the root whose content matches:
+//             { file: "/yumma.config.mjs", content: /yummacss/ }
+//   found     these technologies were all found too
 //
 // A regex with a capture group reads the version from it. Each signal weighs
 // 100 unless it says otherwise: a technology shows at 100, so a weak signal
@@ -315,10 +318,14 @@ export const technologies = [
 		website: "https://yummacss.com/ui",
 		category: "Components",
 		icon: "yummacss",
-		// Yumma UI is Base UI styled with Yumma CSS, copied into the project,
-		// so it leaves no mark of its own: the pair is the evidence.
-		requires: ["yummacss", "base-ui"],
-		signals: [{ classes: ["d:f", "ai:c"], min: 1 }],
+		implies: ["yummacss", "base-ui"],
+		signals: [
+			{ file: "/yummaui.json", content: /"componentsDir"|"registry"/ },
+			{ file: "/yummaui.config.mjs", content: /yummaui/ },
+			// Copied into the project, it leaves no mark of its own in a build:
+			// Base UI styled with Yumma CSS is the evidence.
+			{ found: ["yummacss", "base-ui"] },
+		],
 	},
 	{
 		id: "tailwind-plus",
@@ -384,6 +391,8 @@ export const technologies = [
 		website: "https://yummacss.com",
 		category: "Styling",
 		signals: [
+			{ file: "/yumma.config.mjs", content: /yummacss/ },
+			{ file: "/yummacss.config.mjs", content: /yummacss/ },
 			// Property initials, a colon, value initials: no other framework
 			// generates `.d\:f{display:flex}`.
 			{
