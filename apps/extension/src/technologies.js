@@ -1,0 +1,602 @@
+// Every technology Prisharp knows, as data. Nothing here runs: the collector
+// reads the page, then `detect` scores each entry's signals against it.
+//
+// A signal is one piece of evidence. Its kind is the key it carries:
+//
+//   js        a global path exists:            { js: "next.version", version: true }
+//   jsPrefix  a global name starts with this:  { jsPrefix: "webpackChunk" }
+//   dom       a selector matches:              { dom: "[ng-version]", attr: "ng-version" }
+//             (`attr` or `prop` reads the version off the element)
+//   domKey    an element carries an expando:   { domKey: "__reactFiber$" }
+//   resource  a script, stylesheet or loaded URL matches
+//   html      the rendered document matches
+//   script    the source of the page's entry scripts matches
+//   css       the page's stylesheets match
+//   meta      [name, regex] against a <meta name> or <meta property>
+//   header    [name, regex] against a response header of the page
+//   classes   at least `min` of these class names are in the DOM
+//   url       the page URL matches
+//
+// A regex with a capture group reads the version from it. Each signal weighs
+// 100 unless it says otherwise: a technology shows at 100, so a weak signal
+// (50) needs a second one. `implies` adds what a technology is built on;
+// `requires` drops it unless those were found too.
+
+export const categories = [
+	"Framework",
+	"Library",
+	"Components",
+	"Styling",
+	"Build",
+	"Hosting",
+	"Services",
+];
+
+export const technologies = [
+	// Framework
+	{
+		id: "nextjs",
+		name: "Next.js",
+		website: "https://nextjs.org",
+		category: "Framework",
+		implies: ["react"],
+		signals: [
+			{ js: "next.version", version: true },
+			{ js: "__NEXT_DATA__" },
+			{ js: "__next_f" },
+			{ resource: /\/_next\/static\// },
+			{ header: ["x-powered-by", /next\.js/i] },
+		],
+	},
+	{
+		id: "tanstack-start",
+		name: "TanStack Start",
+		website: "https://tanstack.com/start",
+		category: "Framework",
+		icon: "tanstack",
+		implies: ["tanstack-router"],
+		signals: [{ js: "__TSR_ROUTER__" }, { js: "$_TSR" }],
+	},
+	{
+		id: "react-router",
+		name: "React Router",
+		website: "https://reactrouter.com",
+		category: "Framework",
+		implies: ["react"],
+		signals: [
+			{ js: "__reactRouterContext" },
+			{ js: "__reactRouterManifest" },
+			{ js: "__reactRouterVersion", version: true },
+		],
+	},
+	{
+		id: "remix",
+		name: "Remix",
+		website: "https://remix.run",
+		category: "Framework",
+		implies: ["react"],
+		signals: [{ js: "__remixContext" }, { js: "__remixManifest" }],
+	},
+	{
+		id: "gatsby",
+		name: "Gatsby",
+		website: "https://www.gatsbyjs.com",
+		category: "Framework",
+		implies: ["react"],
+		signals: [
+			{ dom: "#___gatsby" },
+			{ meta: ["generator", /^Gatsby ([\d.]+)/i] },
+		],
+	},
+	{
+		id: "nuxt",
+		name: "Nuxt",
+		website: "https://nuxt.com",
+		category: "Framework",
+		implies: ["vue"],
+		signals: [
+			{ js: "__NUXT__" },
+			{ dom: "#__NUXT_DATA__" },
+			{ dom: "#__nuxt" },
+			{ resource: /\/_nuxt\// },
+		],
+	},
+	{
+		id: "sveltekit",
+		name: "SvelteKit",
+		website: "https://svelte.dev/docs/kit",
+		category: "Framework",
+		icon: "svelte",
+		implies: ["svelte", "vite"],
+		signals: [
+			{ jsPrefix: "__sveltekit_" },
+			{ resource: /\/_app\/immutable\// },
+			{ dom: "[data-sveltekit-preload-data], [data-sveltekit-preload-code]" },
+		],
+	},
+	{
+		id: "astro",
+		name: "Astro",
+		website: "https://astro.build",
+		category: "Framework",
+		implies: ["vite"],
+		signals: [
+			{ meta: ["generator", /^Astro v?([\d.]+)/i] },
+			{ dom: "astro-island, astro-slot" },
+			{ resource: /\/_astro\// },
+		],
+	},
+	{
+		id: "starlight",
+		name: "Starlight",
+		website: "https://starlight.astro.build",
+		category: "Framework",
+		icon: "astro",
+		implies: ["astro"],
+		signals: [{ meta: ["generator", /^Starlight v?([\d.]+)/i] }],
+	},
+	{
+		id: "qwik",
+		name: "Qwik",
+		website: "https://qwik.dev",
+		category: "Framework",
+		signals: [{ dom: "[q\\:container]", attr: "q:version" }],
+	},
+	{
+		id: "vitepress",
+		name: "VitePress",
+		website: "https://vitepress.dev",
+		category: "Framework",
+		icon: "vite",
+		implies: ["vue", "vite"],
+		signals: [
+			{ meta: ["generator", /^VitePress v?([\d.]+)/i] },
+			{ js: "__VP_HASH_MAP__" },
+		],
+	},
+	{
+		id: "docusaurus",
+		name: "Docusaurus",
+		website: "https://docusaurus.io",
+		category: "Framework",
+		implies: ["react"],
+		signals: [{ meta: ["generator", /^Docusaurus v?([\d.]+)/i] }],
+	},
+	{
+		id: "hugo",
+		name: "Hugo",
+		website: "https://gohugo.io",
+		category: "Framework",
+		signals: [{ meta: ["generator", /^Hugo ([\d.]+)/i] }],
+	},
+	{
+		id: "framer",
+		name: "Framer",
+		website: "https://www.framer.com",
+		category: "Framework",
+		signals: [
+			{ meta: ["generator", /^Framer\b/i] },
+			{ dom: "#__framer-badge-container" },
+			{ resource: /framerusercontent\.com/ },
+		],
+	},
+	{
+		id: "figma",
+		name: "Figma Sites",
+		website: "https://www.figma.com/sites",
+		category: "Framework",
+		signals: [{ url: /\.figma\.site\// }, { resource: /\.figma\.site\// }],
+	},
+	{
+		id: "webflow",
+		name: "Webflow",
+		website: "https://webflow.com",
+		category: "Framework",
+		signals: [
+			{ dom: "html[data-wf-site]" },
+			{ meta: ["generator", /^Webflow\b/i] },
+		],
+	},
+	{
+		id: "wordpress",
+		name: "WordPress",
+		website: "https://wordpress.org",
+		category: "Framework",
+		signals: [
+			{ meta: ["generator", /^WordPress ([\d.]+)/i] },
+			{ resource: /\/wp-(content|includes)\// },
+		],
+	},
+	{
+		id: "shopify",
+		name: "Shopify",
+		website: "https://www.shopify.com",
+		category: "Framework",
+		signals: [{ js: "Shopify.shop" }, { resource: /cdn\.shopify\.com/ }],
+	},
+
+	// Library
+	{
+		id: "react",
+		name: "React",
+		website: "https://react.dev",
+		category: "Library",
+		signals: [
+			{ domKey: "__reactFiber$" },
+			{ domKey: "__reactContainer$" },
+			{ domKey: "_reactRootContainer" },
+			{ js: "React.version", version: true },
+		],
+	},
+	{
+		id: "vue",
+		name: "Vue",
+		website: "https://vuejs.org",
+		category: "Library",
+		signals: [
+			{ dom: "[data-v-app]", prop: "__vue_app__.version" },
+			{ js: "__VUE__" },
+			{ domKey: "__vue_app__" },
+			{ domKey: "__vue__" },
+		],
+	},
+	{
+		id: "svelte",
+		name: "Svelte",
+		website: "https://svelte.dev",
+		category: "Library",
+		signals: [{ js: "__svelte.v", version: true }],
+	},
+	{
+		id: "solid",
+		name: "Solid",
+		website: "https://www.solidjs.com",
+		icon: "solidjs",
+		category: "Library",
+		signals: [
+			// Hydration, and the event delegation every rendered app sets up.
+			{ js: "_$HY" },
+			{ js: "document._$DX_DELEGATE" },
+			{ domKey: "$$click" },
+		],
+	},
+	{
+		id: "angular",
+		name: "Angular",
+		website: "https://angular.dev",
+		category: "Library",
+		signals: [
+			{ dom: "[ng-version]", attr: "ng-version" },
+			{ js: "getAllAngularRootElements" },
+		],
+	},
+	{
+		id: "ember",
+		name: "Ember",
+		website: "https://emberjs.com",
+		category: "Library",
+		signals: [{ js: "Ember.VERSION", version: true }],
+	},
+	{
+		id: "lit",
+		name: "Lit",
+		website: "https://lit.dev",
+		category: "Library",
+		signals: [{ js: "litElementVersions", version: true }],
+	},
+	{
+		id: "tanstack-router",
+		name: "TanStack Router",
+		website: "https://tanstack.com/router",
+		category: "Library",
+		icon: "tanstack",
+		signals: [{ js: "__TSR_ROUTER__" }],
+	},
+	{
+		id: "jquery",
+		name: "jQuery",
+		website: "https://jquery.com",
+		category: "Library",
+		signals: [{ js: "jQuery.fn.jquery", version: true }],
+	},
+	{
+		id: "threejs",
+		name: "Three.js",
+		website: "https://threejs.org",
+		category: "Library",
+		signals: [{ js: "__THREE__", version: true }],
+	},
+
+	// Components
+	{
+		id: "yumma-ui",
+		name: "Yumma UI",
+		website: "https://yummacss.com/ui",
+		category: "Components",
+		icon: "yummacss",
+		// Yumma UI is Base UI styled with Yumma CSS, copied into the project,
+		// so it leaves no mark of its own: the pair is the evidence.
+		requires: ["yummacss", "base-ui"],
+		signals: [{ classes: ["d:f", "ai:c"], min: 1 }],
+	},
+	{
+		id: "tailwind-plus",
+		name: "Tailwind Plus",
+		website: "https://tailwindcss.com/plus",
+		category: "Components",
+		icon: "tailwindcss",
+		implies: ["tailwindcss"],
+		signals: [
+			{
+				dom: "el-dropdown, el-menu, el-dialog, el-popover, el-tab-group, el-select, el-autocomplete, el-command-palette, el-disclosure, el-copyable",
+			},
+			{ resource: /@tailwindplus\/elements/ },
+		],
+	},
+	{
+		id: "base-ui",
+		name: "Base UI",
+		website: "https://base-ui.com",
+		category: "Components",
+		signals: [
+			{
+				dom: "[data-base-ui-click-trigger], [data-base-ui-focusable], [data-base-ui-inert], [data-base-ui-portal], [data-base-ui-swipe-ignore], [data-base-ui-focus-guard]",
+			},
+		],
+	},
+	{
+		id: "radix",
+		name: "Radix UI",
+		website: "https://www.radix-ui.com",
+		category: "Components",
+		signals: [
+			{
+				dom: "[data-radix-collection-item], [data-radix-popper-content-wrapper], [data-radix-scroll-area-viewport], [id^='radix-']",
+			},
+		],
+	},
+	{
+		id: "headlessui",
+		name: "Headless UI",
+		website: "https://headlessui.com",
+		category: "Components",
+		signals: [{ dom: "[data-headlessui-state], [id^='headlessui-']" }],
+	},
+	{
+		id: "shadcn",
+		name: "shadcn/ui",
+		website: "https://ui.shadcn.com",
+		category: "Components",
+		requires: ["tailwindcss"],
+		signals: [
+			{
+				dom: "[data-slot='button'], [data-slot='card'], [data-slot='dropdown-menu-trigger'], [data-slot='dialog-content']",
+			},
+		],
+	},
+
+	// Styling
+	{
+		id: "yummacss",
+		name: "Yumma CSS",
+		website: "https://yummacss.com",
+		category: "Styling",
+		signals: [
+			// Property initials, a colon, value initials: no other framework
+			// generates `.d\:f{display:flex}`.
+			{
+				css: /\.(?:d\\:(?:f|g|b|if|none)\{display|ai\\:c\{align-items|jc\\:(?:sb|c)\{justify-content)/,
+			},
+			{
+				classes: ["d:f", "d:g", "ai:c", "jc:sb", "jc:c", "fd:c", "fw:600"],
+				min: 2,
+			},
+		],
+	},
+	{
+		id: "tailwindcss",
+		name: "Tailwind CSS",
+		website: "https://tailwindcss.com",
+		category: "Styling",
+		signals: [
+			{ css: /tailwindcss v([\d.]+)/ },
+			{
+				css: /--tw-(?:ring|shadow|translate|border-style|font-weight)/,
+				weight: 50,
+			},
+			{ resource: /cdn\.tailwindcss\.com|@tailwindcss\/browser/ },
+		],
+	},
+	{
+		id: "bootstrap",
+		name: "Bootstrap",
+		website: "https://getbootstrap.com",
+		category: "Styling",
+		signals: [
+			{ css: /Bootstrap\s+v([\d.]+)/ },
+			{ js: "bootstrap.Tooltip.VERSION", version: true },
+		],
+	},
+
+	// Build
+	{
+		id: "vite",
+		name: "Vite",
+		website: "https://vite.dev",
+		category: "Build",
+		signals: [
+			{ resource: /\/@vite\/client/ },
+			// Vite's modulepreload polyfill opens the entry chunk.
+			{ script: /relList;?\S{0,40}supports\S{0,20}modulepreload/ },
+			{
+				html: /<script type="module" crossorigin src="[^"]*\/assets\/[\w.-]+-[\w-]{8}\.js"/,
+				weight: 50,
+			},
+		],
+	},
+	{
+		id: "rolldown",
+		name: "Rolldown",
+		website: "https://rolldown.rs",
+		category: "Build",
+		requires: ["vite"],
+		// Vite 8 builds with Rolldown and minifies with Oxc, which writes the
+		// same polyfill with template literals.
+		signals: [{ script: /createElement\(`link`\)\.relList/ }],
+	},
+	{
+		id: "turbopack",
+		name: "Turbopack",
+		website: "https://turbo.build/pack",
+		category: "Build",
+		signals: [
+			{ js: "TURBOPACK" },
+			{ resource: /\/_next\/static\/chunks\/turbopack-/ },
+		],
+	},
+	{
+		id: "webpack",
+		name: "Webpack",
+		website: "https://webpack.js.org",
+		category: "Build",
+		signals: [{ jsPrefix: "webpackChunk" }, { js: "webpackJsonp" }],
+	},
+	{
+		id: "parcel",
+		name: "Parcel",
+		website: "https://parceljs.org",
+		category: "Build",
+		signals: [{ jsPrefix: "parcelRequire" }],
+	},
+
+	// Hosting
+	{
+		id: "vercel",
+		name: "Vercel",
+		website: "https://vercel.com",
+		category: "Hosting",
+		signals: [
+			{ header: ["x-vercel-id", /./] },
+			{ header: ["server", /^vercel$/i] },
+		],
+	},
+	{
+		id: "netlify",
+		name: "Netlify",
+		website: "https://www.netlify.com",
+		category: "Hosting",
+		signals: [
+			{ header: ["x-nf-request-id", /./] },
+			{ header: ["server", /^netlify$/i] },
+		],
+	},
+	{
+		id: "cloudflare",
+		name: "Cloudflare",
+		website: "https://www.cloudflare.com",
+		category: "Hosting",
+		signals: [
+			{ header: ["cf-ray", /./] },
+			{ header: ["server", /^cloudflare$/i] },
+		],
+	},
+	{
+		id: "github",
+		name: "GitHub Pages",
+		website: "https://pages.github.com",
+		category: "Hosting",
+		signals: [{ header: ["server", /^GitHub\.com$/i] }],
+	},
+	{
+		id: "fly",
+		name: "Fly.io",
+		website: "https://fly.io",
+		category: "Hosting",
+		signals: [{ header: ["fly-request-id", /./] }],
+	},
+	{
+		id: "render",
+		name: "Render",
+		website: "https://render.com",
+		category: "Hosting",
+		signals: [{ header: ["rndr-id", /./] }],
+	},
+
+	// Services
+	{
+		id: "google-analytics",
+		name: "Google Analytics",
+		website: "https://marketingplatform.google.com/about/analytics",
+		category: "Services",
+		signals: [
+			{
+				resource:
+					/googletagmanager\.com\/gtag\/js|google-analytics\.com\/(?:analytics|g\/collect)/,
+			},
+		],
+	},
+	{
+		id: "plausible",
+		name: "Plausible",
+		website: "https://plausible.io",
+		icon: "plausibleanalytics",
+		category: "Services",
+		signals: [{ resource: /plausible\.io\/(?:js|api)/ }],
+	},
+	{
+		id: "posthog",
+		name: "PostHog",
+		website: "https://posthog.com",
+		category: "Services",
+		signals: [{ js: "posthog.__loaded" }, { resource: /\.posthog\.com\// }],
+	},
+	{
+		id: "sentry",
+		name: "Sentry",
+		website: "https://sentry.io",
+		category: "Services",
+		signals: [
+			{ js: "__SENTRY__" },
+			{ resource: /browser\.sentry-cdn\.com|\.ingest\.(?:\w+\.)?sentry\.io/ },
+		],
+	},
+	{
+		id: "stripe",
+		name: "Stripe",
+		website: "https://stripe.com",
+		category: "Services",
+		signals: [{ resource: /js\.stripe\.com/ }],
+	},
+	{
+		id: "clerk",
+		name: "Clerk",
+		website: "https://clerk.com",
+		category: "Services",
+		signals: [
+			{ js: "Clerk.version", version: true },
+			{ resource: /clerk\.[\w.-]+\/npm\/@clerk/ },
+		],
+	},
+	{
+		id: "supabase",
+		name: "Supabase",
+		website: "https://supabase.com",
+		category: "Services",
+		signals: [{ resource: /\.supabase\.co\// }],
+	},
+	{
+		id: "firebase",
+		name: "Firebase",
+		website: "https://firebase.google.com",
+		category: "Services",
+		signals: [{ resource: /gstatic\.com\/firebasejs|\.firebaseapp\.com\// }],
+	},
+	{
+		id: "google-fonts",
+		name: "Google Fonts",
+		website: "https://fonts.google.com",
+		icon: "google",
+		category: "Services",
+		signals: [{ resource: /fonts\.(?:googleapis|gstatic)\.com/ }],
+	},
+];
