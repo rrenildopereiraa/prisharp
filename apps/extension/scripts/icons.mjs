@@ -62,6 +62,15 @@ const icons = {
 	wordpress: "WordPress",
 };
 
+// Logos svgl does not have, kept in icons/tech as files: whether each has a
+// dark variant. Yumma CSS and Yumma UI from their brand folders, Webpack from
+// Simple Icons (CC0).
+const local = {
+	webpack: false,
+	yummacss: true,
+	"yumma-ui": true,
+};
+
 const render = (name) => {
 	const component = svgl[name];
 	if (!component) throw new Error(`svgl has no ${name}`);
@@ -70,7 +79,7 @@ const render = (name) => {
 	);
 };
 
-const manifest = {};
+const manifest = { ...local };
 for (const [icon, source] of Object.entries(icons)) {
 	const [light, dark] = Array.isArray(source) ? source : [source];
 	await writeFile(`icons/tech/${icon}.svg`, render(light));

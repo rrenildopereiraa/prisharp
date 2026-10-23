@@ -328,7 +328,6 @@ export const technologies = [
 		name: "Yumma UI",
 		website: "https://yummacss.com/ui",
 		category: "Components",
-		icon: "yummacss",
 		implies: ["yummacss", "base-ui"],
 		signals: [
 			{ file: "/yummaui.json", content: /"componentsDir"|"registry"/ },
