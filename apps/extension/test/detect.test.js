@@ -9,21 +9,31 @@ const page = (overrides = {}) => ({
 	jsPrefix: [],
 	dom: {},
 	domKey: [],
+	attrPrefix: [],
 	classes: [],
 	resources: [],
 	meta: {},
 	headers: {},
 	html: "",
 	css: "",
-	script: "",
+	script: {},
 	...overrides,
 });
 
 const names = (found) =>
 	found.map((tech) => [tech.name, tech.version].filter(Boolean).join(" "));
 
-const selectorOf = (id) =>
-	technologies.find((tech) => tech.id === id).signals[0].dom;
+// what the collector finds when the page loaded these scripts
+const scripts = (...texts) => {
+	const hits = {};
+	for (const { source, flags } of probes(technologies).script) {
+		const match = texts
+			.map((text) => new RegExp(source, flags).exec(text))
+			.find(Boolean);
+		if (match) hits[`${source}/${flags}`] = match[1] ?? true;
+	}
+	return hits;
+};
 
 test("every technology is well formed", () => {
 	const ids = new Set(technologies.map((tech) => tech.id));
@@ -67,8 +77,9 @@ test("a weak signal alone is not enough", () => {
 		'<script type="module" crossorigin src="/assets/index-XFbPZZqc.js"></script>';
 	assert.deepEqual(names(detect(page({ html }), technologies)), []);
 
-	const script =
-		"(function(){let e=document.createElement(`link`).relList;if(e&&e.supports&&e.supports(`modulepreload`))return";
+	const script = scripts(
+		"(function(){let e=document.createElement(`link`).relList;if(e&&e.supports&&e.supports(`modulepreload`))return",
+	);
 	assert.deepEqual(names(detect(page({ html, script }), technologies)), [
 		"Vite",
 		"Rolldown",
@@ -97,8 +108,8 @@ test("a technology that requires another drops without it", () => {
 	const yumma = { css: ".d\\:f{display:flex}", classes: ["d:f", "ai:c"] };
 	assert.ok(!names(detect(page(yumma), technologies)).includes("Yumma UI"));
 
-	const dom = { [`${selectorOf("base-ui")}|`]: true };
-	const found = names(detect(page({ ...yumma, dom }), technologies));
+	const attrPrefix = ["data-base-ui-"];
+	const found = names(detect(page({ ...yumma, attrPrefix }), technologies));
 	assert.ok(found.includes("Yumma UI"));
 	assert.ok(found.includes("Base UI"));
 });
@@ -119,4 +130,17 @@ test("versions come from attributes, sets and generators", () => {
 		"Angular 20.1.0",
 		"Vite",
 	]);
+});
+
+test("Base UI shows from a trigger at rest or from any chunk", () => {
+	const trigger = page({ attrPrefix: ["data-base-ui-"] });
+	assert.deepEqual(names(detect(trigger, technologies)), ["Base UI"]);
+
+	const chunk = page({
+		script: scripts(
+			"var app=1;",
+			'var ke=Oe("https://base-ui.com/production-error");',
+		),
+	});
+	assert.deepEqual(names(detect(chunk, technologies)), ["Base UI"]);
 });

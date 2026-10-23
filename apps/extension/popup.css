@@ -208,6 +208,10 @@ hr {
   display: grid;
 }
 
+.d\:if {
+  display: inline-flex;
+}
+
 .fd\:c {
   flex-direction: column;
 }
@@ -474,6 +478,10 @@ hr {
 
 .w\:10 {
   width: 2.5rem;
+}
+
+.w\:100\% {
+  width: 100%;
 }
 
 .w\:5 {

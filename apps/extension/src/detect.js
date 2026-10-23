@@ -4,6 +4,7 @@
 const threshold = 100;
 
 const domKey = ({ dom, attr, prop }) => `${dom}|${attr ?? prop ?? ""}`;
+const scriptKey = (regex) => `${regex.source}/${regex.flags}`;
 
 // What the collector should look for: the parts of each signal that can only
 // be read inside the page.
@@ -12,14 +13,23 @@ export function probes(technologies) {
 		js: new Set(),
 		jsPrefix: new Set(),
 		domKey: new Set(),
+		attrPrefix: new Set(),
 		classes: new Set(),
 	};
 	const dom = new Map();
+	const script = new Map();
 	for (const { signals } of technologies) {
 		for (const signal of signals) {
 			if (signal.js) found.js.add(signal.js);
 			if (signal.jsPrefix) found.jsPrefix.add(signal.jsPrefix);
 			if (signal.domKey) found.domKey.add(signal.domKey);
+			if (signal.attrPrefix) found.attrPrefix.add(signal.attrPrefix);
+			if (signal.script) {
+				script.set(scriptKey(signal.script), {
+					source: signal.script.source,
+					flags: signal.script.flags,
+				});
+			}
 			if (signal.classes)
 				for (const name of signal.classes) found.classes.add(name);
 			if (signal.dom) {
@@ -35,8 +45,10 @@ export function probes(technologies) {
 		js: [...found.js],
 		jsPrefix: [...found.jsPrefix],
 		domKey: [...found.domKey],
+		attrPrefix: [...found.attrPrefix],
 		classes: [...found.classes],
 		dom: [...dom.values()],
+		script: [...script.values()],
 	};
 }
 
@@ -62,6 +74,13 @@ function match(signal, page) {
 	}
 	if (signal.jsPrefix) return page.jsPrefix.includes(signal.jsPrefix) && {};
 	if (signal.domKey) return page.domKey.includes(signal.domKey) && {};
+	if (signal.attrPrefix) {
+		return page.attrPrefix.includes(signal.attrPrefix) && {};
+	}
+	if (signal.script) {
+		const value = page.script[scriptKey(signal.script)];
+		return value !== undefined && { version: version(value) };
+	}
 	if (signal.dom) {
 		const value = page.dom[domKey(signal)];
 		return value !== undefined && { version: version(value) };
@@ -83,7 +102,7 @@ function match(signal, page) {
 		return test(signal.meta[1], page.meta[signal.meta[0]]) || false;
 	if (signal.header)
 		return test(signal.header[1], page.headers[signal.header[0]]) || false;
-	for (const kind of ["html", "css", "script", "url"]) {
+	for (const kind of ["html", "css", "url"]) {
 		if (signal[kind]) return test(signal[kind], page[kind]) || false;
 	}
 	return false;
