@@ -1,6 +1,15 @@
 import { categories, technologies } from "extension/technologies";
 import { Limits } from "./components/limits";
 import { TechList } from "./components/tech-list";
+import { TryIt } from "./components/try-it";
+
+## Try it
+
+Name a site and Prisharp reads it from the server, the way the extension would.
+
+<TryIt />
+
+The server sees a page as it arrives, before its JavaScript runs, so versions read at runtime and anything a script adds later are left out. The extension sees both.
 
 ## Install
 
