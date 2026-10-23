@@ -7,6 +7,7 @@ interface Signal {
 	js?: string;
 	jsPrefix?: string;
 	domKey?: string;
+	attrPrefix?: string;
 	dom?: string;
 	resource?: RegExp;
 	meta?: [string, RegExp];
@@ -24,13 +25,14 @@ function evidence(signal: Signal): string {
 	if (signal.js) return `window.${signal.js}`;
 	if (signal.jsPrefix) return `window.${signal.jsPrefix}…`;
 	if (signal.domKey) return `${signal.domKey}… on elements`;
+	if (signal.attrPrefix) return `${signal.attrPrefix}* attributes`;
 	if (signal.dom) return signal.dom.split(",")[0]?.trim() ?? signal.dom;
 	if (signal.resource) return plain(signal.resource);
 	if (signal.meta) return `<meta name="${signal.meta[0]}">`;
 	if (signal.header) return `${signal.header[0]} header`;
 	if (signal.classes) return `class="${signal.classes.join(" ")}"`;
 	if (signal.css) return "its stylesheet";
-	if (signal.script) return "its entry script";
+	if (signal.script) return `${plain(signal.script).split("|")[0]} in a script`;
 	return "the page";
 }
 

@@ -8,9 +8,10 @@
 //   dom       a selector matches:              { dom: "[ng-version]", attr: "ng-version" }
 //             (`attr` or `prop` reads the version off the element)
 //   domKey    an element carries an expando:   { domKey: "__reactFiber$" }
+//   attrPrefix an attribute name starts with:  { attrPrefix: "data-base-ui-" }
 //   resource  a script, stylesheet or loaded URL matches
 //   html      the rendered document matches
-//   script    the source of the page's entry scripts matches
+//   script    the source of any script the page loaded matches
 //   css       the page's stylesheets match
 //   meta      [name, regex] against a <meta name> or <meta property>
 //   header    [name, regex] against a response header of the page
@@ -339,9 +340,10 @@ export const technologies = [
 		website: "https://base-ui.com",
 		category: "Components",
 		signals: [
-			{
-				dom: "[data-base-ui-click-trigger], [data-base-ui-focusable], [data-base-ui-inert], [data-base-ui-portal], [data-base-ui-swipe-ignore], [data-base-ui-focus-guard]",
-			},
+			// Triggers carry one at rest; open parts add more.
+			{ attrPrefix: "data-base-ui-" },
+			// What survives minifying: its error URL and its event helper.
+			{ script: /base-ui\.com\/production-error|preventBaseUIHandler/ },
 		],
 	},
 	{
@@ -388,7 +390,20 @@ export const technologies = [
 				css: /\.(?:d\\:(?:f|g|b|if|none)\{display|ai\\:c\{align-items|jc\\:(?:sb|c)\{justify-content)/,
 			},
 			{
-				classes: ["d:f", "d:g", "ai:c", "jc:sb", "jc:c", "fd:c", "fw:600"],
+				classes: [
+					"d:f",
+					"d:g",
+					"d:if",
+					"ai:c",
+					"jc:sb",
+					"jc:c",
+					"fd:c",
+					"fw:500",
+					"fw:600",
+					"c:p",
+					"w:100%",
+					"td:none",
+				],
 				min: 2,
 			},
 		],
