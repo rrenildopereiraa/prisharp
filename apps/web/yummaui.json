@@ -1,0 +1,5 @@
+{
+	"componentsDir": "src/components/ui",
+	"alias": "@/components/ui",
+	"registry": "https://www.yummaui.com/ui/registry"
+}
