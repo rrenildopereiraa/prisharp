@@ -34,16 +34,13 @@ export function Hero({
 
 	return (
 		<div className="p:r d:f fd:c g:5 py:6 px:4 @md:py:12 @md:px:8 @lg:fg:1 @lg:min-w:0 @lg:pt:12">
-			<p className="m:0 ff:serif fs:sm @md:fs:md fs:i c:hint">
+			<p className="m:0 ff:sans fw:500 fs:sm @md:fs:md c:hint">
 				A browser extension for Chromium
 			</p>
-			<h1
-				data-display
-				className="m:0 ff:serif fw:400 fs:4xl @sm:fs:5xl @md:fs:6xl lh:1 ls:2"
-			>
+			<h1 className="m:0 ff:sans fw:600 fs:4xl @sm:fs:5xl @md:fs:6xl lh:1 ls:1">
 				What is this site
 				<br />
-				<i>built with?</i>
+				<span className="c:accent">built with?</span>
 			</h1>
 			<p className="m:0 max-w:120 fs:sm c:hint lh:5 tw:p">
 				Prisharp will show you all the frameworks, libraries and hosts used on
@@ -73,7 +70,7 @@ export function Hero({
 				<label htmlFor="address" className="fs:xs c:hint us:none">
 					Try a site, no install needed
 				</label>
-				<div className="d:f ai:c g:2 h:11 pl:3 pr:1 br:md bw:1 bc:rim bg:field tp:a tdu:150 @prm:tp:none fw:os:s fw:ow:3 fw:oo:0 fw:oc:focus/40 fw:bc:focus">
+				<div className="d:f ai:c g:2 h:11 pl:3 pr:1 br:md bw:1 bc:edge bg:field tp:a tdu:150 @prm:tp:none fw:os:s fw:ow:3 fw:oo:0 fw:oc:focus/40 fw:bc:focus">
 					<span aria-hidden="true" className="c:hint us:none">
 						https://
 					</span>
