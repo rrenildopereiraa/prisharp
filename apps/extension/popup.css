@@ -304,6 +304,10 @@ hr {
   padding: 1rem;
 }
 
+.p\:calc\(0\.125rem\) {
+  padding: calc(0.125rem);
+}
+
 .pb\:1 {
   padding-bottom: .25rem;
 }

@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import { readFileSync } from "node:fs";
 import { test } from "vite-plus/test";
 import { detect, probes } from "../src/detect.js";
 import { categories, technologies } from "../src/technologies.js";
@@ -235,6 +236,19 @@ test("icon libraries, from the markup and scripts their packages ship", () => {
 	// a 256 grid at 1em alone is only half the evidence for Phosphor
 	assert.deepEqual(
 		found({ dom: { "svg[viewBox='0 0 256 256'][width='1em']|": true } }),
+		[],
+	);
+});
+
+test("the list of fingerprints does not read as what it lists", () => {
+	// a page that ships this file, as a site about Prisharp might, is built
+	// with none of what it describes
+	const source = readFileSync(
+		new URL("../src/technologies.js", import.meta.url),
+		"utf8",
+	);
+	assert.deepEqual(
+		names(detect(page({ script: scripts(source) }), technologies)),
 		[],
 	);
 });
