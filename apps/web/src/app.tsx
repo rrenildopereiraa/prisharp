@@ -1,6 +1,6 @@
 import { type ReactNode, useEffect } from "react";
 import { Footer } from "@/components/footer";
-import GradientASCII from "@/components/gradient-ascii";
+import Threads from "@/components/threads";
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
 import { Marquee } from "@/components/marquee";
@@ -89,12 +89,6 @@ export function App() {
 		return () => document.removeEventListener("keydown", onKey);
 	}, []);
 
-	// the ASCII field behind the product, a ring around the panel, from the
-	// paper into the ink
-	const ramp = dark
-		? ["#151412", "#2f2c27", "#57524a", "#a8a091"]
-		: ["#f5f3ee", "#ddd8cc", "#948c7c", "#5c564b"];
-
 	return (
 		<DarkContext.Provider value={dark}>
 			<div className="d:f fd:c h:dvh bg:paper c:label ff:mono fs:sm @md:h:auto @md:min-h:dvh">
@@ -109,21 +103,7 @@ export function App() {
 								aria-hidden="true"
 								className="p:a t:0 l:0 w:100% h:100% us:none"
 							>
-								<GradientASCII
-									colors={ramp}
-									lightMode={!dark}
-									shape="eclipse"
-									density={1}
-									scale={1.6}
-									cellSize={14}
-									fontFamily='"Geist Mono Variable", ui-monospace, monospace'
-									glow={0}
-									gradientOpacity={0}
-									grain={0.04}
-									flicker={0.1}
-									speed={0.6}
-									clickEffect="none"
-								/>
+								<Threads color={dark ? "#8394ff" : "#2b44ff"} angle={60} />
 							</div>
 							<Panel lookup={lookup} />
 						</div>
@@ -138,7 +118,7 @@ export function App() {
 									key={fact.title}
 									className={`d:f fd:c g:2 py:5 px:8 ${index > 0 ? "blw:1 blc:line" : ""}`}
 								>
-									<h2 className="m:0 ff:serif fs:lg fw:400">{fact.title}</h2>
+									<h2 className="m:0 ff:sans fs:md fw:600">{fact.title}</h2>
 									<p className="m:0 fs:xs c:hint lh:5">{fact.text}</p>
 								</div>
 							))}
