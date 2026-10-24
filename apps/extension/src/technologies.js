@@ -328,7 +328,6 @@ export const technologies = [
 		name: "Yumma UI",
 		website: "https://yummacss.com/ui",
 		category: "Components",
-		icon: "yummacss",
 		implies: ["yummacss", "base-ui"],
 		signals: [
 			{ file: "/yummaui.json", content: /"componentsDir"|"registry"/ },
@@ -435,9 +434,10 @@ export const technologies = [
 		category: "Styling",
 		signals: [
 			{ css: /tailwindcss v([\d.]+)/ },
+			// Minifiers often drop the banner. What stays: Tailwind's reset of
+			// its own variables, and in v4 an @property for each of them.
 			{
-				css: /--tw-(?:ring|shadow|translate|border-style|font-weight)/,
-				weight: 50,
+				css: /@property --tw-|--tw-(?:ring-offset-shadow|shadow|border-spacing-x):/,
 			},
 			{ resource: /cdn\.tailwindcss\.com|@tailwindcss\/browser/ },
 		],
