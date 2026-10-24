@@ -336,11 +336,11 @@ export function Panel({ lookup }: { lookup: Lookup }) {
 										data-skeleton
 										className="d:f ai:c g:3 h:10 px:4"
 									>
-										<span className="fs:0 w:5 h:5 br:9999 bg:panel-well" />
+										<span className="fs:0 w:5 h:5 br:9999 bg:panel-skeleton" />
 										<span
-											className={`h:3 br:sm bg:panel-well ${WIDTHS[index % WIDTHS.length]}`}
+											className={`h:3 br:sm bg:panel-skeleton ${WIDTHS[index % WIDTHS.length]}`}
 										/>
-										<span className="ml:auto h:3 w:12 br:sm bg:panel-well" />
+										<span className="ml:auto h:3 w:12 br:sm bg:panel-skeleton" />
 									</li>
 								))}
 							</ul>
