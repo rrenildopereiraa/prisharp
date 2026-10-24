@@ -4,6 +4,8 @@
 // A technology Simple Icons lacks is drawn from the extension's own logo as a
 // silhouette; one that shares another's mark, like SvelteKit, is left out.
 import {
+	siLucide,
+	siPhosphoricons,
 	siAngular,
 	siAstro,
 	siBaseui,
@@ -60,6 +62,8 @@ type Icon = { path: string; hex: string };
 /** Simple Icons' path and brand color, by technology id. */
 export const icons: Record<string, Icon> = {
 	nextjs: siNextdotjs,
+	lucide: siLucide,
+	phosphor: siPhosphoricons,
 	"tanstack-start": siTanstack,
 	"react-router": siReactrouter,
 	remix: siRemix,
