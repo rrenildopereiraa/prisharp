@@ -93,8 +93,12 @@ function describe(signal, hit, page, byId) {
 		return { kind: "Element", text: signal.dom, value: hit.version };
 	if (signal.classes)
 		return { kind: "Classes", text: signal.classes.slice(0, 3).join(" ") };
-	if (signal.script)
-		return { kind: "Script", text: clip(plain(signal.script.source)) };
+	if (signal.script) {
+		return {
+			kind: "Script",
+			text: signal.label ?? clip(plain(signal.script.source)),
+		};
+	}
 	if (signal.found)
 		return {
 			kind: "Found with",

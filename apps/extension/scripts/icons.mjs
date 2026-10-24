@@ -63,9 +63,11 @@ const icons = {
 };
 
 // Logos svgl does not have, kept in icons/tech as files: whether each has a
-// dark variant. Yumma CSS and Yumma UI from their brand folders, Webpack from
-// Simple Icons (CC0).
+// dark variant. Yumma CSS and Yumma UI from their brand folders; Lucide, Phosphor and
+// Webpack from Simple Icons (CC0).
 const local = {
+	lucide: false,
+	phosphor: true,
 	webpack: false,
 	yummacss: true,
 	"yumma-ui": true,
