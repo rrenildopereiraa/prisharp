@@ -1,7 +1,8 @@
 import { defineConfig } from "yummacss";
 
-// Ink on paper. The names are Yumma UI's own tokens, so its components draw in
-// the site's colors through their props alone; the values are the site's.
+// Cool grey and cobalt. The names are Yumma UI's own tokens, so its components
+// draw in the site's colors through their props alone; the values are the
+// site's.
 export default defineConfig({
 	source: ["./src/**/*.{js,jsx,ts,tsx}"],
 	theme: {
@@ -25,29 +26,33 @@ export default defineConfig({
 			spin: "to { rotate: 360deg; }",
 		},
 		fonts: {
-			serif: '"Fraunces Variable", Georgia, serif',
-			mono: '"Geist Mono Variable", ui-monospace, Menlo, Consolas, monospace',
+			sans: '"Instrument Sans Variable", system-ui, sans-serif',
+			mono: '"Martian Mono Variable", ui-monospace, Menlo, Consolas, monospace',
 		},
 		colors: {
 			// the page
-			paper: { light: "#f5f3ee", dark: "#151412" },
-			label: { light: "#23201b", dark: "#ece8df" },
-			hint: { light: "#5c564b", dark: "#a8a091" },
-			line: { light: "#ddd8cc", dark: "#2f2c27" },
+			paper: { light: "#f3f4f7", dark: "#0d0f14" },
+			label: { light: "#101218", dark: "#eef0f5" },
+			hint: { light: "#5b6070", dark: "#9aa1b2" },
+			line: { light: "#e0e2e8", dark: "#1e222b" },
+			// the one accent: the threads, the main action, "built with?"
+			accent: { light: "#2b44ff", dark: "#8394ff" },
 			// Yumma UI's surfaces and edges
-			raised: { light: "#ffffff", dark: "#201e1b" },
-			well: { light: "#ece8df", dark: "#0f0e0c" },
-			field: { light: "#ffffff", dark: "#201e1b" },
-			fill: { light: "#23201b", dark: "#ece8df" },
-			"on-fill": { light: "#f5f3ee", dark: "#151412" },
-			rim: { light: "#948c7c", dark: "#57524a" },
-			shadow: { light: "#b9b2a3", dark: "#000000" },
-			check: { light: "#23201b", dark: "#ece8df" },
-			on: { light: "#23201b", dark: "#ece8df" },
-			knob: { light: "#ffffff", dark: "#201e1b" },
-			groove: { light: "#ddd8cc", dark: "#0a0a09" },
-			glint: { light: "#ffffff", dark: "#3d3a33" },
-			focus: { light: "#5c564b", dark: "#a8a091" },
+			raised: { light: "#ffffff", dark: "#161921" },
+			well: { light: "#eaecf1", dark: "#0a0c10" },
+			field: { light: "#ffffff", dark: "#161921" },
+			fill: { light: "#2b44ff", dark: "#8394ff" },
+			"on-fill": { light: "#ffffff", dark: "#0d0f14" },
+			rim: { light: "#c7cbd5", dark: "#2f3542" },
+			// a field's border, dark enough to read as one (3:1 on white)
+			edge: { light: "#8b91a0", dark: "#5a6273" },
+			shadow: { light: "#b9bfcc", dark: "#000000" },
+			check: { light: "#1f35d6", dark: "#a5b2ff" },
+			on: { light: "#2b44ff", dark: "#8394ff" },
+			knob: { light: "#ffffff", dark: "#161921" },
+			groove: { light: "#e0e2e8", dark: "#07080b" },
+			glint: { light: "#ffffff", dark: "#2a2f3a" },
+			focus: { light: "#2b44ff", dark: "#8394ff" },
 			// the extension's panel, drawn in Chrome's colors as in the popup
 			panel: { light: "#ffffff", dark: "#282a2c" },
 			"panel-ink": { light: "#1f1f1f", dark: "#e3e3e3" },
