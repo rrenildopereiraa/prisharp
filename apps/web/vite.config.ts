@@ -5,6 +5,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite-plus";
+import { technologies } from "extension/technologies";
 
 const extension = fileURLToPath(new URL("../extension", import.meta.url));
 
@@ -51,9 +52,26 @@ const download = (): Plugin => ({
 	},
 });
 
+const CATALOG = "virtual:catalog";
+
+/**
+ * The names and logos of what Prisharp detects, for the marquee. Only these
+ * reach the browser: the fingerprints stay on the server, where a page that
+ * shipped them would read as every technology they describe.
+ */
+const catalog = (): Plugin => ({
+	name: "prisharp-catalog",
+	resolveId: (id) => (id === CATALOG ? `\0${CATALOG}` : undefined),
+	load(id) {
+		if (id !== `\0${CATALOG}`) return;
+		const list = technologies.map(({ id, name, icon }) => ({ id, name, icon }));
+		return `export const catalog = ${JSON.stringify(list)};`;
+	},
+});
+
 export default defineConfig({
 	resolve: {
 		alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
 	},
-	plugins: [react(), yummacss(), download()],
+	plugins: [react(), yummacss(), catalog(), download()],
 });

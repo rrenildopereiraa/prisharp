@@ -46,7 +46,13 @@ const label = (tech: Found) =>
 // the logos are pictures of the product, not text to select
 function Mark({ tech, size }: { tech: Found; size: string }) {
 	if (hasLogo(tech.icon)) {
-		return <Logo name={tech.icon} className={`${size} us:none`} />;
+		// 2px in, as in the popup, so wide logos keep their edges
+		return (
+			<Logo
+				name={tech.icon}
+				className={`d:b ${size} p:calc(0.125rem) of:c us:none`}
+			/>
+		);
 	}
 	return (
 		<span

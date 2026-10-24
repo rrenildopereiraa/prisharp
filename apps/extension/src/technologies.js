@@ -233,8 +233,11 @@ export const technologies = [
 			{ domKey: "__reactFiber$" },
 			{ domKey: "__reactContainer$" },
 			{ domKey: "_reactRootContainer" },
-			// The same keys, as react-dom writes them in its bundle.
-			{ script: /__reactFiber\$|__reactContainer\$/ },
+			// The same keys, as react-dom builds them in its bundle.
+			{
+				script: /["'`]__react(?:Fiber|Container)\$["'`]\s*\+/,
+				label: "react-dom's __reactFiber$ key",
+			},
 			{ js: "React.version", version: true },
 		],
 	},
@@ -247,7 +250,10 @@ export const technologies = [
 			{ dom: "[data-v-app]", prop: "__vue_app__.version" },
 			{ js: "__VUE__" },
 			{ domKey: "__vue_app__" },
-			{ script: /__vue_app__/ },
+			{
+				script: /\.__vue_app__\s*=\s*[\w$]/,
+				label: "app.__vue_app__ set on mount",
+			},
 			{ domKey: "__vue__" },
 		],
 	},
@@ -276,7 +282,10 @@ export const technologies = [
 			{ js: "_$HY" },
 			{ js: "document._$DX_DELEGATE" },
 			{ domKey: "$$click" },
-			{ script: /_\$DX_DELEGATE/ },
+			{
+				script: /["'`]_\$DX_DELEGATE["'`]/,
+				label: "solid-js/web's event delegation key",
+			},
 		],
 	},
 	{
@@ -364,7 +373,10 @@ export const technologies = [
 			// Triggers carry one at rest; open parts add more.
 			{ attrPrefix: "data-base-ui-" },
 			// What survives minifying: its error URL and its event helper.
-			{ script: /base-ui\.com\/production-error|preventBaseUIHandler/ },
+			{
+				script: /base-ui\.com\/production-error|preventBaseUIHandler\s*[:=(]/,
+				label: "Base UI's error URL or event helper",
+			},
 		],
 	},
 	{
@@ -429,7 +441,7 @@ export const technologies = [
 			{
 				script:
 					/size:\s*"1em",\s*weight:\s*"regular",\s*mirrored:\s*(?:!1|false)/,
-				label: 'size:"1em",weight:"regular",mirrored:!1',
+				label: "IconContext: 1em, regular weight, not mirrored",
 			},
 			{ css: /font-family:\s*["']?Phosphor/ },
 			// its icons are drawn on a 256 grid at 1em; others use 256 too
@@ -465,7 +477,12 @@ export const technologies = [
 		website: "https://hugeicons.com",
 		category: "Icons",
 		// its markup is a plain 24px SVG; its component keeps this prop name
-		signals: [{ script: /disableSecondaryOpacity/ }],
+		signals: [
+			{
+				script: /disableSecondaryOpacity\s*[:=]/,
+				label: "the disableSecondaryOpacity prop",
+			},
+		],
 	},
 
 	// Styling
@@ -536,7 +553,11 @@ export const technologies = [
 		signals: [
 			{ resource: /\/@vite\/client/ },
 			// Vite's modulepreload polyfill opens the entry chunk.
-			{ script: /relList;?\S{0,40}supports\S{0,20}modulepreload/ },
+			{
+				script:
+					/relList;?\s*if\s*\(\s*[\w$]+\s*&&\s*[\w$]+\.supports\s*&&\s*[\w$]+\.supports\(\s*["'`]modulepreload/,
+				label: "its modulepreload polyfill",
+			},
 			{
 				html: /<script type="module" crossorigin src="[^"]*\/assets\/[\w.-]+-[\w-]{8}\.js"/,
 				weight: 50,
@@ -551,7 +572,12 @@ export const technologies = [
 		requires: ["vite"],
 		// Vite 8 builds with Rolldown and minifies with Oxc, which writes the
 		// same polyfill with template literals.
-		signals: [{ script: /createElement\(`link`\)\.relList/ }],
+		signals: [
+			{
+				script: /createElement\(`link`\)\.relList/,
+				label: "the polyfill, minified by Oxc",
+			},
+		],
 	},
 	{
 		id: "turbopack",

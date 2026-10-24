@@ -31,11 +31,13 @@ for (const button of document.querySelectorAll("[data-close]")) {
 
 // The svgl logo when Prisharp ships one, the site's favicon when it does not,
 // and the first letter when neither loads.
-function icon(tech, classes) {
+// Each logo sits 2px inside its box, so the edges of the wide ones are not
+// cut off where they meet it.
+function icon(tech, size) {
 	const name = tech.icon ?? tech.id;
 	const picture = document.createElement("picture");
 	const img = document.createElement("img");
-	img.className = classes;
+	img.className = `d:b ${size} p:calc(0.125rem) of:c`;
 	img.alt = "";
 	img.decoding = "async";
 
@@ -54,7 +56,7 @@ function icon(tech, classes) {
 	}
 	img.addEventListener("error", () => {
 		const letter = document.createElement("span");
-		letter.className = "fs:xs fw:600 c:muted";
+		letter.className = `${size} d:f ai:c jc:c fs:0 br:sm bg:well fs:xs fw:600 c:muted`;
 		letter.textContent = tech.name[0];
 		picture.replaceWith(letter);
 	});
@@ -135,9 +137,7 @@ function evidenceItem({ kind, text, value }) {
 
 function open(tech, all, row) {
 	document.getElementById("name").textContent = tech.name;
-	document
-		.getElementById("badge")
-		.replaceChildren(icon(tech, "d:b w:7 h:7 of:c"));
+	document.getElementById("badge").replaceChildren(icon(tech, "w:7 h:7"));
 	const implied = brings(tech, all);
 	document.getElementById("headline").textContent = tech.version
 		? `Version ${tech.version}`
@@ -215,7 +215,7 @@ function row(tech, all) {
 	chevron.className = "d:f fs:0 w:4 h:4 c:muted";
 	chevron.append(symbol("chevron_right", "d:b w:100% h:100%"));
 
-	button.append(icon(tech, "d:b w:5 h:5 of:c"), name, meta, chevron);
+	button.append(icon(tech, "w:5 h:5"), name, meta, chevron);
 	button.addEventListener("click", () => open(tech, all, button));
 	item.append(button);
 	return item;

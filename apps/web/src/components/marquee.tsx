@@ -1,4 +1,4 @@
-import { technologies } from "extension/technologies";
+import { catalog } from "virtual:catalog";
 import { useContext, useEffect, useRef, useState } from "react";
 import { icons, pictures } from "@/marks";
 import { DarkContext } from "@/theme";
@@ -12,13 +12,7 @@ type Mark = {
 	path?: string;
 };
 
-interface Technology {
-	id: string;
-	name: string;
-	icon?: string;
-}
-
-const marks: Mark[] = (technologies as Technology[]).flatMap((tech): Mark[] => {
+const marks: Mark[] = catalog.flatMap((tech): Mark[] => {
 	const icon = tech.icon ?? tech.id;
 	const simple = icons[tech.id];
 	if (simple) return [{ id: tech.id, name: tech.name, icon, ...simple }];
@@ -142,8 +136,7 @@ export function Marquee() {
 				className="m:0 fs:0 px:4 fs:xs fw:400 c:hint lh:5 @md:pl:8 @md:pr:0 @md:ws:nw"
 			>
 				Prisharp can detect <br className="d:none @md:d:b" />
-				<span className="c:label">{technologies.length} technologies</span>,
-				like
+				<span className="c:label">{catalog.length} technologies</span>, like
 			</h2>
 			<div className="d:f ai:c g:2 fg:1 min-w:0 pr:4">
 				<div
