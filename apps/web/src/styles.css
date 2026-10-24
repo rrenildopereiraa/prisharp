@@ -10,6 +10,23 @@
 	font-variation-settings: "opsz" 36;
 }
 
+/* A marquee logo with no one-color mark: greyed out, in color when hovered. */
+[data-tint] {
+	display: block;
+	filter: grayscale(1) opacity(0.75);
+	transition: filter 200ms ease-out;
+}
+
+[data-tint][data-lit] {
+	filter: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-tint] {
+		transition: none;
+	}
+}
+
 [data-marquee-frame] {
 	mask-image: linear-gradient(
 		90deg,

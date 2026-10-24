@@ -1,19 +1,16 @@
 import { technologies } from "extension/technologies";
-import { useEffect, useRef, useState } from "react";
-import { icons, silhouettes } from "@/marks";
+import { useContext, useEffect, useRef, useState } from "react";
+import { icons, pictures } from "@/marks";
+import { DarkContext } from "@/theme";
 import { hasLogo, Logo } from "./logo";
 
-// the extension's logo files, for the marks Simple Icons lacks
-const files = import.meta.glob<string>("../../../extension/icons/tech/*.svg", {
-	eager: true,
-	query: "?url",
-	import: "default",
-});
-
-type Mark = { id: string; name: string; icon: string } & (
-	| { path: string; hex: string }
-	| { url: string }
-);
+type Mark = {
+	id: string;
+	name: string;
+	icon: string;
+	hex?: string;
+	path?: string;
+};
 
 interface Technology {
 	id: string;
@@ -25,9 +22,8 @@ const marks: Mark[] = (technologies as Technology[]).flatMap((tech): Mark[] => {
 	const icon = tech.icon ?? tech.id;
 	const simple = icons[tech.id];
 	if (simple) return [{ id: tech.id, name: tech.name, icon, ...simple }];
-	if (silhouettes.includes(icon)) {
-		const url = files[`../../../extension/icons/tech/${icon}.svg`];
-		if (url) return [{ id: tech.id, name: tech.name, icon, url }];
+	if (pictures.includes(icon) && hasLogo(icon)) {
+		return [{ id: tech.id, name: tech.name, icon }];
 	}
 	return [];
 });
@@ -38,28 +34,34 @@ const EASE = 2.5;
 
 const SIZE = "d:b w:6 h:6 @md:w:7 @md:h:7";
 
-/** The mark in ink, and over it the logo in color, shown while hovered. */
+/** How light a #rrggbb color is, 0 to 1. */
+const lightness = (hex: string) => {
+	const [r, g, b] = [0, 2, 4].map(
+		(at) => Number.parseInt(hex.slice(at, at + 2), 16) / 255,
+	);
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+
+/**
+ * A mark in the page's ink that takes its brand color while hovered. It is
+ * one picture throughout: only the color changes, never the shape or size.
+ */
 function Item({
 	mark,
 	lit,
+	dark,
 	onLight,
 }: {
 	mark: Mark;
 	lit: boolean;
+	dark: boolean;
 	onLight: (id: string | null) => void;
 }) {
-	const color = hasLogo(mark.icon) ? (
-		<Logo name={mark.icon} className={`${SIZE} of:c`} />
-	) : "path" in mark ? (
-		<svg
-			viewBox="0 0 24 24"
-			fill={`#${mark.hex}`}
-			aria-hidden="true"
-			className={SIZE}
-		>
-			<path d={mark.path} />
-		</svg>
-	) : null;
+	// a brand color that would vanish into the page keeps the ink instead
+	const brand =
+		mark.hex && (dark ? lightness(mark.hex) > 0.25 : lightness(mark.hex) < 0.85)
+			? `#${mark.hex}`
+			: undefined;
 
 	return (
 		<li
@@ -68,37 +70,21 @@ function Item({
 			title={mark.name}
 			onPointerEnter={() => onLight(mark.id)}
 			onPointerLeave={() => onLight(null)}
-			className="p:r d:f ai:c jc:c fs:0 h:10 px:5 @md:px:6"
+			className="d:f ai:c jc:c fs:0 h:10 px:5 @md:px:6"
 		>
-			<span
-				className={`d:b tp:o tdu:150 @prm:tp:none ${lit && color ? "o:0" : "o:100"}`}
-			>
-				{"path" in mark ? (
-					<svg
-						viewBox="0 0 24 24"
-						fill="currentColor"
-						aria-hidden="true"
-						className={SIZE}
-					>
-						<path d={mark.path} />
-					</svg>
-				) : (
-					<span
-						aria-hidden="true"
-						className={`${SIZE} bg:hint`}
-						style={{
-							mask: `url(${mark.url}) center / contain no-repeat`,
-							WebkitMask: `url(${mark.url}) center / contain no-repeat`,
-						}}
-					/>
-				)}
-			</span>
-			{color && (
-				<span
+			{mark.path ? (
+				<svg
+					viewBox="0 0 24 24"
+					fill="currentColor"
 					aria-hidden="true"
-					className={`p:a d:f ai:c jc:c t:0 l:0 w:100% h:100% tp:o tdu:150 @prm:tp:none ${lit ? "o:100" : "o:0"}`}
+					className={`${SIZE} tp:c tdu:200 @prm:tp:none ${lit && brand ? "" : "c:hint"}`}
+					style={lit && brand ? { color: brand } : undefined}
 				>
-					{color}
+					<path d={mark.path} />
+				</svg>
+			) : (
+				<span data-tint data-lit={lit || undefined} aria-hidden="true">
+					<Logo name={mark.icon} className={`${SIZE} of:c`} />
 				</span>
 			)}
 		</li>
@@ -116,6 +102,7 @@ export function Marquee() {
 	const [hovered, setHovered] = useState(false);
 	const [lit, setLit] = useState<string | null>(null);
 	const target = useRef(1);
+	const dark = useContext(DarkContext);
 
 	useEffect(() => {
 		target.current = paused || hovered ? 0 : 1;
@@ -181,6 +168,7 @@ export function Marquee() {
 										key={mark.id}
 										mark={mark}
 										lit={lit === mark.id}
+										dark={dark}
 										onLight={setLit}
 									/>
 								))}

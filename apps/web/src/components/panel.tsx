@@ -2,6 +2,7 @@ import { paths } from "extension/symbols";
 import { useEffect, useRef, useState } from "react";
 import { merge } from "yummacss/merge";
 import type { Evidence, Found, Lookup } from "@/lookup";
+import { useMorph } from "@/morph";
 import { hasLogo, Logo } from "./logo";
 
 type Name = keyof typeof paths;
@@ -268,6 +269,10 @@ export function Panel({ lookup }: { lookup: Lookup }) {
 
 	const holdFor = () => setHold(pointer.current || focused.current);
 
+	const box = useRef<HTMLElement>(null);
+	const content = useRef<HTMLDivElement>(null);
+	useMorph(box, content, tech ? `page:${tech.id}` : `list:${lookup.state}`);
+
 	const status =
 		lookup.state === "loading"
 			? "Reading the page…"
@@ -281,6 +286,7 @@ export function Panel({ lookup }: { lookup: Lookup }) {
 
 	return (
 		<section
+			ref={box}
 			aria-label="Result"
 			aria-busy={lookup.state === "loading"}
 			onPointerEnter={() => {
@@ -302,94 +308,96 @@ export function Panel({ lookup }: { lookup: Lookup }) {
 			}}
 			className="p:r w:80 max-w:100% max-h:100% oy:auto ob:c br:lg bg:panel c:panel-ink ff:d fs:sm bw:1 bc:transparent bs-o:lg"
 		>
-			{tech ? (
-				<Detail
-					tech={tech}
-					all={all}
-					focus={opened}
-					backClasses={
-						pressed === "back" ? PRESSED : ring === "back" ? RING : ""
-					}
-					onBack={() => {
-						setOpen(null);
-						requestAnimationFrame(() => rows.current.get(tech.id)?.focus());
-					}}
-				/>
-			) : (
-				<>
-					<div className="pt:4 pb:3 px:4">
-						<h3 className="m:0 fs:md fw:400 o:h to:e ws:nw">{lookup.host}</h3>
-						<p
-							role={live ? undefined : "status"}
-							className="m:0 mt:1 fs:xs c:panel-muted"
-						>
-							{status}
-						</p>
-					</div>
-					{lookup.state === "loading" && (
-						<>
-							<hr className={RULE} />
-							<ul aria-hidden="true" className="m:0 py:1 px:0">
-								{Array.from({ length: count.current }, (_, index) => (
-									<li
-										key={index}
-										data-skeleton
-										className="d:f ai:c g:3 h:10 px:4"
-									>
-										<span className="fs:0 w:5 h:5 br:9999 bg:panel-skeleton" />
-										<span
-											className={`h:3 br:sm bg:panel-skeleton ${WIDTHS[index % WIDTHS.length]}`}
-										/>
-										<span className="ml:auto h:3 w:12 br:sm bg:panel-skeleton" />
-									</li>
-								))}
-							</ul>
-						</>
-					)}
-					{all.length > 0 && (
-						<>
-							<hr className={RULE} />
-							<ul className="m:0 py:1 px:0">
-								{all.map((item) => (
-									<li key={item.id} className="d:b">
-										<button
-											ref={(element) => {
-												if (element) rows.current.set(item.id, element);
-											}}
-											type="button"
-											aria-label={`${label(item)}, ${item.category}. Show the evidence`}
-											onClick={() => {
-												setOpened(true);
-												setOpen(item.id);
-											}}
-											className={merge(
-												ROW,
-												pressed === item.id
-													? PRESSED
-													: ring === item.id
-														? RING
-														: "",
-											)}
+			<div ref={content}>
+				{tech ? (
+					<Detail
+						tech={tech}
+						all={all}
+						focus={opened}
+						backClasses={
+							pressed === "back" ? PRESSED : ring === "back" ? RING : ""
+						}
+						onBack={() => {
+							setOpen(null);
+							requestAnimationFrame(() => rows.current.get(tech.id)?.focus());
+						}}
+					/>
+				) : (
+					<>
+						<div className="pt:4 pb:3 px:4">
+							<h3 className="m:0 fs:md fw:400 o:h to:e ws:nw">{lookup.host}</h3>
+							<p
+								role={live ? undefined : "status"}
+								className="m:0 mt:1 fs:xs c:panel-muted"
+							>
+								{status}
+							</p>
+						</div>
+						{lookup.state === "loading" && (
+							<>
+								<hr className={RULE} />
+								<ul aria-hidden="true" className="m:0 py:1 px:0">
+									{Array.from({ length: count.current }, (_, index) => (
+										<li
+											key={index}
+											data-skeleton
+											className="d:f ai:c g:3 h:10 px:4"
 										>
-											<Mark tech={item} size="w:5 h:5" />
-											<span className="fg:1 min-w:0 o:h to:e ws:nw">
-												{item.name}
-											</span>
-											<span className="fs:xs c:panel-muted ws:nw fvn:tn">
-												{item.version ?? item.category}
-											</span>
-											<Symbol
-												name="chevron_right"
-												className="d:b fs:0 w:4 h:4 c:panel-muted"
+											<span className="fs:0 w:5 h:5 br:9999 bg:panel-skeleton" />
+											<span
+												className={`h:3 br:sm bg:panel-skeleton ${WIDTHS[index % WIDTHS.length]}`}
 											/>
-										</button>
-									</li>
-								))}
-							</ul>
-						</>
-					)}
-				</>
-			)}
+											<span className="ml:auto h:3 w:12 br:sm bg:panel-skeleton" />
+										</li>
+									))}
+								</ul>
+							</>
+						)}
+						{all.length > 0 && (
+							<>
+								<hr className={RULE} />
+								<ul className="m:0 py:1 px:0">
+									{all.map((item) => (
+										<li key={item.id} className="d:b">
+											<button
+												ref={(element) => {
+													if (element) rows.current.set(item.id, element);
+												}}
+												type="button"
+												aria-label={`${label(item)}, ${item.category}. Show the evidence`}
+												onClick={() => {
+													setOpened(true);
+													setOpen(item.id);
+												}}
+												className={merge(
+													ROW,
+													pressed === item.id
+														? PRESSED
+														: ring === item.id
+															? RING
+															: "",
+												)}
+											>
+												<Mark tech={item} size="w:5 h:5" />
+												<span className="fg:1 min-w:0 o:h to:e ws:nw">
+													{item.name}
+												</span>
+												<span className="fs:xs c:panel-muted ws:nw fvn:tn">
+													{item.version ?? item.category}
+												</span>
+												<Symbol
+													name="chevron_right"
+													className="d:b fs:0 w:4 h:4 c:panel-muted"
+												/>
+											</button>
+										</li>
+									))}
+								</ul>
+							</>
+						)}
+					</>
+				)}
+			</div>
 		</section>
 	);
 }

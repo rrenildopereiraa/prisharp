@@ -114,5 +114,9 @@ export const icons: Record<string, Icon> = {
 	"google-fonts": siGooglefonts,
 };
 
-/** Drawn from the extension's logo file, as a mask, in the page's ink. */
-export const silhouettes = ["yummacss", "yumma-ui", "turbopack", "parcel"];
+/**
+ * Marks Simple Icons lacks: drawn from the extension's own logo, greyed out,
+ * and in its colors when hovered. Always the same picture, only its color
+ * changes.
+ */
+export const pictures = ["yummacss", "yumma-ui", "turbopack", "parcel"];

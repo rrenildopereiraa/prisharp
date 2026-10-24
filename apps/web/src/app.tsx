@@ -89,8 +89,8 @@ export function App() {
 		return () => document.removeEventListener("keydown", onKey);
 	}, []);
 
-	// the ASCII field rises from the bottom of the band, from the paper into
-	// the ink, behind both columns
+	// the ASCII field behind the product, a ring around the panel, from the
+	// paper into the ink
 	const ramp = dark
 		? ["#151412", "#2f2c27", "#57524a", "#a8a091"]
 		: ["#f5f3ee", "#ddd8cc", "#948c7c", "#5c564b"];
@@ -103,26 +103,28 @@ export function App() {
 				</Band>
 				<main className="d:f fd:c fg:1 min-h:0">
 					<Band grow className="d:f fd:c @lg:fd:r">
-						<div
-							aria-hidden="true"
-							className="p:a t:0 l:0 w:100% h:100% us:none"
-						>
-							<GradientASCII
-								colors={ramp}
-								lightMode={!dark}
-								shape="rise"
-								cellSize={14}
-								fontFamily='"Geist Mono Variable", ui-monospace, monospace'
-								glow={0}
-								gradientOpacity={0}
-								grain={0.04}
-								flicker={0.1}
-								speed={0.6}
-								clickEffect="none"
-							/>
-						</div>
 						<Hero lookup={lookup} onLookup={(address) => void run(address)} />
 						<div className="p:r d:f ai:c jc:c fg:1 min-h:0 o:h p:4 btw:1 btc:line @md:min-h:96 @lg:fg:0 @lg:fs:0 @lg:w:100 @lg:btw:0 @lg:blw:1 @lg:blc:line @lg:p:6">
+							<div
+								aria-hidden="true"
+								className="p:a t:0 l:0 w:100% h:100% us:none"
+							>
+								<GradientASCII
+									colors={ramp}
+									lightMode={!dark}
+									shape="eclipse"
+									density={1}
+									scale={1.6}
+									cellSize={14}
+									fontFamily='"Geist Mono Variable", ui-monospace, monospace'
+									glow={0}
+									gradientOpacity={0}
+									grain={0.04}
+									flicker={0.1}
+									speed={0.6}
+									clickEffect="none"
+								/>
+							</div>
 							<Panel lookup={lookup} />
 						</div>
 					</Band>

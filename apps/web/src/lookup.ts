@@ -18,7 +18,8 @@ export interface Found {
 }
 
 export type Lookup =
-	| { state: "loading"; host: string }
+	// `asked`: someone looked it up, rather than the page on its first load
+	| { state: "loading"; host: string; asked: boolean }
 	| { state: "done"; host: string; technologies: Found[] }
 	| { state: "error"; host: string; message: string };
 
@@ -36,14 +37,15 @@ export function useLookup(initial: string) {
 	const [lookup, setLookup] = useState<Lookup>({
 		state: "loading",
 		host: initial,
+		asked: false,
 	});
 	// only the latest request may answer
 	const latest = useRef(0);
 
-	const run = useCallback(async (address: string) => {
+	const run = useCallback(async (address: string, asked = true) => {
 		const id = ++latest.current;
 		const host = hostOf(address);
-		setLookup({ state: "loading", host });
+		setLookup({ state: "loading", host, asked });
 		try {
 			const response = await fetch(
 				`/api/detect?url=${encodeURIComponent(address)}`,
@@ -70,7 +72,7 @@ export function useLookup(initial: string) {
 	}, []);
 
 	useEffect(() => {
-		void run(initial);
+		void run(initial, false);
 	}, [initial, run]);
 
 	return { lookup, run };
