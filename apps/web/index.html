@@ -3,20 +3,12 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Prisharp</title>
+		<title>Prisharp: what is this site built with?</title>
 		<meta
 			name="description"
-			content="A Chromium extension that shows the tech behind any site, in one click."
+			content="Prisharp will show you all the frameworks, libraries and hosts used on the page, with evidence for each."
 		/>
 		<link rel="icon" type="image/png" href="/icon.png" />
-		<script>
-			// the saved theme, before the first paint
-			try {
-				const theme = localStorage.getItem("prisharp-theme");
-				const scheme = { light: "cs:l", dark: "cs:d" }[theme];
-				if (scheme) document.documentElement.className = scheme;
-			} catch {}
-		</script>
 	</head>
 	<body>
 		<div id="root"></div>

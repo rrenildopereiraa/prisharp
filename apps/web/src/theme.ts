@@ -1,35 +1,19 @@
 import { createContext, useEffect, useState } from "react";
 
-export type Theme = "light" | "dark" | "system";
+const QUERY = "(prefers-color-scheme: dark)";
 
-export const THEME_KEY = "prisharp-theme";
-
-// the color scheme on <html>; every Yumma UI color is a light-dark() pair
-const SCHEMES: Record<Theme, string> = {
-	light: "cs:l",
-	dark: "cs:d",
-	system: "cs:ld",
-};
-
-export function applyTheme(theme: Theme) {
-	const root = document.documentElement;
-	root.classList.remove(...Object.values(SCHEMES));
-	root.classList.add(SCHEMES[theme]);
-}
-
-/** Whether the page is drawn dark, following the system when asked to. */
-export function useDark(theme: Theme) {
-	const query = "(prefers-color-scheme: dark)";
-	const [system, setSystem] = useState(() => matchMedia(query).matches);
+/** Whether the system draws the page dark. Every color is a light-dark() pair. */
+export function useDark() {
+	const [dark, setDark] = useState(() => matchMedia(QUERY).matches);
 
 	useEffect(() => {
-		const media = matchMedia(query);
-		const update = () => setSystem(media.matches);
+		const media = matchMedia(QUERY);
+		const update = () => setDark(media.matches);
 		media.addEventListener("change", update);
 		return () => media.removeEventListener("change", update);
 	}, []);
 
-	return theme === "dark" || (theme === "system" && system);
+	return dark;
 }
 
 /** Whether the page is drawn dark, for images that come in two versions. */

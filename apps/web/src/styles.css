@@ -1,27 +1,37 @@
 @yummacss;
 
-/* Shiki writes both themes as variables; the page's color scheme picks one. */
-.shiki,
-.shiki span {
-	color: light-dark(var(--shiki-light), var(--shiki-dark));
-	background-color: light-dark(var(--shiki-light-bg), var(--shiki-dark-bg));
+@import "@fontsource-variable/fraunces/opsz.css";
+@import "@fontsource-variable/fraunces/opsz-italic.css";
+@import "@fontsource-variable/geist-mono";
+
+/* Yumma CSS has no animation-play-state, and its durations stop short of a
+   minute, so the marquee's loop is written here. */
+[data-marquee] {
+	animation: marquee 60s linear infinite;
 }
 
-html {
-	scroll-behavior: smooth;
+[data-marquee-frame] {
+	mask-image: linear-gradient(
+		90deg,
+		transparent,
+		#000 6%,
+		#000 94%,
+		transparent
+	);
+}
+
+[data-paused] [data-marquee] {
+	animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: reduce) {
-	html {
-		scroll-behavior: auto;
+	[data-marquee] {
+		animation: none;
 	}
 }
 
-/* The reset clears list markers, and Yumma CSS has no decimal yet. */
-article ol {
-	list-style-type: decimal;
-}
-
-pre {
-	tab-size: 2;
+@keyframes marquee {
+	to {
+		translate: -50% 0;
+	}
 }

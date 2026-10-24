@@ -1,7 +1,9 @@
 import { defineConfig } from "yummacss";
 
+// Ink on paper. The names are Yumma UI's own tokens, so its components draw in
+// the site's colors through their props alone; the values are the site's.
 export default defineConfig({
-	source: ["./src/**/*.{js,jsx,ts,tsx,mdx}"],
+	source: ["./src/**/*.{js,jsx,ts,tsx}"],
 	theme: {
 		states: {
 			closing: "[data-ending-style]",
@@ -22,23 +24,38 @@ export default defineConfig({
 			slide: "from { translate: -100% 0; } to { translate: 100% 0; }",
 			spin: "to { rotate: 360deg; }",
 		},
+		fonts: {
+			serif: '"Fraunces Variable", Georgia, serif',
+			mono: '"Geist Mono Variable", ui-monospace, Menlo, Consolas, monospace',
+		},
 		colors: {
-			raised: { light: "#ffffff", dark: "#2d2f33" },
-			well: { light: "#eff0f2", dark: "#18191b" },
-			field: { light: "#ffffff", dark: "#18191b" },
-			fill: { light: "#1e232a", dark: "#e6e9ec" },
-			"on-fill": { light: "#ffffff", dark: "#1e232a" },
-			label: { light: "#1e232a", dark: "#ececee" },
-			hint: { light: "#64748b", dark: "#9a9ca3" },
-			rim: { light: "#d1d5dc", dark: "#424447" },
-			shadow: { light: "#a5aebc", dark: "#0a0a0b" },
-			line: { light: "#e1e3e7", dark: "#2f3032" },
-			check: { light: "#2563eb", dark: "#2563eb" },
-			on: { light: "#10b981", dark: "#10b981" },
-			knob: { light: "#ffffff", dark: "#e6e9ec" },
-			groove: { light: "#c4c9d1", dark: "#08090a" },
-			glint: { light: "#ffffff", dark: "#4f5258" },
-			focus: { light: "#7a879b", dark: "#8f9bab" },
+			// the page
+			paper: { light: "#f5f3ee", dark: "#151412" },
+			label: { light: "#23201b", dark: "#ece8df" },
+			hint: { light: "#5c564b", dark: "#a8a091" },
+			line: { light: "#ddd8cc", dark: "#2f2c27" },
+			// Yumma UI's surfaces and edges
+			raised: { light: "#ffffff", dark: "#201e1b" },
+			well: { light: "#ece8df", dark: "#0f0e0c" },
+			field: { light: "#ffffff", dark: "#201e1b" },
+			fill: { light: "#23201b", dark: "#ece8df" },
+			"on-fill": { light: "#f5f3ee", dark: "#151412" },
+			rim: { light: "#948c7c", dark: "#57524a" },
+			shadow: { light: "#b9b2a3", dark: "#000000" },
+			check: { light: "#23201b", dark: "#ece8df" },
+			on: { light: "#23201b", dark: "#ece8df" },
+			knob: { light: "#ffffff", dark: "#201e1b" },
+			groove: { light: "#ddd8cc", dark: "#0a0a09" },
+			glint: { light: "#ffffff", dark: "#3d3a33" },
+			focus: { light: "#5c564b", dark: "#a8a091" },
+			// the extension's panel, drawn in Chrome's colors as in the popup
+			panel: { light: "#ffffff", dark: "#282a2c" },
+			"panel-ink": { light: "#1f1f1f", dark: "#e3e3e3" },
+			"panel-muted": { light: "#474747", dark: "#c4c7c5" },
+			"panel-line": { light: "#e3e3e3", dark: "#444746" },
+			"panel-hover": { light: "#ececec", dark: "#3a3c3e" },
+			"panel-well": { light: "#f1f3f4", dark: "#1f2022" },
+			"panel-ok": { light: "#146c2e", dark: "#6dd58c" },
 		},
 	},
 });
