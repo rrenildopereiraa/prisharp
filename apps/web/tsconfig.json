@@ -10,7 +10,7 @@
 		"skipLibCheck": true,
 		"allowJs": true,
 		"isolatedModules": true,
-		"types": ["vite-plus/client", "node", "mdx"],
+		"types": ["vite-plus/client", "node"],
 		"paths": {
 			"@/*": ["./src/*"]
 		}

@@ -26,6 +26,8 @@ export async function GET(request: Request) {
 			category: tech.category,
 			website: tech.website,
 			icon: tech.icon ?? tech.id,
+			implies: tech.implies ?? [],
+			evidence: tech.evidence,
 		}));
 		return Response.json(
 			{ url: page.url, technologies: found },

@@ -64,6 +64,36 @@ function icon(tech, classes) {
 	return picture;
 }
 
+const EASE = "cubic-bezier(0.2, 0, 0, 1)";
+const still = matchMedia("(prefers-reduced-motion: reduce)");
+const main = document.querySelector("main");
+
+// Changes what the popup shows, then eases its height from the old size to
+// the new one and slides the new view in. Chrome sizes the popup to its
+// content, so the window follows. Nothing moves under reduced motion.
+function morph(change, from = "translateY(4px)") {
+	const before = main.getBoundingClientRect().height;
+	change();
+	if (still.matches) return;
+	const after = main.getBoundingClientRect().height;
+	if (Math.abs(before - after) > 1) {
+		main.animate(
+			[
+				{ height: `${before}px`, overflow: "hidden" },
+				{ height: `${after}px`, overflow: "hidden" },
+			],
+			{ duration: 260, easing: EASE },
+		);
+	}
+	(home.hidden ? detail : home).animate(
+		[
+			{ opacity: 0, transform: from },
+			{ opacity: 1, transform: "none" },
+		],
+		{ duration: 220, easing: EASE },
+	);
+}
+
 const copied = (button, text) => {
 	const caption = button.querySelector(".fg\\:1");
 	const original = caption.textContent;
@@ -142,8 +172,10 @@ function open(tech, all, row) {
 
 	// Back, or Escape, returns to the row it came from.
 	const close = () => {
-		detail.hidden = true;
-		home.hidden = false;
+		morph(() => {
+			detail.hidden = true;
+			home.hidden = false;
+		}, "translateX(-16px)");
 		document.removeEventListener("keydown", escape);
 		row.focus();
 	};
@@ -155,8 +187,10 @@ function open(tech, all, row) {
 	back.onclick = close;
 	document.addEventListener("keydown", escape);
 
-	home.hidden = true;
-	detail.hidden = false;
+	morph(() => {
+		home.hidden = true;
+		detail.hidden = false;
+	}, "translateX(16px)");
 	back.focus();
 }
 
@@ -193,9 +227,11 @@ function show(all, hostname) {
 		all.length === 1
 			? "Built with 1 technology"
 			: `Built with ${all.length} technologies`;
-	list.replaceChildren(...all.map((tech) => row(tech, all)));
-	found.hidden = false;
-	copy.hidden = false;
+	morph(() => {
+		list.replaceChildren(...all.map((tech) => row(tech, all)));
+		found.hidden = false;
+		copy.hidden = false;
+	});
 	copy.addEventListener("click", () => copied(copy, all.map(label).join("\n")));
 }
 

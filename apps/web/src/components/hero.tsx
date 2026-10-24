@@ -1,51 +1,115 @@
-import { ArrowRightIcon, ArrowRightUpIcon } from "@solar-icons/react/outline";
-import { useContext } from "react";
+import { type FormEvent, useState } from "react";
 import Button from "@/components/ui/button";
-import { REPO } from "@/links";
-import { DarkContext } from "@/theme";
+import { DOWNLOAD, REPO } from "@/links";
+import type { Lookup } from "@/lookup";
 
-export function Hero() {
-	const dark = useContext(DarkContext);
+function Key({ children }: { children: string }) {
 	return (
-		<section id="top" className="d:f fd:c ai:c ta:c g:6 pt:14 pb:16 @md:pt:24">
-			<img src="/icon.png" alt="" className="w:16 h:16" />
-			<div className="d:f fd:c ai:c g:3">
-				<h1 className="m:0 fs:3xl fw:700 c:label @md:fs:5xl">Prisharp</h1>
-				<p className="m:0 max-w:120 fs:md lh:5 c:hint @md:fs:lg">
-					See the tech behind any site, in one click. A Chromium extension that
-					shows what a page is built with, and how it knows.
-				</p>
-			</div>
-			<div className="d:f fw:w jc:c g:3">
+		<kbd
+			aria-hidden="true"
+			className="d:if ai:c jc:c h:4 min-w:4 px:1 br:sm bw:1 bc:current o:70 ff:mono fs:xs lh:1"
+		>
+			{children}
+		</kbd>
+	);
+}
+
+// the hero's buttons: the mockup's 40px height and 6px corners
+const ACTION = "h:10 px:4 g:2 br:md fs:sm us:none";
+
+export function Hero({
+	lookup,
+	onLookup,
+}: {
+	lookup: Lookup;
+	onLookup: (address: string) => void;
+}) {
+	const [address, setAddress] = useState("");
+	const error = lookup.state === "error" ? lookup.message : undefined;
+
+	const submit = (event: FormEvent) => {
+		event.preventDefault();
+		if (address.trim()) onLookup(address.trim());
+	};
+
+	return (
+		<div className="p:r d:f fd:c g:5 py:6 px:4 @md:py:12 @md:px:8 @lg:fg:1 @lg:min-w:0 @lg:pt:12">
+			<p className="m:0 ff:serif fs:sm @md:fs:md fs:i c:hint">
+				A browser extension for Chromium
+			</p>
+			<h1
+				data-display
+				className="m:0 ff:serif fw:400 fs:4xl @sm:fs:5xl @md:fs:6xl lh:1 ls:2"
+			>
+				What is this site
+				<br />
+				<i>built with?</i>
+			</h1>
+			<p className="m:0 max-w:120 fs:sm c:hint lh:5 tw:p">
+				Prisharp will show you all the frameworks, libraries and hosts used on
+				the page, with evidence for each.
+			</p>
+			<div className="d:none fw:w g:2 mt:1 @md:d:f">
 				<Button
-					size="lg"
-					shape="pill"
-					icon={<ArrowRightUpIcon className="w:4 h:4" />}
-					iconPosition="trailing"
+					id="download"
+					render={<a href={DOWNLOAD} download />}
 					nativeButton={false}
-					render={<a href={REPO} />}
+					title="Unzip it, then load the folder unpacked from chrome://extensions"
+					className={ACTION}
 				>
-					Get it on GitHub
+					Download for Chromium <Key>D</Key>
 				</Button>
 				<Button
+					id="source"
 					variant="secondary"
-					size="lg"
-					shape="pill"
-					icon={<ArrowRightIcon className="w:4 h:4" />}
-					iconPosition="trailing"
+					render={<a href={REPO} />}
 					nativeButton={false}
-					render={<a href="#how-it-works" />}
+					className={ACTION}
 				>
-					How it works
+					View source <Key>S</Key>
 				</Button>
 			</div>
-			<img
-				src={dark ? "/popup-dark.png" : "/popup-light.png"}
-				alt="The Prisharp popup on a Next.js app: a pill of logos, Next.js lit up with its version, and the stack opened below."
-				width={369}
-				height={348}
-				className="w:100% max-w:92 h:auto mt:6 br:xl bw:1 btc:rim blc:rim brc:rim bbc:shadow bs-o:md"
-			/>
-		</section>
+			<form onSubmit={submit} className="d:f fd:c g:2 max-w:120 mt:3 @md:mt:5">
+				<label htmlFor="address" className="fs:xs c:hint us:none">
+					Try a site, no install needed
+				</label>
+				<div className="d:f ai:c g:2 h:11 pl:3 pr:1 br:md bw:1 bc:rim bg:field tp:a tdu:150 @prm:tp:none fw:os:s fw:ow:3 fw:oo:0 fw:oc:focus/40 fw:bc:focus">
+					<span aria-hidden="true" className="c:hint us:none">
+						https://
+					</span>
+					<input
+						id="address"
+						name="address"
+						type="text"
+						inputMode="url"
+						enterKeyHint="go"
+						autoCapitalize="none"
+						autoCorrect="off"
+						autoComplete="off"
+						spellCheck={false}
+						placeholder="renildo.dev"
+						aria-invalid={error ? true : undefined}
+						aria-describedby={error ? "address-error" : undefined}
+						value={address}
+						onChange={(event) => setAddress(event.target.value)}
+						className="fg:1 min-w:0 h:100% p:0 bw:0 bg:transparent c:label ff:mono fs:md @md:fs:sm f:os:none"
+					/>
+					<Button
+						type="submit"
+						size="sm"
+						variant="subtle"
+						loading={lookup.state === "loading" && lookup.asked}
+						className="fs:0 h:8 px:2 g:2 br:sm c:label ws:nw us:none"
+					>
+						Look it up <Key>↵</Key>
+					</Button>
+				</div>
+				{error && (
+					<p id="address-error" role="alert" className="m:0 fs:xs c:red-7">
+						{error}
+					</p>
+				)}
+			</form>
+		</div>
 	);
 }

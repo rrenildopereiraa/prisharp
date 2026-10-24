@@ -9,6 +9,7 @@
 		"./technologies": "./src/technologies.js",
 		"./detect": "./src/detect.js",
 		"./icons": "./src/icons.js",
+		"./symbols": "./src/symbols.js",
 		"./icons/*": "./icons/tech/*"
 	},
 	"scripts": {

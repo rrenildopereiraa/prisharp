@@ -1,7 +1,7 @@
 // Material Symbols (Apache 2.0), the icon set Chrome's own panels are drawn
 // from, outlined at weight 400. Paths from @material-symbols/svg-400.
 
-const paths = {
+export const paths = {
 	arrow_back:
 		"m274-450 248 248-42 42-320-320 320-320 42 42-248 248h526v60H274Z",
 	check: "M378-246 154-470l43-43 181 181 384-384 43 43-427 427Z",

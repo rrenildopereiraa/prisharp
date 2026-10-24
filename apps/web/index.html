@@ -3,20 +3,43 @@
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<title>Prisharp</title>
+		<title>Prisharp: what is this site built with?</title>
 		<meta
 			name="description"
-			content="A Chromium extension that shows the tech behind any site, in one click."
+			content="Prisharp will show you all the frameworks, libraries and hosts used on the page, with evidence for each."
 		/>
-		<link rel="icon" type="image/png" href="/icon.png" />
-		<script>
-			// the saved theme, before the first paint
-			try {
-				const theme = localStorage.getItem("prisharp-theme");
-				const scheme = { light: "cs:l", dark: "cs:d" }[theme];
-				if (scheme) document.documentElement.className = scheme;
-			} catch {}
-		</script>
+		<link rel="icon" type="image/svg+xml" href="/icon.svg" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/icon.png" />
+		<link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+		<meta
+			name="theme-color"
+			content="#f5f3ee"
+			media="(prefers-color-scheme: light)"
+		/>
+		<meta
+			name="theme-color"
+			content="#151412"
+			media="(prefers-color-scheme: dark)"
+		/>
+		<meta property="og:type" content="website" />
+		<meta property="og:url" content="https://prisharp.com/" />
+		<meta property="og:site_name" content="Prisharp" />
+		<meta
+			property="og:title"
+			content="Prisharp: what is this site built with?"
+		/>
+		<meta
+			property="og:description"
+			content="Every framework, library and host on the page, with evidence for each. A browser extension for Chromium."
+		/>
+		<meta property="og:image" content="https://prisharp.com/og.png" />
+		<meta property="og:image:width" content="1200" />
+		<meta property="og:image:height" content="630" />
+		<meta
+			property="og:image:alt"
+			content="Prisharp: What is this site built with? Beside it, the extension's panel lists the seven technologies on renildo.dev."
+		/>
+		<meta name="twitter:card" content="summary_large_image" />
 	</head>
 	<body>
 		<div id="root"></div>
