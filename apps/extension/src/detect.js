@@ -68,10 +68,62 @@ const version = (value) =>
 
 const test = (regex, text) => {
 	const match = typeof text === "string" ? regex.exec(text) : null;
-	return match && { version: version(match[1]) };
+	return match && { version: version(match[1]), text: match[0] };
 };
 
-// `false` when the signal is absent, `{ version }` when it is present.
+// One line of a signal that matched, for the popup to show as evidence:
+// what kind of trace it is, the trace itself, and the value it read.
+const clip = (text, max = 60) => {
+	const line = String(text).replace(/\s+/g, " ").trim();
+	return line.length > max ? `${line.slice(0, max - 1)}…` : line;
+};
+
+// A regex source, readable: without the escapes.
+const plain = (source) => source.replace(/\\(.)/g, "$1");
+
+function describe(signal, hit, page, byId) {
+	if (signal.js)
+		return { kind: "Global", text: `window.${signal.js}`, value: hit.version };
+	if (signal.jsPrefix) return { kind: "Global", text: `${signal.jsPrefix}…` };
+	if (signal.domKey) return { kind: "Element", text: `${signal.domKey}…` };
+	if (signal.attrPrefix)
+		return { kind: "Attribute", text: `${signal.attrPrefix}…` };
+	if (signal.file) return { kind: "File", text: signal.file };
+	if (signal.dom)
+		return { kind: "Element", text: signal.dom, value: hit.version };
+	if (signal.classes)
+		return { kind: "Classes", text: signal.classes.slice(0, 3).join(" ") };
+	if (signal.script)
+		return { kind: "Script", text: clip(plain(signal.script.source)) };
+	if (signal.found)
+		return {
+			kind: "Found with",
+			text: signal.found.map((id) => byId.get(id)?.name ?? id).join(", "),
+		};
+	if (signal.meta)
+		return {
+			kind: "Meta tag",
+			text: `<meta name="${signal.meta[0]}">`,
+			value: clip(page.meta[signal.meta[0]]),
+		};
+	if (signal.header)
+		return {
+			kind: "Header",
+			text: signal.header[0],
+			value: clip(page.headers[signal.header[0]]),
+		};
+	const kinds = {
+		resource: "Resource",
+		html: "HTML",
+		css: "Stylesheet",
+		url: "URL",
+	};
+	const kind = Object.keys(kinds).find((key) => signal[key]);
+	return { kind: kinds[kind] ?? "Signal", text: clip(hit.text ?? "") };
+}
+
+// `false` when the signal is absent, `{ version, text }` when it is present,
+// `text` being what a regex matched.
 function match(signal, page) {
 	if (signal.js) {
 		const value = page.js[signal.js];
@@ -126,6 +178,7 @@ export function detect(page, technologies, categories = []) {
 	const score = (tech) => {
 		let total = 0;
 		let firstVersion;
+		const evidence = [];
 		for (const signal of tech.signals) {
 			const hit = signal.found
 				? signal.found.every((id) => found.has(id)) && {}
@@ -133,8 +186,11 @@ export function detect(page, technologies, categories = []) {
 			if (!hit) continue;
 			total += signal.weight ?? 100;
 			firstVersion ??= hit.version;
+			evidence.push(describe(signal, hit, page, byId));
 		}
-		if (total >= threshold) found.set(tech.id, { tech, version: firstVersion });
+		if (total >= threshold) {
+			found.set(tech.id, { tech, version: firstVersion, evidence });
+		}
 	};
 
 	// Page evidence first, then what other findings add up to.
@@ -158,7 +214,11 @@ export function detect(page, technologies, categories = []) {
 			}
 			for (const implied of tech.implies ?? []) {
 				if (!found.has(implied) && byId.has(implied)) {
-					found.set(implied, { tech: byId.get(implied), version: undefined });
+					found.set(implied, {
+						tech: byId.get(implied),
+						version: undefined,
+						evidence: [{ kind: "Comes with", text: tech.name }],
+					});
 					changed = true;
 				}
 			}
@@ -170,7 +230,7 @@ export function detect(page, technologies, categories = []) {
 		return index === -1 ? categories.length : index;
 	};
 	return [...found.values()]
-		.map(({ tech, version }) => ({ ...tech, version }))
+		.map(({ tech, version, evidence }) => ({ ...tech, version, evidence }))
 		.sort(
 			(a, b) => order(a) - order(b) || position.get(a.id) - position.get(b.id),
 		);

@@ -7,67 +7,115 @@
 		<link rel="stylesheet" href="src/base.css" />
 		<script type="module" src="src/popup.js"></script>
 	</head>
-	<body class="m:0 bg:raised c:label ff:d">
-		<main id="main" class="d:f fd:c p:4 w:var(--popup-width)">
-			<!-- Yumma UI's track: a well, its items raised out of it -->
-			<div id="track" class="as:c d:f ai:c g:1 p:1 br:9999 bg:well">
-				<nav
-					id="pill"
-					aria-label="Detected technologies"
-					aria-busy="true"
-					class="d:f ai:c g:1"
-				>
-					<span class="px:4 py:2 fs:sm c:hint ws:nw">Reading the page…</span>
-				</nav>
-				<span
-					id="divider"
-					hidden
-					class="w:0 h:5 mx:1 blw:1 brw:1 blc:groove brc:glint"
-				></span>
-				<button
-					id="toggle"
-					type="button"
-					hidden
-					aria-expanded="false"
-					aria-controls="stack"
-					aria-label="Show the stack"
-					class="d:f ai:c jc:c fs:0 w:9 h:9 br:9999 bw:1 bc:transparent bg:transparent c:hint h:c:label h:bg:raised c:p tp:a tdu:150 ttf:io @prm:tp:none fv:os:s fv:ow:3 fv:oo:0 fv:oc:focus/40 fv:bc:focus"
-				>
-					<svg
-						id="chevron"
-						aria-hidden="true"
-						width="14"
-						height="14"
-						viewBox="0 0 14 14"
-						fill="none"
-						stroke="currentColor"
-						stroke-width="1.8"
-						stroke-linecap="round"
-						stroke-linejoin="round"
-						class="tp:t tdu:300 ttf:out-quart @prm:tp:none"
-					>
-						<path d="M3.5 5.5L7 9l3.5-3.5" />
-					</svg>
-				</button>
-			</div>
-			<!-- Closed, the stack folds to no height; its padding sits inside. -->
-			<section
-				id="stack"
-				inert
-				class="h:0 o:0 o:h tp:a tdu:300 ttf:out-quart @prm:tp:none"
-			>
-				<div class="d:f fd:c g:3 pt:3">
-					<ul id="list" class="d:f fd:c g:1 m:0 p:1 br:xl bg:well"></ul>
-					<div class="d:f ai:c jc:sb g:4 pl:2">
-						<p id="summary" class="m:0 fs:xs c:hint ws:nw"></p>
-						<button
-							id="copy"
-							type="button"
-							class="d:if ai:c jc:c h:8 px:3 br:lg bw:1 bg:raised btc:rim blc:rim brc:rim bbc:shadow bs-o:xs c:label h:bg:well ff:d fs:xs fw:500 us:none c:p tp:a tdu:150 ttf:io a:s:95 @prm:tp:none fv:os:s fv:ow:3 fv:oo:0 fv:oc:focus/40 fv:bc:focus"
-						>
-							Copy stack
-						</button>
+	<!-- Drawn like Chrome's site information panel: a title, rows that open a
+	     page of their own, and quiet actions at the bottom. -->
+	<body class="m:0 w:80 bg:surface c:ink ff:d fs:sm">
+		<main>
+			<section id="home" aria-labelledby="host">
+				<header class="d:f ai:fs g:3 pt:4 pb:3 pl:4 pr:2">
+					<div class="fg:1 min-w:0">
+						<h1 id="host" class="m:0 fs:md fw:400 o:h to:e ws:nw">Prisharp</h1>
+						<p id="status" role="status" class="m:0 mt:1 fs:xs c:muted">
+							Reading the page…
+						</p>
 					</div>
+					<button
+						type="button"
+						data-close
+						aria-label="Close"
+						class="d:f ai:c jc:c fs:0 w:8 h:8 br:9999 bw:0 bg:transparent c:muted h:bg:hover c:p fv:os:s fv:ow:2 fv:oc:focus"
+					>
+						<span data-symbol="close" class="d:f w:5 h:5"></span>
+					</button>
+				</header>
+				<hr class="m:0 h:px bw:0 bg:line" />
+				<div id="found" hidden>
+					<ul id="list" class="m:0 py:1 px:0"></ul>
+					<hr class="m:0 h:px bw:0 bg:line" />
+				</div>
+				<div class="py:1">
+					<button id="copy" type="button" hidden data-row>
+						<span
+							data-symbol="content_copy"
+							class="d:f fs:0 w:5 h:5 c:muted"
+						></span>
+						<span class="fg:1">Copy list</span>
+					</button>
+					<a
+						href="https://github.com/rrenildopereiraa/prisharp/tree/main/apps/extension#how-detection-works"
+						target="_blank"
+						rel="noreferrer"
+						data-row
+					>
+						<span data-symbol="info" class="d:f fs:0 w:5 h:5 c:muted"></span>
+						<span class="fg:1">How Prisharp detects</span>
+						<span
+							data-symbol="open_in_new"
+							class="d:f fs:0 w:4 h:4 c:muted"
+						></span>
+					</a>
+				</div>
+			</section>
+
+			<section id="detail" hidden aria-labelledby="name">
+				<header class="d:f ai:c g:1 py:2 px:2">
+					<button
+						id="back"
+						type="button"
+						aria-label="Back to the list"
+						class="d:f ai:c jc:c fs:0 w:8 h:8 br:9999 bw:0 bg:transparent c:muted h:bg:hover c:p fv:os:s fv:ow:2 fv:oc:focus"
+					>
+						<span data-symbol="arrow_back" class="d:f w:5 h:5"></span>
+					</button>
+					<h2
+						id="name"
+						class="m:0 fg:1 min-w:0 fs:md fw:400 o:h to:e ws:nw"
+					></h2>
+					<button
+						type="button"
+						data-close
+						aria-label="Close"
+						class="d:f ai:c jc:c fs:0 w:8 h:8 br:9999 bw:0 bg:transparent c:muted h:bg:hover c:p fv:os:s fv:ow:2 fv:oc:focus"
+					>
+						<span data-symbol="close" class="d:f w:5 h:5"></span>
+					</button>
+				</header>
+				<hr class="m:0 h:px bw:0 bg:line" />
+				<div class="d:f ai:c g:3 p:4">
+					<span
+						id="badge"
+						class="d:f ai:c jc:c fs:0 w:11 h:11 br:lg bg:well"
+					></span>
+					<div class="min-w:0">
+						<p id="headline" class="m:0"></p>
+						<p id="subline" class="m:0 mt:1 fs:xs c:muted"></p>
+					</div>
+				</div>
+				<hr class="m:0 h:px bw:0 bg:line" />
+				<h3 class="m:0 pt:3 pb:1 px:4 fs:xs fw:400 c:muted">
+					How Prisharp knows
+				</h3>
+				<ul id="evidence" class="m:0 pt:0 pb:2 px:0"></ul>
+				<hr class="m:0 h:px bw:0 bg:line" />
+				<div class="py:1">
+					<a id="website" href="#" target="_blank" rel="noreferrer" data-row>
+						<span
+							data-symbol="language"
+							class="d:f fs:0 w:5 h:5 c:muted"
+						></span>
+						<span id="website-label" class="fg:1 min-w:0 o:h to:e ws:nw"></span>
+						<span
+							data-symbol="open_in_new"
+							class="d:f fs:0 w:4 h:4 c:muted"
+						></span>
+					</a>
+					<button id="copy-evidence" type="button" data-row>
+						<span
+							data-symbol="content_copy"
+							class="d:f fs:0 w:5 h:5 c:muted"
+						></span>
+						<span class="fg:1">Copy evidence</span>
+					</button>
 				</div>
 			</section>
 		</main>

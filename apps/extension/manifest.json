@@ -1,18 +1,26 @@
 {
 	"manifest_version": 3,
 	"name": "Prisharp",
-	"description": "See the tech behind any site, in one click.",
-	"version": "0.1.0",
+	"description": "See what any site is built with, and the evidence for each.",
+	"version": "0.2.0",
 	"homepage_url": "https://prisharp.com",
 	"action": {
 		"default_popup": "popup.html",
-		"default_title": "Prisharp"
+		"default_title": "Prisharp",
+		"default_icon": {
+			"16": "icons/action/light-16.png",
+			"32": "icons/action/light-32.png"
+		}
 	},
-	"permissions": ["activeTab", "scripting"],
+	"permissions": ["activeTab", "scripting", "offscreen"],
 	"icons": {
 		"16": "icons/16.png",
 		"32": "icons/32.png",
 		"48": "icons/48.png",
 		"128": "icons/128.png"
+	},
+	"background": {
+		"service_worker": "src/background.js",
+		"type": "module"
 	}
 }
