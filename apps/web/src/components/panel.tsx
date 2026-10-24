@@ -166,28 +166,44 @@ function Detail({
 	);
 }
 
+// the loading rows' name widths, so the skeleton reads as a list
+const WIDTHS = ["w:16", "w:24", "w:20", "w:28", "w:18", "w:22", "w:14"];
+
 /**
  * The extension's popup, drawn on the page with the result of a lookup: the
  * list, and a page of evidence for each technology, as in Chrome.
  *
- * With `demo`, it plays itself until someone reaches for it: a row takes
- * focus, opens, goes back, and Tab moves on to the next. Under reduced motion
- * it stays still.
+ * It plays itself in a loop: a row takes focus, opens, goes back, and Tab
+ * moves on to the next. A pointer or focus inside holds it, and leaving lets
+ * it carry on from where it is. Under reduced motion it stays still.
  */
-export function Panel({ lookup, demo }: { lookup: Lookup; demo: boolean }) {
+export function Panel({ lookup }: { lookup: Lookup }) {
 	const [open, setOpen] = useState<string | null>(null);
 	const [opened, setOpened] = useState(false);
-	const [playing, setPlaying] = useState(true);
+	const [hold, setHold] = useState(false);
 	const [ring, setRing] = useState<string | null>(null);
 	const [pressed, setPressed] = useState<string | null>(null);
 	const rows = useRef<Map<string, HTMLButtonElement>>(new Map());
+	const pointer = useRef(false);
+	const focused = useRef(false);
+	const current = useRef(open);
+	current.current = open;
+	// where the loop is, to carry on from after a hold
+	const next = useRef(0);
+	// how many rows the last result had, so loading keeps the panel's height
+	const count = useRef(7);
 
-	// a new lookup starts on the list
-	useEffect(() => setOpen(null), [lookup]);
+	useEffect(() => {
+		setOpen(null);
+		next.current = 0;
+		if (lookup.state === "done") {
+			count.current = Math.max(1, lookup.technologies.length);
+		}
+	}, [lookup]);
 
 	const all = lookup.state === "done" ? lookup.technologies : [];
 	const tech = all.find((item) => item.id === open);
-	const live = demo && playing && all.length > 1;
+	const live = !hold && all.length > 1;
 
 	useEffect(() => {
 		if (!live) return;
@@ -196,30 +212,49 @@ export function Panel({ lookup, demo }: { lookup: Lookup; demo: boolean }) {
 		const { signal } = controller;
 		const shown = all.slice(0, 5).map((item) => item.id);
 
+		const press = async (id: string) => {
+			setPressed(id);
+			await wait(160, signal);
+			setPressed(null);
+		};
+		const back = async (id: string) => {
+			setRing("back");
+			await wait(700, signal);
+			await press("back");
+			setOpen(null);
+			setRing(id);
+			await wait(800, signal);
+		};
+
 		const play = async () => {
-			setRing(shown[0]);
-			await wait(1200, signal);
-			for (let index = 0; ; index = (index + 1) % shown.length) {
+			let index = next.current % shown.length;
+			const left = current.current;
+			if (left) {
+				// held on a page: go back from it first
+				index = Math.max(0, shown.indexOf(left));
+				await wait(400, signal);
+				await back(left);
+				index = (index + 1) % shown.length;
+				setRing(shown[index]);
+				await wait(900, signal);
+			} else {
+				setRing(shown[index]);
+				await wait(1200, signal);
+			}
+			for (;;) {
 				const id = shown[index];
+				next.current = index;
 				// Enter: the row presses in and opens
-				setPressed(id);
-				await wait(160, signal);
-				setPressed(null);
+				await press(id);
 				setRing(null);
 				setOpened(false);
 				setOpen(id);
 				await wait(3000, signal);
-				// Back
-				setRing("back");
-				await wait(700, signal);
-				setPressed("back");
-				await wait(160, signal);
-				setPressed(null);
-				setOpen(null);
-				setRing(id);
-				await wait(800, signal);
+				await back(id);
 				// Tab, to the next row
-				setRing(shown[(index + 1) % shown.length]);
+				index = (index + 1) % shown.length;
+				next.current = index;
+				setRing(shown[index]);
 				await wait(900, signal);
 			}
 		};
@@ -231,10 +266,7 @@ export function Panel({ lookup, demo }: { lookup: Lookup; demo: boolean }) {
 		};
 	}, [live, all]);
 
-	// someone reached for it: hand it over, as it is
-	const stop = () => {
-		if (playing) setPlaying(false);
-	};
+	const holdFor = () => setHold(pointer.current || focused.current);
 
 	const status =
 		lookup.state === "loading"
@@ -250,8 +282,24 @@ export function Panel({ lookup, demo }: { lookup: Lookup; demo: boolean }) {
 	return (
 		<section
 			aria-label="Result"
-			onPointerEnter={stop}
-			onFocusCapture={stop}
+			aria-busy={lookup.state === "loading"}
+			onPointerEnter={() => {
+				pointer.current = true;
+				holdFor();
+			}}
+			onPointerLeave={() => {
+				pointer.current = false;
+				holdFor();
+			}}
+			onFocus={() => {
+				focused.current = true;
+				holdFor();
+			}}
+			onBlur={(event) => {
+				if (event.currentTarget.contains(event.relatedTarget)) return;
+				focused.current = false;
+				holdFor();
+			}}
 			className="p:r w:80 max-w:100% max-h:100% oy:auto ob:c br:lg bg:panel c:panel-ink ff:d fs:sm bw:1 bc:transparent bs-o:lg"
 		>
 			{tech ? (
@@ -278,6 +326,26 @@ export function Panel({ lookup, demo }: { lookup: Lookup; demo: boolean }) {
 							{status}
 						</p>
 					</div>
+					{lookup.state === "loading" && (
+						<>
+							<hr className={RULE} />
+							<ul aria-hidden="true" className="m:0 py:1 px:0">
+								{Array.from({ length: count.current }, (_, index) => (
+									<li
+										key={index}
+										data-skeleton
+										className="d:f ai:c g:3 h:10 px:4"
+									>
+										<span className="fs:0 w:5 h:5 br:9999 bg:panel-well" />
+										<span
+											className={`h:3 br:sm bg:panel-well ${WIDTHS[index % WIDTHS.length]}`}
+										/>
+										<span className="ml:auto h:3 w:12 br:sm bg:panel-well" />
+									</li>
+								))}
+							</ul>
+						</>
+					)}
 					{all.length > 0 && (
 						<>
 							<hr className={RULE} />

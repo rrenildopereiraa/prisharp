@@ -10,12 +10,6 @@
 	font-variation-settings: "opsz" 36;
 }
 
-/* Yumma CSS has no animation-play-state, and its durations stop short of a
-   minute, so the marquee's loop is written here. */
-[data-marquee] {
-	animation: marquee 60s linear infinite;
-}
-
 [data-marquee-frame] {
 	mask-image: linear-gradient(
 		90deg,
@@ -26,18 +20,27 @@
 	);
 }
 
-[data-paused] [data-marquee] {
-	animation-play-state: paused;
+/* The panel's loading rows. Yumma CSS has no infinite iteration count, so
+   the pulse is written here. */
+[data-skeleton] {
+	animation: skeleton 1.4s ease-in-out infinite;
 }
 
-@media (prefers-reduced-motion: reduce) {
-	[data-marquee] {
-		animation: none;
+@keyframes skeleton {
+	50% {
+		opacity: 0.45;
 	}
 }
 
-@keyframes marquee {
-	to {
-		translate: -50% 0;
+/* On a short screen the facts give way, so the page still fits it. */
+@media (min-width: 48rem) and (max-height: 50rem) {
+	[data-facts] {
+		display: none;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-skeleton] {
+		animation: none;
 	}
 }

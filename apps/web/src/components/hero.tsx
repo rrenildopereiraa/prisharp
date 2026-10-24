@@ -33,7 +33,7 @@ export function Hero({
 	};
 
 	return (
-		<div className="d:f fd:c g:5 py:6 px:4 @md:py:12 @md:px:8 @lg:fg:1 @lg:min-w:0 @lg:pt:16">
+		<div className="p:r d:f fd:c g:5 py:6 px:4 @md:py:12 @md:px:8 @lg:fg:1 @lg:min-w:0 @lg:pt:12">
 			<p className="m:0 ff:serif fs:sm @md:fs:md fs:i c:hint">
 				A browser extension for Chromium
 			</p>
@@ -73,7 +73,7 @@ export function Hero({
 				<label htmlFor="address" className="fs:xs c:hint us:none">
 					Try a site, no install needed
 				</label>
-				<div className="d:f ai:c g:2 h:11 pl:3 pr:1 br:md bw:1 bc:rim bg:field fw:os:s fw:ow:2 fw:oo:2 fw:oc:focus">
+				<div className="d:f ai:c g:2 h:11 pl:3 pr:1 br:md bw:1 bc:rim bg:field tp:a tdu:150 @prm:tp:none fw:os:s fw:ow:3 fw:oo:0 fw:oc:focus/40 fw:bc:focus">
 					<span aria-hidden="true" className="c:hint us:none">
 						https://
 					</span>
@@ -85,7 +85,7 @@ export function Hero({
 						enterKeyHint="go"
 						autoCapitalize="none"
 						autoCorrect="off"
-						autoComplete="url"
+						autoComplete="off"
 						spellCheck={false}
 						placeholder="renildo.dev"
 						aria-invalid={error ? true : undefined}
