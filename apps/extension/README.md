@@ -24,23 +24,28 @@ Every technology leaves evidence in what it ships to the browser: a global it de
 
 Some of the evidence the fingerprints use, all checked against the packages' own builds:
 
-| Technology                  | Evidence                                                                                               |
-| --------------------------- | ------------------------------------------------------------------------------------------------------ |
-| Next.js                     | `window.next.version`, `self.__next_f`, `/_next/static/`                                               |
-| Turbopack                   | `globalThis.TURBOPACK`, `/_next/static/chunks/turbopack-*`                                             |
-| TanStack Start              | `window.__TSR_ROUTER__`, `self.$_TSR`                                                                  |
-| SvelteKit                   | a `__sveltekit_<hash>` global, `/_app/immutable/`                                                      |
-| Svelte                      | `window.__svelte.v`, the set of running Svelte versions                                                |
-| Solid                       | `_$HY` from hydration, `document._$DX_DELEGATE` from event delegation                                  |
-| React                       | `__reactFiber$…` and `__reactContainer$…` on rendered elements                                         |
-| Vue                         | `[data-v-app]`, whose `__vue_app__.version` gives the version                                          |
-| Astro                       | `<meta name="generator" content="Astro v…">`, `astro-island`, `/_astro/`                               |
-| Vite                        | its modulepreload polyfill at the top of the entry chunk                                               |
-| Rolldown                    | the same polyfill written with template literals, as Vite 8 builds with Rolldown and minifies with Oxc |
-| Tailwind CSS                | `/*! tailwindcss v4.3.3 \| MIT License */` at the top of its CSS                                       |
-| Tailwind Plus               | the `<el-dropdown>`, `<el-dialog>`, `<el-menu>`… elements from `@tailwindplus/elements`                |
-| Yumma CSS                   | `.d\:f{display:flex}` in the stylesheet, or `d:f`, `ai:c`, `jc:sb` in the DOM                          |
-| Vercel, Netlify, Cloudflare | `x-vercel-id`, `x-nf-request-id`, `cf-ray`                                                             |
+| Technology                  | Evidence                                                                                                      |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Next.js                     | `window.next.version`, `self.__next_f`, `/_next/static/`                                                      |
+| Turbopack                   | `globalThis.TURBOPACK`, `/_next/static/chunks/turbopack-*`                                                    |
+| TanStack Start              | `window.__TSR_ROUTER__`, `self.$_TSR`                                                                         |
+| SvelteKit                   | a `__sveltekit_<hash>` global, `/_app/immutable/`                                                             |
+| Svelte                      | `window.__svelte.v`, the set of running Svelte versions                                                       |
+| Solid                       | `_$HY` from hydration, `document._$DX_DELEGATE` from event delegation                                         |
+| React                       | `__reactFiber$…` and `__reactContainer$…` on rendered elements                                                |
+| Vue                         | `[data-v-app]`, whose `__vue_app__.version` gives the version                                                 |
+| Astro                       | `<meta name="generator" content="Astro v…">`, `astro-island`, `/_astro/`                                      |
+| Vite                        | its modulepreload polyfill at the top of the entry chunk                                                      |
+| Rolldown                    | the same polyfill written with template literals, as Vite 8 builds with Rolldown and minifies with Oxc        |
+| Tailwind CSS                | `/*! tailwindcss v4.3.3 \| MIT License */` at the top of its CSS                                              |
+| Tailwind Plus               | the `<el-dropdown>`, `<el-dialog>`, `<el-menu>`… elements from `@tailwindplus/elements`                       |
+| Yumma CSS                   | `.d\:f{display:flex}` in the stylesheet, or `d:f`, `ai:c`, `jc:sb` in the DOM                                 |
+| Lucide, Tabler Icons        | the `lucide` and `tabler-icon` classes their components write on each `<svg>`                                 |
+| Radix Icons                 | `<svg width="15" height="15" viewBox="0 0 15 15">`, the 15 grid only Radix draws on                           |
+| Iconoir                     | `<svg width="1.5em" height="1.5em" color="currentColor">`                                                     |
+| Phosphor Icons              | its React context, `size:"1em",weight:"regular",mirrored:!1`, which minifiers keep; or its `Phosphor` webfont |
+| Hugeicons                   | `disableSecondaryOpacity`, a prop name its component keeps through minification                               |
+| Vercel, Netlify, Cloudflare | `x-vercel-id`, `x-nf-request-id`, `cf-ray`                                                                    |
 
 ### What cannot be seen
 

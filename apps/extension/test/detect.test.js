@@ -194,3 +194,47 @@ test("Tailwind CSS shows without its banner", () => {
 		"Tailwind CSS",
 	]);
 });
+
+test("icon libraries, from the markup and scripts their packages ship", () => {
+	const found = (overrides) => names(detect(page(overrides), technologies));
+
+	assert.deepEqual(found({ dom: { "svg.lucide|": true } }), ["Lucide"]);
+	assert.deepEqual(found({ dom: { "svg.tabler-icon|": true } }), [
+		"Tabler Icons",
+	]);
+	assert.deepEqual(
+		found({
+			dom: { "svg[width='15'][height='15'][viewBox='0 0 15 15']|": true },
+		}),
+		["Radix Icons"],
+	);
+	assert.deepEqual(
+		found({
+			dom: {
+				"svg[width='1.5em'][height='1.5em'][color='currentColor']|": true,
+			},
+		}),
+		["Iconoir"],
+	);
+	assert.deepEqual(
+		found({
+			script: scripts(
+				'const o=r({color:"currentColor",size:"1em",weight:"regular",mirrored:!1});',
+			),
+		}),
+		["Phosphor Icons"],
+	);
+	assert.deepEqual(
+		found({
+			script: scripts(
+				'({color:e="currentColor",size:t=24,secondaryColor:n,disableSecondaryOpacity:r=!1})',
+			),
+		}),
+		["Hugeicons"],
+	);
+	// a 256 grid at 1em alone is only half the evidence for Phosphor
+	assert.deepEqual(
+		found({ dom: { "svg[viewBox='0 0 256 256'][width='1em']|": true } }),
+		[],
+	);
+});

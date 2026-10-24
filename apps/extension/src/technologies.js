@@ -21,6 +21,9 @@
 //             { file: "/yumma.config.mjs", content: /yummacss/ }
 //   found     these technologies were all found too
 //
+// A pattern too dense to read as evidence can carry a `label`, which the
+// popup shows in its place.
+//
 // A regex with a capture group reads the version from it. Each signal weighs
 // 100 unless it says otherwise: a technology shows at 100, so a weak signal
 // (50) needs a second one. `implies` adds what a technology is built on;
@@ -30,6 +33,7 @@ export const categories = [
 	"Framework",
 	"Library",
 	"Components",
+	"Icons",
 	"Styling",
 	"Build",
 	"Hosting",
@@ -392,6 +396,76 @@ export const technologies = [
 				dom: "[data-slot='button'], [data-slot='card'], [data-slot='dropdown-menu-trigger'], [data-slot='dialog-content']",
 			},
 		],
+	},
+
+	// Icons
+	{
+		id: "lucide",
+		name: "Lucide",
+		website: "https://lucide.dev",
+		category: "Icons",
+		// lucide-react and the lucide package both write the icon's name as a class
+		signals: [{ dom: "svg.lucide" }],
+	},
+	{
+		id: "tabler-icons",
+		name: "Tabler Icons",
+		website: "https://tabler.io/icons",
+		category: "Icons",
+		signals: [
+			{ dom: "svg.tabler-icon" },
+			// the webfont: <i class="ti ti-home">
+			{ dom: "i.ti[class*='ti-']" },
+			{ css: /font-family:\s*["']?tabler-icons/ },
+		],
+	},
+	{
+		id: "phosphor",
+		name: "Phosphor Icons",
+		website: "https://phosphoricons.com",
+		category: "Icons",
+		signals: [
+			// @phosphor-icons/react's default context, which minifiers keep
+			{
+				script:
+					/size:\s*"1em",\s*weight:\s*"regular",\s*mirrored:\s*(?:!1|false)/,
+				label: 'size:"1em",weight:"regular",mirrored:!1',
+			},
+			{ css: /font-family:\s*["']?Phosphor/ },
+			// its icons are drawn on a 256 grid at 1em; others use 256 too
+			{ dom: "svg[viewBox='0 0 256 256'][width='1em']", weight: 50 },
+		],
+	},
+	{
+		id: "iconoir",
+		name: "Iconoir",
+		website: "https://iconoir.com",
+		category: "Icons",
+		signals: [
+			// iconoir-react: 1.5em with a color attribute, which few others set
+			{
+				dom: "svg[width='1.5em'][height='1.5em'][color='currentColor']",
+			},
+			// the CSS version: <i class="iconoir-home">
+			{ dom: "[class^='iconoir-'], [class*=' iconoir-']" },
+		],
+	},
+	{
+		id: "radix-icons",
+		name: "Radix Icons",
+		website: "https://www.radix-ui.com/icons",
+		category: "Icons",
+		icon: "radix",
+		// drawn on a 15 grid, which is Radix Icons' own
+		signals: [{ dom: "svg[width='15'][height='15'][viewBox='0 0 15 15']" }],
+	},
+	{
+		id: "hugeicons",
+		name: "Hugeicons",
+		website: "https://hugeicons.com",
+		category: "Icons",
+		// its markup is a plain 24px SVG; its component keeps this prop name
+		signals: [{ script: /disableSecondaryOpacity/ }],
 	},
 
 	// Styling
