@@ -2,7 +2,7 @@
 	"name": "extension",
 	"version": "0.1.0",
 	"private": true,
-	"description": "See the tech behind any site, in one click.",
+	"description": "See what any site is built with, and the evidence for each.",
 	"license": "MIT",
 	"type": "module",
 	"exports": {
@@ -17,7 +17,7 @@
 		"validate": "yummacss lint",
 		"icons": "node scripts/icons.mjs",
 		"test": "vp test run",
-		"zip": "yummacss build && rm -f prisharp.zip && zip -r prisharp.zip manifest.json popup.html popup.css src icons"
+		"zip": "yummacss build && rm -f prisharp.zip && zip -r prisharp.zip manifest.json popup.html offscreen.html popup.css src icons"
 	},
 	"devDependencies": {
 		"@ridemountainpig/svgl-react": "^1.0.18",

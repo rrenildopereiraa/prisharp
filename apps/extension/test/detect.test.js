@@ -73,6 +73,27 @@ test("Next.js reads its version and implies React", () => {
 	]);
 });
 
+test("each finding carries the evidence that matched", () => {
+	const found = detect(
+		page({
+			js: { "next.version": "16.4.2" },
+			headers: { "x-vercel-id": "gru1::x" },
+		}),
+		technologies,
+		categories,
+	);
+	const evidence = (id) => found.find((tech) => tech.id === id).evidence;
+	assert.deepEqual(evidence("nextjs"), [
+		{ kind: "Global", text: "window.next.version", value: "16.4.2" },
+	]);
+	assert.deepEqual(evidence("react"), [
+		{ kind: "Comes with", text: "Next.js" },
+	]);
+	assert.deepEqual(evidence("vercel"), [
+		{ kind: "Header", text: "x-vercel-id", value: "gru1::x" },
+	]);
+});
+
 test("a weak signal alone is not enough", () => {
 	const html =
 		'<script type="module" crossorigin src="/assets/index-XFbPZZqc.js"></script>';

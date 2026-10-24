@@ -1,8 +1,3 @@
-:root {
-	/* Lets the capsule and the stack animate to their natural size. */
-	interpolate-size: allow-keywords;
-}
-
 /* Loaded after popup.css, so `hidden` wins over a Yumma display class. */
 [hidden] {
 	display: none;

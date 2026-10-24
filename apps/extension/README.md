@@ -1,6 +1,6 @@
 # Prisharp
 
-See the tech behind any site, in one click. A Chromium extension that shows what a page is built with as a row of icons in a pill. Click an icon to open that technology's site.
+See what any site is built with, and the evidence for each. A Chromium extension drawn like one of Chrome's own panels: click the globe in the toolbar for the list of technologies on the page, then open one to see what gave it away and to visit its site.
 
 ## Install
 
@@ -8,14 +8,18 @@ See the tech behind any site, in one click. A Chromium extension that shows what
 2. Click **Load unpacked** and pick `apps/extension`.
 3. Pin Prisharp, open a site and click it.
 
-Prisharp runs only when you click it. It asks for `activeTab` and `scripting` and no host permissions, so it reads only the tab you clicked on, and only then.
+Prisharp runs only when you click it. It asks for `activeTab` and `scripting` and no host permissions, so it reads only the tab you clicked on, and only then. The `offscreen` permission lets a hidden page follow the browser's light or dark mode, which a service worker can't do, so the toolbar icon matches it; that page reads nothing else.
+
+## The popup
+
+The popup copies the look of Chrome's site information panel: the system font, Chrome's light and dark surfaces, flat rows and [Material Symbols](https://fonts.google.com/icons) (Apache 2.0), the icon set Chrome draws its own panels with. Its colors live in [`yumma.config.mjs`](yumma.config.mjs). The toolbar icon is the same globe as the popup's "Open" row, rendered from [`scripts/glyph.svg`](scripts/glyph.svg) in Chrome's toolbar grey; the extension's icon on `chrome://extensions` is that globe on a white tile, from [`scripts/tile.svg`](scripts/tile.svg).
 
 ## How detection works
 
 Every technology leaves evidence in what it ships to the browser: a global it defines, an attribute it writes, a path it serves its files from, a comment it keeps at the top of its CSS. Prisharp keeps those fingerprints as data in [`src/technologies.js`](src/technologies.js) and weighs them:
 
 1. **Collect.** On click, [`src/collect.js`](src/collect.js) runs once in the page's own JavaScript world. It checks the globals, selectors and element properties the fingerprints ask for, lists loaded resources and `<meta>` tags, sends one `HEAD` request for the response headers, and reads the stylesheets and entry scripts as text. The browser has usually cached these already.
-2. **Score.** [`src/detect.js`](src/detect.js) matches each technology's signals against that snapshot. A signal weighs 100 by default and a technology shows from 100, so one strong signal is enough and a weak one (50) needs a second.
+2. **Score.** [`src/detect.js`](src/detect.js) matches each technology's signals against that snapshot. A signal weighs 100 by default and a technology shows from 100, so one strong signal is enough and a weak one (50) needs a second. Every signal that matched is kept as evidence, which the popup lists under each technology.
 3. **Relate.** `implies` adds what a technology is built on (Next.js gives React). `requires` drops one unless its partners were found too (Yumma UI needs Yumma CSS and Base UI).
 
 Some of the evidence the fingerprints use, all checked against the packages' own builds:
