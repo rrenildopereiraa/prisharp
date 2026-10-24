@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { Footer } from "@/components/footer";
 import GradientASCII from "@/components/gradient-ascii";
 import { Header } from "@/components/header";
@@ -74,6 +74,8 @@ const KEYS: Record<string, string> = { d: "download", s: "source" };
 export function App() {
 	const dark = useDark();
 	const { lookup, run } = useLookup("renildo.dev");
+	// the panel plays itself on the first result, until someone looks up a site
+	const [demo, setDemo] = useState(true);
 
 	useEffect(() => {
 		const onKey = (event: KeyboardEvent) => {
@@ -101,9 +103,15 @@ export function App() {
 					<Header />
 				</Band>
 				<main className="d:f fd:c fg:1 min-h:0">
-					<Band grow className="d:f fd:c @lg:d:g @lg:gtc:2">
-						<Hero lookup={lookup} onLookup={(address) => void run(address)} />
-						<div className="p:r d:f ai:c jc:c fg:1 min-h:0 o:h p:4 btw:1 btc:line @md:min-h:96 @lg:btw:0 @lg:blw:1 @lg:blc:line @lg:p:8">
+					<Band grow className="d:f fd:c @lg:fd:r">
+						<Hero
+							lookup={lookup}
+							onLookup={(address) => {
+								setDemo(false);
+								void run(address);
+							}}
+						/>
+						<div className="p:r d:f ai:c jc:c fg:1 min-h:0 o:h p:4 btw:1 btc:line @md:min-h:96 @lg:fg:0 @lg:fs:0 @lg:w:100 @lg:btw:0 @lg:blw:1 @lg:blc:line @lg:p:6">
 							<div
 								aria-hidden="true"
 								className="p:a t:0 l:0 w:100% h:100% us:none"
@@ -122,7 +130,7 @@ export function App() {
 									clickEffect="none"
 								/>
 							</div>
-							<Panel lookup={lookup} />
+							<Panel lookup={lookup} demo={demo} />
 						</div>
 					</Band>
 					<Band>

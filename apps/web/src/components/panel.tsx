@@ -1,5 +1,6 @@
 import { paths } from "extension/symbols";
 import { useEffect, useRef, useState } from "react";
+import { merge } from "yummacss/merge";
 import type { Evidence, Found, Lookup } from "@/lookup";
 import { hasLogo, Logo } from "./logo";
 
@@ -20,9 +21,23 @@ function Symbol({ name, className }: { name: Name; className: string }) {
 }
 
 const ROW =
-	"d:f ai:c g:3 w:100% h:10 px:4 bw:0 bg:transparent c:panel-ink ff:d fs:sm ta:l td:none c:p h:bg:panel-hover fv:os:s fv:ow:2 fv:oo:-2 fv:oc:focus";
+	"d:f ai:c g:3 w:100% h:10 px:4 bw:0 bg:transparent c:panel-ink ff:d fs:sm ta:l td:none c:p h:bg:panel-hover fv:os:s fv:ow:2 fv:oo:-2 fv:oc:panel-focus";
 
 const RULE = "m:0 h:px bw:0 bg:panel-line";
+
+// what the demo draws in place of real focus and a real press, so it never
+// takes focus from the page
+const RING = "os:s ow:2 oo:-2 oc:panel-focus bg:panel-hover";
+const PRESSED = "bg:panel-line";
+
+const wait = (ms: number, signal: AbortSignal) =>
+	new Promise<void>((done, fail) => {
+		const timer = setTimeout(done, ms);
+		signal.addEventListener("abort", () => {
+			clearTimeout(timer);
+			fail(signal.reason);
+		});
+	});
 
 const label = (tech: Found) =>
 	[tech.name, tech.version].filter(Boolean).join(" ");
@@ -62,13 +77,21 @@ function Detail({
 	tech,
 	all,
 	onBack,
+	focus,
+	backClasses = "",
 }: {
 	tech: Found;
 	all: Found[];
 	onBack: () => void;
+	/** Moves focus to Back on open: only when a person opened it. */
+	focus: boolean;
+	/** The demo's ring or press on Back. */
+	backClasses?: string;
 }) {
 	const back = useRef<HTMLButtonElement>(null);
-	useEffect(() => back.current?.focus(), []);
+	useEffect(() => {
+		if (focus) back.current?.focus();
+	}, [focus]);
 
 	const brings = tech.implies
 		.map((id) => all.find((other) => other.id === id)?.name)
@@ -89,7 +112,10 @@ function Detail({
 					type="button"
 					aria-label="Back to the list"
 					onClick={onBack}
-					className="d:f ai:c jc:c fs:0 w:8 h:8 br:9999 bw:0 bg:transparent c:panel-muted h:bg:panel-hover c:p fv:os:s fv:ow:2 fv:oc:focus"
+					className={merge(
+						"d:f ai:c jc:c fs:0 w:8 h:8 br:9999 bw:0 bg:transparent c:panel-muted h:bg:panel-hover c:p fv:os:s fv:ow:2 fv:oc:panel-focus",
+						backClasses,
+					)}
 				>
 					<Symbol name="arrow_back" className="d:b w:5 h:5" />
 				</button>
@@ -143,9 +169,17 @@ function Detail({
 /**
  * The extension's popup, drawn on the page with the result of a lookup: the
  * list, and a page of evidence for each technology, as in Chrome.
+ *
+ * With `demo`, it plays itself until someone reaches for it: a row takes
+ * focus, opens, goes back, and Tab moves on to the next. Under reduced motion
+ * it stays still.
  */
-export function Panel({ lookup }: { lookup: Lookup }) {
+export function Panel({ lookup, demo }: { lookup: Lookup; demo: boolean }) {
 	const [open, setOpen] = useState<string | null>(null);
+	const [opened, setOpened] = useState(false);
+	const [playing, setPlaying] = useState(true);
+	const [ring, setRing] = useState<string | null>(null);
+	const [pressed, setPressed] = useState<string | null>(null);
 	const rows = useRef<Map<string, HTMLButtonElement>>(new Map());
 
 	// a new lookup starts on the list
@@ -153,6 +187,54 @@ export function Panel({ lookup }: { lookup: Lookup }) {
 
 	const all = lookup.state === "done" ? lookup.technologies : [];
 	const tech = all.find((item) => item.id === open);
+	const live = demo && playing && all.length > 1;
+
+	useEffect(() => {
+		if (!live) return;
+		if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+		const controller = new AbortController();
+		const { signal } = controller;
+		const shown = all.slice(0, 5).map((item) => item.id);
+
+		const play = async () => {
+			setRing(shown[0]);
+			await wait(1200, signal);
+			for (let index = 0; ; index = (index + 1) % shown.length) {
+				const id = shown[index];
+				// Enter: the row presses in and opens
+				setPressed(id);
+				await wait(160, signal);
+				setPressed(null);
+				setRing(null);
+				setOpened(false);
+				setOpen(id);
+				await wait(3000, signal);
+				// Back
+				setRing("back");
+				await wait(700, signal);
+				setPressed("back");
+				await wait(160, signal);
+				setPressed(null);
+				setOpen(null);
+				setRing(id);
+				await wait(800, signal);
+				// Tab, to the next row
+				setRing(shown[(index + 1) % shown.length]);
+				await wait(900, signal);
+			}
+		};
+		play().catch(() => {});
+		return () => {
+			controller.abort();
+			setRing(null);
+			setPressed(null);
+		};
+	}, [live, all]);
+
+	// someone reached for it: hand it over, as it is
+	const stop = () => {
+		if (playing) setPlaying(false);
+	};
 
 	const status =
 		lookup.state === "loading"
@@ -168,12 +250,18 @@ export function Panel({ lookup }: { lookup: Lookup }) {
 	return (
 		<section
 			aria-label="Result"
+			onPointerEnter={stop}
+			onFocusCapture={stop}
 			className="p:r w:80 max-w:100% max-h:100% oy:auto ob:c br:lg bg:panel c:panel-ink ff:d fs:sm bw:1 bc:transparent bs-o:lg"
 		>
 			{tech ? (
 				<Detail
 					tech={tech}
 					all={all}
+					focus={opened}
+					backClasses={
+						pressed === "back" ? PRESSED : ring === "back" ? RING : ""
+					}
 					onBack={() => {
 						setOpen(null);
 						requestAnimationFrame(() => rows.current.get(tech.id)?.focus());
@@ -183,7 +271,10 @@ export function Panel({ lookup }: { lookup: Lookup }) {
 				<>
 					<div className="pt:4 pb:3 px:4">
 						<h3 className="m:0 fs:md fw:400 o:h to:e ws:nw">{lookup.host}</h3>
-						<p role="status" className="m:0 mt:1 fs:xs c:panel-muted">
+						<p
+							role={live ? undefined : "status"}
+							className="m:0 mt:1 fs:xs c:panel-muted"
+						>
 							{status}
 						</p>
 					</div>
@@ -199,8 +290,18 @@ export function Panel({ lookup }: { lookup: Lookup }) {
 											}}
 											type="button"
 											aria-label={`${label(item)}, ${item.category}. Show the evidence`}
-											onClick={() => setOpen(item.id)}
-											className={ROW}
+											onClick={() => {
+												setOpened(true);
+												setOpen(item.id);
+											}}
+											className={merge(
+												ROW,
+												pressed === item.id
+													? PRESSED
+													: ring === item.id
+														? RING
+														: "",
+											)}
 										>
 											<Mark tech={item} size="w:5 h:5" />
 											<span className="fg:1 min-w:0 o:h to:e ws:nw">
