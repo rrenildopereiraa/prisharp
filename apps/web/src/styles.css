@@ -52,12 +52,6 @@
 /* A phone on its side: wide enough for the column, too short to stack the
    hero over the panel. They sit side by side, as on a desktop, smaller. */
 @media (min-width: 40rem) and (max-height: 30rem) {
-	/* the page scrolls past one screen here rather than squeeze */
-	[data-page] {
-		height: auto;
-		min-height: 100dvh;
-	}
-
 	:has(> [data-hero]) {
 		flex-direction: row;
 	}
