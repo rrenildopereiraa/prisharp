@@ -33,7 +33,10 @@ export function Hero({
 	};
 
 	return (
-		<div className="p:r d:f fd:c g:5 py:6 px:4 @md:py:12 @md:px:8 @lg:fg:1 @lg:min-w:0 @lg:pt:12">
+		<div
+			data-hero
+			className="p:r d:f fd:c g:5 py:6 px:4 @md:py:12 @md:px:8 @lg:fg:1 @lg:min-w:0 @lg:pt:12"
+		>
 			<p className="m:0 ff:sans fw:500 fs:sm @md:fs:md c:hint">
 				A browser extension for Chromium
 			</p>
@@ -46,7 +49,7 @@ export function Hero({
 				Prisharp will show you all the frameworks, libraries and hosts used on
 				the page, with evidence for each.
 			</p>
-			<div className="d:none fw:w g:2 mt:1 @md:d:f">
+			<div data-actions className="d:none fw:w g:2 mt:1 @md:d:f">
 				<Button
 					id="download"
 					render={<a href={DOWNLOAD} download />}
