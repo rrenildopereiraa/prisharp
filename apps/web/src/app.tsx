@@ -8,13 +8,16 @@ import { Panel } from "@/components/panel";
 import { useLookup } from "@/lookup";
 import { DarkContext, useDark } from "@/theme";
 
-/** A small cross where two hairlines of the frame meet. */
+/**
+ * A small cross where two hairlines of the frame meet. It sits just outside
+ * the column, so it shows only once the column has room on either side.
+ */
 function Cross({ side }: { side: "l" | "r" }) {
 	return (
 		<svg
 			aria-hidden="true"
 			viewBox="0 0 8 8"
-			className={`d:none p:a b:-1 w:2 h:2 c:rim @md:d:b ${side === "l" ? "l:-1" : "r:-1"}`}
+			className={`d:none p:a b:-1 w:2 h:2 c:rim @xl:d:b ${side === "l" ? "l:-1" : "r:-1"}`}
 		>
 			<path d="M4 0v8M0 4h8" stroke="currentColor" strokeWidth="1" />
 		</svg>
@@ -91,14 +94,20 @@ export function App() {
 
 	return (
 		<DarkContext.Provider value={dark}>
-			<div className="d:f fd:c h:dvh bg:paper c:label ff:mono fs:sm @md:h:auto @md:min-h:dvh">
+			<div
+				data-page
+				className="d:f fd:c h:dvh bg:paper c:label ff:mono fs:sm @md:h:auto @md:min-h:dvh"
+			>
 				<Band>
 					<Header />
 				</Band>
 				<main className="d:f fd:c fg:1 min-h:0">
 					<Band grow className="d:f fd:c @lg:fd:r">
 						<Hero lookup={lookup} onLookup={(address) => void run(address)} />
-						<div className="p:r d:f ai:c jc:c fg:1 min-h:0 o:h p:4 btw:1 btc:line @md:min-h:96 @lg:fg:0 @lg:fs:0 @lg:w:100 @lg:btw:0 @lg:blw:1 @lg:blc:line @lg:p:6">
+						<div
+							data-stage
+							className="p:r d:f ai:c jc:c fg:1 min-h:0 o:h p:4 btw:1 btc:line blc:line @md:min-h:96 @lg:fg:0 @lg:fs:0 @lg:w:100 @lg:btw:0 @lg:blw:1 @lg:p:6"
+						>
 							<div
 								aria-hidden="true"
 								className="p:a t:0 l:0 w:100% h:100% us:none"
