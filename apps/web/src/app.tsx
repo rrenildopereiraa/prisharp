@@ -94,10 +94,7 @@ export function App() {
 
 	return (
 		<DarkContext.Provider value={dark}>
-			<div
-				data-page
-				className="d:f fd:c h:dvh bg:paper c:label ff:mono fs:sm @md:h:auto @md:min-h:dvh"
-			>
+			<div className="d:f fd:c min-h:dvh bg:paper c:label ff:mono fs:sm">
 				<Band>
 					<Header />
 				</Band>
@@ -106,7 +103,7 @@ export function App() {
 						<Hero lookup={lookup} onLookup={(address) => void run(address)} />
 						<div
 							data-stage
-							className="p:r d:f ai:c jc:c fg:1 min-h:0 o:h p:4 btw:1 btc:line blc:line @md:min-h:96 @lg:fg:0 @lg:fs:0 @lg:w:100 @lg:btw:0 @lg:blw:1 @lg:p:6"
+							className="p:r d:f fg:1 min-h:48 o:h btw:1 btc:line blc:line @md:min-h:96 @lg:fg:0 @lg:fs:0 @lg:w:100 @lg:btw:0 @lg:blw:1"
 						>
 							<div
 								aria-hidden="true"
@@ -114,7 +111,12 @@ export function App() {
 							>
 								<Threads color={dark ? "#8394ff" : "#2b44ff"} angle={60} />
 							</div>
-							<Panel lookup={lookup} />
+							{/* On a phone the panel fills the room the page has left and
+							    scrolls inside it, so it never pushes the page taller; on
+							    wider screens it sets the stage's height. */}
+							<div className="p:a t:0 l:0 d:f ai:c jc:c w:100% h:100% p:4 @md:p:r @md:fg:1 @md:h:auto @lg:p:6">
+								<Panel lookup={lookup} />
+							</div>
 						</div>
 					</Band>
 					<Band>
