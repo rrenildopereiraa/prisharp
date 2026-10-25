@@ -24,6 +24,7 @@
 		"@ridemountainpig/svgl-react": "^1.0.18",
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",
+		"simple-icons": "^16.35.0",
 		"vite-plus": "catalog:",
 		"yummacss": "^4.8.0"
 	}

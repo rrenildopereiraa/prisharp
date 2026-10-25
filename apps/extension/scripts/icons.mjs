@@ -7,68 +7,73 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
 const svgl = await import("@ridemountainpig/svgl-react");
+const simple = await import("simple-icons");
 
-// Icon name, then the svgl component: one for both themes, or a light and a
-// dark one.
-const icons = {
-	angular: "Angular",
-	astro: ["AstroLight", "AstroDark"],
-	"base-ui": ["BaseUILight", "BaseUIDark"],
-	bootstrap: "Bootstrap",
-	clerk: ["ClerkLight", "ClerkDark"],
-	cloudflare: "Cloudflare",
-	docusaurus: "Docusaurus",
-	ember: "Ember",
-	figma: "Figma",
-	firebase: "Firebase",
-	fly: "Fly",
-	framer: ["FramerLight", "FramerDark"],
-	gatsby: "Gatsby",
-	github: ["GitHubLight", "GitHubDark"],
-	google: "Google",
-	"google-analytics": "GoogleAnalytics",
-	headlessui: "HeadlessUI",
-	hugo: "Hugo",
-	jquery: ["JQueryLight", "JQueryDark"],
-	lit: "Lit",
-	netlify: "Netlify",
-	nextjs: "Nextjs",
-	nuxt: "Nuxt",
-	parcel: "Parcel",
-	plausibleanalytics: "PlausibleAnalytics",
-	posthog: "PostHog",
-	qwik: "Qwik",
-	radix: ["RadixUILight", "RadixUIDark"],
-	react: ["ReactLight", "ReactDark"],
-	"react-router": "ReactRouter",
-	remix: ["RemixLight", "RemixDark"],
-	render: ["RenderLight", "RenderDark"],
-	rolldown: "Rolldown",
-	sentry: "Sentry",
-	shadcn: ["ShadcnUiLight", "ShadcnUiDark"],
-	shopify: "Shopify",
-	solidjs: "Solidjs",
-	stripe: "Stripe",
-	supabase: "Supabase",
-	svelte: "Svelte",
-	tailwindcss: "TailwindCSS",
-	tanstack: ["TanStackLight", "TanStackDark"],
-	threejs: ["ThreejsLight", "ThreejsDark"],
-	turbopack: ["TurbopackLight", "TurbopackDark"],
-	vercel: ["VercelLight", "VercelDark"],
-	vite: "Vite",
-	vue: "Vue",
-	webflow: "Webflow",
-	wordpress: "WordPress",
+// Icon name, then its Simple Icons mark, drawn in the brand's own color. The
+// marks share one 24px grid, so they sit alike in the popup's boxes.
+const marks = {
+	angular: "siAngular",
+	astro: "siAstro",
+	"base-ui": "siBaseui",
+	bootstrap: "siBootstrap",
+	clerk: "siClerk",
+	cloudflare: "siCloudflare",
+	docusaurus: "siDocusaurus",
+	ember: "siEmberdotjs",
+	figma: "siFigma",
+	firebase: "siFirebase",
+	fly: "siFlydotio",
+	framer: "siFramer",
+	gatsby: "siGatsby",
+	github: "siGithub",
+	google: "siGooglefonts",
+	"google-analytics": "siGoogleanalytics",
+	headlessui: "siHeadlessui",
+	hugo: "siHugo",
+	jquery: "siJquery",
+	lit: "siLit",
+	lucide: "siLucide",
+	netlify: "siNetlify",
+	nextjs: "siNextdotjs",
+	nuxt: "siNuxt",
+	phosphor: "siPhosphoricons",
+	plausibleanalytics: "siPlausibleanalytics",
+	posthog: "siPosthog",
+	qwik: "siQwik",
+	radix: "siRadixui",
+	react: "siReact",
+	"react-router": "siReactrouter",
+	remix: "siRemix",
+	render: "siRender",
+	rolldown: "siRolldown",
+	sentry: "siSentry",
+	shadcn: "siShadcnui",
+	shopify: "siShopify",
+	solidjs: "siSolid",
+	stripe: "siStripe",
+	supabase: "siSupabase",
+	svelte: "siSvelte",
+	tailwindcss: "siTailwindcss",
+	tanstack: "siTanstack",
+	threejs: "siThreedotjs",
+	vercel: "siVercel",
+	vite: "siVite",
+	vue: "siVuedotjs",
+	webflow: "siWebflow",
+	webpack: "siWebpack",
+	wordpress: "siWordpress",
 };
 
-// Logos svgl does not have, kept in icons/tech as files: whether each has a
-// dark variant. Yumma CSS and Yumma UI from their brand folders; Lucide, Phosphor and
-// Webpack from Simple Icons (CC0).
+// Icon name, then the svgl component, for marks Simple Icons lacks: one for
+// both themes, or a light and a dark one.
+const icons = {
+	parcel: "Parcel",
+	turbopack: ["TurbopackLight", "TurbopackDark"],
+};
+
+// Logos neither has, kept in icons/tech as files: whether each has a dark
+// variant. Yumma CSS and Yumma UI from their brand folders.
 const local = {
-	lucide: false,
-	phosphor: true,
-	webpack: false,
 	yummacss: true,
 	"yumma-ui": true,
 };
@@ -81,7 +86,39 @@ const render = (name) => {
 	);
 };
 
+/** How light a #rrggbb color is, 0 to 1. */
+const lightness = (hex) => {
+	const [r, g, b] = [0, 2, 4].map(
+		(at) => Number.parseInt(hex.slice(at, at + 2), 16) / 255,
+	);
+	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+
+const mark = (path, color) =>
+	`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="${color}" d="${path}"/></svg>`;
+
 const manifest = { ...local };
+for (const [icon, name] of Object.entries(marks)) {
+	const found = simple[name];
+	if (!found) throw new Error(`Simple Icons has no ${name}`);
+	const { path, hex } = found;
+	// a brand color that would vanish into Chrome's panel, light or dark,
+	// draws in that panel's ink instead
+	const light = lightness(hex);
+	const brand = `#${hex}`;
+	await writeFile(
+		`icons/tech/${icon}.svg`,
+		mark(path, light > 0.85 ? "#1f1f1f" : brand),
+	);
+	const variant = light < 0.25 || light > 0.85;
+	if (variant) {
+		await writeFile(
+			`icons/tech/${icon}-dark.svg`,
+			mark(path, light < 0.25 ? "#e3e3e3" : brand),
+		);
+	}
+	manifest[icon] = variant;
+}
 for (const [icon, source] of Object.entries(icons)) {
 	const [light, dark] = Array.isArray(source) ? source : [source];
 	await writeFile(`icons/tech/${icon}.svg`, render(light));
