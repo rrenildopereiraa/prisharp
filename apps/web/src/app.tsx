@@ -1,4 +1,5 @@
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
+import { useSound } from "sonics/react";
 import { Footer } from "@/components/footer";
 import Threads from "@/components/threads";
 import { Header } from "@/components/header";
@@ -78,6 +79,17 @@ export function App() {
 	const dark = useDark();
 	const { lookup, run } = useLookup("renildo.dev");
 	const [asked, setAsked] = useState(0);
+	const success = useSound("success");
+	const failure = useSound("error");
+	const previous = useRef(lookup);
+
+	useEffect(() => {
+		const before = previous.current;
+		previous.current = lookup;
+		if (before.state !== "loading" || !before.asked) return;
+		if (lookup.state === "done") success();
+		else if (lookup.state === "error") failure();
+	}, [lookup, success, failure]);
 
 	useEffect(() => {
 		const onKey = (event: KeyboardEvent) => {

@@ -1,4 +1,5 @@
 import { type FormEvent, useRef, useState } from "react";
+import { useSound } from "sonics/react";
 import Button from "@/components/ui/button";
 import { toAddress } from "@/address";
 import { DOWNLOAD, REPO } from "@/links";
@@ -29,6 +30,9 @@ export function Hero({
 	const [rejected, setRejected] = useState<string>();
 	const [shake, setShake] = useState(false);
 	const field = useRef<HTMLInputElement>(null);
+	const click = useSound("click");
+	const tap = useSound("tap");
+	const fail = useSound("error");
 	const error =
 		rejected ?? (lookup.state === "error" ? lookup.message : undefined);
 
@@ -36,6 +40,7 @@ export function Hero({
 		event.preventDefault();
 		const target = toAddress(address);
 		if (!target) {
+			fail();
 			setRejected(
 				rejected
 					? "That is still not a web address."
@@ -45,6 +50,7 @@ export function Hero({
 			setShake(true);
 			return;
 		}
+		click();
 		setRejected(undefined);
 		setShake(false);
 		onLookup(target);
@@ -60,8 +66,7 @@ export function Hero({
 			</p>
 			<h1 className="m:0 ff:sans fw:600 fs:4xl @sm:fs:5xl @md:fs:6xl lh:1 ls:1">
 				What is this site
-				<br />
-				<span className="c:accent">built with?</span>
+				<br /> built with?
 			</h1>
 			<p className="m:0 max-w:120 fs:sm c:hint lh:5 tw:p">
 				Prisharp will show you all the frameworks, libraries and hosts used on
@@ -74,6 +79,7 @@ export function Hero({
 					nativeButton={false}
 					title="Unzip it, then load the folder unpacked from chrome://extensions"
 					className={ACTION}
+					onClick={() => tap()}
 				>
 					Download for Chromium <Key>D</Key>
 				</Button>
@@ -83,6 +89,7 @@ export function Hero({
 					render={<a href={REPO} />}
 					nativeButton={false}
 					className={ACTION}
+					onClick={() => tap()}
 				>
 					View source <Key>S</Key>
 				</Button>
