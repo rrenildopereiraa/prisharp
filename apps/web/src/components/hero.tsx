@@ -1,5 +1,6 @@
-import { type FormEvent, useState } from "react";
+import { type FormEvent, useRef, useState } from "react";
 import Button from "@/components/ui/button";
+import { toAddress } from "@/address";
 import { DOWNLOAD, REPO } from "@/links";
 import type { Lookup } from "@/lookup";
 
@@ -25,11 +26,21 @@ export function Hero({
 	onLookup: (address: string) => void;
 }) {
 	const [address, setAddress] = useState("");
-	const error = lookup.state === "error" ? lookup.message : undefined;
+	const [rejected, setRejected] = useState<string>();
+	const field = useRef<HTMLInputElement>(null);
+	const error =
+		rejected ?? (lookup.state === "error" ? lookup.message : undefined);
 
 	const submit = (event: FormEvent) => {
 		event.preventDefault();
-		if (address.trim()) onLookup(address.trim());
+		const target = toAddress(address);
+		if (!target) {
+			setRejected("That is not a web address.");
+			field.current?.focus();
+			return;
+		}
+		setRejected(undefined);
+		onLookup(target);
 	};
 
 	return (
@@ -80,6 +91,7 @@ export function Hero({
 					<input
 						id="address"
 						name="address"
+						ref={field}
 						type="text"
 						inputMode="url"
 						enterKeyHint="go"
@@ -91,7 +103,10 @@ export function Hero({
 						aria-invalid={error ? true : undefined}
 						aria-describedby={error ? "address-error" : undefined}
 						value={address}
-						onChange={(event) => setAddress(event.target.value)}
+						onChange={(event) => {
+							setAddress(event.target.value);
+							if (rejected) setRejected(undefined);
+						}}
 						className="fg:1 min-w:0 h:100% p:0 bw:0 bg:transparent c:label ff:mono fs:md @md:fs:sm f:os:none"
 					/>
 					<Button

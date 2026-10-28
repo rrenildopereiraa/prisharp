@@ -9,7 +9,6 @@ import { technologies } from "extension/technologies";
 
 const extension = fileURLToPath(new URL("../extension", import.meta.url));
 
-// What Chrome loads: the same files as the extension's `pnpm zip`.
 const SHIPPED = [
 	"manifest.json",
 	"popup.html",
@@ -52,13 +51,35 @@ const download = (): Plugin => ({
 	},
 });
 
+const api = (): Plugin => ({
+	name: "prisharp-api",
+	configureServer(server) {
+		server.middlewares.use(async (request, response, next) => {
+			const url = new URL(request.url ?? "/", "http://localhost");
+			if (url.pathname !== "/api/detect") return next();
+			try {
+				const { GET } = await server.ssrLoadModule("/api/detect.ts");
+				const answer: Response = await GET(new Request(url));
+				response.statusCode = answer.status;
+				answer.headers.forEach((value, name) =>
+					response.setHeader(name, value),
+				);
+				response.end(Buffer.from(await answer.arrayBuffer()));
+			} catch (error) {
+				response.statusCode = 500;
+				response.setHeader("content-type", "application/json");
+				response.end(
+					JSON.stringify({
+						error: error instanceof Error ? error.message : String(error),
+					}),
+				);
+			}
+		});
+	},
+});
+
 const CATALOG = "virtual:catalog";
 
-/**
- * The names and logos of what Prisharp detects, for the marquee. Only these
- * reach the browser: the fingerprints stay on the server, where a page that
- * shipped them would read as every technology they describe.
- */
 const catalog = (): Plugin => ({
 	name: "prisharp-catalog",
 	resolveId: (id) => (id === CATALOG ? `\0${CATALOG}` : undefined),
@@ -73,5 +94,5 @@ export default defineConfig({
 	resolve: {
 		alias: { "@": fileURLToPath(new URL("./src", import.meta.url)) },
 	},
-	plugins: [react(), yummacss(), catalog(), download()],
+	plugins: [react(), yummacss(), catalog(), download(), api()],
 });
