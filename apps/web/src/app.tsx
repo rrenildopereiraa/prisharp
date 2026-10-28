@@ -1,4 +1,4 @@
-import { type ReactNode, useEffect } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import { Footer } from "@/components/footer";
 import Threads from "@/components/threads";
 import { Header } from "@/components/header";
@@ -77,6 +77,7 @@ const KEYS: Record<string, string> = { d: "download", s: "source" };
 export function App() {
 	const dark = useDark();
 	const { lookup, run } = useLookup("renildo.dev");
+	const [asked, setAsked] = useState(0);
 
 	useEffect(() => {
 		const onKey = (event: KeyboardEvent) => {
@@ -100,7 +101,13 @@ export function App() {
 				</Band>
 				<main className="d:f fd:c fg:1 min-h:0">
 					<Band grow className="d:f fd:c @lg:fd:r">
-						<Hero lookup={lookup} onLookup={(address) => void run(address)} />
+						<Hero
+							lookup={lookup}
+							onLookup={(address) => {
+								setAsked((count) => count + 1);
+								void run(address);
+							}}
+						/>
 						<div
 							data-stage
 							className="p:r d:f fg:1 min-h:48 o:h btw:1 btc:line blc:line @md:min-h:96 @lg:fg:0 @lg:fs:0 @lg:w:100 @lg:btw:0 @lg:blw:1"
@@ -120,7 +127,7 @@ export function App() {
 						</div>
 					</Band>
 					<Band>
-						<Marquee />
+						<Marquee asked={asked} />
 					</Band>
 					<div data-facts>
 						<Band className="d:none @md:d:g @md:gtc:3">

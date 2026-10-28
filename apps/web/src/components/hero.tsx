@@ -27,6 +27,7 @@ export function Hero({
 }) {
 	const [address, setAddress] = useState("");
 	const [rejected, setRejected] = useState<string>();
+	const [shake, setShake] = useState(false);
 	const field = useRef<HTMLInputElement>(null);
 	const error =
 		rejected ?? (lookup.state === "error" ? lookup.message : undefined);
@@ -35,11 +36,17 @@ export function Hero({
 		event.preventDefault();
 		const target = toAddress(address);
 		if (!target) {
-			setRejected("That is not a web address.");
+			setRejected(
+				rejected
+					? "That is still not a web address."
+					: "That is not a web address.",
+			);
 			field.current?.focus();
+			setShake(true);
 			return;
 		}
 		setRejected(undefined);
+		setShake(false);
 		onLookup(target);
 	};
 
@@ -84,7 +91,16 @@ export function Hero({
 				<label htmlFor="address" className="fs:xs c:hint us:none">
 					Try a site, no install needed
 				</label>
-				<div className="d:f ai:c g:2 h:11 pl:3 pr:1 br:md bw:1 bc:edge bg:field tp:a tdu:150 @prm:tp:none fw:os:s fw:ow:3 fw:oo:0 fw:oc:focus/40 fw:bc:focus">
+				<div
+					onAnimationEnd={(event) => {
+						if (event.target === event.currentTarget) setShake(false);
+					}}
+					className={`d:f ai:c g:2 h:11 pl:3 pr:1 br:md bw:1 bg:field tp:a tdu:150 @prm:tp:none fw:os:s fw:ow:3 fw:oo:0 ${
+						error
+							? "bc:red-7 fw:oc:red-7/40 fw:bc:red-7"
+							: "bc:edge fw:oc:focus/40 fw:bc:focus"
+					} ${shake ? "an:shake adu:300 atf:io @prm:an:none" : ""}`}
+				>
 					<input
 						id="address"
 						name="address"

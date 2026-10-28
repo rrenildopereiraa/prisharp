@@ -22,6 +22,5 @@ it("refuses what is not a web address", () => {
 	expect(toAddress("hello world")).toBeNull();
 	expect(toAddress("ftp://example.com")).toBeNull();
 	expect(toAddress("https://")).toBeNull();
-	// a scheme pasted twice: the host would be "https", not a domain
 	expect(toAddress("https://https://renildo.dev/")).toBeNull();
 });

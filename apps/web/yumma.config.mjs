@@ -22,6 +22,8 @@ export default defineConfig({
 		},
 		keyframes: {
 			pulse: "0%, 100% { opacity: .5; } 50% { opacity: 1; }",
+			shake:
+				"10%, 90% { translate: -1px 0; } 20%, 80% { translate: 2px 0; } 30%, 50%, 70% { translate: -3px 0; } 40%, 60% { translate: 3px 0; }",
 			slide: "from { translate: -100% 0; } to { translate: 100% 0; }",
 			spin: "to { rotate: 360deg; }",
 		},

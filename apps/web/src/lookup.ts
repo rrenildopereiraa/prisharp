@@ -29,6 +29,8 @@ const hostOf = (address: string) =>
 		.replace(/^www\./, "")
 		.split(/[/?#]/)[0];
 
+const TRIES = 3;
+
 /**
  * The extension's detection, run on the server for a site you name. Starts
  * with `initial` so the panel shows a real result before anyone types.
@@ -41,10 +43,19 @@ export function useLookup(initial: string) {
 	});
 	// only the latest request may answer
 	const latest = useRef(0);
+	const failures = useRef(new Map<string, number>());
 
 	const run = useCallback(async (address: string, asked = true) => {
 		const id = ++latest.current;
 		const host = hostOf(address);
+		if ((failures.current.get(address) ?? 0) >= TRIES) {
+			setLookup({
+				state: "error",
+				host,
+				message: "Failed to fetch. Try again later.",
+			});
+			return;
+		}
 		setLookup({ state: "loading", host, asked });
 		try {
 			const response = await fetch(
@@ -53,6 +64,7 @@ export function useLookup(initial: string) {
 			const body = await response.json();
 			if (!response.ok) throw new Error(body.error);
 			if (id !== latest.current) return;
+			failures.current.delete(address);
 			setLookup({
 				state: "done",
 				host: hostOf(new URL(body.url).hostname),
@@ -60,6 +72,7 @@ export function useLookup(initial: string) {
 			});
 		} catch (error) {
 			if (id !== latest.current) return;
+			failures.current.set(address, (failures.current.get(address) ?? 0) + 1);
 			setLookup({
 				state: "error",
 				host,

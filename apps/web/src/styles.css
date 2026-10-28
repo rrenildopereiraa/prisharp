@@ -1,7 +1,7 @@
-@yummacss;
-
 @import "@fontsource-variable/instrument-sans";
 @import "@fontsource-variable/martian-mono";
+
+@yummacss;
 
 /* A marquee logo with no one-color mark: greyed out, in color when hovered. */
 [data-tint] {
