@@ -1,4 +1,4 @@
-import { type FormEvent, useRef, useState } from "react";
+import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useSound } from "sonics/react";
 import Button from "@/components/ui/button";
 import { toAddress } from "@/address";
@@ -37,6 +37,10 @@ export function Hero({
 	const again = lookup.address === target && lookup.state !== "error";
 	const error =
 		rejected ?? (lookup.state === "error" ? lookup.message : undefined);
+
+	useEffect(() => {
+		if (lookup.state === "error") setShake(true);
+	}, [lookup]);
 
 	const submit = (event: FormEvent) => {
 		event.preventDefault();
