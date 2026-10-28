@@ -85,9 +85,6 @@ export function Hero({
 					Try a site, no install needed
 				</label>
 				<div className="d:f ai:c g:2 h:11 pl:3 pr:1 br:md bw:1 bc:edge bg:field tp:a tdu:150 @prm:tp:none fw:os:s fw:ow:3 fw:oo:0 fw:oc:focus/40 fw:bc:focus">
-					<span aria-hidden="true" className="c:hint us:none">
-						https://
-					</span>
 					<input
 						id="address"
 						name="address"
