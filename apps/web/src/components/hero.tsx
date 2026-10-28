@@ -126,6 +126,7 @@ export function Hero({
 						type="submit"
 						size="sm"
 						variant="subtle"
+						focus="fv:os:none fv:bc:transparent fv:bg:rim"
 						loading={lookup.state === "loading" && lookup.asked}
 						className="fs:0 h:8 px:2 g:2 br:sm c:label ws:nw us:none"
 					>
