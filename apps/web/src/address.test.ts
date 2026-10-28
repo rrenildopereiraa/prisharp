@@ -9,11 +9,17 @@ it("takes a full address", () => {
 });
 
 it("adds https to a bare host", () => {
-	expect(toAddress("renildo.dev")).toBe("https://renildo.dev");
+	expect(toAddress("renildo.dev")).toBe("https://renildo.dev/");
 	expect(toAddress("www.example.com/docs")).toBe(
 		"https://www.example.com/docs",
 	);
-	expect(toAddress("  renildo.dev  ")).toBe("https://renildo.dev");
+	expect(toAddress("  renildo.dev  ")).toBe("https://renildo.dev/");
+});
+
+it("writes one address one way", () => {
+	expect(toAddress("https://renildo.dev")).toBe("https://renildo.dev/");
+	expect(toAddress("renildo.dev/")).toBe("https://renildo.dev/");
+	expect(toAddress("HTTPS://Renildo.dev")).toBe("https://renildo.dev/");
 });
 
 it("refuses what is not a web address", () => {

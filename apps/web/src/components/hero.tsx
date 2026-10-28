@@ -33,12 +33,13 @@ export function Hero({
 	const click = useSound("click");
 	const tap = useSound("tap");
 	const fail = useSound("error");
+	const target = toAddress(address);
+	const again = lookup.address === target && lookup.state !== "error";
 	const error =
 		rejected ?? (lookup.state === "error" ? lookup.message : undefined);
 
 	const submit = (event: FormEvent) => {
 		event.preventDefault();
-		const target = toAddress(address);
 		if (!target) {
 			fail();
 			setRejected(
@@ -137,7 +138,7 @@ export function Hero({
 						loading={lookup.state === "loading" && lookup.asked}
 						className="fs:0 h:8 px:2 g:2 br:sm c:label ws:nw us:none"
 					>
-						Look it up <Key>↵</Key>
+						{again ? "Check again" : "Look it up"} <Key>↵</Key>
 					</Button>
 				</div>
 				{error && (

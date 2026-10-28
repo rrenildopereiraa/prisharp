@@ -11,5 +11,5 @@ export function toAddress(input: string): string | null {
 	const parsed = address.safeParse(
 		/^[a-z][a-z\d+.-]*:\/\//i.test(trimmed) ? trimmed : `https://${trimmed}`,
 	);
-	return parsed.success ? parsed.data : null;
+	return parsed.success ? new URL(parsed.data).href : null;
 }

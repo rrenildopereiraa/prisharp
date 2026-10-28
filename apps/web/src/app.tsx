@@ -117,7 +117,7 @@ export function App() {
 							lookup={lookup}
 							onLookup={(address) => {
 								setAsked((count) => count + 1);
-								void run(address);
+								run(address);
 							}}
 						/>
 						<div

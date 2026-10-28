@@ -6,7 +6,9 @@ const asked = probes(technologies);
 
 /** GET /api/detect?url=example.com: the stack behind a page, as JSON. */
 export async function GET(request: Request) {
-	const input = new URL(request.url).searchParams.get("url")?.trim() ?? "";
+	const query = new URL(request.url).searchParams;
+	const input = query.get("url")?.trim() ?? "";
+	const fresh = query.has("fresh");
 	let target: URL;
 	try {
 		target = new URL(/^https?:\/\//i.test(input) ? input : `https://${input}`);
@@ -31,7 +33,11 @@ export async function GET(request: Request) {
 		}));
 		return Response.json(
 			{ url: page.url, technologies: found },
-			{ headers: { "cache-control": "public, s-maxage=600" } },
+			{
+				headers: {
+					"cache-control": fresh ? "no-store" : "public, s-maxage=600",
+				},
+			},
 		);
 	} catch (error) {
 		const message =
