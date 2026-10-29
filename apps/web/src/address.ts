@@ -13,3 +13,10 @@ export function toAddress(input: string): string | null {
 	);
 	return parsed.success ? new URL(parsed.data).href : null;
 }
+
+export function hostOf(address: string): string {
+	return address
+		.replace(/^https?:\/\//i, "")
+		.replace(/^www\./, "")
+		.split(/[/?#]/)[0];
+}

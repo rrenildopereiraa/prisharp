@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { toAddress } from "@/address";
+import { hostOf, toAddress } from "@/address";
+import { rememberSite } from "@/share";
 
 export interface Evidence {
 	kind: string;
@@ -23,12 +24,6 @@ export type Lookup =
 	| { state: "loading"; host: string; address: string; asked: boolean }
 	| { state: "done"; host: string; address: string; technologies: Found[] }
 	| { state: "error"; host: string; address: string; message: string };
-
-const hostOf = (address: string) =>
-	address
-		.replace(/^https?:\/\//i, "")
-		.replace(/^www\./, "")
-		.split(/[/?#]/)[0];
 
 const TRIES = 3;
 
@@ -107,6 +102,7 @@ export function useLookup(initial: string) {
 		(address: string, asked = true) => {
 			const key = toAddress(address) ?? address;
 			if (flight.current === key) return;
+			if (asked) rememberSite(key);
 			const now = shown.current;
 			void load(key, asked, now.state === "done" && now.address === key);
 		},

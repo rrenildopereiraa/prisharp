@@ -7,6 +7,7 @@ import { Hero } from "@/components/hero";
 import { Marquee } from "@/components/marquee";
 import { Panel } from "@/components/panel";
 import { useLookup } from "@/lookup";
+import { siteIn } from "@/share";
 import { DarkContext, useDark } from "@/theme";
 
 /**
@@ -77,7 +78,8 @@ const KEYS: Record<string, string> = { d: "download", s: "source" };
 
 export function App() {
 	const dark = useDark();
-	const { lookup, run } = useLookup("renildo.dev");
+	const [initial] = useState(() => siteIn(location.search) ?? "renildo.dev");
+	const { lookup, run } = useLookup(initial);
 	const [asked, setAsked] = useState(0);
 	const success = useSound("success");
 	const failure = useSound("error");
