@@ -93,7 +93,7 @@ export function App() {
 
 	return (
 		<DarkContext.Provider value={dark}>
-			<div className="d:f fd:c min-h:dvh bg:paper c:label ff:mono fs:sm">
+			<div className="d:f fd:c min-h:dvh bg:paper c:label ff:mono fs:sm s::bg:accent/25 s::c:label">
 				<Band>
 					<Header />
 				</Band>
