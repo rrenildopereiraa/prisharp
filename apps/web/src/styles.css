@@ -19,18 +19,6 @@
 	);
 }
 
-/* The panel's loading rows. Yumma CSS has no infinite iteration count, so
-   the pulse is written here. */
-[data-skeleton] {
-	animation: skeleton 1.4s ease-in-out infinite;
-}
-
-@keyframes skeleton {
-	50% {
-		opacity: 0.6;
-	}
-}
-
 /* On a short screen the facts give way, so the page still fits it. */
 @media (min-width: 48rem) and (max-height: 50rem) {
 	[data-facts] {
@@ -56,10 +44,6 @@
 		font-size: 2.25rem;
 	}
 
-	[data-hero] form {
-		margin-top: 0.25rem;
-	}
-
 	[data-stage] {
 		flex: 0 0 22rem;
 		min-height: 0;
@@ -73,11 +57,5 @@
 @media (pointer: coarse) {
 	[data-actions] {
 		display: none;
-	}
-}
-
-@media (prefers-reduced-motion: reduce) {
-	[data-skeleton] {
-		animation: none;
 	}
 }

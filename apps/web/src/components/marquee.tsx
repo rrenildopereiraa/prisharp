@@ -62,7 +62,7 @@ function Item({ mark }: { mark: Mark }) {
  * eases it to a stop; the button holds it still for anyone who wants it to
  * stop. Under reduced motion it never moves.
  */
-export function Marquee({ asked = 0 }: { asked?: number }) {
+export function Marquee() {
 	const track = useRef<HTMLDivElement>(null);
 	const [paused, setPaused] = useState(false);
 	const [hovered, setHovered] = useState(false);
@@ -73,10 +73,6 @@ export function Marquee({ asked = 0 }: { asked?: number }) {
 	useEffect(() => {
 		target.current = paused || hovered ? 0 : 1;
 	}, [paused, hovered]);
-
-	useEffect(() => {
-		if (asked) setPaused(true);
-	}, [asked]);
 
 	useEffect(() => {
 		const element = track.current;

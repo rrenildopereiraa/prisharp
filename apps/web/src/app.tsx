@@ -1,13 +1,11 @@
-import { type ReactNode, useEffect, useRef, useState } from "react";
-import { useSound } from "sonics/react";
+import { type ReactNode, useEffect } from "react";
 import { Footer } from "@/components/footer";
 import Threads from "@/components/threads";
 import { Header } from "@/components/header";
 import { Hero } from "@/components/hero";
 import { Marquee } from "@/components/marquee";
 import { Panel } from "@/components/panel";
-import { useLookup } from "@/lookup";
-import { siteIn } from "@/share";
+import { demo } from "@/demo";
 import { DarkContext, useDark } from "@/theme";
 
 /**
@@ -78,20 +76,6 @@ const KEYS: Record<string, string> = { d: "download", s: "source" };
 
 export function App() {
 	const dark = useDark();
-	const [initial] = useState(() => siteIn(location.search) ?? "renildo.dev");
-	const { lookup, run } = useLookup(initial);
-	const [asked, setAsked] = useState(0);
-	const success = useSound("success");
-	const failure = useSound("error");
-	const previous = useRef(lookup);
-
-	useEffect(() => {
-		const before = previous.current;
-		previous.current = lookup;
-		if (before.state !== "loading" || !before.asked) return;
-		if (lookup.state === "done") success();
-		else if (lookup.state === "error") failure();
-	}, [lookup, success, failure]);
 
 	useEffect(() => {
 		const onKey = (event: KeyboardEvent) => {
@@ -115,13 +99,7 @@ export function App() {
 				</Band>
 				<main className="d:f fd:c fg:1 min-h:0">
 					<Band grow className="d:f fd:c @lg:fd:r">
-						<Hero
-							lookup={lookup}
-							onLookup={(address) => {
-								setAsked((count) => count + 1);
-								run(address);
-							}}
-						/>
+						<Hero />
 						<div
 							data-stage
 							className="p:r d:f fg:1 min-h:48 o:h btw:1 btc:line blc:line @md:min-h:96 @lg:fg:0 @lg:fs:0 @lg:w:100 @lg:btw:0 @lg:blw:1"
@@ -136,12 +114,12 @@ export function App() {
 							    scrolls inside it, so it never pushes the page taller; on
 							    wider screens it sets the stage's height. */}
 							<div className="p:a t:0 l:0 d:f ai:c jc:c w:100% h:100% p:4 @md:p:r @md:fg:1 @md:h:auto @lg:p:6">
-								<Panel lookup={lookup} />
+								<Panel demo={demo} />
 							</div>
 						</div>
 					</Band>
 					<Band>
-						<Marquee asked={asked} />
+						<Marquee />
 					</Band>
 					<div data-facts>
 						<Band className="d:none @md:d:g @md:gtc:3">

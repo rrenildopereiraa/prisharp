@@ -62,7 +62,6 @@ export default defineConfig({
 			"panel-line": { light: "#e3e3e3", dark: "#444746" },
 			"panel-hover": { light: "#ececec", dark: "#3a3c3e" },
 			"panel-well": { light: "#f1f3f4", dark: "#1f2022" },
-			"panel-skeleton": { light: "#dcdde0", dark: "#45474a" },
 			"panel-ok": { light: "#146c2e", dark: "#6dd58c" },
 			"panel-focus": { light: "#0b57d0", dark: "#a8c7fa" },
 		},

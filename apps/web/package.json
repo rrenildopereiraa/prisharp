@@ -17,12 +17,10 @@
 		"@fontsource-variable/martian-mono": "^5.3.0",
 		"@solar-icons/react": "^2.3.3",
 		"extension": "workspace:*",
-		"linkedom": "^0.18.14",
 		"react": "^19.3.1",
 		"react-dom": "^19.3.1",
 		"simple-icons": "^16.35.0",
-		"sonics": "^0.2.0",
-		"zod": "^4.6.7"
+		"sonics": "^0.2.0"
 	},
 	"devDependencies": {
 		"@types/node": "^24.19.2",

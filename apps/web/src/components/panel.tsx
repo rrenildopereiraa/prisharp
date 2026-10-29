@@ -1,7 +1,7 @@
 import { paths } from "extension/symbols";
 import { useEffect, useRef, useState } from "react";
 import { merge } from "yummacss/merge";
-import type { Evidence, Found, Lookup } from "@/lookup";
+import type { Demo, Evidence, Found } from "@/demo";
 import { useMorph } from "@/morph";
 import { hasLogo, Logo } from "./logo";
 
@@ -173,18 +173,15 @@ function Detail({
 	);
 }
 
-// the loading rows' name widths, so the skeleton reads as a list
-const WIDTHS = ["w:16", "w:24", "w:20", "w:28", "w:18", "w:22", "w:14"];
-
 /**
- * The extension's popup, drawn on the page with the result of a lookup: the
- * list, and a page of evidence for each technology, as in Chrome.
+ * The extension's popup, drawn on the page with a result: the list, and a page
+ * of evidence for each technology, as in Chrome.
  *
  * It plays itself in a loop: a row takes focus, opens, goes back, and Tab
  * moves on to the next. A pointer or focus inside holds it, and leaving lets
  * it carry on from where it is. Under reduced motion it stays still.
  */
-export function Panel({ lookup }: { lookup: Lookup }) {
+export function Panel({ demo }: { demo: Demo }) {
 	const [open, setOpen] = useState<string | null>(null);
 	const [opened, setOpened] = useState(false);
 	const [hold, setHold] = useState(false);
@@ -197,18 +194,8 @@ export function Panel({ lookup }: { lookup: Lookup }) {
 	current.current = open;
 	// where the loop is, to carry on from after a hold
 	const next = useRef(0);
-	// how many rows the last result had, so loading keeps the panel's height
-	const count = useRef(7);
 
-	useEffect(() => {
-		setOpen(null);
-		next.current = 0;
-		if (lookup.state === "done") {
-			count.current = Math.max(1, lookup.technologies.length);
-		}
-	}, [lookup]);
-
-	const all = lookup.state === "done" ? lookup.technologies : [];
+	const all = demo.technologies;
 	const tech = all.find((item) => item.id === open);
 	const live = !hold && all.length > 1;
 
@@ -277,24 +264,19 @@ export function Panel({ lookup }: { lookup: Lookup }) {
 
 	const box = useRef<HTMLElement>(null);
 	const content = useRef<HTMLDivElement>(null);
-	useMorph(box, content, tech ? `page:${tech.id}` : `list:${lookup.state}`);
+	useMorph(box, content, tech ? `page:${tech.id}` : "list");
 
 	const status =
-		lookup.state === "loading"
-			? "Reading the page…"
-			: lookup.state === "error"
-				? lookup.message
-				: all.length === 0
-					? "No known technology found on this page."
-					: all.length === 1
-						? "Built with 1 technology"
-						: `Built with ${all.length} technologies`;
+		all.length === 0
+			? "No known technology found on this page."
+			: all.length === 1
+				? "Built with 1 technology"
+				: `Built with ${all.length} technologies`;
 
 	return (
 		<section
 			ref={box}
 			aria-label="Result"
-			aria-busy={lookup.state === "loading"}
 			onPointerEnter={() => {
 				pointer.current = true;
 				holdFor();
@@ -331,34 +313,9 @@ export function Panel({ lookup }: { lookup: Lookup }) {
 				) : (
 					<>
 						<div className="pt:4 pb:3 px:4">
-							<h3 className="m:0 fs:md fw:400 o:h to:e ws:nw">{lookup.host}</h3>
-							<p
-								role={live ? undefined : "status"}
-								className="m:0 mt:1 fs:xs c:panel-muted"
-							>
-								{status}
-							</p>
+							<h3 className="m:0 fs:md fw:400 o:h to:e ws:nw">{demo.host}</h3>
+							<p className="m:0 mt:1 fs:xs c:panel-muted">{status}</p>
 						</div>
-						{lookup.state === "loading" && (
-							<>
-								<hr className={RULE} />
-								<ul aria-hidden="true" className="m:0 py:1 px:0">
-									{Array.from({ length: count.current }, (_, index) => (
-										<li
-											key={index}
-											data-skeleton
-											className="d:f ai:c g:3 h:10 px:4"
-										>
-											<span className="fs:0 w:5 h:5 br:9999 bg:panel-skeleton" />
-											<span
-												className={`h:3 br:sm bg:panel-skeleton ${WIDTHS[index % WIDTHS.length]}`}
-											/>
-											<span className="ml:auto h:3 w:12 br:sm bg:panel-skeleton" />
-										</li>
-									))}
-								</ul>
-							</>
-						)}
 						{all.length > 0 && (
 							<>
 								<hr className={RULE} />
