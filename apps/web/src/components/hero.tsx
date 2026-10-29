@@ -24,7 +24,7 @@ export function Hero() {
 	return (
 		<div
 			data-hero
-			className="p:r d:f fd:c g:5 py:6 px:4 @md:py:12 @md:px:8 @lg:fg:1 @lg:min-w:0 @lg:jc:c @lg:py:12"
+			className="p:r d:f fd:c g:5 py:6 px:4 @md:py:12 @md:px:8 @lg:fg:1 @lg:min-w:0 @lg:py:12"
 		>
 			<p className="m:0 d:f ai:c fw:w g:2 ff:sans fw:500 fs:sm @md:fs:md c:hint">
 				<span>A browser extension for</span>
