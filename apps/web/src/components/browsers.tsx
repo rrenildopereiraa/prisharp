@@ -38,9 +38,9 @@ export function BrowserMarks() {
 						{browser.bold ? (
 							<path
 								d={browser.path}
-								transform="translate(12 12) scale(0.9) translate(-12 -12)"
+								transform="translate(12 12) scale(0.95) translate(-12 -12)"
 								stroke="currentColor"
-								strokeWidth={2}
+								strokeWidth={1.2}
 								strokeLinejoin="round"
 								strokeLinecap="round"
 							/>
