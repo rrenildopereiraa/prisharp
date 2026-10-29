@@ -1,6 +1,8 @@
 import { type FormEvent, useEffect, useRef, useState } from "react";
 import { useSound } from "sonics/react";
 import Button from "@/components/ui/button";
+import { BrowserMarks } from "@/components/browsers";
+import { Tooltip } from "@/components/tooltip";
 import { toAddress } from "@/address";
 import { DOWNLOAD, REPO } from "@/links";
 import type { Lookup } from "@/lookup";
@@ -18,6 +20,9 @@ function Key({ children }: { children: string }) {
 
 // the hero's buttons: the mockup's 40px height and 6px corners
 const ACTION = "h:10 px:4 g:2 br:md fs:sm us:none";
+
+const UNZIP =
+	"Unzip it, then load the folder unpacked from chrome://extensions";
 
 export function Hero({
 	lookup,
@@ -66,8 +71,9 @@ export function Hero({
 			data-hero
 			className="p:r d:f fd:c g:5 py:6 px:4 @md:py:12 @md:px:8 @lg:fg:1 @lg:min-w:0 @lg:pt:12"
 		>
-			<p className="m:0 ff:sans fw:500 fs:sm @md:fs:md c:hint">
-				A browser extension for Chromium
+			<p className="m:0 d:f ai:c fw:w g:2 ff:sans fw:500 fs:sm @md:fs:md c:hint">
+				<span>A browser extension for</span>
+				<BrowserMarks />
 			</p>
 			<h1 className="m:0 ff:sans fw:600 fs:4xl @sm:fs:5xl @md:fs:6xl lh:1 ls:1">
 				What is this site
@@ -78,16 +84,18 @@ export function Hero({
 				the page, with evidence for each.
 			</p>
 			<div data-actions className="d:none fw:w g:2 mt:1 @md:d:f">
-				<Button
-					id="download"
-					render={<a href={DOWNLOAD} download />}
-					nativeButton={false}
-					title="Unzip it, then load the folder unpacked from chrome://extensions"
-					className={ACTION}
-					onClick={() => tap()}
-				>
-					Download for Chromium <Key>D</Key>
-				</Button>
+				<Tooltip label={UNZIP}>
+					<Button
+						id="download"
+						render={<a href={DOWNLOAD} download />}
+						nativeButton={false}
+						aria-description={UNZIP}
+						className={ACTION}
+						onClick={() => tap()}
+					>
+						Download for Chromium <Key>D</Key>
+					</Button>
+				</Tooltip>
 				<Button
 					id="source"
 					variant="secondary"

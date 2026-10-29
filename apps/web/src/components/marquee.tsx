@@ -4,6 +4,7 @@ import { useSound } from "sonics/react";
 import { icons, pictures } from "@/marks";
 import { DarkContext } from "@/theme";
 import { hasLogo, Logo } from "./logo";
+import { Tooltip } from "./tooltip";
 
 type Mark = {
 	id: string;
@@ -59,30 +60,31 @@ function Item({
 			: undefined;
 
 	return (
-		<li
-			role="img"
-			aria-label={mark.name}
-			title={mark.name}
-			onPointerEnter={() => onLight(mark.id)}
-			onPointerLeave={() => onLight(null)}
-			className="d:f ai:c jc:c fs:0 h:10 px:5 @md:px:6"
-		>
-			{mark.path ? (
-				<svg
-					viewBox="0 0 24 24"
-					fill="currentColor"
-					aria-hidden="true"
-					className={`${SIZE} tp:c tdu:200 @prm:tp:none ${lit && brand ? "" : "c:hint"}`}
-					style={lit && brand ? { color: brand } : undefined}
-				>
-					<path d={mark.path} />
-				</svg>
-			) : (
-				<span data-tint data-lit={lit || undefined} aria-hidden="true">
-					<Logo name={mark.icon} className={`${SIZE} of:c`} />
-				</span>
-			)}
-		</li>
+		<Tooltip label={mark.name} delay={150}>
+			<li
+				role="img"
+				aria-label={mark.name}
+				onPointerEnter={() => onLight(mark.id)}
+				onPointerLeave={() => onLight(null)}
+				className="d:f ai:c jc:c fs:0 h:10 px:5 @md:px:6"
+			>
+				{mark.path ? (
+					<svg
+						viewBox="0 0 24 24"
+						fill="currentColor"
+						aria-hidden="true"
+						className={`${SIZE} tp:c tdu:200 @prm:tp:none ${lit && brand ? "" : "c:hint"}`}
+						style={lit && brand ? { color: brand } : undefined}
+					>
+						<path d={mark.path} />
+					</svg>
+				) : (
+					<span data-tint data-lit={lit || undefined} aria-hidden="true">
+						<Logo name={mark.icon} className={`${SIZE} of:c`} />
+					</span>
+				)}
+			</li>
+		</Tooltip>
 	);
 }
 
