@@ -1,7 +1,43 @@
-@import "@fontsource-variable/instrument-sans";
-@import "@fontsource-variable/martian-mono";
+@import "@fontsource/instrument-serif/400.css";
+@import "@fontsource/instrument-serif/400-italic.css";
+@import "@fontsource-variable/geist-mono";
 
 @yummacss;
+
+/* Two lines of heading, so a longer technology name never moves the page. The
+   tracking keeps "built with TanStack Router?" inside the column. */
+[data-hero] h1 {
+	min-block-size: 2lh;
+	letter-spacing: -0.03em;
+}
+
+/* The caret that follows the typed technology name. */
+[data-caret] {
+	display: inline-block;
+	width: 2px;
+	height: 0.74em;
+	margin-inline: 0.02em 0;
+	vertical-align: -0.04em;
+	background: currentColor;
+	animation: caret 1.05s steps(1, end) infinite;
+}
+
+@keyframes caret {
+	50% {
+		opacity: 0;
+	}
+}
+
+/* A real cursor holds still while text is going in. */
+[data-caret][data-typing] {
+	animation: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-caret] {
+		display: none;
+	}
+}
 
 /* A marquee logo with no one-color mark, greyed into the page's ink. */
 [data-tint] {

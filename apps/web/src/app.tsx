@@ -131,7 +131,7 @@ export function App() {
 									key={step.title}
 									className={`d:f fd:c g:2 py:5 px:8 ${index > 0 ? "blw:1 blc:line" : ""}`}
 								>
-									<h2 className="m:0 ff:sans fs:md fw:600">
+									<h2 className="m:0 ff:mono fs:sm fw:500">
 										<span aria-hidden="true">{index + 1}.</span> {step.title}
 									</h2>
 									<p className="m:0 fs:xs c:hint lh:5">{step.text}</p>

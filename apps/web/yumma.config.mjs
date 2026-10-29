@@ -28,8 +28,8 @@ export default defineConfig({
 			spin: "to { rotate: 360deg; }",
 		},
 		fonts: {
-			sans: '"Instrument Sans Variable", system-ui, sans-serif',
-			mono: '"Martian Mono Variable", ui-monospace, Menlo, Consolas, monospace',
+			sans: '"Instrument Serif", ui-serif, Georgia, serif',
+			mono: '"Geist Mono Variable", ui-monospace, Menlo, Consolas, monospace',
 		},
 		colors: {
 			// the page
