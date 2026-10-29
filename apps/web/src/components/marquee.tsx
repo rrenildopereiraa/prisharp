@@ -32,7 +32,7 @@ const SIZE = "d:b w:6 h:6 @md:w:7 @md:h:7";
 function Item({ mark }: { mark: Mark }) {
 	return (
 		<Tooltip label={mark.name} delay={150}>
-			<li
+			<div
 				role="img"
 				aria-label={mark.name}
 				className="d:f ai:c jc:c fs:0 h:10 px:5 @md:px:6"
@@ -51,7 +51,7 @@ function Item({ mark }: { mark: Mark }) {
 						<Logo name={mark.icon} className={`${SIZE} of:c`} />
 					</span>
 				)}
-			</li>
+			</div>
 		</Tooltip>
 	);
 }
@@ -117,15 +117,15 @@ export function Marquee() {
 					{/* Two copies, so the loop never shows a seam; the second is hidden. */}
 					<div ref={track} className="d:f w:max">
 						{[0, 1].map((copy) => (
-							<ul
+							<div
 								key={copy}
 								aria-hidden={copy === 1 || undefined}
-								className="d:f fs:0 m:0 p:0"
+								className="d:f fs:0"
 							>
 								{marks.map((mark) => (
 									<Item key={mark.id} mark={mark} />
 								))}
-							</ul>
+							</div>
 						))}
 					</div>
 				</div>

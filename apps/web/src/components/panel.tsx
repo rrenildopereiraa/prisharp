@@ -126,9 +126,9 @@ function Detail({
 				>
 					<Symbol name="arrow_back" className="d:b w:5 h:5" />
 				</button>
-				<h3 className="m:0 fg:1 min-w:0 fs:md fw:400 o:h to:e ws:nw">
+				<p className="m:0 fg:1 min-w:0 fs:md fw:400 o:h to:e ws:nw">
 					{tech.name}
-				</h3>
+				</p>
 			</div>
 			<hr className={RULE} />
 			<div className="d:f ai:c g:3 p:4">
@@ -150,9 +150,9 @@ function Detail({
 				</div>
 			</div>
 			<hr className={RULE} />
-			<h4 className="m:0 pt:3 pb:1 px:4 fs:xs fw:400 c:panel-muted">
+			<p className="m:0 pt:3 pb:1 px:4 fs:xs fw:400 c:panel-muted">
 				How Prisharp knows
-			</h4>
+			</p>
 			<ul className="m:0 pt:0 pb:2 px:0">
 				{tech.evidence.map((item) => (
 					<EvidenceItem key={`${item.kind} ${item.text}`} {...item} />
@@ -313,7 +313,7 @@ export function Panel({ demo }: { demo: Demo }) {
 				) : (
 					<>
 						<div className="pt:4 pb:3 px:4">
-							<h3 className="m:0 fs:md fw:400 o:h to:e ws:nw">{demo.host}</h3>
+							<p className="m:0 fs:md fw:400 o:h to:e ws:nw">{demo.host}</p>
 							<p className="m:0 mt:1 fs:xs c:panel-muted">{status}</p>
 						</div>
 						{all.length > 0 && (
