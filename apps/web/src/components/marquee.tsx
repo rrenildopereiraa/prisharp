@@ -1,6 +1,5 @@
 import { catalog } from "virtual:catalog";
 import { useEffect, useRef, useState } from "react";
-import { useSound } from "sonics/react";
 import { icons, pictures } from "@/marks";
 import { hasLogo, Logo } from "./logo";
 import { Tooltip } from "./tooltip";
@@ -67,8 +66,6 @@ export function Marquee() {
 	const [paused, setPaused] = useState(false);
 	const [hovered, setHovered] = useState(false);
 	const target = useRef(1);
-	const on = useSound("toggleOn");
-	const off = useSound("toggleOff");
 
 	useEffect(() => {
 		target.current = paused || hovered ? 0 : 1;
@@ -136,11 +133,7 @@ export function Marquee() {
 					type="button"
 					aria-pressed={paused}
 					aria-label="Pause the technologies"
-					onClick={() => {
-						setPaused(!paused);
-						if (paused) on();
-						else off();
-					}}
+					onClick={() => setPaused(!paused)}
 					className="d:f ai:c jc:c fs:0 w:8 h:8 br:md bw:1 bc:rim bg:raised c:label c:p h:bg:well fv:os:s fv:ow:3 fv:oo:0 fv:oc:focus/40 fv:bc:focus @prm:d:none"
 				>
 					<svg

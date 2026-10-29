@@ -19,8 +19,7 @@
 		"extension": "workspace:*",
 		"react": "^19.3.1",
 		"react-dom": "^19.3.1",
-		"simple-icons": "^16.35.0",
-		"sonics": "^0.2.0"
+		"simple-icons": "^16.35.0"
 	},
 	"devDependencies": {
 		"@types/node": "^24.19.2",

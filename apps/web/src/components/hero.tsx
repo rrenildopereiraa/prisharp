@@ -1,4 +1,3 @@
-import { useSound } from "sonics/react";
 import Button from "@/components/ui/button";
 import { BrowserMarks } from "@/components/browsers";
 import { Tooltip } from "@/components/tooltip";
@@ -22,8 +21,6 @@ const UNZIP =
 	"Unzip it, then load the folder unpacked from chrome://extensions";
 
 export function Hero() {
-	const tap = useSound("tap");
-
 	return (
 		<div
 			data-hero
@@ -49,7 +46,6 @@ export function Hero() {
 						nativeButton={false}
 						aria-description={UNZIP}
 						className={ACTION}
-						onClick={() => tap()}
 					>
 						Download for Chromium <Key>D</Key>
 					</Button>
@@ -60,7 +56,6 @@ export function Hero() {
 					render={<a href={REPO} />}
 					nativeButton={false}
 					className={ACTION}
-					onClick={() => tap()}
 				>
 					View source <Key>S</Key>
 				</Button>

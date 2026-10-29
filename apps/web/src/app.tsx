@@ -56,18 +56,18 @@ function Band({
 	);
 }
 
-const FACTS = [
+const STEPS = [
 	{
-		title: "Shows its work",
-		text: "Open any result to see the script, global or tag that gave it away.",
+		title: "Download the zip",
+		text: "One file, prisharp.zip. It holds the whole extension.",
 	},
 	{
-		title: "Stays on your device",
-		text: "The page is read inside your browser. No account, no tracking.",
+		title: "Unzip it",
+		text: "Anywhere you like. The folder it makes is the extension.",
 	},
 	{
-		title: "Open source",
-		text: "MIT licensed. Teaching it a new technology takes one entry in one file.",
+		title: "Load it unpacked",
+		text: "At chrome://extensions, turn on Developer mode, then Load unpacked and pick that folder.",
 	},
 ];
 
@@ -121,19 +121,24 @@ export function App() {
 					<Band>
 						<Marquee />
 					</Band>
-					<div data-facts>
-						<Band className="d:none @md:d:g @md:gtc:3">
-							{FACTS.map((fact, index) => (
-								<div
-									key={fact.title}
+					<Band className="d:none @md:d:b">
+						<ol
+							aria-label="Installing"
+							className="m:0 p:0 sst:none d:g @md:gtc:3"
+						>
+							{STEPS.map((step, index) => (
+								<li
+									key={step.title}
 									className={`d:f fd:c g:2 py:5 px:8 ${index > 0 ? "blw:1 blc:line" : ""}`}
 								>
-									<h2 className="m:0 ff:sans fs:md fw:600">{fact.title}</h2>
-									<p className="m:0 fs:xs c:hint lh:5">{fact.text}</p>
-								</div>
+									<h2 className="m:0 ff:sans fs:md fw:600">
+										<span aria-hidden="true">{index + 1}.</span> {step.title}
+									</h2>
+									<p className="m:0 fs:xs c:hint lh:5">{step.text}</p>
+								</li>
 							))}
-						</Band>
-					</div>
+						</ol>
+					</Band>
 				</main>
 				<Band last>
 					<Footer />
