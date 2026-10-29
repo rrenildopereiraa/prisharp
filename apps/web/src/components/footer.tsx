@@ -6,7 +6,7 @@ export function Footer() {
 			<p className="m:0">© 2026 Prisharp · MIT License</p>
 			<a
 				href={GITHUB}
-				className="c:hint td:none h:c:label br:sm fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus"
+				className="c:hint td:none h:c:label fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus"
 			>
 				GitHub
 			</a>

@@ -7,7 +7,7 @@ function Key({ children }: { children: string }) {
 	return (
 		<kbd
 			aria-hidden="true"
-			className="d:if ai:c jc:c h:4 min-w:4 px:1 br:sm bw:1 bc:current o:70 ff:mono fs:xs lh:1"
+			className="d:if ai:c jc:c h:4 min-w:4 px:1 bw:1 bc:current o:70 ff:mono fs:xs lh:1"
 		>
 			{children}
 		</kbd>
@@ -15,7 +15,7 @@ function Key({ children }: { children: string }) {
 }
 
 // the hero's buttons: the mockup's 40px height and 6px corners
-const ACTION = "h:10 px:4 g:2 br:md fs:sm us:none";
+const ACTION = "h:10 px:4 g:2 fs:sm us:none";
 
 const UNZIP =
 	"Unzip it, then load the folder unpacked from chrome://extensions";
@@ -44,6 +44,7 @@ export function Hero() {
 						id="download"
 						render={<a href={DOWNLOAD} download />}
 						nativeButton={false}
+						shape="square"
 						aria-description={UNZIP}
 						className={ACTION}
 					>
@@ -55,6 +56,7 @@ export function Hero() {
 					variant="secondary"
 					render={<a href={REPO} />}
 					nativeButton={false}
+					shape="square"
 					className={ACTION}
 				>
 					View source <Key>S</Key>

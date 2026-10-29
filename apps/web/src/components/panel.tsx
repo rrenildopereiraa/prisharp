@@ -50,7 +50,7 @@ function Mark({ tech, size }: { tech: Found; size: string }) {
 		return (
 			<Logo
 				name={tech.icon}
-				className={`d:b ${size} p:calc(0.125rem) of:c us:none`}
+				className={`d:b ${size} p:calc(0.125rem) br:sm of:c us:none`}
 			/>
 		);
 	}

@@ -134,7 +134,7 @@ export function Marquee() {
 					aria-pressed={paused}
 					aria-label="Pause the technologies"
 					onClick={() => setPaused(!paused)}
-					className="d:f ai:c jc:c fs:0 w:8 h:8 br:md bw:1 bc:rim bg:raised c:label c:p h:bg:well fv:os:s fv:ow:3 fv:oo:0 fv:oc:focus/40 fv:bc:focus @prm:d:none"
+					className="d:f ai:c jc:c fs:0 w:8 h:8 bw:1 bc:rim bg:raised c:label c:p h:bg:well fv:os:s fv:ow:3 fv:oo:0 fv:oc:focus/40 fv:bc:focus @prm:d:none"
 				>
 					<svg
 						viewBox="0 0 24 24"
