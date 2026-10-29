@@ -8,23 +8,9 @@ export default defineConfig({
 	theme: {
 		states: {
 			closing: "[data-ending-style]",
-			"from-left": "[data-activation-direction=left]",
-			"from-right": "[data-activation-direction=right]",
-			hovering: "[data-hovering]",
 			opening: "[data-starting-style]",
-			scrolling: "[data-scrolling]",
-			swiping: "[data-swiping]",
-		},
-		easings: {
-			"in-out-cubic": "cubic-bezier(0.65, 0, 0.35, 1)",
-			"out-back": "cubic-bezier(0.34, 1.56, 0.64, 1)",
-			"out-quart": "cubic-bezier(0.25, 1, 0.5, 1)",
 		},
 		keyframes: {
-			pulse: "0%, 100% { opacity: .5; } 50% { opacity: 1; }",
-			shake:
-				"10%, 90% { translate: -1px 0; } 20%, 80% { translate: 2px 0; } 30%, 50%, 70% { translate: -3px 0; } 40%, 60% { translate: 3px 0; }",
-			slide: "from { translate: -100% 0; } to { translate: 100% 0; }",
 			spin: "to { rotate: 360deg; }",
 		},
 		fonts: {
@@ -42,18 +28,11 @@ export default defineConfig({
 			// Yumma UI's surfaces and edges
 			raised: { light: "#ffffff", dark: "#161921" },
 			well: { light: "#eaecf1", dark: "#0a0c10" },
-			field: { light: "#ffffff", dark: "#161921" },
 			fill: { light: "#2b44ff", dark: "#8394ff" },
 			"on-fill": { light: "#ffffff", dark: "#0d0f14" },
 			rim: { light: "#c7cbd5", dark: "#2f3542" },
-			// a field's border, dark enough to read as one (3:1 on white)
-			edge: { light: "#8b91a0", dark: "#5a6273" },
 			shadow: { light: "#b9bfcc", dark: "#000000" },
 			check: { light: "#1f35d6", dark: "#a5b2ff" },
-			on: { light: "#2b44ff", dark: "#8394ff" },
-			knob: { light: "#ffffff", dark: "#161921" },
-			groove: { light: "#e0e2e8", dark: "#07080b" },
-			glint: { light: "#ffffff", dark: "#2a2f3a" },
 			focus: { light: "#2b44ff", dark: "#8394ff" },
 			// the extension's panel, drawn in Chrome's colors as in the popup
 			panel: { light: "#ffffff", dark: "#282a2c" },

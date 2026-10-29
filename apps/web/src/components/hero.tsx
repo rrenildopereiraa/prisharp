@@ -122,7 +122,7 @@ export function Hero() {
 						aria-description={UNZIP}
 						className={ACTION}
 					>
-						Download <Key>D</Key>
+						Download extension <Key>D</Key>
 					</Button>
 				</Tooltip>
 				<Button
