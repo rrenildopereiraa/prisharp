@@ -93,11 +93,11 @@ hr {
 }
 
 .bg\:line {
-  background-color: light-dark(#e3e3e3, #444746);
+  background-color: light-dark(oklch(0.916 0 none), oklch(0.395 0.004 174));
 }
 
 .bg\:surface {
-  background-color: light-dark(#ffffff, #282a2c);
+  background-color: light-dark(oklch(1 0 180), oklch(0.284 0.005 248));
 }
 
 .bg\:transparent {
@@ -105,7 +105,7 @@ hr {
 }
 
 .bg\:well {
-  background-color: light-dark(#f1f3f4, #1f2022);
+  background-color: light-dark(oklch(0.963 0.003 229), oklch(0.243 0.004 264));
 }
 
 .br\:9999 {
@@ -125,15 +125,15 @@ hr {
 }
 
 .c\:ink {
-  color: light-dark(#1f1f1f, #e3e3e3);
+  color: light-dark(oklch(0.239 0 none), oklch(0.916 0 none));
 }
 
 .c\:muted {
-  color: light-dark(#474747, #c4c7c5);
+  color: light-dark(oklch(0.398 0 none), oklch(0.827 0.004 157));
 }
 
 .c\:ok {
-  color: light-dark(#146c2e, #6dd58c);
+  color: light-dark(oklch(0.467 0.125 148), oklch(0.792 0.143 152));
 }
 
 .c\:p {
@@ -193,7 +193,7 @@ hr {
 }
 
 .fv\:oc\:focus:focus-visible {
-  outline-color: light-dark(#0b57d0, #a8c7fa);
+  outline-color: light-dark(oklch(0.495 0.199 261), oklch(0.825 0.08 260));
 }
 
 .fv\:oo\:-2:focus-visible {
@@ -265,7 +265,7 @@ hr {
 }
 
 .h\:bg\:hover:hover {
-  background-color: light-dark(#ececec, #3a3c3e);
+  background-color: light-dark(oklch(0.943 0 none), oklch(0.355 0.004 248));
 }
 
 .h\:px {
@@ -294,10 +294,6 @@ hr {
 
 .o\:h {
   overflow: hidden;
-}
-
-.of\:c {
-  object-fit: cover;
 }
 
 .p\:4 {

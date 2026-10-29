@@ -25,6 +25,7 @@ export function Logo({ name, className }: { name: string; className: string }) {
 			src={url(variant ? `${name}-dark` : name)}
 			alt=""
 			draggable={false}
+			data-logo
 			className={className}
 		/>
 	);

@@ -48,7 +48,7 @@ function Item({ mark }: { mark: Mark }) {
 					</svg>
 				) : (
 					<span data-tint aria-hidden="true">
-						<Logo name={mark.icon} className={`${SIZE} of:c`} />
+						<Logo name={mark.icon} className={SIZE} />
 					</span>
 				)}
 			</div>

@@ -37,7 +37,8 @@ function icon(tech, size) {
 	const name = tech.icon ?? tech.id;
 	const picture = document.createElement("picture");
 	const img = document.createElement("img");
-	img.className = `d:b ${size} p:calc(0.125rem) of:c`;
+	img.className = `d:b ${size} p:calc(0.125rem)`;
+	img.dataset.logo = "";
 	img.alt = "";
 	img.decoding = "async";
 

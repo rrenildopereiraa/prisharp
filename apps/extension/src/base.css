@@ -2,3 +2,9 @@
 [hidden] {
 	display: none;
 }
+
+/* A logo keeps its own proportions, letterboxed in its square: Parcel is 4:3,
+   the Yumma mark is taller than wide, and cover cropped both. */
+img[data-logo] {
+	object-fit: contain;
+}

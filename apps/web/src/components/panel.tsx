@@ -50,7 +50,7 @@ function Mark({ tech, size }: { tech: Found; size: string }) {
 		return (
 			<Logo
 				name={tech.icon}
-				className={`d:b ${size} p:calc(0.125rem) br:sm of:c us:none`}
+				className={`d:b ${size} p:calc(0.125rem) br:sm us:none`}
 			/>
 		);
 	}
@@ -327,7 +327,7 @@ export function Panel({ demo }: { demo: Demo }) {
 													if (element) rows.current.set(item.id, element);
 												}}
 												type="button"
-												aria-label={`${label(item)}, ${item.category}. Show the evidence`}
+												aria-label={`${label(item)} ${item.category}. Show the evidence`}
 												onClick={() => {
 													setOpened(true);
 													setOpen(item.id);
@@ -344,7 +344,7 @@ export function Panel({ demo }: { demo: Demo }) {
 												<Mark tech={item} size="w:5 h:5" />
 												<span className="fg:1 min-w:0 o:h to:e ws:nw">
 													{item.name}
-												</span>
+												</span>{" "}
 												<span className="fs:xs c:panel-muted ws:nw fvn:tn">
 													{item.version ?? item.category}
 												</span>

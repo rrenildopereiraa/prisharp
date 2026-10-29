@@ -11,6 +11,12 @@
 	letter-spacing: -0.03em;
 }
 
+/* A logo keeps its own proportions, letterboxed in its square: Parcel is 4:3,
+   the Yumma mark is taller than wide, and cover cropped both. */
+[data-logo] {
+	object-fit: contain;
+}
+
 /* The caret that follows the typed technology name. */
 [data-caret] {
 	display: inline-block;
