@@ -3,21 +3,10 @@
 
 @yummacss;
 
-/* A marquee logo with no one-color mark: greyed out, in color when hovered. */
+/* A marquee logo with no one-color mark, greyed into the page's ink. */
 [data-tint] {
 	display: block;
 	filter: grayscale(1) opacity(0.75);
-	transition: filter 200ms ease-out;
-}
-
-[data-tint][data-lit] {
-	filter: none;
-}
-
-@media (prefers-reduced-motion: reduce) {
-	[data-tint] {
-		transition: none;
-	}
 }
 
 [data-marquee-frame] {

@@ -1,8 +1,7 @@
 import { catalog } from "virtual:catalog";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSound } from "sonics/react";
 import { icons, pictures } from "@/marks";
-import { DarkContext } from "@/theme";
 import { hasLogo, Logo } from "./logo";
 import { Tooltip } from "./tooltip";
 
@@ -10,14 +9,15 @@ type Mark = {
 	id: string;
 	name: string;
 	icon: string;
-	hex?: string;
 	path?: string;
 };
 
 const marks: Mark[] = catalog.flatMap((tech): Mark[] => {
 	const icon = tech.icon ?? tech.id;
 	const simple = icons[tech.id];
-	if (simple) return [{ id: tech.id, name: tech.name, icon, ...simple }];
+	if (simple) {
+		return [{ id: tech.id, name: tech.name, icon, path: simple.path }];
+	}
 	if (pictures.includes(icon) && hasLogo(icon)) {
 		return [{ id: tech.id, name: tech.name, icon }];
 	}
@@ -30,42 +30,12 @@ const EASE = 2.5;
 
 const SIZE = "d:b w:6 h:6 @md:w:7 @md:h:7";
 
-/** How light a #rrggbb color is, 0 to 1. */
-const lightness = (hex: string) => {
-	const [r, g, b] = [0, 2, 4].map(
-		(at) => Number.parseInt(hex.slice(at, at + 2), 16) / 255,
-	);
-	return 0.2126 * r + 0.7152 * g + 0.0722 * b;
-};
-
-/**
- * A mark in the page's ink that takes its brand color while hovered. It is
- * one picture throughout: only the color changes, never the shape or size.
- */
-function Item({
-	mark,
-	lit,
-	dark,
-	onLight,
-}: {
-	mark: Mark;
-	lit: boolean;
-	dark: boolean;
-	onLight: (id: string | null) => void;
-}) {
-	// a brand color that would vanish into the page keeps the ink instead
-	const brand =
-		mark.hex && (dark ? lightness(mark.hex) > 0.25 : lightness(mark.hex) < 0.85)
-			? `#${mark.hex}`
-			: undefined;
-
+function Item({ mark }: { mark: Mark }) {
 	return (
 		<Tooltip label={mark.name} delay={150}>
 			<li
 				role="img"
 				aria-label={mark.name}
-				onPointerEnter={() => onLight(mark.id)}
-				onPointerLeave={() => onLight(null)}
 				className="d:f ai:c jc:c fs:0 h:10 px:5 @md:px:6"
 			>
 				{mark.path ? (
@@ -73,13 +43,12 @@ function Item({
 						viewBox="0 0 24 24"
 						fill="currentColor"
 						aria-hidden="true"
-						className={`${SIZE} tp:c tdu:200 @prm:tp:none ${lit && brand ? "" : "c:hint"}`}
-						style={lit && brand ? { color: brand } : undefined}
+						className={SIZE}
 					>
 						<path d={mark.path} />
 					</svg>
 				) : (
-					<span data-tint data-lit={lit || undefined} aria-hidden="true">
+					<span data-tint aria-hidden="true">
 						<Logo name={mark.icon} className={`${SIZE} of:c`} />
 					</span>
 				)}
@@ -90,16 +59,14 @@ function Item({
 
 /**
  * The technologies Prisharp detects, drifting past in the page's ink. Hovering
- * eases it to a stop and shows that logo in color; the button holds it still
- * for anyone who wants it to stop. Under reduced motion it never moves.
+ * eases it to a stop; the button holds it still for anyone who wants it to
+ * stop. Under reduced motion it never moves.
  */
 export function Marquee({ asked = 0 }: { asked?: number }) {
 	const track = useRef<HTMLDivElement>(null);
 	const [paused, setPaused] = useState(false);
 	const [hovered, setHovered] = useState(false);
-	const [lit, setLit] = useState<string | null>(null);
 	const target = useRef(1);
-	const dark = useContext(DarkContext);
 	const on = useSound("toggleOn");
 	const off = useSound("toggleOff");
 
@@ -151,10 +118,7 @@ export function Marquee({ asked = 0 }: { asked?: number }) {
 				<div
 					data-marquee-frame
 					onPointerEnter={() => setHovered(true)}
-					onPointerLeave={() => {
-						setHovered(false);
-						setLit(null);
-					}}
+					onPointerLeave={() => setHovered(false)}
 					className="fg:1 min-w:0 o:h us:none c:hint"
 				>
 					{/* Two copies, so the loop never shows a seam; the second is hidden. */}
@@ -166,13 +130,7 @@ export function Marquee({ asked = 0 }: { asked?: number }) {
 								className="d:f fs:0 m:0 p:0"
 							>
 								{marks.map((mark) => (
-									<Item
-										key={mark.id}
-										mark={mark}
-										lit={lit === mark.id}
-										dark={dark}
-										onLight={setLit}
-									/>
+									<Item key={mark.id} mark={mark} />
 								))}
 							</ul>
 						))}
