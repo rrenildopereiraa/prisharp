@@ -44,11 +44,3 @@
 		border-left-width: 1px;
 	}
 }
-
-/* Nothing to download on a phone or tablet: Chromium there runs no
-   extensions. */
-@media (pointer: coarse) {
-	[data-actions] {
-		display: none;
-	}
-}

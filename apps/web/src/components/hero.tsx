@@ -38,7 +38,7 @@ export function Hero() {
 				Prisharp will show you all the frameworks, libraries and hosts used on
 				the page, with evidence for each.
 			</p>
-			<div data-actions className="d:f fw:w g:2 mt:1">
+			<div data-actions className="d:f fw:w g:2 mt:1 @pc:d:none">
 				<Tooltip label={UNZIP}>
 					<Button
 						id="download"

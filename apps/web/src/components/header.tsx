@@ -15,7 +15,7 @@ export function Header() {
 				nativeButton={false}
 				size="sm"
 				shape="square"
-				className="us:none"
+				className="us:none @pc:d:none"
 			>
 				Download
 			</Button>
