@@ -157,9 +157,6 @@ importers:
       '@fontsource-variable/martian-mono':
         specifier: ^5.3.0
         version: 5.3.0
-      '@solar-icons/react':
-        specifier: ^2.3.3
-        version: 2.3.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
       extension:
         specifier: workspace:*
         version: link:../extension
@@ -572,13 +569,6 @@ packages:
 
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
-
-  '@solar-icons/react@2.3.3':
-    resolution: {integrity: sha512-ysV8O4SitjscEnfsuHehHwkQFPZYKk6A9+Zooqw9SmG80n4V/R0ciTkwABHZ3VTlCRtkqQgaDZHkczkujhtcag==}
-    engines: {node: '>=16'}
-    peerDependencies:
-      react: '>= 16.8'
-      react-dom: '>= 16.8'
 
   '@testing-library/dom@10.4.2':
     resolution: {integrity: sha512-yzr2S9HyAIdhz2/6qHgbs665Q7PKVcDF05vsOlHPxG1mo36gKVesdYVeDLnXgfjJ03CrKRk08knc6+E/9m8v2Q==}
@@ -1584,11 +1574,6 @@ snapshots:
       react-dom: 19.3.1(react@19.3.1)
 
   '@rolldown/pluginutils@1.0.1': {}
-
-  '@solar-icons/react@2.3.3(react-dom@19.3.1(react@19.3.1))(react@19.3.1)':
-    dependencies:
-      react: 19.3.1
-      react-dom: 19.3.1(react@19.3.1)
 
   '@testing-library/dom@10.4.2':
     dependencies:
