@@ -6,3 +6,5 @@ dist/
 *.tsbuildinfo
 .env*
 apps/extension/prisharp.zip
+TODO.md
+NOTES.md
