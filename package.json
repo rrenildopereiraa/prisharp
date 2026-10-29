@@ -11,7 +11,7 @@
 		"ready": "vp check && vp run -r test && vp run -r build"
 	},
 	"devDependencies": {
-		"typescript": "^5.9.3",
+		"typescript": "^7.0.2",
 		"vite-plus": "catalog:"
 	},
 	"engines": {

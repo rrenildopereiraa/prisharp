@@ -85,7 +85,12 @@ const catalog = (): Plugin => ({
 	resolveId: (id) => (id === CATALOG ? `\0${CATALOG}` : undefined),
 	load(id) {
 		if (id !== `\0${CATALOG}`) return;
-		const list = technologies.map(({ id, name, icon }) => ({ id, name, icon }));
+		const list = technologies.map(({ id, name, icon, website }) => ({
+			id,
+			name,
+			icon,
+			website,
+		}));
 		return `export const catalog = ${JSON.stringify(list)};`;
 	},
 });
