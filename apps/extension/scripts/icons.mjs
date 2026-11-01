@@ -72,10 +72,11 @@ const icons = {
 };
 
 // Logos neither has, kept in icons/tech as files: whether each has a dark
-// variant. Yumma CSS and Yumma UI from their brand folders.
+// variant. Yumma CSS and Yumma UI share the Yumma mark from its brand page,
+// the same in both themes.
 const local = {
-	yummacss: true,
-	"yumma-ui": true,
+	yummacss: false,
+	"yumma-ui": false,
 };
 
 const render = (name) => {
