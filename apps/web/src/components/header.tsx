@@ -1,4 +1,5 @@
 import Button from "@/components/ui/button";
+import { Mark } from "@/components/mark";
 import { DOWNLOAD } from "@/links";
 
 export function Header() {
@@ -6,9 +7,10 @@ export function Header() {
 		<header className="d:f ai:c jc:sb g:4 h:14 px:4 @md:h:18 @md:px:8">
 			<a
 				href="/"
-				className="ff:sans fw:400 ls:2 fs:xl @md:fs:xxl c:label td:none fv:os:s fv:ow:2 fv:oo:4 fv:oc:focus"
+				className="d:f ai:c g:3 c:label td:none fv:os:s fv:ow:2 fv:oo:4 fv:oc:focus"
 			>
-				Prisharp
+				<Mark className="h:6 w:5" />
+				<span className="ff:sans fw:400 ls:2 fs:xl @md:fs:xxl">Prisharp</span>
 			</a>
 			<Button
 				render={<a href={DOWNLOAD} download />}

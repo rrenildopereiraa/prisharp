@@ -25,6 +25,8 @@ export default defineConfig({
 			line: { light: "#e0e2e8", dark: "#1e222b" },
 			// the one accent: the threads, the main action, "built with?"
 			accent: { light: "#2b44ff", dark: "#8394ff" },
+			// the mark's sky: a step lighter than the accent, so its two tones stay apart
+			logo: { light: "#8394ff", dark: "#b7c2ff" },
 			// Yumma UI's surfaces and edges
 			raised: { light: "#ffffff", dark: "#161921" },
 			well: { light: "#eaecf1", dark: "#0a0c10" },
