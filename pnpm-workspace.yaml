@@ -22,7 +22,7 @@ minimumReleaseAgeExclude:
   - "@voidzero-dev/vite-plus-linux-x64-musl@1.4.0"
   - "@voidzero-dev/vite-plus-win32-arm64-msvc@1.4.0"
   - "@voidzero-dev/vite-plus-win32-x64-msvc@1.4.0"
-  - "@yummacss/core@4.8.0"
-  - "@yummacss/nitro@4.8.0"
+  - "@yummacss/core@4.12.0"
+  - "@yummacss/nitro@4.12.0"
   - vite-plus@1.4.0
-  - yummacss@4.8.0
+  - yummacss@4.12.0

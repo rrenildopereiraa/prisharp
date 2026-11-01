@@ -12,7 +12,7 @@ Prisharp runs only when you click it. It asks for `activeTab` and `scripting` an
 
 ## The popup
 
-The popup copies the look of Chrome's site information panel: the system font, Chrome's light and dark surfaces, flat rows and [Material Symbols](https://fonts.google.com/icons) (Apache 2.0), the icon set Chrome draws its own panels with. Its colors live in [`yumma.config.mjs`](yumma.config.mjs). The toolbar icon is the same globe as the popup's "Open" row, rendered from [`scripts/glyph.svg`](scripts/glyph.svg) in Chrome's toolbar grey; the extension's icon on `chrome://extensions` is that globe on a white tile, from [`scripts/tile.svg`](scripts/tile.svg).
+The popup copies the look of Chrome's site information panel: the system font, Chrome's light and dark surfaces, flat rows and [Material Symbols](https://fonts.google.com/icons) (Apache 2.0), the icon set Chrome draws its own panels with. Its colors live in [`yummacss.config.mjs`](yummacss.config.mjs). The toolbar icon is the same globe as the popup's "Open" row, rendered from [`scripts/glyph.svg`](scripts/glyph.svg) in Chrome's toolbar grey; the extension's icon on `chrome://extensions` is that globe on a white tile, from [`scripts/tile.svg`](scripts/tile.svg).
 
 ## How detection works
 
@@ -69,7 +69,7 @@ A technology without an svgl logo shows its site's favicon, then its first lette
 
 ## Develop
 
-The popup is styled with [Yumma CSS](https://yummacss.com), with Yumma UI's theme and recipes: its theme comes from `apps/web/yumma.config.mjs`, so the popup and prisharp.com always match.
+The popup is styled with [Yumma CSS](https://yummacss.com), with Yumma UI's theme and recipes: its theme comes from `apps/web/yummacss.config.mjs`, so the popup and prisharp.com always match.
 
 ```bash
 pnpm build      # popup.css from the classes in popup.html and src

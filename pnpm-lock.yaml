@@ -143,8 +143,8 @@ importers:
         specifier: 'catalog:'
         version: 1.4.0(@types/node@24.19.2)(@vitest/ui@5.0.5)(typescript@7.0.2)
       yummacss:
-        specifier: ^4.8.0
-        version: 4.9.0
+        specifier: ^4.12.0
+        version: 4.12.0
 
   apps/web:
     dependencies:
@@ -183,8 +183,8 @@ importers:
         specifier: ^6.1.2
         version: 6.1.2(@voidzero-dev/vite-plus-core@1.4.0(@types/node@24.19.2)(typescript@7.0.2))
       '@yummacss/vite':
-        specifier: ^4.7.0
-        version: 4.9.0(@voidzero-dev/vite-plus-core@1.4.0(@types/node@24.19.2)(typescript@7.0.2))
+        specifier: ^4.12.0
+        version: 4.12.0(@voidzero-dev/vite-plus-core@1.4.0(@types/node@24.19.2)(typescript@7.0.2))
       fflate:
         specifier: ^0.8.3
         version: 0.8.3
@@ -192,8 +192,8 @@ importers:
         specifier: 'catalog:'
         version: 1.4.0(@types/node@24.19.2)(@vitest/ui@5.0.5)(typescript@7.0.2)
       yummacss:
-        specifier: ^4.8.0
-        version: 4.9.0
+        specifier: ^4.12.0
+        version: 4.12.0
 
 packages:
 
@@ -967,14 +967,14 @@ packages:
   '@yuku-toolchain/types@0.19.0':
     resolution: {integrity: sha512-tFkNbsP4WXX9UMUC5syJGdK9dPMLK0PPaIuXCcCYH75sZ8MrebfBZ2XvCILRTw8AgLivSSCfDa4R67iYBDa4Kg==}
 
-  '@yummacss/core@4.9.0':
-    resolution: {integrity: sha512-wKzNdoeU8xEkn9WBt0maAeW0AAlPnzTax1+IBFwzuQ8FkYN6lTDQdhuX1YmMrSG0duT8Kb9neKQ2RXMRmIEYsw==}
+  '@yummacss/core@4.12.0':
+    resolution: {integrity: sha512-yfGGIYz5rCGqR7r2nnc9ZO01S0rgFhDk8OTEngLPUCKmBR0ge6xe8lAEa841t+X7GFYvk0Ilb8FwNFAjcQJMtg==}
 
-  '@yummacss/nitro@4.9.0':
-    resolution: {integrity: sha512-POzIyOKEmFP2O6tuksLr4gm22sAK2NVBnzTAt0EfF5lvyquqh+MrDclHuYPV8SCzSNhk3NClH5MJOwPyBBtjBQ==}
+  '@yummacss/nitro@4.12.0':
+    resolution: {integrity: sha512-Z0/bWsIIFlueTDtRESKnlncsw7yaFaq4LtJ6JaC9kWlpvSCbw4WtPu3mYbcnmvoos+onTnMUQHuRZ8FaFnIELg==}
 
-  '@yummacss/vite@4.9.0':
-    resolution: {integrity: sha512-CmeM2mtQID+X5DyFDRbw/5KGYnhJ6HK9VfevjnGERpsi3Hx3PHq4mu4iT1gOOdFRPtERlQwx/Ji7vZPsogkNLw==}
+  '@yummacss/vite@4.12.0':
+    resolution: {integrity: sha512-o1ka+4nJYH32j2e8xszVQsM7dJZEoNv7zEjJVEx8lqAhUjwZlSB+FxqqU3tZZde+T1Vk2U5RWeRQl6siJMkhqA==}
     peerDependencies:
       vite: ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0
 
@@ -1352,8 +1352,8 @@ packages:
     resolution: {integrity: sha512-XrBh9ZiQK5mJVRxZBAvD6LwRyAYrK3MFtH3+onyuxFL5hFD44EC3QOmIC1FjTj6H2MMwq46/NAI+NZxLZPZgxg==}
     engines: {node: '>=14.18.0'}
 
-  yummacss@4.9.0:
-    resolution: {integrity: sha512-D/FurXDcaiPOJ6A7UYSf2qapSUz0AuWWgXy/mXCO5PvbF2sKrsfbFUYRG3K/l0rdURZp/DyNN2ZsXRQyjFKzwA==}
+  yummacss@4.12.0:
+    resolution: {integrity: sha512-XDivpRpT12qHzQwbbQ+e3l58S0Oi+4eLQRaFj/2D5b2eTed7xKnLM0rOctFtyxNaKWcqvznwq+5ldJVoFEK1gg==}
     hasBin: true
 
   zod@4.6.7:
@@ -1828,18 +1828,18 @@ snapshots:
 
   '@yuku-toolchain/types@0.19.0': {}
 
-  '@yummacss/core@4.9.0': {}
+  '@yummacss/core@4.12.0': {}
 
-  '@yummacss/nitro@4.9.0':
+  '@yummacss/nitro@4.12.0':
     dependencies:
-      '@yummacss/core': 4.9.0
+      '@yummacss/core': 4.12.0
       fastest-levenshtein: 1.0.16
       tinyglobby: 0.2.17
       zod: 4.6.7
 
-  '@yummacss/vite@4.9.0(@voidzero-dev/vite-plus-core@1.4.0(@types/node@24.19.2)(typescript@7.0.2))':
+  '@yummacss/vite@4.12.0(@voidzero-dev/vite-plus-core@1.4.0(@types/node@24.19.2)(typescript@7.0.2))':
     dependencies:
-      '@yummacss/nitro': 4.9.0
+      '@yummacss/nitro': 4.12.0
       picomatch: 4.0.7
       vite: '@voidzero-dev/vite-plus-core@1.4.0(@types/node@24.19.2)(typescript@7.0.2)'
 
@@ -2206,9 +2206,9 @@ snapshots:
       '@yuku-toolchain/types': 0.19.0
       yuku-core: 0.19.0
 
-  yummacss@4.9.0:
+  yummacss@4.12.0:
     dependencies:
-      '@yummacss/core': 4.9.0
-      '@yummacss/nitro': 4.9.0
+      '@yummacss/core': 4.12.0
+      '@yummacss/nitro': 4.12.0
 
   zod@4.6.7: {}
