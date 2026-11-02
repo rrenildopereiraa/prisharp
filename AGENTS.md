@@ -13,7 +13,7 @@ This project styles with Yumma CSS (https://yummacss.com). Write its classes, no
 Check the version before anything else. The project is on 3.x if `yummacss` in `package.json` is below `4`, or if its classes put a dash between property and value: `d-f`, `p-4`, `bg-red-5`, `m--4`.
 
 - Stop before the task and tell the user. A 3.x build generates no 4.x class, so nothing below works until the project is migrated.
-- Do not rewrite classes by hand, and do not take `yummacss lint` suggestions one at a time: on a 3.x project it reports nearly every class. The codemod rewrites them all, reading `yumma.config.mjs` for custom colors and breakpoints.
+- Do not rewrite classes by hand, and do not take `yummacss lint` suggestions one at a time: on a 3.x project it reports nearly every class. The codemod rewrites them all, reading `yummacss.config.mjs` for custom colors and breakpoints.
 - Migrate as its own change, in this order:
   1. `pnpm dlx yummacss migrate --dry-run`, then `pnpm dlx yummacss migrate`.
   2. Rewrite by hand only what it lists under "Left alone": classes built at runtime, and the same classes in a `safelist`.
@@ -38,7 +38,7 @@ Check the version before anything else. The project is on 3.x if `yummacss` in `
 - Other at-rules: `@pc:` @media (pointer: coarse), `@prm:` @media (prefers-reduced-motion: reduce), `@st:` @starting-style.
 - States: `a:` :active, `c:` :checked, `d:` :disabled, `e:` :empty, `f:` :focus, `fc:` :first-child, `fv:` :focus-visible, `fw:` :focus-within, `h:` :hover, `i:` :invalid, `in:` :indeterminate, `lc:` :last-child, `nc:` :nth-child, `r:` :required, `ro:` :read-only, `v:` :valid.
 - Pseudo-elements: `a::` :after, `b::` :before, `p::` ::placeholder, `s::` ::selection.
-- Colors, breakpoints and states the project adds live in `yumma.config.mjs` under `theme`. Read it before using a name that is not listed here.
+- Colors, breakpoints and states the project adds live in `yummacss.config.mjs` under `theme`. Read it before using a name that is not listed here.
 
 ## Examples
 
@@ -49,7 +49,7 @@ Yumma UI components are written in these classes. Read one before building somet
 - https://www.yummaui.com/components/tabs.md: a sliding indicator positioned under the selected tab, with a transition that can be turned off.
 - https://www.yummaui.com/components/dialog.md: an overlay and a popup that animate with `opening:` and `closing:`, and `@prm:tp:none` for reduced motion.
 
-`opening:` and `closing:` are states a project declares under `theme.states`, as the Yumma UI installation page shows. Check `yumma.config.mjs` before using them.
+`opening:` and `closing:` are states a project declares under `theme.states`, as the Yumma UI installation page shows. Check `yummacss.config.mjs` before using them.
 
 ## Check
 

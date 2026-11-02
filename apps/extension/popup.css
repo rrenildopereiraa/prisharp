@@ -264,10 +264,6 @@ hr {
   height: 2rem;
 }
 
-.h\:bg\:hover:hover {
-  background-color: light-dark(oklch(0.943 0 none), oklch(0.355 0.004 248));
-}
-
 .h\:px {
   height: 1px;
 }
@@ -410,4 +406,10 @@ hr {
 
 .ws\:nw {
   white-space: nowrap;
+}
+
+@media (hover: hover) {
+  .h\:bg\:hover:hover {
+    background-color: light-dark(oklch(0.943 0 none), oklch(0.355 0.004 248));
+  }
 }
