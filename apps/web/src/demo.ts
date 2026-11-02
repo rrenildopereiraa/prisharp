@@ -22,22 +22,23 @@ export interface Demo {
 
 /**
  * The result the panel shows: a real run of the extension's detection over
- * renildo.dev, frozen. The site makes no requests of its own.
+ * supabase.com, frozen. The site makes no requests of its own.
  */
 export const demo: Demo = {
-	host: "renildo.dev",
+	host: "supabase.com",
 	technologies: [
 		{
 			id: "nextjs",
 			name: "Next.js",
+			version: "16.4.3",
 			category: "Framework",
 			website: "https://nextjs.org",
 			icon: "nextjs",
 			implies: ["react"],
 			evidence: [
+				{ kind: "Global", text: "window.next.version", value: "16.4.3" },
 				{ kind: "Global", text: "window.__next_f" },
 				{ kind: "Resource", text: "/_next/static/" },
-				{ kind: "Header", text: "x-powered-by", value: "Next.js" },
 			],
 		},
 		{
@@ -47,49 +48,41 @@ export const demo: Demo = {
 			website: "https://react.dev",
 			icon: "react",
 			implies: [],
-			evidence: [{ kind: "Script", text: "react-dom's __reactFiber$ key" }],
+			evidence: [{ kind: "Element", text: "__reactFiber$" }],
 		},
 		{
-			id: "yumma-ui",
-			name: "Yumma UI",
-			category: "Components",
-			website: "https://yummacss.com/ui",
-			icon: "yumma-ui",
-			implies: ["yummacss", "base-ui"],
-			evidence: [{ kind: "Found with", text: "Yumma CSS, Base UI" }],
-		},
-		{
-			id: "base-ui",
-			name: "Base UI",
-			category: "Components",
-			website: "https://base-ui.com",
-			icon: "base-ui",
-			implies: [],
-			evidence: [
-				{ kind: "Attribute", text: "data-base-ui-*" },
-				{ kind: "Script", text: "Base UI's error URL or event helper" },
-			],
-		},
-		{
-			id: "yummacss",
-			name: "Yumma CSS",
+			id: "tailwindcss",
+			name: "Tailwind CSS",
+			version: "4.2.4",
 			category: "Styling",
-			website: "https://yummacss.com",
-			icon: "yummacss",
+			website: "https://tailwindcss.com",
+			icon: "tailwindcss",
 			implies: [],
 			evidence: [
-				{ kind: "Stylesheet", text: ".ai\\:c{align-items" },
-				{ kind: "Classes", text: "d:f d:g d:if" },
+				{ kind: "Stylesheet", text: "tailwindcss v4.2.4" },
+				{ kind: "Stylesheet", text: "@property --tw-" },
 			],
 		},
 		{
-			id: "turbopack",
-			name: "Turbopack",
-			category: "Build",
-			website: "https://turbo.build/pack",
-			icon: "turbopack",
+			id: "radix",
+			name: "Radix UI",
+			category: "Components",
+			website: "https://www.radix-ui.com",
+			icon: "radix",
 			implies: [],
-			evidence: [{ kind: "Global", text: "window.TURBOPACK" }],
+			evidence: [
+				{ kind: "Element", text: "[data-radix-collection-item]" },
+				{ kind: "Element", text: "[id^='radix-']" },
+			],
+		},
+		{
+			id: "lucide",
+			name: "Lucide",
+			category: "Icons",
+			website: "https://lucide.dev",
+			icon: "lucide",
+			implies: [],
+			evidence: [{ kind: "Element", text: "svg.lucide" }],
 		},
 		{
 			id: "vercel",
@@ -99,7 +92,11 @@ export const demo: Demo = {
 			icon: "vercel",
 			implies: [],
 			evidence: [
-				{ kind: "Header", text: "x-vercel-id", value: "cdg1::iad1::sgr5p" },
+				{
+					kind: "Header",
+					text: "x-vercel-id",
+					value: "cdg1::8rwrf-1793653548447",
+				},
 				{ kind: "Header", text: "server", value: "Vercel" },
 			],
 		},
