@@ -1,6 +1,6 @@
 # Prisharp
 
-See what any site is built with, and the evidence for each. A Chromium extension drawn like one of Chrome's own panels: click the globe in the toolbar for the list of technologies on the page, then open one to see what gave it away and to visit its site.
+See what any site is built with, and the evidence for each. A Chromium extension drawn like one of Chrome's own panels: click the Prisharp mark in the toolbar for the list of technologies on the page, then open one to see what gave it away and to visit its site.
 
 ## Install
 
@@ -12,7 +12,7 @@ Prisharp runs only when you click it. It asks for `activeTab` and `scripting` an
 
 ## The popup
 
-The popup copies the look of Chrome's site information panel: the system font, Chrome's light and dark surfaces, flat rows and [Material Symbols](https://fonts.google.com/icons) (Apache 2.0), the icon set Chrome draws its own panels with. Its colors live in [`yummacss.config.mjs`](yummacss.config.mjs). The toolbar icon is the same globe as the popup's "Open" row, rendered from [`scripts/glyph.svg`](scripts/glyph.svg) in Chrome's toolbar grey; the extension's icon on `chrome://extensions` is that globe on a white tile, from [`scripts/tile.svg`](scripts/tile.svg).
+The popup copies the look of Chrome's site information panel: the system font, Chrome's light and dark surfaces, flat rows and [Material Symbols](https://fonts.google.com/icons) (Apache 2.0), the icon set Chrome draws its own panels with. Its colors live in [`yummacss.config.mjs`](yummacss.config.mjs). The toolbar icon and the extension's icon on `chrome://extensions` are the Prisharp mark from prisharp.com ([`apps/web/public/icon.svg`](../web/public/icon.svg)): in its own sky on light toolbars, and in the lighter tint the site uses in dark mode on dark ones.
 
 ## How detection works
 
@@ -65,7 +65,7 @@ pnpm icons      # when svgl has a logo for it: add it to scripts/icons.mjs first
 pnpm test       # vp test run
 ```
 
-A technology without an svgl logo shows its site's favicon, then its first letter.
+A technology without a logo in `icons/tech` shows its first letter. The popup never asks another server for an icon.
 
 ## Develop
 

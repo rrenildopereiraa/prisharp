@@ -29,38 +29,35 @@ for (const button of document.querySelectorAll("[data-close]")) {
 	button.addEventListener("click", () => window.close());
 }
 
-// The svgl logo when Prisharp ships one, the site's favicon when it does not,
-// and the first letter when neither loads.
+// The logo Prisharp ships for the technology, and its first letter when it
+// has none or the logo fails to load. Logos come from the extension itself,
+// so the popup asks no other server for them.
 // Each logo sits 2px inside its box, so the edges of the wide ones are not
 // cut off where they meet it.
 function icon(tech, size) {
 	const name = tech.icon ?? tech.id;
+	const letter = () => {
+		const span = document.createElement("span");
+		span.className = `${size} d:f ai:c jc:c fs:0 br:sm bg:well fs:xs fw:600 c:muted`;
+		span.textContent = tech.name[0];
+		return span;
+	};
+	if (!(name in icons)) return letter();
+
 	const picture = document.createElement("picture");
 	const img = document.createElement("img");
 	img.className = `d:b ${size} p:calc(0.125rem)`;
 	img.dataset.logo = "";
 	img.alt = "";
 	img.decoding = "async";
-
-	if (name in icons) {
-		img.src = `icons/tech/${name}.svg`;
-		if (icons[name]) {
-			const dark = document.createElement("source");
-			dark.media = "(prefers-color-scheme: dark)";
-			dark.srcset = `icons/tech/${name}-dark.svg`;
-			picture.append(dark);
-		}
-	} else {
-		const { hostname } = new URL(tech.website);
-		img.src = `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`;
-		img.classList.add("br:sm");
+	img.src = `icons/tech/${name}.svg`;
+	if (icons[name]) {
+		const dark = document.createElement("source");
+		dark.media = "(prefers-color-scheme: dark)";
+		dark.srcset = `icons/tech/${name}-dark.svg`;
+		picture.append(dark);
 	}
-	img.addEventListener("error", () => {
-		const letter = document.createElement("span");
-		letter.className = `${size} d:f ai:c jc:c fs:0 br:sm bg:well fs:xs fw:600 c:muted`;
-		letter.textContent = tech.name[0];
-		picture.replaceWith(letter);
-	});
+	img.addEventListener("error", () => picture.replaceWith(letter()));
 
 	picture.className = "d:f ai:c jc:c fs:0";
 	picture.append(img);
