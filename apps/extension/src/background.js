@@ -6,8 +6,8 @@ const tint = (dark) => {
 	const tone = dark ? "dark" : "light";
 	return chrome.action.setIcon({
 		path: {
-			16: `icons/action/${tone}-16.png`,
-			32: `icons/action/${tone}-32.png`,
+			16: `/icons/action/${tone}-16.png`,
+			32: `/icons/action/${tone}-32.png`,
 		},
 	});
 };

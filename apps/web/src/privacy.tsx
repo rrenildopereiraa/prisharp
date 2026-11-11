@@ -64,10 +64,9 @@ function Privacy() {
 
 						<Section title="What leaves your browser">
 							<Text>
-								One thing: to show a site's icon in the popup, Prisharp asks
-								Google's favicon service for it, which tells Google the site's
-								domain name. Nothing else is sent anywhere. Results are not
-								stored, and they are gone when the popup closes.
+								Nothing. The logos in the popup ship inside the extension, so it
+								asks no other server for them. Results are not stored, and they
+								are gone when the popup closes.
 							</Text>
 						</Section>
 
