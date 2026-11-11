@@ -3,6 +3,9 @@
 export const icons = {
 	"yummacss": false,
 	"yumma-ui": false,
+	"tabler-icons": true,
+	"iconoir": true,
+	"hugeicons": true,
 	"angular": true,
 	"astro": false,
 	"base-ui": true,
