@@ -26,3 +26,19 @@ chrome.runtime.onMessage.addListener((message) => {
 });
 chrome.runtime.onStartup.addListener(() => void watch());
 chrome.runtime.onInstalled.addListener(() => void watch());
+
+// The popup leaves the number of technologies it found on the icon, for that
+// tab. A new page in the tab has not been read yet, so its count goes.
+const badge = () =>
+	Promise.all([
+		chrome.action.setBadgeBackgroundColor({ color: "#2b44ff" }),
+		chrome.action.setBadgeTextColor({ color: "#ffffff" }),
+	]);
+
+chrome.runtime.onStartup.addListener(() => void badge());
+chrome.runtime.onInstalled.addListener(() => void badge());
+chrome.tabs.onUpdated.addListener((tabId, change) => {
+	if (change.status === "loading") {
+		void chrome.action.setBadgeText({ tabId, text: "" });
+	}
+});
