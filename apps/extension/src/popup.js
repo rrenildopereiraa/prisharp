@@ -258,6 +258,12 @@ async function run() {
 	}
 
 	const all = detect(page, technologies, categories);
+	// the count stays on the toolbar icon for this tab until it loads
+	// another page; the worker clears it then
+	void chrome.action.setBadgeText({
+		tabId: tab.id,
+		text: all.length ? String(all.length) : "",
+	});
 	if (all.length === 0) {
 		status.textContent = "No known technology found on this page.";
 		return;
