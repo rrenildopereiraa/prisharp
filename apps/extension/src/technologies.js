@@ -223,6 +223,31 @@ export const technologies = [
 		signals: [{ js: "Shopify.shop" }, { resource: /cdn\.shopify\.com/ }],
 	},
 
+	{
+		id: "aspnet",
+		name: "ASP.NET",
+		website: "https://dotnet.microsoft.com/apps/aspnet",
+		category: "Framework",
+		icon: "dotnet",
+		signals: [
+			{ header: ["x-aspnet-version", /([\d.]+)/] },
+			{ header: ["x-aspnetmvc-version", /([\d.]+)/] },
+			{ dom: "input[name='__VIEWSTATE']" },
+			// IIS sends this for any page it serves, ASP.NET or not
+			{ header: ["x-powered-by", /asp\.net/i], weight: 50 },
+		],
+	},
+	{
+		id: "blazor",
+		name: "Blazor",
+		website: "https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor",
+		category: "Framework",
+		signals: [
+			{ resource: /\/_framework\/blazor\.(?:web|webassembly|server)\.js/ },
+			{ js: "Blazor" },
+		],
+	},
+
 	// Library
 	{
 		id: "react",
@@ -335,6 +360,34 @@ export const technologies = [
 		signals: [{ js: "__THREE__", version: true }],
 	},
 
+	{
+		id: "alpinejs",
+		name: "Alpine.js",
+		website: "https://alpinejs.dev",
+		category: "Library",
+		signals: [
+			{ js: "Alpine.version", version: true },
+			{ dom: "[x-data]", weight: 50 },
+		],
+	},
+	{
+		id: "htmx",
+		name: "htmx",
+		website: "https://htmx.org",
+		category: "Library",
+		signals: [
+			{ js: "htmx.version", version: true },
+			{ attrPrefix: "hx-", weight: 50 },
+		],
+	},
+	{
+		id: "gsap",
+		name: "GSAP",
+		website: "https://gsap.com",
+		category: "Library",
+		signals: [{ js: "gsap.version", version: true }],
+	},
+
 	// Components
 	{
 		id: "yumma-ui",
@@ -407,6 +460,63 @@ export const technologies = [
 			{
 				dom: "[data-slot='button'], [data-slot='card'], [data-slot='dropdown-menu-trigger'], [data-slot='dialog-content']",
 			},
+		],
+	},
+
+	{
+		id: "mui",
+		name: "MUI",
+		website: "https://mui.com",
+		category: "Components",
+		implies: ["react"],
+		signals: [
+			{
+				classes: [
+					"MuiButtonBase-root",
+					"MuiButton-root",
+					"MuiSvgIcon-root",
+					"MuiTypography-root",
+					"MuiPaper-root",
+					"MuiBox-root",
+					"MuiStack-root",
+					"MuiContainer-root",
+				],
+				min: 1,
+			},
+		],
+	},
+	{
+		id: "chakra-ui",
+		name: "Chakra UI",
+		website: "https://chakra-ui.com",
+		category: "Components",
+		icon: "chakraui",
+		implies: ["react"],
+		signals: [
+			{ css: /--chakra-(?:colors|space|sizes|radii|fontSizes)-/ },
+			{
+				classes: [
+					"chakra-button",
+					"chakra-stack",
+					"chakra-text",
+					"chakra-heading",
+					"chakra-container",
+					"chakra-link",
+					"chakra-icon",
+				],
+				min: 2,
+			},
+		],
+	},
+	{
+		id: "mantine",
+		name: "Mantine",
+		website: "https://mantine.dev",
+		category: "Components",
+		implies: ["react"],
+		signals: [
+			{ dom: "html[data-mantine-color-scheme]" },
+			{ css: /--mantine-(?:color|spacing|radius|font-size)-/ },
 		],
 	},
 
@@ -485,6 +595,21 @@ export const technologies = [
 		],
 	},
 
+	{
+		id: "font-awesome",
+		name: "Font Awesome",
+		website: "https://fontawesome.com",
+		category: "Icons",
+		icon: "fontawesome",
+		signals: [
+			{ css: /Font Awesome (?:Free|Pro) ([\d.]+)/ },
+			{
+				resource: /kit\.fontawesome\.com|use\.fontawesome\.com|font-?awesome/i,
+			},
+			{ dom: "svg.svg-inline--fa" },
+		],
+	},
+
 	// Styling
 	{
 		id: "yummacss",
@@ -542,6 +667,39 @@ export const technologies = [
 			{ css: /Bootstrap\s+v([\d.]+)/ },
 			{ js: "bootstrap.Tooltip.VERSION", version: true },
 		],
+	},
+
+	{
+		id: "stylex",
+		name: "StyleX",
+		website: "https://stylexjs.com",
+		category: "Styling",
+		signals: [
+			// StyleX compiles every style to an atomic class named x and a hash,
+			// so its elements carry runs of them
+			{
+				html: /class="(?:x[0-9a-z]{5,9} ){4,}x[0-9a-z]{5,9}"/,
+				label: "Runs of atomic classes like x1n2onr6",
+			},
+		],
+	},
+	{
+		id: "styled-components",
+		name: "styled-components",
+		website: "https://styled-components.com",
+		category: "Styling",
+		icon: "styledcomponents",
+		signals: [
+			{ dom: "style[data-styled-version]", attr: "data-styled-version" },
+			{ dom: "style[data-styled]" },
+		],
+	},
+	{
+		id: "emotion",
+		name: "Emotion",
+		website: "https://emotion.sh",
+		category: "Styling",
+		signals: [{ dom: "style[data-emotion]" }],
 	},
 
 	// Build
@@ -657,6 +815,17 @@ export const technologies = [
 		signals: [{ header: ["rndr-id", /./] }],
 	},
 
+	{
+		id: "cloudfront",
+		name: "Amazon CloudFront",
+		website: "https://aws.amazon.com/cloudfront",
+		category: "Hosting",
+		signals: [
+			{ header: ["x-amz-cf-id", /./] },
+			{ header: ["via", /cloudfront/i] },
+		],
+	},
+
 	// Services
 	{
 		id: "google-analytics",
@@ -733,5 +902,16 @@ export const technologies = [
 		icon: "google",
 		category: "Services",
 		signals: [{ resource: /fonts\.(?:googleapis|gstatic)\.com/ }],
+	},
+	{
+		id: "google-tag-manager",
+		name: "Google Tag Manager",
+		website: "https://tagmanager.google.com",
+		category: "Services",
+		icon: "googletagmanager",
+		signals: [
+			{ resource: /googletagmanager\.com\/gtm\.js/ },
+			{ js: "google_tag_manager" },
+		],
 	},
 ];

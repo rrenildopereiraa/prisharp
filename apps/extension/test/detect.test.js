@@ -252,3 +252,117 @@ test("the list of fingerprints does not read as what it lists", () => {
 		[],
 	);
 });
+
+test(".NET shows from its runtime, and IIS alone is not enough", () => {
+	const found = (overrides) => names(detect(page(overrides), technologies));
+	assert.deepEqual(found({ headers: { "x-aspnet-version": "4.0.30319" } }), [
+		"ASP.NET 4.0.30319",
+	]);
+	assert.deepEqual(found({ dom: { "input[name='__VIEWSTATE']|": true } }), [
+		"ASP.NET",
+	]);
+	// IIS sends this header for PHP and static sites too
+	assert.deepEqual(found({ headers: { "x-powered-by": "ASP.NET" } }), []);
+	assert.deepEqual(
+		found({ resources: ["https://example.com/_framework/blazor.web.js"] }),
+		["Blazor"],
+	);
+});
+
+test("small libraries read their version from their global", () => {
+	const found = names(
+		detect(
+			page({
+				js: {
+					"Alpine.version": "3.14.9",
+					"htmx.version": "2.0.4",
+					"gsap.version": "3.13.0",
+				},
+			}),
+			technologies,
+		),
+	);
+	assert.deepEqual(found.sort(), [
+		"Alpine.js 3.14.9",
+		"GSAP 3.13.0",
+		"htmx 2.0.4",
+	]);
+});
+
+test("an attribute alone does not claim Alpine.js or htmx", () => {
+	const found = names(
+		detect(
+			page({ dom: { "[x-data]|": true }, attrPrefix: ["hx-"] }),
+			technologies,
+		),
+	);
+	assert.deepEqual(found, []);
+});
+
+test("component libraries, from the classes and variables they ship", () => {
+	const found = (overrides) => names(detect(page(overrides), technologies));
+	assert.deepEqual(found({ classes: ["MuiButtonBase-root"] }), [
+		"React",
+		"MUI",
+	]);
+	assert.deepEqual(found({ css: ":root{--chakra-colors-gray-100:#f7fafc}" }), [
+		"React",
+		"Chakra UI",
+	]);
+	// one generic-looking class is not enough for Chakra
+	assert.deepEqual(found({ classes: ["chakra-text"] }), []);
+	assert.deepEqual(
+		found({ dom: { "html[data-mantine-color-scheme]|": true } }),
+		["React", "Mantine"],
+	);
+});
+
+test("CSS-in-JS libraries, from the style tags they inject", () => {
+	const found = (overrides) => names(detect(page(overrides), technologies));
+	assert.deepEqual(
+		found({
+			dom: {
+				"style[data-styled-version]|data-styled-version": "6.1.19",
+				"style[data-styled]|": true,
+			},
+		}),
+		["styled-components 6.1.19"],
+	);
+	assert.deepEqual(found({ dom: { "style[data-emotion]|": true } }), [
+		"Emotion",
+	]);
+});
+
+test("StyleX shows from runs of atomic classes, not from one", () => {
+	const found = (html) => names(detect(page({ html }), technologies));
+	assert.deepEqual(
+		found('<div class="x1n2onr6 x1vjfegm x78zum5 xdt5ytf x1iyjqo2">'),
+		["StyleX"],
+	);
+	assert.deepEqual(found('<div class="x1n2onr6 container">'), []);
+	assert.deepEqual(found('<div class="xl xs xxl md lg">'), []);
+});
+
+test("Font Awesome reads its version from the stylesheet banner", () => {
+	const css =
+		"/*!\n * Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com";
+	assert.deepEqual(names(detect(page({ css }), technologies)), [
+		"Font Awesome 6.7.2",
+	]);
+});
+
+test("Google Tag Manager and CloudFront, from what they load and send", () => {
+	const found = names(
+		detect(
+			page({
+				resources: ["https://www.googletagmanager.com/gtm.js?id=GTM-ABC123"],
+				headers: {
+					"x-amz-cf-id": "abc==",
+					via: "1.1 abc.cloudfront.net (CloudFront)",
+				},
+			}),
+			technologies,
+		),
+	);
+	assert.deepEqual(found.sort(), ["Amazon CloudFront", "Google Tag Manager"]);
+});
