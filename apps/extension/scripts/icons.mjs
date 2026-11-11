@@ -73,10 +73,15 @@ const icons = {
 
 // Logos neither has, kept in icons/tech as files: whether each has a dark
 // variant. Yumma CSS and Yumma UI share the Yumma mark from its brand page,
-// the same in both themes.
+// the same in both themes. Tabler Icons, Iconoir and Hugeicons are each
+// project's own mark from its icon set (brand-tabler, iconoir,
+// HugeiconsIcon; all MIT), drawn in the panel's ink.
 const local = {
 	yummacss: false,
 	"yumma-ui": false,
+	"tabler-icons": true,
+	iconoir: true,
+	hugeicons: true,
 };
 
 const render = (name) => {
