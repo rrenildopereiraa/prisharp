@@ -12,7 +12,7 @@ Prisharp runs only when you click it. It asks for `activeTab` and `scripting` an
 
 ## The popup
 
-The popup copies the look of Chrome's site information panel: the system font, Chrome's light and dark surfaces, flat rows and [Material Symbols](https://fonts.google.com/icons) (Apache 2.0), the icon set Chrome draws its own panels with. Its colors live in [`yummacss.config.mjs`](yummacss.config.mjs). The toolbar icon and the extension's icon on `chrome://extensions` are the Prisharp mark from prisharp.com ([`apps/web/public/icon.svg`](../web/public/icon.svg)): on light toolbars in the site's accent over the mark's sky, which holds up at 16px better than the sky alone, and on dark ones in the lighter tint the site uses in dark mode. Once the popup has read a tab, the icon carries the number of technologies it found there, in the same accent, until the tab loads another page.
+The popup copies the look of Chrome's site information panel: the system font, Chrome's light and dark surfaces, flat rows and [Material Symbols](https://fonts.google.com/icons) (Apache 2.0), the icon set Chrome draws its own panels with. Its colors live in [`yummacss.config.mjs`](yummacss.config.mjs). The toolbar icon and the extension's icon on `chrome://extensions` are the Prisharp mark from prisharp.com ([`apps/web/public/icon.svg`](../web/public/icon.svg)): on light toolbars in the site's accent over the mark's sky, which holds up at 16px better than the sky alone, and on dark ones in the lighter tint the site uses in dark mode.
 
 ## How detection works
 
