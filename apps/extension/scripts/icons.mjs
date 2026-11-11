@@ -86,8 +86,11 @@ const icons = {
 // variant. Yumma CSS and Yumma UI share the Yumma mark from its brand page,
 // the same in both themes. Tabler Icons, Iconoir and Hugeicons are each
 // project's own mark from its icon set (brand-tabler, iconoir,
-// HugeiconsIcon; all MIT), drawn in the panel's ink.
+// HugeiconsIcon; all MIT), drawn in the panel's ink. Emotion's mark is a
+// drawing, so it ships as its own logo from the Emotion repository, scaled to
+// 64px inside an SVG.
 const local = {
+	emotion: false,
 	yummacss: false,
 	"yumma-ui": false,
 	"tabler-icons": true,
