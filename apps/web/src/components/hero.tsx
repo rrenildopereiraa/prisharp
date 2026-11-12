@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import { catalog } from "virtual:catalog";
 import Button from "@/components/ui/button";
 import { BrowserMarks } from "@/components/browsers";
-import { Tooltip } from "@/components/tooltip";
-import { DOWNLOAD, REPO } from "@/links";
+import { REPO, STORE } from "@/links";
 
 const TYPED = catalog.map((tech) => tech.name);
 const START = Math.max(0, TYPED.indexOf("React"));
@@ -81,9 +80,6 @@ function Key({ children }: { children: string }) {
 // the hero's buttons: the mockup's 40px height and 6px corners
 const ACTION = "h:10 px:4 g:2 fs:sm us:none";
 
-const UNZIP =
-	"Unzip it, then load the folder unpacked from chrome://extensions";
-
 export function Hero() {
 	const { name, typing } = useTypedName();
 
@@ -113,18 +109,15 @@ export function Hero() {
 				the page, with evidence for each.
 			</p>
 			<div data-actions className="d:f fw:w g:2 mt:1 @pc:d:none">
-				<Tooltip label={UNZIP}>
-					<Button
-						id="download"
-						render={<a href={DOWNLOAD} download />}
-						nativeButton={false}
-						shape="square"
-						aria-description={UNZIP}
-						className={ACTION}
-					>
-						Download extension <Key>D</Key>
-					</Button>
-				</Tooltip>
+				<Button
+					id="install"
+					render={<a href={STORE} />}
+					nativeButton={false}
+					shape="square"
+					className={ACTION}
+				>
+					Add to Chrome <Key>A</Key>
+				</Button>
 				<Button
 					id="source"
 					variant="secondary"

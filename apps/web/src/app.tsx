@@ -11,21 +11,21 @@ import { DarkContext, useDark } from "@/theme";
 
 const STEPS = [
 	{
-		title: "Download the zip",
-		text: "One file, prisharp.zip. It holds the whole extension.",
+		title: "Add it to Chrome",
+		text: "One click from the Chrome Web Store. Edge, Brave, Opera, Vivaldi and Arc take it too.",
 	},
 	{
-		title: "Unzip it",
-		text: "Anywhere you like. The folder it makes is the extension.",
+		title: "Open any site",
+		text: "Prisharp stays out of the way. It reads nothing until you ask.",
 	},
 	{
-		title: "Load it unpacked",
-		text: "At chrome://extensions, turn on Developer mode, then Load unpacked and pick that folder.",
+		title: "Click the icon",
+		text: "See what the page is built with, then open any result for the evidence.",
 	},
 ];
 
-// D and S press the hero's buttons, unless a field has the keys
-const KEYS: Record<string, string> = { d: "download", s: "source" };
+// A and S press the hero's buttons, unless a field has the keys
+const KEYS: Record<string, string> = { a: "install", s: "source" };
 
 export function App() {
 	const dark = useDark();
@@ -76,7 +76,7 @@ export function App() {
 					</Band>
 					<Band className="d:none @md:d:b">
 						<ol
-							aria-label="Installing"
+							aria-label="How it works"
 							className="m:0 p:0 sst:none d:g @md:gtc:3"
 						>
 							{STEPS.map((step, index) => (
