@@ -70,7 +70,7 @@ function Key({ children }: { children: string }) {
 	return (
 		<kbd
 			aria-hidden="true"
-			className="d:if ai:c jc:c h:4 min-w:4 px:1 bw:1 bc:current o:70 ff:mono fs:xs lh:1"
+			className="d:if ai:c jc:c h:4 min-w:4 px:1 bw:1 bc:current o:70 ff:mono fs:xs lh:1 @pc:d:none"
 		>
 			{children}
 		</kbd>
@@ -108,7 +108,7 @@ export function Hero() {
 				Prisharp will show you all the frameworks, libraries and hosts used on
 				the page, with evidence for each.
 			</p>
-			<div data-actions className="d:f fw:w g:2 mt:1 @pc:d:none">
+			<div data-actions className="d:f fw:w g:2 mt:1">
 				<Button
 					id="install"
 					render={<a href={STORE} />}

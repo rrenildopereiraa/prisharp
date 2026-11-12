@@ -17,7 +17,7 @@ export function Header() {
 				nativeButton={false}
 				size="sm"
 				shape="square"
-				className="us:none @pc:d:none"
+				className="us:none"
 			>
 				Add to Chrome
 			</Button>
