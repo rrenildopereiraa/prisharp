@@ -5,7 +5,7 @@ See the tech behind any site, in one click.
 | App                                |                                            |
 | ---------------------------------- | ------------------------------------------ |
 | [`apps/extension`](apps/extension) | The Chromium extension                     |
-| [`apps/web`](apps/web)             | just the website source code |
+| [`apps/web`](apps/web)             | just The website |
 
 ## Develop
 
