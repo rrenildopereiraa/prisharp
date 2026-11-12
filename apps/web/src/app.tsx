@@ -55,7 +55,7 @@ export function App() {
 						<Hero />
 						<div
 							data-stage
-							className="p:r d:f fg:1 min-h:48 o:h btw:1 btc:line blc:line @md:min-h:96 @lg:fg:0 @lg:fs:0 @lg:w:100 @lg:btw:0 @lg:blw:1"
+							className="p:r d:f fg:1 min-h:96 o:h btw:1 btc:line blc:line @lg:fg:0 @lg:fs:0 @lg:w:100 @lg:btw:0 @lg:blw:1"
 						>
 							<div
 								aria-hidden="true"
@@ -74,7 +74,7 @@ export function App() {
 					<Band>
 						<Marquee />
 					</Band>
-					<Band className="d:none @md:d:b">
+					<Band>
 						<ol
 							aria-label="How it works"
 							className="m:0 p:0 sst:none d:g @md:gtc:3"
@@ -82,7 +82,7 @@ export function App() {
 							{STEPS.map((step, index) => (
 								<li
 									key={step.title}
-									className={`d:f fd:c g:2 py:5 px:8 ${index > 0 ? "blw:1 blc:line" : ""}`}
+									className={`d:f fd:c g:2 py:5 px:4 @md:px:8 ${index > 0 ? "btw:1 btc:line @md:btw:0 @md:blw:1 @md:blc:line" : ""}`}
 								>
 									<h2 className="m:0 ff:mono fs:sm fw:500">
 										<span aria-hidden="true">{index + 1}.</span> {step.title}
