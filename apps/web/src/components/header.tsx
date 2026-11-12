@@ -1,6 +1,6 @@
 import Button from "@/components/ui/button";
 import { Mark } from "@/components/mark";
-import { DOWNLOAD } from "@/links";
+import { STORE } from "@/links";
 
 export function Header() {
 	return (
@@ -13,13 +13,13 @@ export function Header() {
 				<span className="ff:sans fw:400 ls:2 fs:xl @md:fs:xxl">Prisharp</span>
 			</a>
 			<Button
-				render={<a href={DOWNLOAD} download />}
+				render={<a href={STORE} />}
 				nativeButton={false}
 				size="sm"
 				shape="square"
 				className="us:none @pc:d:none"
 			>
-				Download
+				Add to Chrome
 			</Button>
 		</header>
 	);
