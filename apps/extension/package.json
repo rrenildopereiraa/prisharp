@@ -18,10 +18,11 @@
 		"validate": "yummacss lint",
 		"icons": "node scripts/icons.mjs",
 		"test": "vp test run",
-		"zip": "yummacss build && rm -f prisharp.zip && zip -r prisharp.zip manifest.json popup.html offscreen.html popup.css src icons"
+		"zip": "yummacss build && node scripts/zip.mjs"
 	},
 	"devDependencies": {
 		"@ridemountainpig/svgl-react": "^1.0.18",
+		"fflate": "^0.8.3",
 		"react": "^19.2.0",
 		"react-dom": "^19.2.0",
 		"simple-icons": "^16.35.0",

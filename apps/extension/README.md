@@ -75,7 +75,7 @@ The popup is styled with [Yumma CSS](https://yummacss.com), with Yumma UI's them
 pnpm build      # popup.css from the classes in popup.html and src
 pnpm validate   # every class is one Yumma CSS generates
 pnpm test       # the detection engine
-pnpm zip        # prisharp.zip for the Chrome Web Store
+pnpm zip        # prisharp-<version>.zip for the Chrome Web Store
 ```
 
 Logos come from [svgl](https://svgl.app).
