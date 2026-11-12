@@ -260,6 +260,41 @@ export const technologies = [
 		],
 	},
 
+	{
+		id: "laravel",
+		name: "Laravel",
+		website: "https://laravel.com",
+		category: "Framework",
+		signals: [],
+	},
+	{
+		id: "livewire",
+		name: "Livewire",
+		website: "https://livewire.laravel.com",
+		category: "Framework",
+		implies: ["laravel"],
+		signals: [{ js: "Livewire" }, { attrPrefix: "wire:", weight: 50 }],
+	},
+	{
+		id: "phoenix",
+		name: "Phoenix",
+		website: "https://www.phoenixframework.org",
+		category: "Framework",
+		icon: "phoenixframework",
+		signals: [],
+	},
+	{
+		id: "phoenix-liveview",
+		name: "Phoenix LiveView",
+		website: "https://github.com/phoenixframework/phoenix_live_view",
+		category: "Framework",
+		icon: "phoenixframework",
+		implies: ["phoenix"],
+		signals: [
+			{ dom: "[data-phx-main], [data-phx-session]" },
+			{ js: "liveSocket", weight: 50 },
+		],
+	},
 	// Library
 	{
 		id: "react",
@@ -347,7 +382,10 @@ export const technologies = [
 		name: "Lit",
 		website: "https://lit.dev",
 		category: "Library",
-		signals: [{ js: "litElementVersions", version: true }],
+		signals: [
+			{ js: "litElementVersions", version: true },
+			{ js: "litHtmlVersions", version: true },
+		],
 	},
 	{
 		id: "tanstack-router",
@@ -415,6 +453,56 @@ export const technologies = [
 		signals: [{ js: "__core-js_shared__.versions.0.version", version: true }],
 	},
 
+	{
+		id: "hyperscript",
+		name: "_hyperscript",
+		website: "https://hyperscript.org",
+		category: "Library",
+		signals: [
+			{ js: "_hyperscript" },
+			{ resource: /_hyperscript(?:\.min)?\.js|hyperscript\.org@/ },
+		],
+	},
+	{
+		id: "turbo",
+		name: "Turbo",
+		website: "https://turbo.hotwired.dev",
+		category: "Library",
+		icon: "hotwire",
+		signals: [
+			{ js: "Turbo.session" },
+			{ dom: "turbo-frame, turbo-stream-source" },
+		],
+	},
+	{
+		id: "prism",
+		name: "Prism",
+		website: "https://prismjs.com",
+		category: "Library",
+		signals: [
+			{ js: "Prism.languages" },
+			{
+				dom: "pre[class*='language-'] .token, code[class*='language-'] .token",
+			},
+		],
+	},
+	{
+		id: "lodash",
+		name: "Lodash",
+		website: "https://lodash.com",
+		category: "Library",
+		signals: [
+			// flatMapDeep is Lodash's own: Underscore has no such function
+			{ js: "_.flatMapDeep" },
+		],
+	},
+	{
+		id: "katex",
+		name: "KaTeX",
+		website: "https://katex.org",
+		category: "Library",
+		signals: [{ dom: ".katex" }, { css: /\.katex(?:-display)?\s*\{/ }],
+	},
 	// Components
 	{
 		id: "yumma-ui",
@@ -556,6 +644,18 @@ export const technologies = [
 		signals: [{ attrPrefix: "data-react-aria-" }, { dom: "[data-rac]" }],
 	},
 
+	{
+		id: "web-awesome",
+		name: "Web Awesome",
+		website: "https://webawesome.com",
+		category: "Components",
+		icon: "webawesome",
+		signals: [
+			{
+				dom: "wa-button, wa-icon, wa-input, wa-dialog, wa-dropdown, wa-tooltip, wa-card, wa-tab-group, wa-select, wa-switch",
+			},
+		],
+	},
 	// Icons
 	{
 		id: "lucide",
@@ -614,7 +714,9 @@ export const technologies = [
 		website: "https://www.radix-ui.com/icons",
 		category: "Icons",
 		icon: "radix",
-		// drawn on a 15 grid, which is Radix Icons' own
+		// drawn on a 15 grid, which is Radix Icons' own, but any 15px icon is
+		// too, so it counts only beside Radix UI
+		requires: ["radix"],
 		signals: [{ dom: "svg[width='15'][height='15'][viewBox='0 0 15 15']" }],
 	},
 	{
@@ -873,6 +975,43 @@ export const technologies = [
 		],
 	},
 
+	{
+		id: "fastly",
+		name: "Fastly",
+		website: "https://www.fastly.com",
+		category: "Hosting",
+		signals: [
+			{ header: ["x-fastly-request-id", /./] },
+			// the served-by name is Fastly's cache, the via its Varnish
+			{ header: ["x-served-by", /^cache-[a-z0-9-]+$/i], weight: 50 },
+			{ header: ["via", /varnish/i], weight: 50 },
+		],
+	},
+	{
+		id: "nginx",
+		name: "Nginx",
+		website: "https://nginx.org",
+		category: "Hosting",
+		signals: [{ header: ["server", /^nginx(?:\/([\d.]+))?/i] }],
+	},
+	{
+		id: "apache",
+		name: "Apache HTTP Server",
+		website: "https://httpd.apache.org",
+		category: "Hosting",
+		signals: [{ header: ["server", /^Apache(?:\/([\d.]+))?/] }],
+	},
+	{
+		id: "envoy",
+		name: "Envoy",
+		website: "https://www.envoyproxy.io",
+		category: "Hosting",
+		icon: "envoyproxy",
+		signals: [
+			{ header: ["server", /^envoy$/i] },
+			{ header: ["x-envoy-upstream-service-time", /./] },
+		],
+	},
 	// Services
 	{
 		id: "google-analytics",
@@ -971,5 +1110,160 @@ export const technologies = [
 			{ js: "_satellite.buildInfo.turbineVersion" },
 			{ resource: /assets\.adobedtm\.com\// },
 		],
+	},
+	{
+		id: "vercel-analytics",
+		name: "Vercel Analytics",
+		website: "https://vercel.com/analytics",
+		category: "Services",
+		icon: "vercel",
+		signals: [
+			{
+				resource:
+					/\/_vercel\/insights\/script\.js|va\.vercel-scripts\.com\/v1\/script/,
+			},
+		],
+	},
+	{
+		id: "vercel-speed-insights",
+		name: "Vercel Speed Insights",
+		website: "https://vercel.com/docs/speed-insights",
+		category: "Services",
+		icon: "vercel",
+		signals: [
+			{
+				resource:
+					/\/_vercel\/speed-insights\/script\.js|va\.vercel-scripts\.com\/v1\/speed-insights/,
+			},
+		],
+	},
+	{
+		id: "fathom",
+		name: "Fathom",
+		website: "https://usefathom.com",
+		category: "Services",
+		signals: [{ resource: /cdn\.usefathom\.com\// }],
+	},
+	{
+		id: "cloudflare-web-analytics",
+		name: "Cloudflare Web Analytics",
+		website: "https://www.cloudflare.com/web-analytics",
+		category: "Services",
+		icon: "cloudflare",
+		signals: [{ resource: /static\.cloudflareinsights\.com\/beacon/ }],
+	},
+	{
+		id: "datadog-rum",
+		name: "Datadog RUM",
+		website: "https://www.datadoghq.com/product/real-user-monitoring",
+		category: "Services",
+		icon: "datadog",
+		signals: [
+			{ js: "DD_RUM.version", version: true },
+			{ resource: /datadoghq-browser-agent\.com|browser-intake-datadoghq/ },
+		],
+	},
+	{
+		id: "adobe-fonts",
+		name: "Adobe Fonts",
+		website: "https://fonts.adobe.com",
+		category: "Services",
+		signals: [{ resource: /use\.typekit\.net\/|p\.typekit\.net\// }],
+	},
+	{
+		id: "algolia",
+		name: "Algolia",
+		website: "https://www.algolia.com",
+		category: "Services",
+		signals: [{ resource: /\.algolia(?:net)?\.(?:com|net)\// }],
+	},
+	{
+		id: "docsearch",
+		name: "Algolia DocSearch",
+		website: "https://docsearch.algolia.com",
+		category: "Services",
+		icon: "algolia",
+		implies: ["algolia"],
+		signals: [
+			{ dom: ".DocSearch-Button, .DocSearch" },
+			{ css: /--docsearch-/ },
+		],
+	},
+	{
+		id: "onetrust",
+		name: "OneTrust",
+		website: "https://www.onetrust.com",
+		category: "Services",
+		signals: [
+			{ resource: /cdn\.cookielaw\.org\/|otSDKStub\.js|otBannerSdk\.js/ },
+		],
+	},
+	{
+		id: "datadome",
+		name: "DataDome",
+		website: "https://datadome.co",
+		category: "Services",
+		signals: [
+			{ resource: /js\.datadome\.co\/|captcha-delivery\.com/ },
+			{ js: "ddjskey" },
+		],
+	},
+	{
+		id: "help-scout",
+		name: "Help Scout",
+		website: "https://www.helpscout.com",
+		category: "Services",
+		icon: "helpscout",
+		signals: [{ resource: /beacon-v2\.helpscout\.net/ }],
+	},
+	{
+		id: "buysellads",
+		name: "BuySellAds",
+		website: "https://www.buysellads.com",
+		category: "Services",
+		signals: [{ resource: /srv\.buysellads\.com|cdn\.carbonads\.com/ }],
+	},
+	{
+		id: "google-publisher-tag",
+		name: "Google Publisher Tag",
+		website: "https://developers.google.com/publisher-tag",
+		category: "Services",
+		signals: [
+			{
+				resource:
+					/securepubads\.g\.doubleclick\.net\/tag\/js\/gpt\.js|googletagservices\.com\/tag\/js\/gpt\.js/,
+			},
+			{ js: "googletag.apiReady" },
+		],
+	},
+	{
+		id: "prebid",
+		name: "Prebid.js",
+		website: "https://prebid.org",
+		category: "Services",
+		signals: [{ js: "pbjs.version", version: true }],
+	},
+	{
+		id: "amazon-ads",
+		name: "Amazon Ads",
+		website: "https://advertising.amazon.com",
+		category: "Services",
+		signals: [{ resource: /c\.amazon-adsystem\.com\// }],
+	},
+	{
+		id: "google-sign-in",
+		name: "Sign in with Google",
+		website: "https://developers.google.com/identity/gsi/web",
+		category: "Services",
+		icon: "googlesignin",
+		signals: [{ resource: /accounts\.google\.com\/gsi\/client/ }],
+	},
+	{
+		id: "apple-sign-in",
+		name: "Sign in with Apple",
+		website: "https://developer.apple.com/sign-in-with-apple",
+		category: "Services",
+		icon: "apple",
+		signals: [{ resource: /appleid\.cdn-apple\.com\/appleauth\// }],
 	},
 ];

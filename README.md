@@ -2,10 +2,10 @@
 
 See the tech behind any site, in one click.
 
-| App                                |                                            |
-| ---------------------------------- | ------------------------------------------ |
-| [`apps/extension`](apps/extension) | The Chromium extension                     |
-| [`apps/web`](apps/web)             | The docs site |
+| App                                |                        |
+| ---------------------------------- | ---------------------- |
+| [`apps/extension`](apps/extension) | The Chromium extension |
+| [`apps/web`](apps/web)             | The docs site          |
 
 ## Develop
 

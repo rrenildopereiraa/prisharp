@@ -205,9 +205,12 @@ test("icon libraries, from the markup and scripts their packages ship", () => {
 	]);
 	assert.deepEqual(
 		found({
-			dom: { "svg[width='15'][height='15'][viewBox='0 0 15 15']|": true },
+			dom: {
+				"svg[width='15'][height='15'][viewBox='0 0 15 15']|": true,
+				"[data-radix-collection-item], [data-radix-popper-content-wrapper], [data-radix-scroll-area-viewport], [id^='radix-']|": true,
+			},
 		}),
-		["Radix Icons"],
+		["Radix UI", "Radix Icons"],
 	);
 	assert.deepEqual(
 		found({
@@ -400,4 +403,67 @@ test("an Adobe stack: AEM, Launch, React Aria, MobX, core-js and S3", () => {
 test("a /content/dam/ path alone does not claim AEM", () => {
 	const html = '<img src="/content/dam/photo.jpg">';
 	assert.deepEqual(names(detect(page({ html }), technologies)), []);
+});
+
+test("Livewire brings Laravel, and LiveView brings Phoenix", () => {
+	const found = (overrides) => names(detect(page(overrides), technologies));
+	assert.deepEqual(found({ js: { Livewire: true } }).sort(), [
+		"Laravel",
+		"Livewire",
+	]);
+	assert.deepEqual(
+		found({ dom: { "[data-phx-main], [data-phx-session]|": true } }).sort(),
+		["Phoenix", "Phoenix LiveView"],
+	);
+	// wire: attributes alone are a hint, not proof
+	assert.deepEqual(found({ attrPrefix: ["wire:"] }), []);
+});
+
+test("a 15px icon is Radix Icons only beside Radix UI", () => {
+	const icon = { "svg[width='15'][height='15'][viewBox='0 0 15 15']|": true };
+	assert.deepEqual(names(detect(page({ dom: icon }), technologies)), []);
+});
+
+test("servers and CDNs, from the headers they send", () => {
+	const found = (headers) => names(detect(page({ headers }), technologies));
+	assert.deepEqual(found({ server: "nginx/1.27.4" }), ["Nginx 1.27.4"]);
+	assert.deepEqual(found({ server: "envoy" }), ["Envoy"]);
+	assert.deepEqual(found({ "x-fastly-request-id": "abc" }), ["Fastly"]);
+	// a Fastly-style name alone is a hint; with Fastly's Varnish it is proof
+	assert.deepEqual(found({ "x-served-by": "cache-lis1490051-LIS" }), []);
+	assert.deepEqual(
+		found({ "x-served-by": "cache-lis1490051-LIS", via: "1.1 varnish" }),
+		["Fastly"],
+	);
+});
+
+test("ad, analytics and search services, from what they load", () => {
+	const found = names(
+		detect(
+			page({
+				js: {
+					"pbjs.version": "v11.22.0",
+					"DD_RUM.version": "6.21.0",
+					litHtmlVersions: "1.1.2",
+				},
+				resources: [
+					"https://nuxt.com/_vercel/insights/script.js",
+					"https://use.typekit.net/abc.css",
+					"https://cdn.cookielaw.org/scripttemplates/otSDKStub.js",
+				],
+				dom: { ".DocSearch-Button, .DocSearch|": true },
+			}),
+			technologies,
+		),
+	);
+	assert.deepEqual(found.sort(), [
+		"Adobe Fonts",
+		"Algolia",
+		"Algolia DocSearch",
+		"Datadog RUM 6.21.0",
+		"Lit 1.1.2",
+		"OneTrust",
+		"Prebid.js 11.22.0",
+		"Vercel Analytics",
+	]);
 });
