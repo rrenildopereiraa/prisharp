@@ -130,6 +130,9 @@ importers:
       '@ridemountainpig/svgl-react':
         specifier: ^1.0.18
         version: 1.0.18(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
+      fflate:
+        specifier: ^0.8.3
+        version: 0.8.3
       react:
         specifier: ^19.2.0
         version: 19.3.1
