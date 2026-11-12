@@ -5,7 +5,7 @@ See the tech behind any site, in one click.
 | App                                |                                            |
 | ---------------------------------- | ------------------------------------------ |
 | [`apps/extension`](apps/extension) | The Chromium extension                     |
-| [`apps/web`](apps/web)             | prisharp.com, one page built with Yumma UI |
+| [`apps/web`](apps/web)             | prisharp.com, the website |
 
 ## Develop
 
