@@ -366,3 +366,38 @@ test("Google Tag Manager and CloudFront, from what they load and send", () => {
 	);
 	assert.deepEqual(found.sort(), ["Amazon CloudFront", "Google Tag Manager"]);
 });
+
+test("an Adobe stack: AEM, Launch, React Aria, MobX, core-js and S3", () => {
+	const found = names(
+		detect(
+			page({
+				resources: [
+					"https://account.adobe.com/etc.clientlibs/account/clientlibs/main.js",
+					"https://assets.adobedtm.com/abc/launch-123.min.js",
+				],
+				js: {
+					"_satellite.buildInfo.turbineVersion": "29.0.0",
+					__mobxGlobals: true,
+					"__core-js_shared__.versions.0.version": "3.46.0",
+				},
+				attrPrefix: ["data-react-aria-"],
+				headers: { server: "AmazonS3" },
+			}),
+			technologies,
+		),
+	);
+	assert.deepEqual(found.sort(), [
+		"Adobe Experience Manager",
+		"Adobe Launch",
+		"Amazon S3",
+		"MobX",
+		"React",
+		"React Aria",
+		"core-js 3.46.0",
+	]);
+});
+
+test("a /content/dam/ path alone does not claim AEM", () => {
+	const html = '<img src="/content/dam/photo.jpg">';
+	assert.deepEqual(names(detect(page({ html }), technologies)), []);
+});

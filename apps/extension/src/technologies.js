@@ -248,6 +248,18 @@ export const technologies = [
 		],
 	},
 
+	{
+		id: "aem",
+		name: "Adobe Experience Manager",
+		website:
+			"https://business.adobe.com/products/experience-manager/adobe-experience-manager.html",
+		category: "Framework",
+		signals: [
+			{ resource: /\/etc\.clientlibs\// },
+			{ html: /["'(]\/content\/dam\//, weight: 50 },
+		],
+	},
+
 	// Library
 	{
 		id: "react",
@@ -388,6 +400,21 @@ export const technologies = [
 		signals: [{ js: "gsap.version", version: true }],
 	},
 
+	{
+		id: "mobx",
+		name: "MobX",
+		website: "https://mobx.js.org",
+		category: "Library",
+		signals: [{ js: "__mobxGlobals" }, { js: "__mobxInstanceCount" }],
+	},
+	{
+		id: "core-js",
+		name: "core-js",
+		website: "https://github.com/zloirock/core-js",
+		category: "Library",
+		signals: [{ js: "__core-js_shared__.versions.0.version", version: true }],
+	},
+
 	// Components
 	{
 		id: "yumma-ui",
@@ -518,6 +545,15 @@ export const technologies = [
 			{ dom: "html[data-mantine-color-scheme]" },
 			{ css: /--mantine-(?:color|spacing|radius|font-size)-/ },
 		],
+	},
+
+	{
+		id: "react-aria",
+		name: "React Aria",
+		website: "https://react-spectrum.adobe.com/react-aria/",
+		category: "Components",
+		implies: ["react"],
+		signals: [{ attrPrefix: "data-react-aria-" }, { dom: "[data-rac]" }],
 	},
 
 	// Icons
@@ -826,6 +862,17 @@ export const technologies = [
 		],
 	},
 
+	{
+		id: "amazon-s3",
+		name: "Amazon S3",
+		website: "https://aws.amazon.com/s3",
+		category: "Hosting",
+		signals: [
+			{ header: ["server", /^AmazonS3$/] },
+			{ header: ["x-amz-bucket-region", /./] },
+		],
+	},
+
 	// Services
 	{
 		id: "google-analytics",
@@ -912,6 +959,17 @@ export const technologies = [
 		signals: [
 			{ resource: /googletagmanager\.com\/gtm\.js/ },
 			{ js: "google_tag_manager" },
+		],
+	},
+	{
+		id: "adobe-launch",
+		name: "Adobe Launch",
+		website:
+			"https://experienceleague.adobe.com/en/docs/experience-platform/tags/home",
+		category: "Services",
+		signals: [
+			{ js: "_satellite.buildInfo.turbineVersion" },
+			{ resource: /assets\.adobedtm\.com\// },
 		],
 	},
 ];

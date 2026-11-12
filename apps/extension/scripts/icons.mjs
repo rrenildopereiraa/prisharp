@@ -42,6 +42,7 @@ const marks = {
 	lit: "siLit",
 	lucide: "siLucide",
 	mantine: "siMantine",
+	mobx: "siMobx",
 	mui: "siMui",
 	netlify: "siNetlify",
 	nextjs: "siNextdotjs",

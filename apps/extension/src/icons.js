@@ -37,6 +37,7 @@ export const icons = {
 	"lit": false,
 	"lucide": false,
 	"mantine": false,
+	"mobx": false,
 	"mui": false,
 	"netlify": false,
 	"nextjs": true,
