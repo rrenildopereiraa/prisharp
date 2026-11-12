@@ -112,7 +112,9 @@ export async function collect(probes) {
 	for (const element of document.querySelectorAll("script[src], link[href]")) {
 		resources.add(element.src || element.href);
 	}
-	for (const entry of performance.getEntriesByType("resource").slice(0, 500)) {
+	// A heavy page loads thousands of files, and analytics come late: read
+	// them all, since a URL is short
+	for (const entry of performance.getEntriesByType("resource").slice(0, 5000)) {
 		resources.add(entry.name);
 	}
 
