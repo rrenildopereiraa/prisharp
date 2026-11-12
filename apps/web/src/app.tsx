@@ -77,17 +77,20 @@ export function App() {
 					<Band>
 						<ol
 							aria-label="How it works"
-							className="m:0 p:0 sst:none d:g @md:gtc:3"
+							className="m:0 p:0 sst:none d:g gtc:3"
 						>
 							{STEPS.map((step, index) => (
 								<li
 									key={step.title}
-									className={`d:f fd:c g:2 py:5 px:4 @md:px:8 ${index > 0 ? "btw:1 btc:line @md:btw:0 @md:blw:1 @md:blc:line" : ""}`}
+									className={`d:f fd:c g:2 py:4 px:3 @md:py:5 @md:px:8 ${index > 0 ? "blw:1 blc:line" : ""}`}
 								>
-									<h2 className="m:0 ff:mono fs:sm fw:500">
+									<h2 className="m:0 ff:mono fs:xs fw:500 @md:fs:sm">
 										<span aria-hidden="true">{index + 1}.</span> {step.title}
 									</h2>
-									<p className="m:0 fs:xs c:hint lh:5">{step.text}</p>
+									{/* On a phone the three sit side by side, titles only */}
+									<p className="d:none m:0 fs:xs c:hint lh:5 @md:d:b">
+										{step.text}
+									</p>
 								</li>
 							))}
 						</ol>
