@@ -547,20 +547,6 @@ export const technologies = [
 	},
 	// Components
 	{
-		id: "yumma-ui",
-		name: "Yumma UI",
-		website: "https://yummacss.com/ui",
-		category: "Components",
-		implies: ["yummacss", "base-ui"],
-		signals: [
-			{ file: "/yummaui.json", content: /"componentsDir"|"registry"/ },
-			{ file: "/yummaui.config.mjs", content: /yummaui/ },
-			// Copied into the project, it leaves no mark of its own in a build:
-			// Base UI styled with Yumma CSS is the evidence.
-			{ found: ["yummacss", "base-ui"] },
-		],
-	},
-	{
 		id: "tailwind-plus",
 		name: "Tailwind Plus",
 		website: "https://tailwindcss.com/plus",

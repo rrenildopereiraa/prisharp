@@ -4,7 +4,6 @@ export const icons = {
 	"emotion": false,
 	"prism": true,
 	"yummacss": false,
-	"yumma-ui": false,
 	"tabler-icons": true,
 	"iconoir": true,
 	"hugeicons": true,

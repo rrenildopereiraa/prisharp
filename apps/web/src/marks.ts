@@ -119,4 +119,4 @@ export const icons: Record<string, Icon> = {
  * and in its colors when hovered. Always the same picture, only its color
  * changes.
  */
-export const pictures = ["yummacss", "yumma-ui", "turbopack", "parcel"];
+export const pictures = ["yummacss", "turbopack", "parcel"];
