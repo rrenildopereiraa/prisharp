@@ -4,6 +4,7 @@ import { test } from "vite-plus/test";
 import { detect, probes } from "../src/detect.js";
 import { categories, technologies } from "../src/technologies.js";
 import { README, render } from "../scripts/readme.mjs";
+import { CHANGELOG, notes } from "../scripts/notes.mjs";
 
 const page = (overrides = {}) => ({
 	url: "https://example.com/",
@@ -576,4 +577,14 @@ test("every logo the manifest names is a file", async () => {
 test("the README lists every technology, as pnpm readme writes it", () => {
 	const readme = readFileSync(README, "utf8");
 	assert.equal(readme, render(readme), "run pnpm readme");
+});
+
+test("the CHANGELOG has a section for the manifest's version", () => {
+	const { version } = JSON.parse(
+		readFileSync(new URL("../manifest.json", import.meta.url), "utf8"),
+	);
+	assert.ok(
+		notes(readFileSync(CHANGELOG, "utf8"), version),
+		`add ## [${version}] to CHANGELOG.md`,
+	);
 });

@@ -1,0 +1,39 @@
+# Publishes the version in apps/extension/manifest.json as a GitHub release:
+# tags the commit v<version>, attaches prisharp-<version>.zip, and uses that
+# version's CHANGELOG section as the notes. Run it from the Actions tab once
+# the store has approved the version.
+name: Release
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Read the version
+        run: echo "VERSION=$(node -p "require('./apps/extension/manifest.json').version")" >> "$GITHUB_ENV"
+      - name: Pack the extension
+        working-directory: apps/extension
+        run: pnpm zip
+      - name: Write the notes
+        run: node apps/extension/scripts/notes.mjs > notes.md
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >
+          gh release create "v$VERSION"
+          "apps/extension/prisharp-$VERSION.zip"
+          --title "v$VERSION"
+          --notes-file notes.md
+          --target "$GITHUB_SHA"
