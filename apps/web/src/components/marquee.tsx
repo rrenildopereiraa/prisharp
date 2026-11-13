@@ -67,7 +67,9 @@ function Item({ mark }: { mark: Mark }) {
 	const brand = mark.hex && !vanishes ? `#${mark.hex}` : undefined;
 	const vars = {
 		"--brand": brand,
-		"--silhouette": mark.path ? undefined : `url(${url(mark.icon)})`,
+		"--silhouette": mark.path
+			? undefined
+			: `url(${JSON.stringify(url(mark.icon))})`,
 	} as CSSProperties;
 
 	return (

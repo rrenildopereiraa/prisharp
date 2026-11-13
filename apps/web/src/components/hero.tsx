@@ -4,11 +4,20 @@ import Button from "@/components/ui/button";
 import { BrowserMarks } from "@/components/browsers";
 import { REPO, STORE } from "@/links";
 
-// Names that fit the heading's second line with the question mark, at
-// every width: "built with TanStack Router?" is the longest that does.
+// "Built with" fits what a site is made of, not the icons or analytics it
+// adds; and only names that fit the heading's second line with the question
+// mark at every width: "built with TanStack Router?" is the longest that does.
+const BUILT = new Set([
+	"Framework",
+	"Platform",
+	"Library",
+	"Components",
+	"Styling",
+	"Build",
+]);
 const TYPED = catalog
-	.map((tech) => tech.name)
-	.filter((name) => name.length <= 15);
+	.filter((tech) => BUILT.has(tech.category) && tech.name.length <= 15)
+	.map((tech) => tech.name);
 const START = Math.max(0, TYPED.indexOf("React"));
 
 /** A keystroke's cost, in the range a person actually types at. */
