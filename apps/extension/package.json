@@ -18,7 +18,8 @@
 		"validate": "yummacss lint",
 		"icons": "node scripts/icons.mjs",
 		"test": "vp test run",
-		"zip": "yummacss build && node scripts/zip.mjs"
+		"zip": "yummacss build && node scripts/zip.mjs",
+		"readme": "node scripts/readme.mjs"
 	},
 	"devDependencies": {
 		"@ridemountainpig/svgl-react": "^1.0.18",
