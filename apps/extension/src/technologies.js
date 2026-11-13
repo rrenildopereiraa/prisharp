@@ -255,6 +255,7 @@ export const technologies = [
 		website:
 			"https://business.adobe.com/products/experience-manager/adobe-experience-manager.html",
 		category: "Framework",
+		icon: "adobe",
 		signals: [
 			{ resource: /\/etc\.clientlibs\// },
 			{ html: /["'(]\/content\/dam\//, weight: 50 },
@@ -961,6 +962,7 @@ export const technologies = [
 		name: "Amazon CloudFront",
 		website: "https://aws.amazon.com/cloudfront",
 		category: "Hosting",
+		icon: "aws",
 		signals: [
 			{ header: ["x-amz-cf-id", /./] },
 			{ header: ["via", /cloudfront/i] },
@@ -972,6 +974,7 @@ export const technologies = [
 		name: "Amazon S3",
 		website: "https://aws.amazon.com/s3",
 		category: "Hosting",
+		icon: "aws",
 		signals: [
 			{ header: ["server", /^AmazonS3$/] },
 			{ header: ["x-amz-bucket-region", /./] },
@@ -1109,6 +1112,7 @@ export const technologies = [
 		website:
 			"https://experienceleague.adobe.com/en/docs/experience-platform/tags/home",
 		category: "Services",
+		icon: "adobe",
 		signals: [
 			{ js: "_satellite.buildInfo.turbineVersion" },
 			{ resource: /assets\.adobedtm\.com\// },
@@ -1171,6 +1175,7 @@ export const technologies = [
 		name: "Adobe Fonts",
 		website: "https://fonts.adobe.com",
 		category: "Services",
+		icon: "adobefonts",
 		signals: [{ resource: /use\.typekit\.net\/|p\.typekit\.net\// }],
 	},
 	{
@@ -1231,6 +1236,7 @@ export const technologies = [
 		name: "Google Publisher Tag",
 		website: "https://developers.google.com/publisher-tag",
 		category: "Services",
+		icon: "googlelogo",
 		signals: [
 			{
 				resource:

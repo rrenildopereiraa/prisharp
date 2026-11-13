@@ -96,6 +96,10 @@ const marks = {
 // Icon name, then the svgl component, for marks Simple Icons lacks: one for
 // both themes, or a light and a dark one.
 const icons = {
+	adobe: "Adobe",
+	adobefonts: "AdobeFonts",
+	aws: ["AmazonWebServicesLight", "AmazonWebServicesDark"],
+	googlelogo: "Google",
 	parcel: "Parcel",
 	turbopack: ["TurbopackLight", "TurbopackDark"],
 };
@@ -109,6 +113,8 @@ const icons = {
 // 64px inside an SVG.
 const local = {
 	emotion: false,
+	// Prism's triangle from its repository, drawn in the panel's ink
+	prism: true,
 	yummacss: false,
 	"yumma-ui": false,
 	"tabler-icons": true,

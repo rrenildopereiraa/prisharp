@@ -2,6 +2,7 @@
 
 export const icons = {
 	"emotion": false,
+	"prism": true,
 	"yummacss": false,
 	"yumma-ui": false,
 	"tabler-icons": true,
@@ -86,6 +87,10 @@ export const icons = {
 	"webflow": false,
 	"webpack": false,
 	"wordpress": false,
+	"adobe": false,
+	"adobefonts": false,
+	"aws": true,
+	"googlelogo": false,
 	"parcel": false,
 	"turbopack": true
 };
