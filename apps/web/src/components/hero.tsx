@@ -4,7 +4,11 @@ import Button from "@/components/ui/button";
 import { BrowserMarks } from "@/components/browsers";
 import { REPO, STORE } from "@/links";
 
-const TYPED = catalog.map((tech) => tech.name);
+// Names that fit the heading's second line with the question mark, at
+// every width: "built with TanStack Router?" is the longest that does.
+const TYPED = catalog
+	.map((tech) => tech.name)
+	.filter((name) => name.length <= 15);
 const START = Math.max(0, TYPED.indexOf("React"));
 
 /** A keystroke's cost, in the range a person actually types at. */
