@@ -1,0 +1,42 @@
+name: Request a technology
+description: Ask Prisharp to detect a framework, library, host or service it misses.
+title: "Detect "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Prisharp only adds a technology it can prove from what a site ships to the browser. A live site that uses it is what makes that possible, so that part is required.
+
+        Check the [list of technologies](https://github.com/rrenildopereiraa/prisharp#technologies) first. If one is there but missed a site, open a regular issue with the site instead.
+  - type: input
+    id: name
+    attributes:
+      label: Technology
+      description: Its name, as its own site writes it.
+      placeholder: Umami
+    validations:
+      required: true
+  - type: input
+    id: website
+    attributes:
+      label: Its website
+      placeholder: https://umami.is
+    validations:
+      required: false
+  - type: textarea
+    id: sites
+    attributes:
+      label: Sites that use it
+      description: One or more live pages where it runs. Pages you know for sure are best, such as the technology's own site.
+      placeholder: https://umami.is
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: How to spot it (optional)
+      description: Anything it leaves in the browser, if you know it. A global like `window.umami`, a script URL, a response header, a class or attribute name.
+      placeholder: "Loads /script.js with a data-website-id attribute, and defines window.umami."
+    validations:
+      required: false
