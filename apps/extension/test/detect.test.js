@@ -506,3 +506,33 @@ test("PayPal, from its SDK", () => {
 	);
 	assert.deepEqual(found, ["PayPal 5.0.475"]);
 });
+
+test("payment providers, from the checkout scripts they load", () => {
+	const found = names(
+		detect(
+			page({
+				resources: [
+					"https://app.lemonsqueezy.com/js/lemon.js",
+					"https://cdn.paddle.com/paddle/v2/paddle.js",
+					"https://cdn.jsdelivr.net/npm/@polar-sh/checkout@0.1/dist/embed.global.js",
+					"https://gumroad.com/js/gumroad.js",
+					"https://js.braintreegateway.com/web/3.97.2/js/client.min.js",
+					"https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.0/adyen.js",
+					"https://web.squarecdn.com/v1/square.js",
+					"https://js.klarna.com/web-sdk/v1/klarna.js",
+				],
+			}),
+			technologies,
+		),
+	);
+	assert.deepEqual(found.sort(), [
+		"Adyen",
+		"Braintree",
+		"Gumroad",
+		"Klarna",
+		"Lemon Squeezy",
+		"Paddle",
+		"Polar",
+		"Square",
+	]);
+});

@@ -1088,6 +1088,80 @@ export const technologies = [
 		],
 	},
 	{
+		id: "lemon-squeezy",
+		name: "Lemon Squeezy",
+		website: "https://www.lemonsqueezy.com",
+		category: "Services",
+		icon: "lemonsqueezy",
+		signals: [
+			{
+				resource:
+					/app\.lemonsqueezy\.com\/js\/lemon\.js|assets\.lemonsqueezy\.com\/lemon\.js/,
+			},
+			{ js: "LemonSqueezy" },
+		],
+	},
+	{
+		id: "paddle",
+		name: "Paddle",
+		website: "https://www.paddle.com",
+		category: "Services",
+		signals: [
+			{ resource: /cdn\.paddle\.com\/paddle\// },
+			{ js: "Paddle.Checkout" },
+		],
+	},
+	{
+		id: "polar",
+		name: "Polar",
+		website: "https://polar.sh",
+		category: "Services",
+		signals: [
+			{ resource: /@polar-sh\/checkout|polar\.sh\/.*embed/ },
+			{ dom: "[data-polar-checkout]" },
+		],
+	},
+	{
+		id: "gumroad",
+		name: "Gumroad",
+		website: "https://gumroad.com",
+		category: "Services",
+		signals: [{ resource: /gumroad\.com\/js\/gumroad/ }],
+	},
+	{
+		id: "braintree",
+		name: "Braintree",
+		website: "https://www.braintreepayments.com",
+		category: "Services",
+		signals: [{ resource: /js\.braintreegateway\.com\// }],
+	},
+	{
+		id: "adyen",
+		name: "Adyen",
+		website: "https://www.adyen.com",
+		category: "Services",
+		signals: [{ resource: /checkoutshopper-[a-z]+\.adyen\.com\// }],
+	},
+	{
+		id: "square",
+		name: "Square",
+		website: "https://squareup.com",
+		category: "Services",
+		signals: [
+			{
+				resource:
+					/web\.squarecdn\.com\/v1\/square\.js|sandbox\.web\.squarecdn\.com/,
+			},
+		],
+	},
+	{
+		id: "klarna",
+		name: "Klarna",
+		website: "https://www.klarna.com",
+		category: "Services",
+		signals: [{ resource: /js\.klarna\.com\/|x\.klarnacdn\.net\// }],
+	},
+	{
 		id: "clerk",
 		name: "Clerk",
 		website: "https://clerk.com",
