@@ -166,7 +166,7 @@ function Detail({
 export function Proof({ tech }: { tech: Found }) {
 	const box = useRef<HTMLElement>(null);
 	const content = useRef<HTMLDivElement>(null);
-	useMorph(box, content, tech.id);
+	useMorph(box, content, `page:${tech.id}`);
 	return (
 		<section
 			ref={box}
