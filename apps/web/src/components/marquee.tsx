@@ -20,7 +20,44 @@ type Mark = {
 	hex?: string;
 };
 
-const marks: Mark[] = catalog.flatMap((tech): Mark[] => {
+// The ones most people know come first, so the first logos a visitor sees
+// are ones they use; the rest follow in the catalog's order.
+const FAMOUS = [
+	"react",
+	"nextjs",
+	"tailwindcss",
+	"vue",
+	"wordpress",
+	"shopify",
+	"vercel",
+	"stripe",
+	"cloudflare",
+	"angular",
+	"svelte",
+	"vite",
+	"google-analytics",
+	"nuxt",
+	"astro",
+	"supabase",
+	"firebase",
+	"github",
+	"netlify",
+	"bootstrap",
+	"jquery",
+	"framer",
+	"webflow",
+	"shadcn",
+	"threejs",
+	"sentry",
+	"webpack",
+	"figma",
+];
+const rank = (id: string) => {
+	const index = FAMOUS.indexOf(id);
+	return index === -1 ? FAMOUS.length : index;
+};
+
+const unranked: Mark[] = catalog.flatMap((tech): Mark[] => {
 	const icon = tech.icon ?? tech.id;
 	const simple = icons[tech.id];
 	if (simple) {
@@ -39,6 +76,8 @@ const marks: Mark[] = catalog.flatMap((tech): Mark[] => {
 	}
 	return [];
 });
+// a stable sort keeps the catalog's order among the rest
+const marks = [...unranked].sort((a, b) => rank(a.id) - rank(b.id));
 
 // pixels a second at full speed, and how quickly it eases to a stop or back
 const SPEED = 36;
