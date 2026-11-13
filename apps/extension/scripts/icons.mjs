@@ -62,6 +62,7 @@ const marks = {
 	nextjs: "siNextdotjs",
 	nginx: "siNginx",
 	nuxt: "siNuxt",
+	paypal: "siPaypal",
 	phoenixframework: "siPhoenixframework",
 	phosphor: "siPhosphoricons",
 	plausibleanalytics: "siPlausibleanalytics",

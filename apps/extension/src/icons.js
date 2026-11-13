@@ -58,6 +58,7 @@ export const icons = {
 	"nextjs": true,
 	"nginx": false,
 	"nuxt": false,
+	"paypal": true,
 	"phoenixframework": false,
 	"phosphor": true,
 	"plausibleanalytics": false,

@@ -1076,6 +1076,18 @@ export const technologies = [
 		signals: [{ resource: /js\.stripe\.com/ }],
 	},
 	{
+		id: "paypal",
+		name: "PayPal",
+		website: "https://developer.paypal.com",
+		category: "Services",
+		signals: [
+			// the JavaScript SDK and the older checkout.js
+			{ resource: /paypal\.com\/sdk\/js|paypalobjects\.com\/api\/checkout/ },
+			{ js: "paypal.version", version: true },
+			{ dom: "[data-paypal-button], .paypal-buttons" },
+		],
+	},
+	{
 		id: "clerk",
 		name: "Clerk",
 		website: "https://clerk.com",

@@ -493,3 +493,16 @@ test("MediaWiki reads its version from the generator", () => {
 		"MediaWiki 1.46.0",
 	]);
 });
+
+test("PayPal, from its SDK", () => {
+	const found = names(
+		detect(
+			page({
+				resources: ["https://www.paypal.com/sdk/js?client-id=abc&currency=EUR"],
+				js: { "paypal.version": "5.0.475" },
+			}),
+			technologies,
+		),
+	);
+	assert.deepEqual(found, ["PayPal 5.0.475"]);
+});
