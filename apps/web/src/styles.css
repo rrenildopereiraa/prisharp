@@ -46,9 +46,39 @@
 }
 
 /* A marquee logo with no one-color mark, greyed into the page's ink. */
-[data-tint] {
+/* A marquee logo: the page's hint color at rest, its brand's when hovered.
+   A full-color logo rests as a silhouette of itself, in the same hint. */
+[data-mark] {
+	transition: color 150ms ease;
+}
+
+[data-mark]:hover {
+	/* without a brand color that shows on this page, the ink */
+	color: var(--brand, light-dark(#101218, #eef0f5));
+}
+
+[data-silhouette] {
 	display: block;
-	filter: grayscale(1) opacity(0.75);
+	background: currentColor;
+	mask: var(--silhouette) center / contain no-repeat;
+}
+
+[data-picture] {
+	display: none;
+}
+
+[data-mark]:hover [data-silhouette] {
+	display: none;
+}
+
+[data-mark]:hover [data-picture] {
+	display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-mark] {
+		transition: none;
+	}
 }
 
 [data-marquee-frame] {

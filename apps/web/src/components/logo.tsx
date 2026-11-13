@@ -9,7 +9,8 @@ const files = import.meta.glob<string>("../../../extension/icons/tech/*.svg", {
 	import: "default",
 });
 
-const url = (file: string) =>
+/** A logo's URL in the build, by its file name without the extension. */
+export const url = (file: string) =>
 	files[`../../../extension/icons/tech/${file}.svg`];
 
 /** Whether the extension ships a logo by this name. */
