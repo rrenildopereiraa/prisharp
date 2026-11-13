@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { test } from "vite-plus/test";
 import { detect, probes } from "../src/detect.js";
 import { categories, technologies } from "../src/technologies.js";
+import { README, render } from "../scripts/readme.mjs";
 
 const page = (overrides = {}) => ({
 	url: "https://example.com/",
@@ -570,4 +571,9 @@ test("every logo the manifest names is a file", async () => {
 			);
 		}
 	}
+});
+
+test("the README lists every technology, as pnpm readme writes it", () => {
+	const readme = readFileSync(README, "utf8");
+	assert.equal(readme, render(readme), "run pnpm readme");
 });

@@ -62,6 +62,7 @@ Add an entry to `src/technologies.js`, using the signal kinds listed at the top 
 ```bash
 pnpm install
 pnpm icons      # when svgl has a logo for it: add it to scripts/icons.mjs first
+pnpm readme     # list it in the repository's README
 pnpm test       # vp test run
 ```
 
