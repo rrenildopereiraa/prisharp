@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { catalog } from "virtual:catalog";
+import { rank } from "@/famous";
 import Button from "@/components/ui/button";
 import { BrowserMarks } from "@/components/browsers";
 import { REPO, STORE } from "@/links";
@@ -15,8 +16,10 @@ const BUILT = new Set([
 	"Styling",
 	"Build",
 ]);
+// best known first, as in the marquee; a stable sort keeps the rest in order
 const TYPED = catalog
 	.filter((tech) => BUILT.has(tech.category) && tech.name.length <= 15)
+	.sort((a, b) => rank(a.id) - rank(b.id))
 	.map((tech) => tech.name);
 const START = Math.max(0, TYPED.indexOf("React"));
 
