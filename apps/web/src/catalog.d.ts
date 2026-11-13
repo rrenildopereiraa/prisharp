@@ -5,5 +5,10 @@ declare module "virtual:catalog" {
 		name: string;
 		icon?: string;
 		category: string;
+		website: string;
+		/** The names of what it brings in. */
+		implies: string[];
+		/** Up to three traces Prisharp looks for, without values. */
+		evidence: { kind: string; text: string }[];
 	}[];
 }

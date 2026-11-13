@@ -1,12 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Band } from "@/components/band";
 import { Footer } from "@/components/footer";
 import Threads from "@/components/threads";
 import { Header } from "@/components/header";
-import { Hero } from "@/components/hero";
+import { FIRST, Hero } from "@/components/hero";
 import { Marquee } from "@/components/marquee";
-import { Panel } from "@/components/panel";
-import { demo } from "@/demo";
+import { catalog } from "virtual:catalog";
+import { Proof } from "@/components/panel";
+import type { Found } from "@/demo";
 import { DarkContext, useDark } from "@/theme";
 
 const STEPS = [
@@ -27,8 +28,17 @@ const STEPS = [
 // A and S press the hero's buttons, unless a field has the keys
 const KEYS: Record<string, string> = { a: "install", s: "source" };
 
+/** A catalog entry, in the shape the popup's evidence page reads. */
+const found = (name: string): Found => {
+	const tech = catalog.find((entry) => entry.name === name) ?? catalog[0];
+	return { ...tech, icon: tech.icon ?? tech.id };
+};
+
 export function App() {
 	const dark = useDark();
+	// the evidence follows the name the heading has typed
+	const [named, setNamed] = useState(FIRST);
+	const proof = found(named);
 
 	useEffect(() => {
 		const onKey = (event: KeyboardEvent) => {
@@ -52,7 +62,7 @@ export function App() {
 				</Band>
 				<main className="d:f fd:c fg:1 min-h:0">
 					<Band grow className="d:f fd:c @lg:fd:r">
-						<Hero />
+						<Hero onName={setNamed} />
 						<div
 							data-stage
 							className="p:r d:f fg:1 min-h:96 o:h btw:1 btc:line blc:line @lg:fg:0 @lg:fs:0 @lg:w:100 @lg:btw:0 @lg:blw:1"
@@ -67,7 +77,7 @@ export function App() {
 							    scrolls inside it, so it never pushes the page taller; on
 							    wider screens it sets the stage's height. */}
 							<div className="p:a t:0 l:0 d:f ai:c jc:c w:100% h:100% p:4 @md:p:r @md:fg:1 @md:h:auto @lg:p:6">
-								<Panel demo={demo} />
+								<Proof tech={proof} />
 							</div>
 						</div>
 					</Band>
