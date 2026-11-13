@@ -528,3 +528,46 @@ test("OutSystems, from its runtime scripts", () => {
 		"OutSystems",
 	]);
 });
+
+// Technologies whose logo neither Simple Icons nor svgl has, and that show
+// their first letter until their own SVG is added to icons/tech. The list
+// only shrinks: a new technology must ship with its logo.
+const WITHOUT_LOGO = [
+	"core-js",
+	"hyperscript",
+	"katex",
+	"react-aria",
+	"stylex",
+	"polar",
+	"onetrust",
+	"datadome",
+	"prebid",
+	"amazon-ads",
+	"outsystems",
+];
+
+test("every technology ships a logo, but the few listed without one", async () => {
+	const { icons } = await import("../src/icons.js");
+	const missing = technologies
+		.filter((tech) => !((tech.icon ?? tech.id) in icons))
+		.map((tech) => tech.id);
+	assert.deepEqual(missing.sort(), [...WITHOUT_LOGO].sort());
+});
+
+test("every logo the manifest names is a file", async () => {
+	const { icons } = await import("../src/icons.js");
+	for (const [name, dark] of Object.entries(icons)) {
+		assert.ok(
+			readFileSync(new URL(`../icons/tech/${name}.svg`, import.meta.url)),
+			name,
+		);
+		if (dark) {
+			assert.ok(
+				readFileSync(
+					new URL(`../icons/tech/${name}-dark.svg`, import.meta.url),
+				),
+				`${name}-dark`,
+			);
+		}
+	}
+});
