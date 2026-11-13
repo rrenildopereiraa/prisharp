@@ -536,3 +536,12 @@ test("payment providers, from the checkout scripts they load", () => {
 		"Square",
 	]);
 });
+
+test("OutSystems, from its runtime scripts", () => {
+	const resources = [
+		"https://app.example.com/MyApp/scripts/OutSystemsReactView.js?abc",
+	];
+	assert.deepEqual(names(detect(page({ resources }), technologies)), [
+		"OutSystems",
+	]);
+});

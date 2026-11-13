@@ -309,6 +309,21 @@ export const technologies = [
 		],
 	},
 
+	{
+		id: "outsystems",
+		name: "OutSystems",
+		website: "https://www.outsystems.com",
+		category: "Framework",
+		signals: [
+			// its runtime scripts, served from each app's own /scripts/
+			{
+				resource:
+					/\/scripts\/OutSystems(?:ReactView|ReactWidgets|UI|ManifestLoader)?\.js/,
+			},
+			{ js: "OutSystemsDebugger", weight: 50 },
+		],
+	},
+
 	// Library
 	{
 		id: "react",
