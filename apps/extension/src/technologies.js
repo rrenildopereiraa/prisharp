@@ -297,6 +297,18 @@ export const technologies = [
 			{ js: "liveSocket", weight: 50 },
 		],
 	},
+	{
+		id: "mediawiki",
+		name: "MediaWiki",
+		website: "https://www.mediawiki.org",
+		category: "Framework",
+		icon: "wikipedia",
+		signals: [
+			{ meta: ["generator", /^MediaWiki ([\d.]+)/] },
+			{ js: "mw.config" },
+		],
+	},
+
 	// Library
 	{
 		id: "react",

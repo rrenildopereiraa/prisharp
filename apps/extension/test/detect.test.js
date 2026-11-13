@@ -486,3 +486,10 @@ test("a version drops its build metadata", () => {
 	);
 	assert.deepEqual(found, ["Angular 22.2.6"]);
 });
+
+test("MediaWiki reads its version from the generator", () => {
+	const meta = { generator: "MediaWiki 1.46.0-wmf.3" };
+	assert.deepEqual(names(detect(page({ meta }), technologies)), [
+		"MediaWiki 1.46.0",
+	]);
+});

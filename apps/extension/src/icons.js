@@ -84,6 +84,7 @@ export const icons = {
 	"vite": false,
 	"vue": false,
 	"webawesome": false,
+	"wikipedia": true,
 	"webflow": false,
 	"webpack": false,
 	"wordpress": false,

@@ -88,6 +88,7 @@ const marks = {
 	vite: "siVite",
 	vue: "siVuedotjs",
 	webawesome: "siWebawesome",
+	wikipedia: "siWikipedia",
 	webflow: "siWebflow",
 	webpack: "siWebpack",
 	wordpress: "siWordpress",
