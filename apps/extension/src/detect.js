@@ -63,7 +63,8 @@ export function probes(technologies) {
 
 const version = (value) =>
 	typeof value === "string" && /\d/.test(value)
-		? value.replace(/^v/i, "")
+		? // a build's +metadata says which commit, not which version
+			value.replace(/^v/i, "").replace(/\+.*$/, "")
 		: undefined;
 
 const test = (regex, text) => {
@@ -180,6 +181,8 @@ export function detect(page, technologies, categories = []) {
 	const found = new Map();
 
 	const score = (tech) => {
+		// evidence that rules a technology out, whatever else is found
+		if (tech.unless?.some((signal) => match(signal, page))) return;
 		let total = 0;
 		let firstVersion;
 		const evidence = [];

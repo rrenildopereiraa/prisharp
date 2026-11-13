@@ -27,7 +27,8 @@
 // A regex with a capture group reads the version from it. Each signal weighs
 // 100 unless it says otherwise: a technology shows at 100, so a weak signal
 // (50) needs a second one. `implies` adds what a technology is built on;
-// `requires` drops it unless those were found too.
+// `requires` drops it unless those were found too; `unless` lists signals
+// that rule it out.
 
 export const categories = [
 	"Framework",
@@ -936,6 +937,8 @@ export const technologies = [
 		name: "GitHub Pages",
 		website: "https://pages.github.com",
 		category: "Hosting",
+		// github.com sends the same server header as the sites it hosts
+		unless: [{ url: /^https?:\/\/(?:[\w-]+\.)*github\.com\// }],
 		signals: [{ header: ["server", /^GitHub\.com$/i] }],
 	},
 	{

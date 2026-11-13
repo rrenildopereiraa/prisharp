@@ -2,7 +2,7 @@
 	"manifest_version": 3,
 	"name": "Prisharp - See what any site is built with",
 	"description": "Every framework, library and host on the page, and how Prisharp knows.",
-	"version": "0.5.0",
+	"version": "0.5.1",
 	"homepage_url": "https://prisharp.com",
 	"action": {
 		"default_popup": "popup.html",

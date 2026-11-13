@@ -467,3 +467,22 @@ test("ad, analytics and search services, from what they load", () => {
 		"Vercel Analytics",
 	]);
 });
+
+test("GitHub Pages shows for the sites GitHub hosts, not github.com", () => {
+	const headers = { server: "GitHub.com" };
+	const found = (url) => names(detect(page({ url, headers }), technologies));
+	assert.deepEqual(found("https://yummacss.github.io/docs/"), ["GitHub Pages"]);
+	assert.deepEqual(found("https://mantine.dev/"), ["GitHub Pages"]);
+	assert.deepEqual(found("https://github.com/"), []);
+	assert.deepEqual(found("https://gist.github.com/x"), []);
+});
+
+test("a version drops its build metadata", () => {
+	const found = names(
+		detect(
+			page({ dom: { "[ng-version]|ng-version": "22.2.6+sha-2267937" } }),
+			technologies,
+		),
+	);
+	assert.deepEqual(found, ["Angular 22.2.6"]);
+});
