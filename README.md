@@ -9,7 +9,7 @@ See the tech behind any site, in one click.
 
 ## Technologies
 
-Each one is detected only from evidence it alone leaves, and the popup shows that evidence. To add one, see [`apps/extension`](apps/extension#add-a-technology).
+Each one is detected only from evidence it alone leaves, and the popup shows that evidence. Missing one? [Request it](https://github.com/rrenildopereiraa/prisharp/issues/new?template=technology.yml), or add it yourself as [`apps/extension`](apps/extension#add-a-technology) explains.
 
 <!-- technologies:start -->
 
