@@ -127,16 +127,6 @@ test("Yumma CSS shows from its stylesheet or its classes", () => {
 	assert.deepEqual(names(detect(page({ classes: ["d:f"] }), technologies)), []);
 });
 
-test("Yumma UI follows from Yumma CSS and Base UI together", () => {
-	const yumma = { css: ".d\\:f{display:flex}", classes: ["d:f", "ai:c"] };
-	assert.ok(!names(detect(page(yumma), technologies)).includes("Yumma UI"));
-
-	const attrPrefix = ["data-base-ui-"];
-	const found = names(detect(page({ ...yumma, attrPrefix }), technologies));
-	assert.ok(found.includes("Yumma UI"));
-	assert.ok(found.includes("Base UI"));
-});
-
 test("versions come from attributes, sets and generators", () => {
 	const found = detect(
 		page({
@@ -166,13 +156,6 @@ test("Base UI shows from a trigger at rest or from any chunk", () => {
 		),
 	});
 	assert.deepEqual(names(detect(chunk, technologies)), ["Base UI"]);
-});
-
-test("Yumma UI shows from its config on a dev server", () => {
-	const found = names(
-		detect(page({ file: ["/yummaui.json"] }), technologies, categories),
-	);
-	assert.deepEqual(found, ["Yumma UI", "Base UI", "Yumma CSS"]);
 });
 
 test("Yumma CSS shows from its config on a dev server", () => {
@@ -465,5 +448,83 @@ test("ad, analytics and search services, from what they load", () => {
 		"OneTrust",
 		"Prebid.js 11.22.0",
 		"Vercel Analytics",
+	]);
+});
+
+test("GitHub Pages shows for the sites GitHub hosts, not github.com", () => {
+	const headers = { server: "GitHub.com" };
+	const found = (url) => names(detect(page({ url, headers }), technologies));
+	assert.deepEqual(found("https://yummacss.github.io/docs/"), ["GitHub Pages"]);
+	assert.deepEqual(found("https://mantine.dev/"), ["GitHub Pages"]);
+	assert.deepEqual(found("https://github.com/"), []);
+	assert.deepEqual(found("https://gist.github.com/x"), []);
+});
+
+test("a version drops its build metadata", () => {
+	const found = names(
+		detect(
+			page({ dom: { "[ng-version]|ng-version": "22.2.6+sha-2267937" } }),
+			technologies,
+		),
+	);
+	assert.deepEqual(found, ["Angular 22.2.6"]);
+});
+
+test("MediaWiki reads its version from the generator", () => {
+	const meta = { generator: "MediaWiki 1.46.0-wmf.3" };
+	assert.deepEqual(names(detect(page({ meta }), technologies)), [
+		"MediaWiki 1.46.0",
+	]);
+});
+
+test("PayPal, from its SDK", () => {
+	const found = names(
+		detect(
+			page({
+				resources: ["https://www.paypal.com/sdk/js?client-id=abc&currency=EUR"],
+				js: { "paypal.version": "5.0.475" },
+			}),
+			technologies,
+		),
+	);
+	assert.deepEqual(found, ["PayPal 5.0.475"]);
+});
+
+test("payment providers, from the checkout scripts they load", () => {
+	const found = names(
+		detect(
+			page({
+				resources: [
+					"https://app.lemonsqueezy.com/js/lemon.js",
+					"https://cdn.paddle.com/paddle/v2/paddle.js",
+					"https://cdn.jsdelivr.net/npm/@polar-sh/checkout@0.1/dist/embed.global.js",
+					"https://gumroad.com/js/gumroad.js",
+					"https://js.braintreegateway.com/web/3.97.2/js/client.min.js",
+					"https://checkoutshopper-live.adyen.com/checkoutshopper/sdk/5.0/adyen.js",
+					"https://web.squarecdn.com/v1/square.js",
+					"https://js.klarna.com/web-sdk/v1/klarna.js",
+				],
+			}),
+			technologies,
+		),
+	);
+	assert.deepEqual(found.sort(), [
+		"Adyen",
+		"Braintree",
+		"Gumroad",
+		"Klarna",
+		"Lemon Squeezy",
+		"Paddle",
+		"Polar",
+		"Square",
+	]);
+});
+
+test("OutSystems, from its runtime scripts", () => {
+	const resources = [
+		"https://app.example.com/MyApp/scripts/OutSystemsReactView.js?abc",
+	];
+	assert.deepEqual(names(detect(page({ resources }), technologies)), [
+		"OutSystems",
 	]);
 });

@@ -1,10 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { catalog } from "virtual:catalog";
+import { rank } from "@/famous";
 import Button from "@/components/ui/button";
 import { BrowserMarks } from "@/components/browsers";
 import { REPO, STORE } from "@/links";
 
-const TYPED = catalog.map((tech) => tech.name);
+// "Built with" fits what a site is made of, not the icons or analytics it
+// adds; and only names that fit the heading's second line with the question
+// mark at every width: "built with TanStack Router?" is the longest that does.
+const BUILT = new Set([
+	"Framework",
+	"Platform",
+	"Library",
+	"Components",
+	"Styling",
+	"Build",
+]);
+// best known first, as in the marquee; a stable sort keeps the rest in order
+const TYPED = catalog
+	.filter((tech) => BUILT.has(tech.category) && tech.name.length <= 15)
+	.sort((a, b) => rank(a.id) - rank(b.id))
+	.map((tech) => tech.name);
 const START = Math.max(0, TYPED.indexOf("React"));
 
 /** A keystroke's cost, in the range a person actually types at. */
@@ -18,9 +34,18 @@ function strokeOf(char: string) {
 	return char === " " ? gap + SPACE_PAUSE : gap;
 }
 
-/** Types each technology's name into the sentence, then deletes it. */
-function useTypedName() {
+/** The name the heading types first, and so the one the page opens on. */
+export const FIRST = TYPED[START];
+
+/**
+ * Types each technology's name into the sentence, then deletes it, and says
+ * which one is on the page once its name is whole.
+ */
+function useTypedName(onName?: (name: string) => void) {
 	const [name, setName] = useState(TYPED[START]);
+	// the latest callback, read when a name is whole, so typing never restarts
+	const report = useRef(onName);
+	report.current = onName;
 	const [typing, setTyping] = useState(false);
 
 	useEffect(() => {
@@ -54,6 +79,7 @@ function useTypedName() {
 					await wait(strokeOf(next[i - 1]));
 				}
 				setTyping(false);
+				report.current?.(next);
 			}
 		})();
 
@@ -80,8 +106,8 @@ function Key({ children }: { children: string }) {
 // the hero's buttons: the mockup's 40px height and 6px corners
 const ACTION = "h:10 px:4 g:2 fs:sm us:none";
 
-export function Hero() {
-	const { name, typing } = useTypedName();
+export function Hero({ onName }: { onName?: (name: string) => void }) {
+	const { name, typing } = useTypedName(onName);
 
 	return (
 		<div

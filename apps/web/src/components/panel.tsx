@@ -1,7 +1,7 @@
 import { paths } from "extension/symbols";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import { merge } from "yummacss/merge";
-import type { Demo, Evidence, Found } from "@/demo";
+import type { Evidence, Found } from "@/demo";
 import { useMorph } from "@/morph";
 import { hasLogo, Logo } from "./logo";
 
@@ -25,23 +25,6 @@ const ROW =
 	"d:f ai:c g:3 w:100% h:10 px:4 bw:0 bg:transparent c:panel-ink ff:d fs:sm ta:l td:none c:p h:bg:panel-hover fv:os:s fv:ow:2 fv:oo:-2 fv:oc:panel-focus";
 
 const RULE = "m:0 h:px bw:0 bg:panel-line";
-
-// what the demo draws in place of real focus and a real press, so it never
-// takes focus from the page
-const RING = "os:s ow:2 oo:-2 oc:panel-focus bg:panel-hover";
-const PRESSED = "bg:panel-line";
-
-const wait = (ms: number, signal: AbortSignal) =>
-	new Promise<void>((done, fail) => {
-		const timer = setTimeout(done, ms);
-		signal.addEventListener("abort", () => {
-			clearTimeout(timer);
-			fail(signal.reason);
-		});
-	});
-
-const label = (tech: Found) =>
-	[tech.name, tech.version].filter(Boolean).join(" ");
 
 // the logos are pictures of the product, not text to select
 function Mark({ tech, size }: { tech: Found; size: string }) {
@@ -89,7 +72,8 @@ function Detail({
 }: {
 	tech: Found;
 	all: Found[];
-	onBack: () => void;
+	/** Without it, the page has no way back: it stands on its own. */
+	onBack?: () => void;
 	/** Moves focus to Back on open: only when a person opened it. */
 	focus: boolean;
 	/** The demo's ring or press on Back. */
@@ -101,31 +85,33 @@ function Detail({
 	}, [focus]);
 
 	const brings = tech.implies
-		.map((id) => all.find((other) => other.id === id)?.name)
+		.map((id) => all.find((other) => other.id === id)?.name ?? id)
 		.filter(Boolean);
 	const site = new URL(tech.website).hostname.replace(/^www\./, "");
 
 	return (
 		<div
 			onKeyDown={(event) => {
-				if (event.key !== "Escape") return;
+				if (event.key !== "Escape" || !onBack) return;
 				event.preventDefault();
 				onBack();
 			}}
 		>
-			<div className="d:f ai:c g:1 py:2 px:2">
-				<button
-					ref={back}
-					type="button"
-					aria-label="Back to the list"
-					onClick={onBack}
-					className={merge(
-						"d:f ai:c jc:c fs:0 w:8 h:8 br:9999 bw:0 bg:transparent c:panel-muted h:bg:panel-hover c:p fv:os:s fv:ow:2 fv:oc:panel-focus",
-						backClasses,
-					)}
-				>
-					<Symbol name="arrow_back" className="d:b w:5 h:5" />
-				</button>
+			<div className={`d:f ai:c g:1 py:2 ${onBack ? "px:2" : "px:4 h:12"}`}>
+				{onBack && (
+					<button
+						ref={back}
+						type="button"
+						aria-label="Back to the list"
+						onClick={onBack}
+						className={merge(
+							"d:f ai:c jc:c fs:0 w:8 h:8 br:9999 bw:0 bg:transparent c:panel-muted h:bg:panel-hover c:p fv:os:s fv:ow:2 fv:oc:panel-focus",
+							backClasses,
+						)}
+					>
+						<Symbol name="arrow_back" className="d:b w:5 h:5" />
+					</button>
+				)}
 				<p className="m:0 fg:1 min-w:0 fs:md fw:400 o:h to:e ws:nw">
 					{tech.name}
 				</p>
@@ -174,192 +160,22 @@ function Detail({
 }
 
 /**
- * The extension's popup, drawn on the page with a result: the list, and a page
- * of evidence for each technology, as in Chrome.
- *
- * It plays itself in a loop: a row takes focus, opens, goes back, and Tab
- * moves on to the next. A pointer or focus inside holds it, and leaving lets
- * it carry on from where it is. Under reduced motion it stays still.
+ * The popup's evidence page for one technology, on its own: what Prisharp
+ * looks for to know it is there. It follows the name the heading types.
  */
-export function Panel({ demo }: { demo: Demo }) {
-	const [open, setOpen] = useState<string | null>(null);
-	const [opened, setOpened] = useState(false);
-	const [hold, setHold] = useState(false);
-	const [ring, setRing] = useState<string | null>(null);
-	const [pressed, setPressed] = useState<string | null>(null);
-	const rows = useRef<Map<string, HTMLButtonElement>>(new Map());
-	const pointer = useRef(false);
-	const focused = useRef(false);
-	const current = useRef(open);
-	current.current = open;
-	// where the loop is, to carry on from after a hold
-	const next = useRef(0);
-
-	const all = demo.technologies;
-	const tech = all.find((item) => item.id === open);
-	const live = !hold && all.length > 1;
-
-	useEffect(() => {
-		if (!live) return;
-		if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-		const controller = new AbortController();
-		const { signal } = controller;
-		const shown = all.slice(0, 5).map((item) => item.id);
-
-		const press = async (id: string) => {
-			setPressed(id);
-			await wait(160, signal);
-			setPressed(null);
-		};
-		const back = async (id: string) => {
-			setRing("back");
-			await wait(700, signal);
-			await press("back");
-			setOpen(null);
-			setRing(id);
-			await wait(800, signal);
-		};
-
-		const play = async () => {
-			let index = next.current % shown.length;
-			const left = current.current;
-			if (left) {
-				// held on a page: go back from it first
-				index = Math.max(0, shown.indexOf(left));
-				await wait(400, signal);
-				await back(left);
-				index = (index + 1) % shown.length;
-				setRing(shown[index]);
-				await wait(900, signal);
-			} else {
-				setRing(shown[index]);
-				await wait(1200, signal);
-			}
-			for (;;) {
-				const id = shown[index];
-				next.current = index;
-				// Enter: the row presses in and opens
-				await press(id);
-				setRing(null);
-				setOpened(false);
-				setOpen(id);
-				await wait(3000, signal);
-				await back(id);
-				// Tab, to the next row
-				index = (index + 1) % shown.length;
-				next.current = index;
-				setRing(shown[index]);
-				await wait(900, signal);
-			}
-		};
-		play().catch(() => {});
-		return () => {
-			controller.abort();
-			setRing(null);
-			setPressed(null);
-		};
-	}, [live, all]);
-
-	const holdFor = () => setHold(pointer.current || focused.current);
-
+export function Proof({ tech }: { tech: Found }) {
 	const box = useRef<HTMLElement>(null);
 	const content = useRef<HTMLDivElement>(null);
-	useMorph(box, content, tech ? `page:${tech.id}` : "list");
-
-	const status =
-		all.length === 0
-			? "No known technology found on this page."
-			: all.length === 1
-				? "Built with 1 technology"
-				: `Built with ${all.length} technologies`;
-
+	useMorph(box, content, tech.id);
 	return (
 		<section
 			ref={box}
-			aria-label="Result"
-			onPointerEnter={() => {
-				pointer.current = true;
-				holdFor();
-			}}
-			onPointerLeave={() => {
-				pointer.current = false;
-				holdFor();
-			}}
-			onFocus={() => {
-				focused.current = true;
-				holdFor();
-			}}
-			onBlur={(event) => {
-				if (event.currentTarget.contains(event.relatedTarget)) return;
-				focused.current = false;
-				holdFor();
-			}}
+			aria-label={`How Prisharp knows ${tech.name}`}
+			aria-live="polite"
 			className="p:r w:80 max-w:100% max-h:100% oy:auto ob:c br:lg bg:panel c:panel-ink ff:d fs:sm bw:1 bc:transparent bs-o:lg"
 		>
 			<div ref={content}>
-				{tech ? (
-					<Detail
-						tech={tech}
-						all={all}
-						focus={opened}
-						backClasses={
-							pressed === "back" ? PRESSED : ring === "back" ? RING : ""
-						}
-						onBack={() => {
-							setOpen(null);
-							requestAnimationFrame(() => rows.current.get(tech.id)?.focus());
-						}}
-					/>
-				) : (
-					<>
-						<div className="pt:4 pb:3 px:4">
-							<p className="m:0 fs:md fw:400 o:h to:e ws:nw">{demo.host}</p>
-							<p className="m:0 mt:1 fs:xs c:panel-muted">{status}</p>
-						</div>
-						{all.length > 0 && (
-							<>
-								<hr className={RULE} />
-								<ul className="m:0 py:1 px:0">
-									{all.map((item) => (
-										<li key={item.id} className="d:b">
-											<button
-												ref={(element) => {
-													if (element) rows.current.set(item.id, element);
-												}}
-												type="button"
-												aria-label={`${label(item)} ${item.category}. Show the evidence`}
-												onClick={() => {
-													setOpened(true);
-													setOpen(item.id);
-												}}
-												className={merge(
-													ROW,
-													pressed === item.id
-														? PRESSED
-														: ring === item.id
-															? RING
-															: "",
-												)}
-											>
-												<Mark tech={item} size="w:5 h:5" />
-												<span className="fg:1 min-w:0 o:h to:e ws:nw">
-													{item.name}
-												</span>{" "}
-												<span className="fs:xs c:panel-muted ws:nw fvn:tn">
-													{item.version ?? item.category}
-												</span>
-												<Symbol
-													name="chevron_right"
-													className="d:b fs:0 w:4 h:4 c:panel-muted"
-												/>
-											</button>
-										</li>
-									))}
-								</ul>
-							</>
-						)}
-					</>
-				)}
+				<Detail tech={tech} all={[]} focus={false} />
 			</div>
 		</section>
 	);

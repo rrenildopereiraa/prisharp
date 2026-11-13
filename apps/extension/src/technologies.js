@@ -27,17 +27,31 @@
 // A regex with a capture group reads the version from it. Each signal weighs
 // 100 unless it says otherwise: a technology shows at 100, so a weak signal
 // (50) needs a second one. `implies` adds what a technology is built on;
-// `requires` drops it unless those were found too.
+// `requires` drops it unless those were found too; `unless` lists signals
+// that rule it out.
 
+// The order the popup lists them in: what the site is built on first, then
+// how it looks, where it runs, and what it plugs in.
 export const categories = [
 	"Framework",
+	"Platform",
 	"Library",
 	"Components",
 	"Icons",
 	"Styling",
 	"Build",
 	"Hosting",
-	"Services",
+	"Backend",
+	"Auth",
+	"Payments",
+	"Analytics",
+	"Monitoring",
+	"Marketing",
+	"Search",
+	"Fonts",
+	"Security",
+	"Privacy",
+	"Support",
 ];
 
 export const technologies = [
@@ -181,7 +195,7 @@ export const technologies = [
 		id: "framer",
 		name: "Framer",
 		website: "https://www.framer.com",
-		category: "Framework",
+		category: "Platform",
 		signals: [
 			{ meta: ["generator", /^Framer\b/i] },
 			{ dom: "#__framer-badge-container" },
@@ -192,14 +206,14 @@ export const technologies = [
 		id: "figma",
 		name: "Figma Sites",
 		website: "https://www.figma.com/sites",
-		category: "Framework",
+		category: "Platform",
 		signals: [{ url: /\.figma\.site\// }, { resource: /\.figma\.site\// }],
 	},
 	{
 		id: "webflow",
 		name: "Webflow",
 		website: "https://webflow.com",
-		category: "Framework",
+		category: "Platform",
 		signals: [
 			{ dom: "html[data-wf-site]" },
 			{ meta: ["generator", /^Webflow\b/i] },
@@ -209,7 +223,7 @@ export const technologies = [
 		id: "wordpress",
 		name: "WordPress",
 		website: "https://wordpress.org",
-		category: "Framework",
+		category: "Platform",
 		signals: [
 			{ meta: ["generator", /^WordPress ([\d.]+)/i] },
 			{ resource: /\/wp-(content|includes)\// },
@@ -219,7 +233,7 @@ export const technologies = [
 		id: "shopify",
 		name: "Shopify",
 		website: "https://www.shopify.com",
-		category: "Framework",
+		category: "Platform",
 		signals: [{ js: "Shopify.shop" }, { resource: /cdn\.shopify\.com/ }],
 	},
 
@@ -253,7 +267,8 @@ export const technologies = [
 		name: "Adobe Experience Manager",
 		website:
 			"https://business.adobe.com/products/experience-manager/adobe-experience-manager.html",
-		category: "Framework",
+		category: "Platform",
+		icon: "adobe",
 		signals: [
 			{ resource: /\/etc\.clientlibs\// },
 			{ html: /["'(]\/content\/dam\//, weight: 50 },
@@ -295,6 +310,33 @@ export const technologies = [
 			{ js: "liveSocket", weight: 50 },
 		],
 	},
+	{
+		id: "mediawiki",
+		name: "MediaWiki",
+		website: "https://www.mediawiki.org",
+		category: "Platform",
+		icon: "wikipedia",
+		signals: [
+			{ meta: ["generator", /^MediaWiki ([\d.]+)/] },
+			{ js: "mw.config" },
+		],
+	},
+
+	{
+		id: "outsystems",
+		name: "OutSystems",
+		website: "https://www.outsystems.com",
+		category: "Platform",
+		signals: [
+			// its runtime scripts, served from each app's own /scripts/
+			{
+				resource:
+					/\/scripts\/OutSystems(?:ReactView|ReactWidgets|UI|ManifestLoader)?\.js/,
+			},
+			{ js: "OutSystemsDebugger", weight: 50 },
+		],
+	},
+
 	// Library
 	{
 		id: "react",
@@ -504,20 +546,6 @@ export const technologies = [
 		signals: [{ dom: ".katex" }, { css: /\.katex(?:-display)?\s*\{/ }],
 	},
 	// Components
-	{
-		id: "yumma-ui",
-		name: "Yumma UI",
-		website: "https://yummacss.com/ui",
-		category: "Components",
-		implies: ["yummacss", "base-ui"],
-		signals: [
-			{ file: "/yummaui.json", content: /"componentsDir"|"registry"/ },
-			{ file: "/yummaui.config.mjs", content: /yummaui/ },
-			// Copied into the project, it leaves no mark of its own in a build:
-			// Base UI styled with Yumma CSS is the evidence.
-			{ found: ["yummacss", "base-ui"] },
-		],
-	},
 	{
 		id: "tailwind-plus",
 		name: "Tailwind Plus",
@@ -936,6 +964,8 @@ export const technologies = [
 		name: "GitHub Pages",
 		website: "https://pages.github.com",
 		category: "Hosting",
+		// github.com sends the same server header as the sites it hosts
+		unless: [{ url: /^https?:\/\/(?:[\w-]+\.)*github\.com\// }],
 		signals: [{ header: ["server", /^GitHub\.com$/i] }],
 	},
 	{
@@ -958,6 +988,7 @@ export const technologies = [
 		name: "Amazon CloudFront",
 		website: "https://aws.amazon.com/cloudfront",
 		category: "Hosting",
+		icon: "aws",
 		signals: [
 			{ header: ["x-amz-cf-id", /./] },
 			{ header: ["via", /cloudfront/i] },
@@ -969,6 +1000,7 @@ export const technologies = [
 		name: "Amazon S3",
 		website: "https://aws.amazon.com/s3",
 		category: "Hosting",
+		icon: "aws",
 		signals: [
 			{ header: ["server", /^AmazonS3$/] },
 			{ header: ["x-amz-bucket-region", /./] },
@@ -1017,7 +1049,7 @@ export const technologies = [
 		id: "google-analytics",
 		name: "Google Analytics",
 		website: "https://marketingplatform.google.com/about/analytics",
-		category: "Services",
+		category: "Analytics",
 		signals: [
 			{
 				resource:
@@ -1030,21 +1062,21 @@ export const technologies = [
 		name: "Plausible",
 		website: "https://plausible.io",
 		icon: "plausibleanalytics",
-		category: "Services",
+		category: "Analytics",
 		signals: [{ resource: /plausible\.io\/(?:js|api)/ }],
 	},
 	{
 		id: "posthog",
 		name: "PostHog",
 		website: "https://posthog.com",
-		category: "Services",
+		category: "Analytics",
 		signals: [{ js: "posthog.__loaded" }, { resource: /\.posthog\.com\// }],
 	},
 	{
 		id: "sentry",
 		name: "Sentry",
 		website: "https://sentry.io",
-		category: "Services",
+		category: "Monitoring",
 		signals: [
 			{ js: "__SENTRY__" },
 			{ resource: /browser\.sentry-cdn\.com|\.ingest\.(?:\w+\.)?sentry\.io/ },
@@ -1054,14 +1086,100 @@ export const technologies = [
 		id: "stripe",
 		name: "Stripe",
 		website: "https://stripe.com",
-		category: "Services",
+		category: "Payments",
 		signals: [{ resource: /js\.stripe\.com/ }],
+	},
+	{
+		id: "paypal",
+		name: "PayPal",
+		website: "https://developer.paypal.com",
+		category: "Payments",
+		signals: [
+			// the JavaScript SDK and the older checkout.js
+			{ resource: /paypal\.com\/sdk\/js|paypalobjects\.com\/api\/checkout/ },
+			{ js: "paypal.version", version: true },
+			{ dom: "[data-paypal-button], .paypal-buttons" },
+		],
+	},
+	{
+		id: "lemon-squeezy",
+		name: "Lemon Squeezy",
+		website: "https://www.lemonsqueezy.com",
+		category: "Payments",
+		icon: "lemonsqueezy",
+		signals: [
+			{
+				resource:
+					/app\.lemonsqueezy\.com\/js\/lemon\.js|assets\.lemonsqueezy\.com\/lemon\.js/,
+			},
+			{ js: "LemonSqueezy" },
+		],
+	},
+	{
+		id: "paddle",
+		name: "Paddle",
+		website: "https://www.paddle.com",
+		category: "Payments",
+		signals: [
+			{ resource: /cdn\.paddle\.com\/paddle\// },
+			{ js: "Paddle.Checkout" },
+		],
+	},
+	{
+		id: "polar",
+		name: "Polar",
+		website: "https://polar.sh",
+		category: "Payments",
+		signals: [
+			{ resource: /@polar-sh\/checkout|polar\.sh\/.*embed/ },
+			{ dom: "[data-polar-checkout]" },
+		],
+	},
+	{
+		id: "gumroad",
+		name: "Gumroad",
+		website: "https://gumroad.com",
+		category: "Payments",
+		signals: [{ resource: /gumroad\.com\/js\/gumroad/ }],
+	},
+	{
+		id: "braintree",
+		name: "Braintree",
+		website: "https://www.braintreepayments.com",
+		category: "Payments",
+		signals: [{ resource: /js\.braintreegateway\.com\// }],
+	},
+	{
+		id: "adyen",
+		name: "Adyen",
+		website: "https://www.adyen.com",
+		category: "Payments",
+		signals: [{ resource: /checkoutshopper-[a-z]+\.adyen\.com\// }],
+	},
+	{
+		id: "square",
+		name: "Square",
+		website: "https://squareup.com",
+		category: "Payments",
+		signals: [
+			{
+				resource:
+					/web\.squarecdn\.com\/v1\/square\.js|sandbox\.web\.squarecdn\.com/,
+			},
+		],
+	},
+	{
+		id: "klarna",
+		name: "Klarna",
+		website: "https://www.klarna.com",
+		category: "Payments",
+		signals: [{ resource: /js\.klarna\.com\/|x\.klarnacdn\.net\// }],
 	},
 	{
 		id: "clerk",
 		name: "Clerk",
 		website: "https://clerk.com",
-		category: "Services",
+		category: "Auth",
 		signals: [
 			{ js: "Clerk.version", version: true },
 			{ resource: /clerk\.[\w.-]+\/npm\/@clerk/ },
@@ -1071,14 +1189,14 @@ export const technologies = [
 		id: "supabase",
 		name: "Supabase",
 		website: "https://supabase.com",
-		category: "Services",
+		category: "Backend",
 		signals: [{ resource: /\.supabase\.co\// }],
 	},
 	{
 		id: "firebase",
 		name: "Firebase",
 		website: "https://firebase.google.com",
-		category: "Services",
+		category: "Backend",
 		signals: [{ resource: /gstatic\.com\/firebasejs|\.firebaseapp\.com\// }],
 	},
 	{
@@ -1086,14 +1204,14 @@ export const technologies = [
 		name: "Google Fonts",
 		website: "https://fonts.google.com",
 		icon: "google",
-		category: "Services",
+		category: "Fonts",
 		signals: [{ resource: /fonts\.(?:googleapis|gstatic)\.com/ }],
 	},
 	{
 		id: "google-tag-manager",
 		name: "Google Tag Manager",
 		website: "https://tagmanager.google.com",
-		category: "Services",
+		category: "Marketing",
 		icon: "googletagmanager",
 		signals: [
 			{ resource: /googletagmanager\.com\/gtm\.js/ },
@@ -1105,7 +1223,8 @@ export const technologies = [
 		name: "Adobe Launch",
 		website:
 			"https://experienceleague.adobe.com/en/docs/experience-platform/tags/home",
-		category: "Services",
+		category: "Marketing",
+		icon: "adobe",
 		signals: [
 			{ js: "_satellite.buildInfo.turbineVersion" },
 			{ resource: /assets\.adobedtm\.com\// },
@@ -1115,7 +1234,7 @@ export const technologies = [
 		id: "vercel-analytics",
 		name: "Vercel Analytics",
 		website: "https://vercel.com/analytics",
-		category: "Services",
+		category: "Analytics",
 		icon: "vercel",
 		signals: [
 			{
@@ -1128,7 +1247,7 @@ export const technologies = [
 		id: "vercel-speed-insights",
 		name: "Vercel Speed Insights",
 		website: "https://vercel.com/docs/speed-insights",
-		category: "Services",
+		category: "Monitoring",
 		icon: "vercel",
 		signals: [
 			{
@@ -1141,14 +1260,14 @@ export const technologies = [
 		id: "fathom",
 		name: "Fathom",
 		website: "https://usefathom.com",
-		category: "Services",
+		category: "Analytics",
 		signals: [{ resource: /cdn\.usefathom\.com\// }],
 	},
 	{
 		id: "cloudflare-web-analytics",
 		name: "Cloudflare Web Analytics",
 		website: "https://www.cloudflare.com/web-analytics",
-		category: "Services",
+		category: "Analytics",
 		icon: "cloudflare",
 		signals: [{ resource: /static\.cloudflareinsights\.com\/beacon/ }],
 	},
@@ -1156,7 +1275,7 @@ export const technologies = [
 		id: "datadog-rum",
 		name: "Datadog RUM",
 		website: "https://www.datadoghq.com/product/real-user-monitoring",
-		category: "Services",
+		category: "Monitoring",
 		icon: "datadog",
 		signals: [
 			{ js: "DD_RUM.version", version: true },
@@ -1167,21 +1286,22 @@ export const technologies = [
 		id: "adobe-fonts",
 		name: "Adobe Fonts",
 		website: "https://fonts.adobe.com",
-		category: "Services",
+		category: "Fonts",
+		icon: "adobefonts",
 		signals: [{ resource: /use\.typekit\.net\/|p\.typekit\.net\// }],
 	},
 	{
 		id: "algolia",
 		name: "Algolia",
 		website: "https://www.algolia.com",
-		category: "Services",
+		category: "Search",
 		signals: [{ resource: /\.algolia(?:net)?\.(?:com|net)\// }],
 	},
 	{
 		id: "docsearch",
 		name: "Algolia DocSearch",
 		website: "https://docsearch.algolia.com",
-		category: "Services",
+		category: "Search",
 		icon: "algolia",
 		implies: ["algolia"],
 		signals: [
@@ -1193,7 +1313,7 @@ export const technologies = [
 		id: "onetrust",
 		name: "OneTrust",
 		website: "https://www.onetrust.com",
-		category: "Services",
+		category: "Privacy",
 		signals: [
 			{ resource: /cdn\.cookielaw\.org\/|otSDKStub\.js|otBannerSdk\.js/ },
 		],
@@ -1202,7 +1322,7 @@ export const technologies = [
 		id: "datadome",
 		name: "DataDome",
 		website: "https://datadome.co",
-		category: "Services",
+		category: "Security",
 		signals: [
 			{ resource: /js\.datadome\.co\/|captcha-delivery\.com/ },
 			{ js: "ddjskey" },
@@ -1212,7 +1332,7 @@ export const technologies = [
 		id: "help-scout",
 		name: "Help Scout",
 		website: "https://www.helpscout.com",
-		category: "Services",
+		category: "Support",
 		icon: "helpscout",
 		signals: [{ resource: /beacon-v2\.helpscout\.net/ }],
 	},
@@ -1220,14 +1340,15 @@ export const technologies = [
 		id: "buysellads",
 		name: "BuySellAds",
 		website: "https://www.buysellads.com",
-		category: "Services",
+		category: "Marketing",
 		signals: [{ resource: /srv\.buysellads\.com|cdn\.carbonads\.com/ }],
 	},
 	{
 		id: "google-publisher-tag",
 		name: "Google Publisher Tag",
 		website: "https://developers.google.com/publisher-tag",
-		category: "Services",
+		category: "Marketing",
+		icon: "googlelogo",
 		signals: [
 			{
 				resource:
@@ -1240,21 +1361,21 @@ export const technologies = [
 		id: "prebid",
 		name: "Prebid.js",
 		website: "https://prebid.org",
-		category: "Services",
+		category: "Marketing",
 		signals: [{ js: "pbjs.version", version: true }],
 	},
 	{
 		id: "amazon-ads",
 		name: "Amazon Ads",
 		website: "https://advertising.amazon.com",
-		category: "Services",
+		category: "Marketing",
 		signals: [{ resource: /c\.amazon-adsystem\.com\// }],
 	},
 	{
 		id: "google-sign-in",
 		name: "Sign in with Google",
 		website: "https://developers.google.com/identity/gsi/web",
-		category: "Services",
+		category: "Auth",
 		icon: "googlesignin",
 		signals: [{ resource: /accounts\.google\.com\/gsi\/client/ }],
 	},
@@ -1262,7 +1383,7 @@ export const technologies = [
 		id: "apple-sign-in",
 		name: "Sign in with Apple",
 		website: "https://developer.apple.com/sign-in-with-apple",
-		category: "Services",
+		category: "Auth",
 		icon: "apple",
 		signals: [{ resource: /appleid\.cdn-apple\.com\/appleauth\// }],
 	},

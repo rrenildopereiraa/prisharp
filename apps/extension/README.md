@@ -20,7 +20,7 @@ Every technology leaves evidence in what it ships to the browser: a global it de
 
 1. **Collect.** On click, [`src/collect.js`](src/collect.js) runs once in the page's own JavaScript world. It checks the globals, selectors and element properties the fingerprints ask for, lists loaded resources and `<meta>` tags, sends one `HEAD` request for the response headers, and reads the stylesheets and entry scripts as text. The browser has usually cached these already.
 2. **Score.** [`src/detect.js`](src/detect.js) matches each technology's signals against that snapshot. A signal weighs 100 by default and a technology shows from 100, so one strong signal is enough and a weak one (50) needs a second. Every signal that matched is kept as evidence, which the popup lists under each technology.
-3. **Relate.** `implies` adds what a technology is built on (Next.js gives React). `requires` drops one unless its partners were found too (Yumma UI needs Yumma CSS and Base UI).
+3. **Relate.** `implies` adds what a technology is built on (Next.js gives React). `requires` drops one unless its partners were found too (Radix Icons needs Radix UI). `unless` rules one out (GitHub Pages is never github.com itself).
 
 Some of the evidence the fingerprints use, all checked against the packages' own builds:
 
@@ -53,7 +53,7 @@ A browser sees only what a site ships. Build tools and server code leave no trac
 
 - **Vite+** builds with Vite and Rolldown, so its output is theirs. Prisharp shows Vite and Rolldown.
 - **Static Astro** without islands or the generator tag can ship plain HTML and CSS, with no trace of Astro.
-- **Base UI** writes its `data-base-ui-*` attributes only while a component is open. On a page at rest it can be invisible, and so can Yumma UI, which needs it.
+- **Base UI** writes its `data-base-ui-*` attributes only while a component is open. On a page at rest it can be invisible.
 
 ## Add a technology
 

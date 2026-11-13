@@ -12,6 +12,7 @@ const simple = await import("simple-icons");
 // Icon name, then its Simple Icons mark, drawn in the brand's own color. The
 // marks share one 24px grid, so they sit alike in the popup's boxes.
 const marks = {
+	adyen: "siAdyen",
 	algolia: "siAlgolia",
 	alpinejs: "siAlpinedotjs",
 	angular: "siAngular",
@@ -21,6 +22,7 @@ const marks = {
 	"base-ui": "siBaseui",
 	blazor: "siBlazor",
 	bootstrap: "siBootstrap",
+	braintree: "siBraintree",
 	buysellads: "siBuysellads",
 	chakraui: "siChakraui",
 	clerk: "siClerk",
@@ -44,13 +46,16 @@ const marks = {
 	googlesignin: "siGoogle",
 	googletagmanager: "siGoogletagmanager",
 	gsap: "siGsap",
+	gumroad: "siGumroad",
 	headlessui: "siHeadlessui",
 	helpscout: "siHelpscout",
 	hotwire: "siHotwire",
 	htmx: "siHtmx",
 	hugo: "siHugo",
 	jquery: "siJquery",
+	klarna: "siKlarna",
 	laravel: "siLaravel",
+	lemonsqueezy: "siLemonsqueezy",
 	lit: "siLit",
 	livewire: "siLivewire",
 	lodash: "siLodash",
@@ -62,6 +67,8 @@ const marks = {
 	nextjs: "siNextdotjs",
 	nginx: "siNginx",
 	nuxt: "siNuxt",
+	paddle: "siPaddle",
+	paypal: "siPaypal",
 	phoenixframework: "siPhoenixframework",
 	phosphor: "siPhosphoricons",
 	plausibleanalytics: "siPlausibleanalytics",
@@ -77,6 +84,7 @@ const marks = {
 	shadcn: "siShadcnui",
 	shopify: "siShopify",
 	solidjs: "siSolid",
+	square: "siSquare",
 	stripe: "siStripe",
 	styledcomponents: "siStyledcomponents",
 	supabase: "siSupabase",
@@ -90,18 +98,23 @@ const marks = {
 	webawesome: "siWebawesome",
 	webflow: "siWebflow",
 	webpack: "siWebpack",
+	wikipedia: "siWikipedia",
 	wordpress: "siWordpress",
 };
 
 // Icon name, then the svgl component, for marks Simple Icons lacks: one for
 // both themes, or a light and a dark one.
 const icons = {
+	adobe: "Adobe",
+	adobefonts: "AdobeFonts",
+	aws: ["AmazonWebServicesLight", "AmazonWebServicesDark"],
+	googlelogo: "Google",
 	parcel: "Parcel",
 	turbopack: ["TurbopackLight", "TurbopackDark"],
 };
 
 // Logos neither has, kept in icons/tech as files: whether each has a dark
-// variant. Yumma CSS and Yumma UI share the Yumma mark from its brand page,
+// variant. Yumma CSS has the Yumma mark from its brand page,
 // the same in both themes. Tabler Icons, Iconoir and Hugeicons are each
 // project's own mark from its icon set (brand-tabler, iconoir,
 // HugeiconsIcon; all MIT), drawn in the panel's ink. Emotion's mark is a
@@ -109,8 +122,9 @@ const icons = {
 // 64px inside an SVG.
 const local = {
 	emotion: false,
+	// Prism's triangle from its repository, drawn in the panel's ink
+	prism: true,
 	yummacss: false,
-	"yumma-ui": false,
 	"tabler-icons": true,
 	iconoir: true,
 	hugeicons: true,
