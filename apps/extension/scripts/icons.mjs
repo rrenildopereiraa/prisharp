@@ -34,6 +34,7 @@ const marks = {
 	datadog: "siDatadog",
 	docusaurus: "siDocusaurus",
 	dotnet: "siDotnet",
+	eleventy: "siEleventy",
 	ember: "siEmberdotjs",
 	envoyproxy: "siEnvoyproxy",
 	fastly: "siFastly",
@@ -55,10 +56,12 @@ const marks = {
 	headlessui: "siHeadlessui",
 	helpscout: "siHelpscout",
 	heroui: "siHeroui",
+	hexo: "siHexo",
 	hotwire: "siHotwire",
 	htmx: "siHtmx",
 	hugo: "siHugo",
 	intercom: "siIntercom",
+	jekyll: "siJekyll",
 	jquery: "siJquery",
 	klarna: "siKlarna",
 	laravel: "siLaravel",
@@ -72,6 +75,7 @@ const marks = {
 	mui: "siMui",
 	netlify: "siNetlify",
 	nextjs: "siNextdotjs",
+	nextra: "siNextra",
 	nginx: "siNginx",
 	nuxt: "siNuxt",
 	paddle: "siPaddle",
@@ -146,6 +150,7 @@ const icons = {
 // - Element Plus, Kobalte, Carbon: from their own repositories, Kobalte's
 //   as its app icon PNG; Angular Material: its pinned-tab mark from the
 //   angular/components repository, in the panel's ink.
+// - Rspress: the icon rspress.rs itself uses, from assets.rspack.rs.
 // - DataDome: its app icon from its documentation, which publishes it only
 //   as a 180px PNG, so the file wraps that PNG with its corners rounded.
 const local = {
@@ -166,6 +171,7 @@ const local = {
 	outsystems: false,
 	prebid: false,
 	prism: true,
+	rspress: false,
 	"react-aria": true,
 	stylex: false,
 	"tabler-icons": true,

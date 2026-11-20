@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **[extension]** Detection of nine UI kits, each from evidence only it ships: Ant Design, Element Plus, Angular Material, Carbon, HeroUI, Kobalte, daisyUI and Flowbite, and Bulma with its version.
+- **[extension]** Detection of six site generators from the generator tag they write, each with its version: Eleventy, Jekyll, Hexo, VuePress and Rspress. Nextra shows from its CSS variables.
 
 ### Fixed
 
