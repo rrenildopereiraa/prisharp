@@ -377,6 +377,49 @@ export const technologies = [
 		],
 	},
 	{
+		id: "inertia",
+		name: "Inertia.js",
+		website: "https://inertiajs.com",
+		category: "Framework",
+		signals: [
+			// the page data Inertia renders into: on the root element before 3.0,
+			// in a JSON script tag since
+			{
+				dom: "[data-page*='component'][data-page*='props'], script[data-page][type='application/json']",
+			},
+		],
+	},
+	{
+		id: "meteor",
+		name: "Meteor",
+		website: "https://www.meteor.com",
+		category: "Framework",
+		signals: [{ js: "__meteor_runtime_config__" }],
+	},
+	{
+		id: "hydrogen",
+		name: "Hydrogen",
+		website: "https://hydrogen.shop",
+		category: "Framework",
+		implies: ["shopify", "react"],
+		signals: [{ header: ["powered-by", /Hydrogen/i] }],
+	},
+	{
+		id: "elm",
+		name: "Elm",
+		website: "https://elm-lang.org",
+		category: "Framework",
+		signals: [
+			// the key its virtual DOM sets on elements with events, which stays
+			// after an Elm app replaces the page it was inlined in
+			{ domKey: "elm_event_node_ref" },
+			// the hint links its compiled code keeps, even optimized
+			{ script: /github\.com\/elm\/core\/blob\/1\.0\.0\/hints/ },
+			{ html: /github\.com\/elm\/core\/blob\/1\.0\.0\/hints/ },
+			{ js: "Elm", weight: 50 },
+		],
+	},
+	{
 		id: "mediawiki",
 		name: "MediaWiki",
 		website: "https://www.mediawiki.org",
@@ -537,6 +580,34 @@ export const technologies = [
 			{ js: "htmx.version", version: true },
 			{ attrPrefix: "hx-", weight: 50 },
 		],
+	},
+	{
+		id: "datastar",
+		name: "Datastar",
+		website: "https://data-star.dev",
+		category: "Library",
+		signals: [
+			{
+				resource: /starfederation\/datastar|\/datastar(?:-core)?(?:\.min)?\.js/,
+			},
+			{ attrPrefix: "data-signals", weight: 50 },
+			{ attrPrefix: "data-on:", weight: 50 },
+		],
+	},
+	{
+		id: "backbone",
+		name: "Backbone.js",
+		website: "https://backbonejs.org",
+		category: "Library",
+		icon: "backbonedotjs",
+		signals: [{ js: "Backbone.VERSION", version: true }],
+	},
+	{
+		id: "knockout",
+		name: "Knockout.js",
+		website: "https://knockoutjs.com",
+		category: "Library",
+		signals: [{ js: "ko.version", version: true }],
 	},
 	{
 		id: "gsap",

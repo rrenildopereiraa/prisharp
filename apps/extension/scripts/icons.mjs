@@ -21,6 +21,7 @@ const marks = {
 	apple: "siApple",
 	astro: "siAstro",
 	auth0: "siAuth0",
+	backbonedotjs: "siBackbonedotjs",
 	"base-ui": "siBaseui",
 	blazor: "siBlazor",
 	bootstrap: "siBootstrap",
@@ -35,6 +36,7 @@ const marks = {
 	docusaurus: "siDocusaurus",
 	dotnet: "siDotnet",
 	eleventy: "siEleventy",
+	elm: "siElm",
 	ember: "siEmberdotjs",
 	envoyproxy: "siEnvoyproxy",
 	fastly: "siFastly",
@@ -60,6 +62,7 @@ const marks = {
 	hotwire: "siHotwire",
 	htmx: "siHtmx",
 	hugo: "siHugo",
+	inertia: "siInertia",
 	intercom: "siIntercom",
 	jekyll: "siJekyll",
 	jquery: "siJquery",
@@ -71,6 +74,7 @@ const marks = {
 	lodash: "siLodash",
 	lucide: "siLucide",
 	mantine: "siMantine",
+	meteor: "siMeteor",
 	mobx: "siMobx",
 	mui: "siMui",
 	netlify: "siNetlify",
@@ -151,6 +155,10 @@ const icons = {
 //   as its app icon PNG; Angular Material: its pinned-tab mark from the
 //   angular/components repository, in the panel's ink.
 // - Rspress: the icon rspress.rs itself uses, from assets.rspack.rs.
+// - Hydrogen: the mark of its logo from Shopify/hydrogen, with a dark ink
+//   for its black half. Datastar: the rocket data-star.dev uses, kept as
+//   pixel art. Knockout: the wordmark knockoutjs.com shows, without its
+//   shadow, in the panel's ink.
 // - DataDome: its app icon from its documentation, which publishes it only
 //   as a 180px PNG, so the file wraps that PNG with its corners rounded.
 const local = {
@@ -160,12 +168,15 @@ const local = {
 	"core-js": true,
 	crisp: false,
 	datadome: false,
+	datastar: false,
 	"element-plus": false,
 	emotion: false,
 	hugeicons: true,
+	hydrogen: true,
 	hyperscript: false,
 	iconoir: true,
 	katex: true,
+	knockout: true,
 	kobalte: false,
 	onetrust: true,
 	outsystems: false,
