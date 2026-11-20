@@ -208,10 +208,6 @@ hr {
   outline-width: 2px;
 }
 
-.fvn\:tn {
-  font-variant-numeric: tabular-nums;
-}
-
 .fw\:400 {
   font-weight: 400;
 }
@@ -296,8 +292,16 @@ hr {
   padding: 1rem;
 }
 
+.p\:a {
+  position: absolute;
+}
+
 .p\:calc\(0\.125rem\) {
   padding: calc(0.125rem);
+}
+
+.p\:r {
+  position: relative;
 }
 
 .pb\:1 {
@@ -360,6 +364,14 @@ hr {
   padding-block: .5rem;
 }
 
+.r\:10 {
+  right: 2.5rem;
+}
+
+.t\:1 {
+  top: .25rem;
+}
+
 .ta\:l {
   text-align: left;
 }
@@ -411,5 +423,9 @@ hr {
 @media (hover: hover) {
   .h\:bg\:hover:hover {
     background-color: light-dark(oklch(0.943 0 none), oklch(0.355 0.004 248));
+  }
+  
+  .h\:bg\:line:hover {
+    background-color: light-dark(oklch(0.916 0 none), oklch(0.395 0.004 174));
   }
 }

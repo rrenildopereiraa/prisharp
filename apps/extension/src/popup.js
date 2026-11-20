@@ -17,6 +17,8 @@ const back = document.getElementById("back");
 const ROW =
 	"d:f ai:c g:3 w:100% h:10 px:4 bw:0 bg:transparent c:ink ff:d fs:sm ta:l td:none c:p h:bg:hover fv:os:s fv:ow:2 fv:oo:-2 fv:oc:focus";
 
+const hostOf = (url) => new URL(url).hostname.replace(/^www\./, "");
+
 const label = (tech) => [tech.name, tech.version].filter(Boolean).join(" ");
 
 for (const element of document.querySelectorAll("[data-symbol]")) {
@@ -153,7 +155,7 @@ function open(tech, all, row) {
 	const website = document.getElementById("website");
 	website.href = tech.website;
 	document.getElementById("website-label").textContent =
-		`Open ${new URL(tech.website).hostname.replace(/^www\./, "")}`;
+		`Open ${hostOf(tech.website)}`;
 
 	const copyEvidence = document.getElementById("copy-evidence");
 	copyEvidence.onclick = () =>
@@ -192,12 +194,20 @@ function open(tech, all, row) {
 	back.focus();
 }
 
+// A technology's row opens its evidence. On hover or focus, a link to its
+// site takes the category's place, so the row is the same as any other at
+// rest and the site is one click away.
+const VISIT =
+	"p:a t:1 r:10 d:f ai:c jc:c w:8 h:8 br:9999 c:muted td:none h:bg:line fv:os:s fv:ow:2 fv:oc:focus";
+
 function row(tech, all) {
 	const item = document.createElement("li");
-	item.className = "d:b";
+	item.className = "p:r d:b h:bg:hover";
+	item.dataset.tech = "";
+
 	const button = document.createElement("button");
 	button.type = "button";
-	button.className = ROW;
+	button.className = ROW.replace(" h:bg:hover", "");
 	button.setAttribute(
 		"aria-label",
 		`${label(tech)}, ${tech.category}. Show the evidence`,
@@ -206,16 +216,30 @@ function row(tech, all) {
 	const name = document.createElement("span");
 	name.className = "fg:1 min-w:0 o:h to:e ws:nw";
 	name.textContent = tech.name;
+	// the category only: the version is on the technology's own page
 	const meta = document.createElement("span");
-	meta.className = "fs:xs c:muted ws:nw fvn:tn";
-	meta.textContent = tech.version ?? tech.category;
+	meta.className = "fs:xs c:muted ws:nw";
+	meta.dataset.meta = "";
+	meta.textContent = tech.category;
 	const chevron = document.createElement("span");
 	chevron.className = "d:f fs:0 w:4 h:4 c:muted";
 	chevron.append(symbol("chevron_right", "d:b w:100% h:100%"));
 
 	button.append(icon(tech, "w:5 h:5"), name, meta, chevron);
 	button.addEventListener("click", () => open(tech, all, button));
-	item.append(button);
+
+	const site = hostOf(tech.website);
+	const visit = document.createElement("a");
+	visit.href = tech.website;
+	visit.target = "_blank";
+	visit.rel = "noreferrer";
+	visit.className = VISIT;
+	visit.dataset.visit = "";
+	visit.title = `Open ${site}`;
+	visit.setAttribute("aria-label", `Open ${site}`);
+	visit.append(symbol("open_in_new", "d:b w:4 h:4"));
+
+	item.append(button, visit);
 	return item;
 }
 
