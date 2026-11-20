@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-20
+
 ### Added
 
 - **[extension]** Detection of Ghost, with its version from the generator tag, and its Portal and search scripts.
@@ -43,5 +45,6 @@ The first stable release, on the [Chrome Web Store](https://chromewebstore.googl
 - **[web]** prisharp.com, where the heading types well-known technologies and shows the popup's evidence for each, above a marquee of every logo.
 - **[web]** A privacy policy at [prisharp.com/privacy](https://prisharp.com/privacy/).
 
-[Unreleased]: https://github.com/rrenildopereiraa/prisharp/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/rrenildopereiraa/prisharp/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/rrenildopereiraa/prisharp/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/rrenildopereiraa/prisharp/releases/tag/v1.0.0
