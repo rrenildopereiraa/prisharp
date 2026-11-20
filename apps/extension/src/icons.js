@@ -7,6 +7,11 @@ export const icons = {
 	"tabler-icons": true,
 	"iconoir": true,
 	"hugeicons": true,
+	"umami": true,
+	"sanity": true,
+	"intercom": true,
+	"ghost": true,
+	"auth0": false,
 	"adyen": false,
 	"algolia": true,
 	"alpinejs": false,
@@ -99,6 +104,7 @@ export const icons = {
 	"adobefonts": false,
 	"aws": true,
 	"googlelogo": false,
+	"hcaptcha": false,
 	"parcel": false,
 	"turbopack": true
 };
