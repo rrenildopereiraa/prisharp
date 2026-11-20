@@ -7,12 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.1.0] - 2026-11-20
+
 ### Added
 
 - **[extension]** Detection of Ghost, with its version from the generator tag, and its Portal and search scripts.
 - **[extension]** Detection of Umami, Auth0 and Sanity, from the scripts, sign-in calls and image CDN each one uses.
 - **[extension]** Detection of Crisp and Intercom, from their chat widgets.
 - **[extension]** Detection of Cloudflare Turnstile, reCAPTCHA and hCaptcha, from the scripts they load. reCAPTCHA shows only from its own script, because hCaptcha defines `window.grecaptcha` too.
+- **[extension]** Logos for core-js, Crisp, DataDome, _hyperscript, KaTeX, React Aria, StyleX, Polar, OneTrust, Prebid, Amazon Ads and OutSystems, each in a version for light and dark panels. Every technology now has its logo.
 
 ### Changed
 
@@ -43,5 +46,6 @@ The first stable release, on the [Chrome Web Store](https://chromewebstore.googl
 - **[web]** prisharp.com, where the heading types well-known technologies and shows the popup's evidence for each, above a marquee of every logo.
 - **[web]** A privacy policy at [prisharp.com/privacy](https://prisharp.com/privacy/).
 
-[Unreleased]: https://github.com/rrenildopereiraa/prisharp/compare/v1.0.0...HEAD
+[Unreleased]: https://github.com/rrenildopereiraa/prisharp/compare/v1.1.0...HEAD
+[1.1.0]: https://github.com/rrenildopereiraa/prisharp/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/rrenildopereiraa/prisharp/releases/tag/v1.0.0
