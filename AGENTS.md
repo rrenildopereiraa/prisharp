@@ -1,6 +1,7 @@
 # Working
 
 - PRs, never direct commits to `main`.
+- Name a branch for what it holds, as `type/what-it-does`: `feat/` for something new, `fix/` for a bug, `ui/` for how something looks, `docs/` for writing, `chore/` for versions, tooling and upkeep. For example `feat/detect-umami` or `fix/stale-zip-cache`.
 - A Vite+ monorepo: `apps/extension` is the extension, `apps/web` is prisharp.com. Run `pnpm ready` (`vp check`, tests, builds) before a PR.
 - `apps/web` uses Yumma UI as it ships. Change a component through its props; leave `src/components/ui` as the CLI wrote it.
 
