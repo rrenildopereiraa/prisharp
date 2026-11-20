@@ -139,15 +139,23 @@ function open(tech, all, row) {
 	document.getElementById("name").textContent = tech.name;
 	document.getElementById("badge").replaceChildren(icon(tech, "w:7 h:7"));
 	const implied = brings(tech, all);
-	document.getElementById("headline").textContent = tech.version
-		? `Version ${tech.version}`
-		: tech.category;
-	document.getElementById("subline").textContent = [
-		tech.version && tech.category,
-		implied.length > 0 && `brings in ${implied.join(", ")}`,
-	]
-		.filter(Boolean)
-		.join(" · ");
+	// the technology by name, then what it is: its category and version, and
+	// on a line of its own what it brings in
+	document.getElementById("headline").textContent = tech.name;
+	const lines = [
+		[tech.category, tech.version && `Version ${tech.version}`]
+			.filter(Boolean)
+			.join(" · "),
+		implied.length > 0 && `Brings in ${implied.join(", ")}`,
+	].filter(Boolean);
+	document.getElementById("subline").replaceChildren(
+		...lines.map((text) => {
+			const line = document.createElement("span");
+			line.className = "d:b";
+			line.textContent = text;
+			return line;
+		}),
+	);
 	document
 		.getElementById("evidence")
 		.replaceChildren(...tech.evidence.map(evidenceItem));

@@ -122,16 +122,16 @@ function Detail({
 					<Mark tech={tech} size="w:7 h:7" />
 				</span>
 				<div className="min-w:0">
-					<p className="m:0">
-						{tech.version ? `Version ${tech.version}` : tech.category}
-					</p>
+					<p className="m:0">{tech.name}</p>
 					<p className="m:0 mt:1 fs:xs c:panel-muted">
-						{[
-							tech.version && tech.category,
-							brings.length > 0 && `brings in ${brings.join(", ")}`,
-						]
-							.filter(Boolean)
-							.join(" · ")}
+						<span className="d:b">
+							{[tech.category, tech.version && `Version ${tech.version}`]
+								.filter(Boolean)
+								.join(" · ")}
+						</span>
+						{brings.length > 0 && (
+							<span className="d:b">Brings in {brings.join(", ")}</span>
+						)}
 					</p>
 				</div>
 			</div>
