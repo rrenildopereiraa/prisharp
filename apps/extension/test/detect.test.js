@@ -472,6 +472,14 @@ test("a version drops its build metadata", () => {
 	assert.deepEqual(found, ["Angular 22.2.6"]);
 });
 
+test("a 0.0.0 banner from a build from source is no version", () => {
+	const css =
+		"/*! tailwindcss v0.0.0 | MIT License | https://tailwindcss.com */";
+	assert.deepEqual(names(detect(page({ css }), technologies)), [
+		"Tailwind CSS",
+	]);
+});
+
 test("MediaWiki reads its version from the generator", () => {
 	const meta = { generator: "MediaWiki 1.46.0-wmf.3" };
 	assert.deepEqual(names(detect(page({ meta }), technologies)), [

@@ -61,11 +61,13 @@ export function probes(technologies) {
 	};
 }
 
-const version = (value) =>
-	typeof value === "string" && /\d/.test(value)
-		? // a build's +metadata says which commit, not which version
-			value.replace(/^v/i, "").replace(/\+.*$/, "")
-		: undefined;
+const version = (value) => {
+	if (typeof value !== "string" || !/\d/.test(value)) return undefined;
+	// a build's +metadata says which commit, not which version
+	const clean = value.replace(/^v/i, "").replace(/\+.*$/, "");
+	// 0.0.0 is what a build from source writes in place of one
+	return /^0(?:\.0)*$/.test(clean) ? undefined : clean;
+};
 
 const test = (regex, text) => {
 	const match = typeof text === "string" ? regex.exec(text) : null;

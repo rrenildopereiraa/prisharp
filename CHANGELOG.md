@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **[extension]** The list shows each technology's category, and its version only on its own page.
 - **[extension]** A link to each technology's site appears on its row on hover or focus, so it opens without the details page.
+- **[extension]** A technology's page names it beside its logo, with its category, version and what it brings in below.
+- **[web]** The evidence card on prisharp.com shows the same.
+
+### Fixed
+
+- **[extension]** A `0.0.0` version, which builds from source write in its place, no longer shows. Cloudflare's dashboard showed Tailwind CSS 0.0.0.
 
 ## [1.0.0] - 2026-11-13
 
