@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[extension]** Detection of Umami, Auth0 and Sanity, from the scripts, sign-in calls and image CDN each one uses.
 - **[extension]** Detection of Crisp and Intercom, from their chat widgets.
 - **[extension]** Detection of Cloudflare Turnstile, reCAPTCHA and hCaptcha, from the scripts they load. reCAPTCHA shows only from its own script, because hCaptcha defines `window.grecaptcha` too.
-- **[extension]** Logos for core-js, Crisp, _hyperscript, KaTeX, React Aria, StyleX, Polar, OneTrust, Prebid, Amazon Ads and OutSystems, each in a version for light and dark panels. Every technology has its logo but DataDome.
+- **[extension]** Logos for core-js, Crisp, DataDome, _hyperscript, KaTeX, React Aria, StyleX, Polar, OneTrust, Prebid, Amazon Ads and OutSystems, each in a version for light and dark panels. Every technology now has its logo.
 
 ### Changed
 

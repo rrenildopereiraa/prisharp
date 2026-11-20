@@ -4,6 +4,7 @@ export const icons = {
 	"amazon-ads": false,
 	"core-js": true,
 	"crisp": false,
+	"datadome": false,
 	"emotion": false,
 	"hugeicons": true,
 	"hyperscript": false,

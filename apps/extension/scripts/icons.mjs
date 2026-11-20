@@ -138,10 +138,13 @@ const icons = {
 //   Ads: Amazon's mark from Simple Icons' earlier releases, in its orange.
 // - Crisp, OneTrust, OutSystems: the marks from their own websites,
 //   OneTrust's in the panel's ink.
+// - DataDome: its app icon from its documentation, which publishes it only
+//   as a 180px PNG, so the file wraps that PNG with its corners rounded.
 const local = {
 	"amazon-ads": false,
 	"core-js": true,
 	crisp: false,
+	datadome: false,
 	emotion: false,
 	hugeicons: true,
 	hyperscript: false,
