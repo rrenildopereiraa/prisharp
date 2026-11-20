@@ -522,6 +522,87 @@ test("payment providers, from the checkout scripts they load", () => {
 	]);
 });
 
+test("support, analytics, auth and content services, from what they load", () => {
+	const found = names(
+		detect(
+			page({
+				resources: [
+					"https://client.crisp.chat/l.js",
+					"https://widget.intercom.io/widget/abc123",
+					"https://cloud.umami.is/script.js",
+					"https://acme.eu.auth0.com/oauth/token",
+					"https://cdn.sanity.io/images/abc123/production/photo-1200x800.jpg",
+				],
+			}),
+			technologies,
+		),
+	);
+	assert.deepEqual(found.sort(), [
+		"Auth0",
+		"Crisp",
+		"Intercom",
+		"Sanity",
+		"Umami",
+	]);
+});
+
+test("self-hosted Umami and Crisp, from their globals", () => {
+	const js = { "umami.track": true, CRISP_WEBSITE_ID: "abc" };
+	assert.deepEqual(names(detect(page({ js }), technologies)).sort(), [
+		"Crisp",
+		"Umami",
+	]);
+});
+
+test("Ghost reads its version from the generator", () => {
+	const found = names(
+		detect(
+			page({
+				meta: { generator: "Ghost 6.76" },
+				resources: [
+					"https://cdn.jsdelivr.net/ghost/portal@~2.72/umd/portal.min.js",
+				],
+			}),
+			technologies,
+		),
+	);
+	assert.deepEqual(found, ["Ghost 6.76"]);
+});
+
+test("captchas, from the scripts they load", () => {
+	const found = names(
+		detect(
+			page({
+				resources: [
+					"https://challenges.cloudflare.com/turnstile/v0/api.js",
+					"https://www.google.com/recaptcha/api.js?render=explicit",
+					"https://js.hcaptcha.com/1/api.js",
+				],
+			}),
+			technologies,
+		),
+	);
+	assert.deepEqual(found.sort(), [
+		"Cloudflare Turnstile",
+		"hCaptcha",
+		"reCAPTCHA",
+	]);
+});
+
+test("hCaptcha's grecaptcha does not claim reCAPTCHA", () => {
+	const found = names(
+		detect(
+			page({
+				resources: ["https://js.hcaptcha.com/1/api.js"],
+				js: { grecaptcha: true, "hcaptcha.render": true },
+				dom: { ".g-recaptcha|": true },
+			}),
+			technologies,
+		),
+	);
+	assert.deepEqual(found, ["hCaptcha"]);
+});
+
 test("OutSystems, from its runtime scripts", () => {
 	const resources = [
 		"https://app.example.com/MyApp/scripts/OutSystemsReactView.js?abc",
@@ -536,6 +617,7 @@ test("OutSystems, from its runtime scripts", () => {
 // only shrinks: a new technology must ship with its logo.
 const WITHOUT_LOGO = [
 	"core-js",
+	"crisp",
 	"hyperscript",
 	"katex",
 	"react-aria",

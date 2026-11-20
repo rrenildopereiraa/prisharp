@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **[extension]** Detection of Ghost, with its version from the generator tag, and its Portal and search scripts.
+- **[extension]** Detection of Umami, Auth0 and Sanity, from the scripts, sign-in calls and image CDN each one uses.
+- **[extension]** Detection of Crisp and Intercom, from their chat widgets.
+- **[extension]** Detection of Cloudflare Turnstile, reCAPTCHA and hCaptcha, from the scripts they load. reCAPTCHA shows only from its own script, because hCaptcha defines `window.grecaptcha` too.
+
+### Changed
+
+- **[extension]** The list shows each technology's category, and its version only on its own page.
+- **[extension]** A link to each technology's site appears on its row on hover or focus, so it opens without the details page.
+
 ## [1.0.0] - 2026-11-13
 
 The first stable release, on the [Chrome Web Store](https://chromewebstore.google.com/detail/prisharp-see-what-any-sit/ahjcmijihodolfhcdeapnbmpihkoolhn). Works in Chrome, Edge, Brave, Opera, Vivaldi and Arc.

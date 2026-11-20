@@ -8,3 +8,17 @@
 img[data-logo] {
 	object-fit: contain;
 }
+
+/* A row's link to the technology's site takes the category's place while
+   the row is hovered or has focus, so the list stays quiet at rest. */
+[data-visit] {
+	opacity: 0;
+}
+[data-tech]:hover [data-visit],
+[data-tech]:focus-within [data-visit] {
+	opacity: 1;
+}
+[data-tech]:hover [data-meta],
+[data-tech]:focus-within [data-meta] {
+	visibility: hidden;
+}

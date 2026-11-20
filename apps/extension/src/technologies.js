@@ -236,6 +236,17 @@ export const technologies = [
 		category: "Platform",
 		signals: [{ js: "Shopify.shop" }, { resource: /cdn\.shopify\.com/ }],
 	},
+	{
+		id: "ghost",
+		name: "Ghost",
+		website: "https://ghost.org",
+		category: "Platform",
+		signals: [
+			{ meta: ["generator", /^Ghost ([\d.]+)/] },
+			// Portal and search, which Ghost loads from jsDelivr
+			{ resource: /cdn\.jsdelivr\.net\/ghost\/(?:portal|sodo-search)@/ },
+		],
+	},
 
 	{
 		id: "aspnet",
@@ -1066,6 +1077,16 @@ export const technologies = [
 		signals: [{ resource: /plausible\.io\/(?:js|api)/ }],
 	},
 	{
+		id: "umami",
+		name: "Umami",
+		website: "https://umami.is",
+		category: "Analytics",
+		signals: [
+			{ js: "umami.track" },
+			{ resource: /cloud\.umami\.is\/script\.js/ },
+		],
+	},
+	{
 		id: "posthog",
 		name: "PostHog",
 		website: "https://posthog.com",
@@ -1186,6 +1207,16 @@ export const technologies = [
 		],
 	},
 	{
+		id: "auth0",
+		name: "Auth0",
+		website: "https://auth0.com",
+		category: "Auth",
+		signals: [
+			// a tenant's own domain, which the SDK calls to sign in and refresh
+			{ resource: /\/\/[\w.-]+\.auth0\.com\// },
+		],
+	},
+	{
 		id: "supabase",
 		name: "Supabase",
 		website: "https://supabase.com",
@@ -1198,6 +1229,13 @@ export const technologies = [
 		website: "https://firebase.google.com",
 		category: "Backend",
 		signals: [{ resource: /gstatic\.com\/firebasejs|\.firebaseapp\.com\// }],
+	},
+	{
+		id: "sanity",
+		name: "Sanity",
+		website: "https://www.sanity.io",
+		category: "Backend",
+		signals: [{ resource: /cdn\.sanity\.io\/(?:images|files)\// }],
 	},
 	{
 		id: "google-fonts",
@@ -1329,12 +1367,68 @@ export const technologies = [
 		],
 	},
 	{
+		id: "turnstile",
+		name: "Cloudflare Turnstile",
+		website:
+			"https://www.cloudflare.com/application-services/products/turnstile/",
+		icon: "cloudflare",
+		category: "Security",
+		signals: [
+			{ resource: /challenges\.cloudflare\.com\/turnstile\// },
+			{ js: "turnstile.render" },
+		],
+	},
+	{
+		id: "recaptcha",
+		name: "reCAPTCHA",
+		website: "https://developers.google.com/recaptcha",
+		icon: "googlesignin",
+		category: "Security",
+		// only its script: hCaptcha defines window.grecaptcha too
+		signals: [
+			{
+				resource:
+					/(?:google\.com|recaptcha\.net)\/recaptcha\/|gstatic\.com\/recaptcha\//,
+			},
+		],
+	},
+	{
+		id: "hcaptcha",
+		name: "hCaptcha",
+		website: "https://www.hcaptcha.com",
+		category: "Security",
+		signals: [
+			{ resource: /\/\/(?:js\.|newassets\.)?hcaptcha\.com\// },
+			{ js: "hcaptcha.render" },
+		],
+	},
+	{
 		id: "help-scout",
 		name: "Help Scout",
 		website: "https://www.helpscout.com",
 		category: "Support",
 		icon: "helpscout",
 		signals: [{ resource: /beacon-v2\.helpscout\.net/ }],
+	},
+	{
+		id: "crisp",
+		name: "Crisp",
+		website: "https://crisp.chat",
+		category: "Support",
+		signals: [
+			{ resource: /client\.crisp\.chat\// },
+			{ js: "CRISP_WEBSITE_ID" },
+		],
+	},
+	{
+		id: "intercom",
+		name: "Intercom",
+		website: "https://www.intercom.com",
+		category: "Support",
+		signals: [
+			{ resource: /widget\.intercom\.io\/widget\/|js\.intercomcdn\.com\// },
+			{ js: "intercomSettings" },
+		],
 	},
 	{
 		id: "buysellads",
