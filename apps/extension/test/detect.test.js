@@ -305,6 +305,79 @@ test("component libraries, from the classes and variables they ship", () => {
 	);
 });
 
+test("UI kits, from the classes, variables and banners they ship", () => {
+	const found = names(
+		detect(
+			page({
+				dom: { "style[data-css-hash]|": true },
+				classes: ["ant-btn", "ant-layout", "mat-mdc-button", "cds--btn"],
+				attrPrefix: ["data-kb-"],
+				js: { initFlowbite: true },
+				css: [
+					"/*! bulma.io v1.0.4 | MIT License | github.com/jgthms/bulma */",
+					"/*! 🌼 daisyUI 5.8.1 - MIT License */ :root{--radius-selector:.5rem}",
+					":root{--el-color-primary:#409eff;--mat-sys-primary:#005cbb}",
+					".cds--btn{display:flex}",
+					":root{--heroui-radius-medium:12px}",
+				].join("\n"),
+			}),
+			technologies,
+		),
+	);
+	for (const name of [
+		"Ant Design",
+		"Element Plus",
+		"Angular Material",
+		"Carbon",
+		"HeroUI",
+		"Kobalte",
+		"daisyUI 5.8.1",
+		"Flowbite",
+		"Bulma 1.0.4",
+	]) {
+		assert.ok(found.includes(name), `${name} in ${found.join(", ")}`);
+	}
+});
+
+test("HeroUI's button and card slots alone are not shadcn/ui", () => {
+	const found = names(
+		detect(
+			page({
+				dom: { "[data-slot='button'], [data-slot='card']|": true },
+				css: ".list-box-item__indicator{opacity:0} --tw-shadow:0 0 #0000",
+			}),
+			technologies,
+		),
+	);
+	assert.ok(found.includes("HeroUI"), found.join(", "));
+	assert.ok(!found.includes("shadcn/ui"), found.join(", "));
+});
+
+test("shadcn/ui shows from its own slots, or a button slot and its theme", () => {
+	const tw = "--tw-shadow:0 0 #0000";
+	for (const overrides of [
+		{
+			dom: {
+				"[data-slot='dropdown-menu-trigger'], [data-slot='dialog-content'], [data-slot='sidebar-provider'], [data-slot='navigation-menu']|": true,
+			},
+			css: tw,
+		},
+		{
+			dom: { "[data-slot='button'], [data-slot='card']|": true },
+			css: `${tw} :root{--popover-foreground:oklch(0.1 0 0)}`,
+		},
+	]) {
+		assert.ok(
+			names(detect(page(overrides), technologies)).includes("shadcn/ui"),
+		);
+	}
+});
+
+test("one ant- class is not Ant Design", () => {
+	const found = names(detect(page({ classes: ["ant-btn"] }), technologies));
+	assert.ok(!found.includes("Ant Design"));
+});
+
 test("CSS-in-JS libraries, from the style tags they inject", () => {
 	const found = (overrides) => names(detect(page(overrides), technologies));
 	assert.deepEqual(

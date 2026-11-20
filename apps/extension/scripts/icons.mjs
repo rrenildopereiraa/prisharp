@@ -16,6 +16,7 @@ const marks = {
 	algolia: "siAlgolia",
 	alpinejs: "siAlpinedotjs",
 	angular: "siAngular",
+	antdesign: "siAntdesign",
 	apache: "siApache",
 	apple: "siApple",
 	astro: "siAstro",
@@ -24,10 +25,12 @@ const marks = {
 	blazor: "siBlazor",
 	bootstrap: "siBootstrap",
 	braintree: "siBraintree",
+	bulma: "siBulma",
 	buysellads: "siBuysellads",
 	chakraui: "siChakraui",
 	clerk: "siClerk",
 	cloudflare: "siCloudflare",
+	daisyui: "siDaisyui",
 	datadog: "siDatadog",
 	docusaurus: "siDocusaurus",
 	dotnet: "siDotnet",
@@ -51,6 +54,7 @@ const marks = {
 	gumroad: "siGumroad",
 	headlessui: "siHeadlessui",
 	helpscout: "siHelpscout",
+	heroui: "siHeroui",
 	hotwire: "siHotwire",
 	htmx: "siHtmx",
 	hugo: "siHugo",
@@ -113,6 +117,7 @@ const icons = {
 	adobe: "Adobe",
 	adobefonts: "AdobeFonts",
 	aws: ["AmazonWebServicesLight", "AmazonWebServicesDark"],
+	flowbite: "Flowbite",
 	googlelogo: "Google",
 	hcaptcha: "HCaptcha",
 	parcel: "Parcel",
@@ -138,18 +143,25 @@ const icons = {
 //   Ads: Amazon's mark from Simple Icons' earlier releases, in its orange.
 // - Crisp, OneTrust, OutSystems: the marks from their own websites,
 //   OneTrust's in the panel's ink.
+// - Element Plus, Kobalte, Carbon: from their own repositories, Kobalte's
+//   as its app icon PNG; Angular Material: its pinned-tab mark from the
+//   angular/components repository, in the panel's ink.
 // - DataDome: its app icon from its documentation, which publishes it only
 //   as a 180px PNG, so the file wraps that PNG with its corners rounded.
 const local = {
 	"amazon-ads": false,
+	"angular-material": true,
+	carbon: false,
 	"core-js": true,
 	crisp: false,
 	datadome: false,
+	"element-plus": false,
 	emotion: false,
 	hugeicons: true,
 	hyperscript: false,
 	iconoir: true,
 	katex: true,
+	kobalte: false,
 	onetrust: true,
 	outsystems: false,
 	prebid: false,

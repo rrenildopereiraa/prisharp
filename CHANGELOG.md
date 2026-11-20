@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **[extension]** Detection of nine UI kits, each from evidence only it ships: Ant Design, Element Plus, Angular Material, Carbon, HeroUI, Kobalte, daisyUI and Flowbite, and Bulma with its version.
+
+### Fixed
+
+- **[extension]** shadcn/ui no longer shows from a `button` or `card` slot alone, which HeroUI writes too. It shows from the slots only it writes, or from those two with its theme.
+
 ## [1.1.0] - 2026-11-20
 
 ### Added
