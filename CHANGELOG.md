@@ -23,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[extension]** A link to each technology's site appears on its row on hover or focus, so it opens without the details page.
 - **[extension]** A technology's page names it beside its logo, with its category, version and what it brings in below.
 - **[web]** The evidence card on prisharp.com shows the same.
-- **[extension]** The extension's description reads "X-ray any site: frameworks, libraries, hosts, with proof."
+- **[extension]** The extension's description reads "See every framework, library and host, with proof."
 
 ### Fixed
 
