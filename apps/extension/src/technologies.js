@@ -611,9 +611,13 @@ export const technologies = [
 		category: "Components",
 		requires: ["tailwindcss"],
 		signals: [
+			// slot names only shadcn/ui writes
 			{
-				dom: "[data-slot='button'], [data-slot='card'], [data-slot='dropdown-menu-trigger'], [data-slot='dialog-content']",
+				dom: "[data-slot='dropdown-menu-trigger'], [data-slot='dialog-content'], [data-slot='sidebar-provider'], [data-slot='navigation-menu']",
 			},
+			// HeroUI writes button and card slots too, so these need its theme
+			{ dom: "[data-slot='button'], [data-slot='card']", weight: 50 },
+			{ css: /--popover-foreground:/, weight: 50 },
 		],
 	},
 
@@ -672,6 +676,128 @@ export const technologies = [
 			{ dom: "html[data-mantine-color-scheme]" },
 			{ css: /--mantine-(?:color|spacing|radius|font-size)-/ },
 		],
+	},
+	{
+		id: "ant-design",
+		name: "Ant Design",
+		website: "https://ant.design",
+		icon: "antdesign",
+		category: "Components",
+		implies: ["react"],
+		signals: [
+			// the style tags its CSS-in-JS writes
+			{ dom: "style[data-css-hash]" },
+			{
+				classes: [
+					"ant-btn",
+					"ant-layout",
+					"ant-typography",
+					"ant-space",
+					"ant-input",
+					"ant-menu",
+					"ant-card",
+					"ant-select",
+					"ant-table",
+					"ant-modal",
+					"ant-form",
+					"ant-dropdown",
+				],
+				min: 2,
+			},
+		],
+	},
+	{
+		id: "element-plus",
+		name: "Element Plus",
+		website: "https://element-plus.org",
+		category: "Components",
+		implies: ["vue"],
+		signals: [{ css: /--el-color-primary:/ }],
+	},
+	{
+		id: "angular-material",
+		name: "Angular Material",
+		website: "https://material.angular.dev",
+		category: "Components",
+		implies: ["angular"],
+		signals: [
+			{ css: /--mat-sys-[a-z-]+:/ },
+			{
+				classes: [
+					"mat-mdc-button",
+					"mat-mdc-icon-button",
+					"mat-mdc-form-field",
+					"mat-mdc-card",
+					"mat-mdc-tab",
+					"mat-mdc-list",
+					"mat-mdc-chip",
+					"mat-mdc-menu-panel",
+				],
+				min: 1,
+			},
+		],
+	},
+	{
+		id: "carbon",
+		name: "Carbon",
+		website: "https://carbondesignsystem.com",
+		category: "Components",
+		signals: [
+			{ css: /\.cds--[a-z]/ },
+			{
+				classes: [
+					"cds--btn",
+					"cds--header",
+					"cds--side-nav",
+					"cds--grid",
+					"cds--text-input",
+					"cds--list-box",
+					"cds--modal",
+					"cds--tabs",
+				],
+				min: 1,
+			},
+		],
+	},
+	{
+		id: "heroui",
+		name: "HeroUI",
+		website: "https://www.heroui.com",
+		category: "Components",
+		implies: ["react"],
+		signals: [
+			// HeroUI 3's stylesheet, by selectors only it writes
+			{ css: /\.list-box-item__indicator|\.scroll-shadow--hide-scrollbar/ },
+			// HeroUI 2, and NextUI as it was named before 2025
+			{ css: /--(?:heroui|nextui)-(?:font-size|radius|background|primary)/ },
+		],
+	},
+	{
+		id: "kobalte",
+		name: "Kobalte",
+		website: "https://kobalte.dev",
+		category: "Components",
+		implies: ["solid"],
+		signals: [{ attrPrefix: "data-kb-" }],
+	},
+	{
+		id: "daisyui",
+		name: "daisyUI",
+		website: "https://daisyui.com",
+		category: "Components",
+		implies: ["tailwindcss"],
+		signals: [
+			{ css: /daisyUI ([\d.]+)/ },
+			// a theme variable only daisyUI defines
+			{ css: /--radius-selector:/ },
+		],
+	},
+	{
+		id: "flowbite",
+		name: "Flowbite",
+		website: "https://flowbite.com",
+		category: "Components",
+		signals: [{ js: "initFlowbite" }, { js: "FlowbiteInstances" }],
 	},
 
 	{
@@ -843,6 +969,16 @@ export const technologies = [
 		signals: [
 			{ css: /Bootstrap\s+v([\d.]+)/ },
 			{ js: "bootstrap.Tooltip.VERSION", version: true },
+		],
+	},
+	{
+		id: "bulma",
+		name: "Bulma",
+		website: "https://bulma.io",
+		category: "Styling",
+		signals: [
+			{ css: /bulma\.io v([\d.]+)/ },
+			{ css: /--bulma-(?:scheme|primary|control)-/ },
 		],
 	},
 
