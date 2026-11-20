@@ -572,6 +572,50 @@ test("Nextra, from its CSS variables", () => {
 	assert.ok(names(detect(page({ css }), technologies)).includes("Nextra"));
 });
 
+test("frameworks, from the data, headers and globals they leave", () => {
+	const found = names(
+		detect(
+			page({
+				dom: {
+					"[data-page*='component'][data-page*='props'], script[data-page][type='application/json']|": true,
+				},
+				js: {
+					__meteor_runtime_config__: true,
+					"Backbone.VERSION": "1.6.1",
+					"ko.version": "3.5.3",
+				},
+				headers: { "powered-by": "Shopify, Oxygen, Hydrogen" },
+				html: '<script>throw Error("https://github.com/elm/core/blob/1.0.0/hints/"+n+".md")</script>',
+				attrPrefix: ["data-signals", "data-on:"],
+			}),
+			technologies,
+		),
+	);
+	for (const name of [
+		"Inertia.js",
+		"Meteor",
+		"Hydrogen",
+		"Elm",
+		"Datastar",
+		"Backbone.js 1.6.1",
+		"Knockout.js 3.5.3",
+	]) {
+		assert.ok(found.includes(name), `${name} in ${found.join(", ")}`);
+	}
+});
+
+test("Elm, from the key its virtual DOM sets", () => {
+	const found = names(
+		detect(page({ domKey: ["elm_event_node_ref"] }), technologies),
+	);
+	assert.ok(found.includes("Elm"));
+});
+
+test("a global named Elm alone is not Elm", () => {
+	const found = names(detect(page({ js: { Elm: true } }), technologies));
+	assert.ok(!found.includes("Elm"));
+});
+
 test("MediaWiki reads its version from the generator", () => {
 	const meta = { generator: "MediaWiki 1.46.0-wmf.3" };
 	assert.deepEqual(names(detect(page({ meta }), technologies)), [
