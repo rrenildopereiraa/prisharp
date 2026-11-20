@@ -177,6 +177,31 @@ export const technologies = [
 		],
 	},
 	{
+		id: "vuepress",
+		name: "VuePress",
+		website: "https://vuepress.vuejs.org",
+		category: "Framework",
+		icon: "vue",
+		implies: ["vue"],
+		signals: [{ meta: ["generator", /^VuePress ([\w.-]+)/i] }],
+	},
+	{
+		id: "rspress",
+		name: "Rspress",
+		website: "https://rspress.rs",
+		category: "Framework",
+		implies: ["react"],
+		signals: [{ meta: ["generator", /^Rspress v?([\w.-]+)/i] }],
+	},
+	{
+		id: "nextra",
+		name: "Nextra",
+		website: "https://nextra.site",
+		category: "Framework",
+		implies: ["nextjs"],
+		signals: [{ css: /--nextra-(?:navbar-height|primary-hue|bg)/ }],
+	},
+	{
 		id: "docusaurus",
 		name: "Docusaurus",
 		website: "https://docusaurus.io",
@@ -190,6 +215,36 @@ export const technologies = [
 		website: "https://gohugo.io",
 		category: "Framework",
 		signals: [{ meta: ["generator", /^Hugo ([\d.]+)/i] }],
+	},
+	{
+		id: "eleventy",
+		name: "Eleventy",
+		website: "https://www.11ty.dev",
+		category: "Framework",
+		// Eleventy 4 writes "Eleventy (Build Awesome) v4.0.0", for its new name
+		signals: [
+			{
+				meta: [
+					"generator",
+					/^(?:Eleventy|Build Awesome)(?: \([^)]*\))? v?([\d.]+)/i,
+				],
+			},
+		],
+	},
+	{
+		id: "jekyll",
+		name: "Jekyll",
+		website: "https://jekyllrb.com",
+		category: "Framework",
+		// the tag jekyll-seo-tag writes, which GitHub Pages turns on
+		signals: [{ meta: ["generator", /^Jekyll v?([\d.]+)/i] }],
+	},
+	{
+		id: "hexo",
+		name: "Hexo",
+		website: "https://hexo.io",
+		category: "Framework",
+		signals: [{ meta: ["generator", /^Hexo ([\d.]+)/i] }],
 	},
 	{
 		id: "framer",

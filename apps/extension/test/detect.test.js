@@ -553,6 +553,25 @@ test("a 0.0.0 banner from a build from source is no version", () => {
 	]);
 });
 
+test("site generators read their version from the generator tag", () => {
+	for (const [generator, expected] of [
+		["Eleventy v3.1.2", "Eleventy 3.1.2"],
+		["Eleventy (Build Awesome) v4.0.0", "Eleventy 4.0.0"],
+		["Jekyll v4.3.4", "Jekyll 4.3.4"],
+		["Hexo 7.3.0", "Hexo 7.3.0"],
+		["VuePress 2.0.0-rc.24", "VuePress 2.0.0-rc.24"],
+		["Rspress v2.1.4", "Rspress 2.1.4"],
+	]) {
+		const found = names(detect(page({ meta: { generator } }), technologies));
+		assert.ok(found.includes(expected), `${expected} in ${found.join(", ")}`);
+	}
+});
+
+test("Nextra, from its CSS variables", () => {
+	const css = ":root{--nextra-navbar-height:64px;--nextra-primary-hue:212deg}";
+	assert.ok(names(detect(page({ css }), technologies)).includes("Nextra"));
+});
+
 test("MediaWiki reads its version from the generator", () => {
 	const meta = { generator: "MediaWiki 1.46.0-wmf.3" };
 	assert.deepEqual(names(detect(page({ meta }), technologies)), [
