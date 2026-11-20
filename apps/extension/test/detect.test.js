@@ -623,20 +623,9 @@ test("OutSystems, from its runtime scripts", () => {
 // Technologies whose logo neither Simple Icons nor svgl has, and that show
 // their first letter until their own SVG is added to icons/tech. The list
 // only shrinks: a new technology must ship with its logo.
-const WITHOUT_LOGO = [
-	"core-js",
-	"crisp",
-	"hyperscript",
-	"katex",
-	"react-aria",
-	"stylex",
-	"polar",
-	"onetrust",
-	"datadome",
-	"prebid",
-	"amazon-ads",
-	"outsystems",
-];
+// every technology has a logo but these, whose makers publish none Prisharp
+// could ship
+const WITHOUT_LOGO = ["datadome"];
 
 test("every technology ships a logo, but the few listed without one", async () => {
 	const { icons } = await import("../src/icons.js");

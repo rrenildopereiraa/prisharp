@@ -116,24 +116,45 @@ const icons = {
 	googlelogo: "Google",
 	hcaptcha: "HCaptcha",
 	parcel: "Parcel",
+	polar: ["PolarLight", "PolarDark"],
 	turbopack: ["TurbopackLight", "TurbopackDark"],
 };
 
 // Logos neither has, kept in icons/tech as files: whether each has a dark
-// variant. Yumma CSS has the Yumma mark from its brand page,
-// the same in both themes. Tabler Icons, Iconoir and Hugeicons are each
-// project's own mark from its icon set (brand-tabler, iconoir,
-// HugeiconsIcon; all MIT), drawn in the panel's ink. Emotion's mark is a
-// drawing, so it ships as its own logo from the Emotion repository, scaled to
-// 64px inside an SVG.
+// variant. Each is the project's own, and a mark drawn in black gets a
+// second file in the panel's dark ink.
+// - Yumma CSS: the Yumma mark from its brand page, the same in both themes.
+// - Tabler Icons, Iconoir, Hugeicons: each project's mark from its icon set
+//   (brand-tabler, iconoir, HugeiconsIcon; all MIT), in the panel's ink.
+// - Emotion: its drawing from the Emotion repository, scaled to 64px.
+// - Prism: its triangle from its repository, in the panel's ink.
+// - KaTeX: its wordmark from the KaTeX repository, in the panel's ink.
+// - React Aria: its favicon from the React Spectrum repository, in its own
+//   purple for each theme.
+// - _hyperscript: its editor icon from its repository, with the "_" drawn
+//   as a shape rather than set in a font.
+// - Prebid: the orange mark of its logo from prebid.github.io.
+// - core-js: Devicon's mark; StyleX: the mark from the svg-logos set; Amazon
+//   Ads: Amazon's mark from Simple Icons' earlier releases, in its orange.
+// - Crisp, OneTrust, OutSystems: the marks from their own websites,
+//   OneTrust's in the panel's ink.
 const local = {
+	"amazon-ads": false,
+	"core-js": true,
+	crisp: false,
 	emotion: false,
-	// Prism's triangle from its repository, drawn in the panel's ink
-	prism: true,
-	yummacss: false,
-	"tabler-icons": true,
-	iconoir: true,
 	hugeicons: true,
+	hyperscript: false,
+	iconoir: true,
+	katex: true,
+	onetrust: true,
+	outsystems: false,
+	prebid: false,
+	prism: true,
+	"react-aria": true,
+	stylex: false,
+	"tabler-icons": true,
+	yummacss: false,
 };
 
 const render = (name) => {
