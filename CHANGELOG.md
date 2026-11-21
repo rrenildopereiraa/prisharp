@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-21
+
 ### Added
 
 - **[extension]** Detection of nine UI kits, each from evidence only it ships: Ant Design, Element Plus, Angular Material, Carbon, HeroUI, Kobalte, daisyUI and Flowbite, and Bulma with its version.
@@ -59,6 +61,7 @@ The first stable release, on the [Chrome Web Store](https://chromewebstore.googl
 - **[web]** prisharp.com, where the heading types well-known technologies and shows the popup's evidence for each, above a marquee of every logo.
 - **[web]** A privacy policy at [prisharp.com/privacy](https://prisharp.com/privacy/).
 
-[Unreleased]: https://github.com/rrenildopereiraa/prisharp/compare/v1.1.0...HEAD
+[Unreleased]: https://github.com/rrenildopereiraa/prisharp/compare/v1.2.0...HEAD
+[1.2.0]: https://github.com/rrenildopereiraa/prisharp/compare/v1.1.0...v1.2.0
 [1.1.0]: https://github.com/rrenildopereiraa/prisharp/compare/v1.0.0...v1.1.0
 [1.0.0]: https://github.com/rrenildopereiraa/prisharp/releases/tag/v1.0.0
