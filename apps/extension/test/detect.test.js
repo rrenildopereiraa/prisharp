@@ -616,6 +616,52 @@ test("a global named Elm alone is not Elm", () => {
 	assert.ok(!found.includes("Elm"));
 });
 
+test("hosts, from the headers they send", () => {
+	for (const { headers, name } of [
+		{ headers: { via: "1.1 vegur" }, name: "Heroku" },
+		{ headers: { via: "2.0 heroku-router" }, name: "Heroku" },
+		{ headers: { via: "1.1 spaces-router (616cf2ff3f21)" }, name: "Heroku" },
+		{ headers: { "x-deno-trace-id": "0953fe7b" }, name: "Deno Deploy" },
+		{ headers: { "x-platform-router": "lwdpat4ar5ou" }, name: "Platform.sh" },
+		{ headers: { "x-kinsta-cache": "HIT" }, name: "Kinsta" },
+		{ headers: { "x-railway-edge": "ord1" }, name: "Railway" },
+	]) {
+		const found = names(detect(page({ headers }), technologies));
+		assert.ok(found.includes(name), `${name} in ${found.join(", ")}`);
+	}
+});
+
+test("auth services, from what they call", () => {
+	const found = names(
+		detect(
+			page({
+				resources: [
+					"https://acme.com/api/auth/session",
+					"https://acme.okta.com/oauth2/v1/authorize",
+					"https://cognito-idp.eu-west-1.amazonaws.com/",
+					"https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+				],
+			}),
+			technologies,
+		),
+	);
+	for (const name of [
+		"Auth.js",
+		"Okta",
+		"Amazon Cognito",
+		"Microsoft Entra ID",
+	]) {
+		assert.ok(found.includes(name), `${name} in ${found.join(", ")}`);
+	}
+});
+
+test("Better Auth's session path is not Auth.js", () => {
+	const resources = ["https://acme.com/api/auth/get-session"];
+	assert.ok(
+		!names(detect(page({ resources }), technologies)).includes("Auth.js"),
+	);
+});
+
 test("MediaWiki reads its version from the generator", () => {
 	const meta = { generator: "MediaWiki 1.46.0-wmf.3" };
 	assert.deepEqual(names(detect(page({ meta }), technologies)), [

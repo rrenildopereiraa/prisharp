@@ -1255,6 +1255,54 @@ export const technologies = [
 		category: "Hosting",
 		signals: [{ header: ["rndr-id", /./] }],
 	},
+	{
+		id: "heroku",
+		name: "Heroku",
+		website: "https://www.heroku.com",
+		category: "Hosting",
+		// its routers: vegur, the newer heroku-router, and Private Spaces'
+		signals: [{ header: ["via", /\b(?:vegur|heroku-router|spaces-router)\b/] }],
+	},
+	{
+		id: "deno-deploy",
+		name: "Deno Deploy",
+		website: "https://deno.com/deploy",
+		icon: "deno",
+		category: "Hosting",
+		signals: [
+			{ header: ["x-deno-trace-id", /./] },
+			{ header: ["via", /deno-cluster\.net/] },
+		],
+	},
+	{
+		id: "platformsh",
+		name: "Platform.sh",
+		website: "https://upsun.com",
+		icon: "platformdotsh",
+		category: "Hosting",
+		// Upsun, as it is now named, sends the same headers
+		signals: [
+			{ header: ["x-platform-router", /./] },
+			{ header: ["x-platform-cluster", /./] },
+		],
+	},
+	{
+		id: "kinsta",
+		name: "Kinsta",
+		website: "https://kinsta.com",
+		category: "Hosting",
+		signals: [{ header: ["x-kinsta-cache", /./] }],
+	},
+	{
+		id: "railway",
+		name: "Railway",
+		website: "https://railway.com",
+		category: "Hosting",
+		signals: [
+			{ header: ["x-railway-request-id", /./] },
+			{ header: ["x-railway-edge", /./] },
+		],
+	},
 
 	{
 		id: "cloudfront",
@@ -1466,6 +1514,54 @@ export const technologies = [
 		signals: [
 			{ js: "Clerk.version", version: true },
 			{ resource: /clerk\.[\w.-]+\/npm\/@clerk/ },
+		],
+	},
+	{
+		id: "authjs",
+		name: "Auth.js",
+		website: "https://authjs.dev",
+		category: "Auth",
+		// the session its client fetches, at its default base path
+		signals: [{ resource: /\/api\/auth\/session(?:\?|$)/ }],
+	},
+	{
+		id: "okta",
+		name: "Okta",
+		website: "https://www.okta.com",
+		category: "Auth",
+		signals: [
+			{
+				resource:
+					/\/\/[\w.-]+\.okta(?:preview|-emea)?\.com\/|global\.oktacdn\.com/,
+			},
+			{ resource: /okta-sign-in(?:\.min)?\.(?:js|css)/ },
+		],
+	},
+	{
+		id: "cognito",
+		name: "Amazon Cognito",
+		website: "https://aws.amazon.com/cognito",
+		icon: "aws",
+		category: "Auth",
+		signals: [
+			{
+				resource:
+					/cognito-idp\.[a-z0-9-]+\.amazonaws\.com|\.auth\.[a-z0-9-]+\.amazoncognito\.com/,
+			},
+		],
+	},
+	{
+		id: "microsoft-entra",
+		name: "Microsoft Entra ID",
+		website:
+			"https://www.microsoft.com/security/business/identity-access/microsoft-entra-id",
+		icon: "microsoft",
+		category: "Auth",
+		signals: [
+			{
+				resource:
+					/login\.microsoftonline\.com|aadcdn\.msauth\.net|alcdn\.msauth\.net/,
+			},
 		],
 	},
 	{
