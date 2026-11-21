@@ -3,6 +3,7 @@ import { catalog } from "virtual:catalog";
 import { rank } from "@/famous";
 import Button from "@/components/ui/button";
 import { BrowserMarks } from "@/components/browsers";
+import { useKeyHold } from "@tanstack/react-hotkeys";
 import { REPO, STORE } from "@/links";
 
 // "Built with" fits what a site is made of, not the icons or analytics it
@@ -108,6 +109,9 @@ const ACTION = "h:10 px:4 g:2 fs:sm us:none";
 
 export function Hero({ onName }: { onName?: (name: string) => void }) {
 	const { name, typing } = useTypedName(onName);
+	// held Shift turns the install button into the zip, to load unpacked or
+	// upload a build without typing its address
+	const zip = useKeyHold("Shift");
 
 	return (
 		<div
@@ -137,12 +141,14 @@ export function Hero({ onName }: { onName?: (name: string) => void }) {
 			<div data-actions className="d:f fw:w g:2 mt:1">
 				<Button
 					id="install"
-					render={<a href={STORE} />}
+					render={
+						zip ? <a href="/prisharp.zip" download /> : <a href={STORE} />
+					}
 					nativeButton={false}
 					shape="square"
 					className={ACTION}
 				>
-					Add to Chrome <Key>A</Key>
+					{zip ? "Download .zip" : "Add to Chrome"} <Key>A</Key>
 				</Button>
 				<Button
 					id="source"

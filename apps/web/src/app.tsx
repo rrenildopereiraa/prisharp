@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+import { useHotkey } from "@tanstack/react-hotkeys";
+import { useState } from "react";
 import { Band } from "@/components/band";
 import { Footer } from "@/components/footer";
 import Threads from "@/components/threads";
@@ -25,8 +26,9 @@ const STEPS = [
 	},
 ];
 
-// A and S press the hero's buttons, unless a field has the keys
-const KEYS: Record<string, string> = { a: "install", s: "source" };
+// A and S press the hero's buttons, and Shift+A the install button while
+// Shift turns it into the zip. Typing in a field never triggers them.
+const press = (id: string) => () => document.getElementById(id)?.click();
 
 /** A catalog entry, in the shape the popup's evidence page reads. */
 const found = (name: string): Found => {
@@ -40,19 +42,9 @@ export function App() {
 	const [named, setNamed] = useState(FIRST);
 	const proof = found(named);
 
-	useEffect(() => {
-		const onKey = (event: KeyboardEvent) => {
-			const target = event.target as HTMLElement;
-			if (event.metaKey || event.ctrlKey || event.altKey) return;
-			if (target.closest("input, textarea, select, [contenteditable]")) return;
-			const id = KEYS[event.key.toLowerCase()];
-			if (!id) return;
-			event.preventDefault();
-			document.getElementById(id)?.click();
-		};
-		document.addEventListener("keydown", onKey);
-		return () => document.removeEventListener("keydown", onKey);
-	}, []);
+	useHotkey("A", press("install"));
+	useHotkey("Shift+A", press("install"));
+	useHotkey("S", press("source"));
 
 	return (
 		<DarkContext.Provider value={dark}>
