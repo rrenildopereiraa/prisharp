@@ -617,17 +617,17 @@ test("a global named Elm alone is not Elm", () => {
 });
 
 test("hosts, from the headers they send", () => {
-	for (const [headers, expected] of [
-		[{ via: "1.1 vegur" }, "Heroku"],
-		[{ via: "2.0 heroku-router" }, "Heroku"],
-		[{ via: "1.1 spaces-router (616cf2ff3f21)" }, "Heroku"],
-		[{ "x-deno-trace-id": "0953fe7b" }, "Deno Deploy"],
-		[{ "x-platform-router": "lwdpat4ar5ou" }, "Platform.sh"],
-		[{ "x-kinsta-cache": "HIT" }, "Kinsta"],
-		[{ "x-railway-edge": "ord1" }, "Railway"],
+	for (const { headers, name } of [
+		{ headers: { via: "1.1 vegur" }, name: "Heroku" },
+		{ headers: { via: "2.0 heroku-router" }, name: "Heroku" },
+		{ headers: { via: "1.1 spaces-router (616cf2ff3f21)" }, name: "Heroku" },
+		{ headers: { "x-deno-trace-id": "0953fe7b" }, name: "Deno Deploy" },
+		{ headers: { "x-platform-router": "lwdpat4ar5ou" }, name: "Platform.sh" },
+		{ headers: { "x-kinsta-cache": "HIT" }, name: "Kinsta" },
+		{ headers: { "x-railway-edge": "ord1" }, name: "Railway" },
 	]) {
 		const found = names(detect(page({ headers }), technologies));
-		assert.ok(found.includes(expected), `${expected} in ${found.join(", ")}`);
+		assert.ok(found.includes(name), `${name} in ${found.join(", ")}`);
 	}
 });
 
