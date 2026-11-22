@@ -73,6 +73,7 @@ type Signal = {
 	resource?: RegExp;
 	css?: RegExp;
 	html?: RegExp;
+	url?: RegExp;
 	label?: string;
 };
 
@@ -107,6 +108,7 @@ function evidence(signal: Signal): { kind: string; text: string }[] {
 	}
 	if (signal.css) return [{ kind: "Stylesheet", text: pattern(signal.css) }];
 	if (signal.html) return [{ kind: "HTML", text: pattern(signal.html) }];
+	if (signal.url) return [{ kind: "URL", text: pattern(signal.url) }];
 	return [];
 }
 

@@ -35,6 +35,7 @@
 export const categories = [
 	"Framework",
 	"Platform",
+	"AI Builder",
 	"Library",
 	"Components",
 	"Icons",
@@ -290,6 +291,68 @@ export const technologies = [
 		website: "https://www.shopify.com",
 		category: "Platform",
 		signals: [{ js: "Shopify.shop" }, { resource: /cdn\.shopify\.com/ }],
+	},
+	{
+		id: "v0",
+		name: "v0",
+		website: "https://v0.app",
+		category: "AI Builder",
+		// the generator its Next.js layout sets
+		signals: [{ meta: ["generator", /^v0\.(?:app|dev)$/i] }],
+	},
+	{
+		id: "lovable",
+		name: "Lovable",
+		website: "https://lovable.dev",
+		category: "AI Builder",
+		signals: [
+			// the tags its template's index.html ships
+			{ meta: ["author", /^Lovable$/] },
+			{ meta: ["og:image", /lovable\.dev\/opengraph-image/] },
+			{ meta: ["twitter:site", /^@lovable_dev$/] },
+			{ resource: /cdn\.gpteng\.co\/gptengineer\.js/ },
+			{
+				url: /^https?:\/\/[\w-]+\.lovable\.app\//,
+				label: "A site on lovable.app",
+			},
+		],
+	},
+	{
+		id: "bolt",
+		name: "Bolt",
+		website: "https://bolt.new",
+		category: "AI Builder",
+		signals: [
+			{ url: /^https?:\/\/[\w-]+\.bolt\.host\//, label: "A site on bolt.host" },
+		],
+	},
+	{
+		id: "replit",
+		name: "Replit",
+		website: "https://replit.com",
+		category: "AI Builder",
+		signals: [
+			// the banner script its templates keep in production builds
+			{ resource: /replit\.com\/public\/js\/replit-dev-banner\.js/ },
+			{
+				url: /^https?:\/\/[\w-]+\.replit\.app\//,
+				label: "A site on replit.app",
+			},
+		],
+	},
+	{
+		id: "base44",
+		name: "Base44",
+		website: "https://base44.com",
+		category: "AI Builder",
+		signals: [
+			// its SDK calls the app's API on base44.app
+			{ resource: /\/\/base44\.app\/api\// },
+			{
+				url: /^https?:\/\/[\w-]+\.base44\.app\//,
+				label: "A site on base44.app",
+			},
+		],
 	},
 	{
 		id: "ghost",

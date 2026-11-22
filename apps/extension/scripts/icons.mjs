@@ -99,6 +99,7 @@ const marks = {
 	react: "siReact",
 	remix: "siRemix",
 	render: "siRender",
+	replit: "siReplit",
 	rolldown: "siRolldown",
 	sanity: "siSanity",
 	sentry: "siSentry",
@@ -114,6 +115,7 @@ const marks = {
 	tanstack: "siTanstack",
 	threejs: "siThreedotjs",
 	umami: "siUmami",
+	v0: "siV0",
 	vercel: "siVercel",
 	vite: "siVite",
 	vue: "siVuedotjs",
@@ -130,10 +132,12 @@ const icons = {
 	adobe: "Adobe",
 	adobefonts: "AdobeFonts",
 	authjs: "Authjs",
+	bolt: ["BoltLight", "BoltDark"],
 	aws: ["AmazonWebServicesLight", "AmazonWebServicesDark"],
 	flowbite: "Flowbite",
 	googlelogo: "Google",
 	heroku: "Heroku",
+	lovable: "Lovable",
 	microsoft: "Microsoft",
 	hcaptcha: "HCaptcha",
 	parcel: "Parcel",
@@ -167,11 +171,13 @@ const icons = {
 //   for its black half. Datastar: the rocket data-star.dev uses, kept as
 //   pixel art. Knockout: the wordmark knockoutjs.com shows, without its
 //   shadow, in the panel's ink.
+// - Base44: the icon base44.com uses, as a PNG.
 // - DataDome: its app icon from its documentation, which publishes it only
 //   as a 180px PNG, so the file wraps that PNG with its corners rounded.
 const local = {
 	"amazon-ads": false,
 	"angular-material": true,
+	base44: false,
 	carbon: false,
 	"core-js": true,
 	crisp: false,

@@ -662,6 +662,43 @@ test("Better Auth's session path is not Auth.js", () => {
 	);
 });
 
+test("AI builders, from what their templates and hosting leave", () => {
+	for (const { overrides, name } of [
+		{ overrides: { meta: { generator: "v0.app" } }, name: "v0" },
+		{ overrides: { meta: { author: "Lovable" } }, name: "Lovable" },
+		{
+			overrides: {
+				meta: { "og:image": "https://lovable.dev/opengraph-image-p98pqg.png" },
+			},
+			name: "Lovable",
+		},
+		{ overrides: { url: "https://my-shop.lovable.app/" }, name: "Lovable" },
+		{ overrides: { url: "https://my-shop.bolt.host/" }, name: "Bolt" },
+		{
+			overrides: {
+				resources: ["https://replit.com/public/js/replit-dev-banner.js"],
+			},
+			name: "Replit",
+		},
+		{
+			overrides: {
+				resources: ["https://base44.app/api/apps/abc/entities/Task"],
+			},
+			name: "Base44",
+		},
+	]) {
+		const found = names(detect(page(overrides), technologies));
+		assert.ok(found.includes(name), `${name} in ${found.join(", ")}`);
+	}
+});
+
+test("a site that only links to an AI builder is not built with it", () => {
+	const html =
+		'<a href="https://lovable.dev">Lovable</a> <a href="https://v0.app">v0</a>';
+	const found = names(detect(page({ html }), technologies));
+	assert.ok(!found.includes("Lovable") && !found.includes("v0"));
+});
+
 test("MediaWiki reads its version from the generator", () => {
 	const meta = { generator: "MediaWiki 1.46.0-wmf.3" };
 	assert.deepEqual(names(detect(page({ meta }), technologies)), [
