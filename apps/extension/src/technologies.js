@@ -311,7 +311,10 @@ export const technologies = [
 			{ meta: ["og:image", /lovable\.dev\/opengraph-image/] },
 			{ meta: ["twitter:site", /^@lovable_dev$/] },
 			{ resource: /cdn\.gpteng\.co\/gptengineer\.js/ },
-			{ url: /^https?:\/\/[\w-]+\.lovable\.app\// },
+			{
+				url: /^https?:\/\/[\w-]+\.lovable\.app\//,
+				label: "A site on lovable.app",
+			},
 		],
 	},
 	{
@@ -319,7 +322,9 @@ export const technologies = [
 		name: "Bolt",
 		website: "https://bolt.new",
 		category: "AI Builder",
-		signals: [{ url: /^https?:\/\/[\w-]+\.bolt\.host\// }],
+		signals: [
+			{ url: /^https?:\/\/[\w-]+\.bolt\.host\//, label: "A site on bolt.host" },
+		],
 	},
 	{
 		id: "replit",
@@ -329,7 +334,10 @@ export const technologies = [
 		signals: [
 			// the banner script its templates keep in production builds
 			{ resource: /replit\.com\/public\/js\/replit-dev-banner\.js/ },
-			{ url: /^https?:\/\/[\w-]+\.replit\.app\// },
+			{
+				url: /^https?:\/\/[\w-]+\.replit\.app\//,
+				label: "A site on replit.app",
+			},
 		],
 	},
 	{
@@ -340,7 +348,10 @@ export const technologies = [
 		signals: [
 			// its SDK calls the app's API on base44.app
 			{ resource: /\/\/base44\.app\/api\// },
-			{ url: /^https?:\/\/[\w-]+\.base44\.app\// },
+			{
+				url: /^https?:\/\/[\w-]+\.base44\.app\//,
+				label: "A site on base44.app",
+			},
 		],
 	},
 	{
