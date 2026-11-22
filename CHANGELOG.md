@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **[extension]** An AI Builder category, with v0, Lovable, Bolt, Replit and Base44, from the tags, scripts and hosting their projects ship with.
 - **[web]** prisharp.com/chrome and prisharp.com/get open Prisharp on the Chrome Web Store, short links for posts.
 - **[web]** Holding Shift turns "Add to Chrome" into "Download .zip", and Shift+A downloads it, to load the latest build unpacked or upload it to the store.
 
