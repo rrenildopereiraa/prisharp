@@ -7,17 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- **[extension]** An AI Builder category, with v0, Lovable, Bolt, Replit and Base44, from the tags, scripts and hosting their projects ship with.
-- **[web]** prisharp.com/chrome and prisharp.com/get open Prisharp on the Chrome Web Store, short links for posts.
-- **[web]** Holding Shift turns "Add to Chrome" into "Download .zip", and Shift+A downloads it, to load the latest build unpacked or upload it to the store.
-
-### Changed
-
-- **[web]** The A and S shortcuts run on TanStack Hotkeys, which skips fields you type in and lets go of Shift when the window loses focus.
-
-## [1.2.0] - 2026-11-21
+## [1.2.0] - 2026-11-22
 
 ### Added
 
@@ -26,6 +16,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[extension]** Detection of seven frameworks and libraries: Inertia.js, Meteor, Hydrogen, Elm, Datastar, and Backbone.js and Knockout.js with their versions.
 - **[extension]** Detection of five hosts from the headers they send: Heroku, Deno Deploy, Platform.sh, Kinsta and Railway.
 - **[extension]** Detection of four auth services from what they call: Auth.js, Okta, Amazon Cognito and Microsoft Entra ID.
+- **[extension]** An AI Builder category, with v0, Lovable, Bolt, Replit and Base44, from the tags, scripts and hosting their projects ship with.
+- **[web]** prisharp.com/chrome and prisharp.com/get open Prisharp on the Chrome Web Store, short links for posts.
+- **[web]** Holding Shift turns "Add to Chrome" into "Download .zip", and Shift+A downloads it, to load the latest build unpacked or upload it to the store.
+
+### Changed
+
+- **[web]** The A and S shortcuts run on TanStack Hotkeys, which skips fields you type in and lets go of Shift when the window loses focus.
 
 ### Fixed
 
