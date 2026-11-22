@@ -6,7 +6,24 @@
 	"headers": [
 		{
 			"source": "/prisharp.zip",
-			"headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+			"headers": [
+				{
+					"key": "Cache-Control",
+					"value": "no-cache"
+				}
+			]
+		}
+	],
+	"redirects": [
+		{
+			"source": "/chrome",
+			"destination": "https://chromewebstore.google.com/detail/prisharp-see-what-any-sit/ahjcmijihodolfhcdeapnbmpihkoolhn",
+			"permanent": false
+		},
+		{
+			"source": "/get",
+			"destination": "https://chromewebstore.google.com/detail/prisharp-see-what-any-sit/ahjcmijihodolfhcdeapnbmpihkoolhn",
+			"permanent": false
 		}
 	]
 }
