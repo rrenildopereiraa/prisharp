@@ -1,12 +1,27 @@
 import { useEffect, useRef, useState } from "react";
-import { typed } from "virtual:catalog";
+import { catalog } from "virtual:catalog";
+import { rank } from "@/famous";
 import Button from "@/components/ui/button";
 import { BrowserMarks } from "@/components/browsers";
 import { useKeyHold } from "@tanstack/react-hotkeys";
 import { REPO, STORE } from "@/links";
 
-// best known first, as in the marquee, picked at build time
-const TYPED = typed.map((tech) => tech.name);
+// "Built with" fits what a site is made of, not the icons or analytics it
+// adds; and only names that fit the heading's second line with the question
+// mark at every width: "built with TanStack Router?" is the longest that does.
+const BUILT = new Set([
+	"Framework",
+	"Platform",
+	"Library",
+	"Components",
+	"Styling",
+	"Build",
+]);
+// best known first, as in the marquee; a stable sort keeps the rest in order
+const TYPED = catalog
+	.filter((tech) => BUILT.has(tech.category) && tech.name.length <= 15)
+	.sort((a, b) => rank(a.id) - rank(b.id))
+	.map((tech) => tech.name);
 const START = Math.max(0, TYPED.indexOf("React"));
 
 /** A keystroke's cost, in the range a person actually types at. */

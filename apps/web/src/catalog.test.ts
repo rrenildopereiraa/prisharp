@@ -1,4 +1,4 @@
-import { catalog } from "virtual:catalog/all";
+import { catalog } from "virtual:catalog";
 import { expect, it } from "vite-plus/test";
 
 it("gives every technology a trace to show", () => {

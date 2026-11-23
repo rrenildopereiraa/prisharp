@@ -6,7 +6,7 @@ import Threads from "@/components/threads";
 import { Header } from "@/components/header";
 import { FIRST, Hero } from "@/components/hero";
 import { Marquee } from "@/components/marquee";
-import { typed } from "virtual:catalog";
+import { catalog } from "virtual:catalog";
 import { Proof } from "@/components/panel";
 import type { Found } from "@/demo";
 import { DarkContext, useDark } from "@/theme";
@@ -30,9 +30,9 @@ const STEPS = [
 // Shift turns it into the zip. Typing in a field never triggers them.
 const press = (id: string) => () => document.getElementById(id)?.click();
 
-/** A typed name's entry, in the shape the popup's evidence page reads. */
+/** A catalog entry, in the shape the popup's evidence page reads. */
 const found = (name: string): Found => {
-	const tech = typed.find((entry) => entry.name === name) ?? typed[0];
+	const tech = catalog.find((entry) => entry.name === name) ?? catalog[0];
 	return { ...tech, icon: tech.icon ?? tech.id };
 };
 
