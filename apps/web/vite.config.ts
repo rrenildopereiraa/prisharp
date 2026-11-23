@@ -6,6 +6,9 @@ import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite-plus";
 import { technologies } from "extension/technologies";
+import { icons as logoFiles } from "extension/icons";
+import { icons as simpleMarks } from "./src/marks";
+import { marquee, typed } from "./src/slices";
 
 const extension = fileURLToPath(new URL("../extension", import.meta.url));
 
@@ -112,30 +115,82 @@ function evidence(signal: Signal): { kind: string; text: string }[] {
 	return [];
 }
 
+/** Every technology, without its fingerprints, in the shape the site reads. */
+function entries() {
+	const names = new Map(technologies.map((tech) => [tech.id, tech.name]));
+	const list = technologies.map((tech) => ({
+		id: tech.id,
+		name: tech.name,
+		icon: tech.icon,
+		category: tech.category,
+		website: tech.website,
+		implies: (tech.implies ?? []).map((id) => names.get(id) ?? id),
+		evidence: (tech.signals as Signal[]).flatMap(evidence).slice(0, 3),
+	}));
+	// one with no trace of its own, like Laravel, shows what brings it in
+	for (const entry of list) {
+		if (entry.evidence.length > 0) continue;
+		const by = technologies
+			.filter((tech) => tech.implies?.includes(entry.id))
+			.map((tech) => tech.name);
+		entry.evidence = [{ kind: "Comes with", text: by.join(", ") }];
+	}
+	return list;
+}
+
+const hasLogo = (icon: string) => icon in logoFiles;
+
+/**
+ * The landing page's module: the count, the heading's names with their
+ * evidence, the marquee's marks, and the logo files those need, and nothing
+ * else, so the page doesn't grow with the catalog.
+ */
+function landing() {
+	const list = entries();
+	const named = typed(list);
+	const marks = marquee(list, hasLogo).map(({ id, name, icon }) => ({
+		id,
+		name,
+		icon: icon ?? id,
+	}));
+	// the marquee draws a Simple Icons mark when it has one, else the logo
+	const pictured = [
+		...named.map((tech) => tech.icon ?? tech.id),
+		...marks.filter((mark) => !(mark.id in simpleMarks)).map((m) => m.icon),
+	];
+	const files = [...new Set(pictured)]
+		.filter(hasLogo)
+		.flatMap((icon) =>
+			(logoFiles as Record<string, boolean>)[icon]
+				? [icon, `${icon}-dark`]
+				: [icon],
+		);
+	const imports = files.map(
+		(file, index) =>
+			`import logo${index} from ${JSON.stringify(`${extension}/icons/tech/${file}.svg?url`)};`,
+	);
+	const logos = files.map(
+		(file, index) => `${JSON.stringify(file)}: logo${index}`,
+	);
+	return [
+		...imports,
+		`export const count = ${list.length};`,
+		`export const typed = ${JSON.stringify(named)};`,
+		`export const marks = ${JSON.stringify(marks)};`,
+		`export const logos = { ${logos.join(", ")} };`,
+	].join("\n");
+}
+
+const ALL = `${CATALOG}/all`;
+
 const catalog = (): Plugin => ({
 	name: "prisharp-catalog",
-	resolveId: (id) => (id === CATALOG ? `\0${CATALOG}` : undefined),
+	resolveId: (id) => (id === CATALOG || id === ALL ? `\0${id}` : undefined),
 	load(id) {
-		if (id !== `\0${CATALOG}`) return;
-		const names = new Map(technologies.map((tech) => [tech.id, tech.name]));
-		const list = technologies.map((tech) => ({
-			id: tech.id,
-			name: tech.name,
-			icon: tech.icon,
-			category: tech.category,
-			website: tech.website,
-			implies: (tech.implies ?? []).map((id) => names.get(id) ?? id),
-			evidence: (tech.signals as Signal[]).flatMap(evidence).slice(0, 3),
-		}));
-		// one with no trace of its own, like Laravel, shows what brings it in
-		for (const entry of list) {
-			if (entry.evidence.length > 0) continue;
-			const by = technologies
-				.filter((tech) => tech.implies?.includes(entry.id))
-				.map((tech) => tech.name);
-			entry.evidence = [{ kind: "Comes with", text: by.join(", ") }];
+		if (id === `\0${CATALOG}`) return landing();
+		if (id === `\0${ALL}`) {
+			return `export const catalog = ${JSON.stringify(entries())};`;
 		}
-		return `export const catalog = ${JSON.stringify(list)};`;
 	},
 });
 
