@@ -4,6 +4,11 @@
 - Name a branch for what it holds, as `type/what-it-does`: `feat/` for something new, `fix/` for a bug, `ui/` for how something looks, `docs/` for writing, `chore/` for versions, tooling and upkeep. For example `feat/detect-umami` or `fix/stale-zip-cache`.
 - A PR that settles an issue says so in its body (`Closes #53`), so the issue closes on merge.
 - After opening a PR, watch it until it's merged or closed: answer review comments and fix failed checks without waiting to be asked. Sessions are cleared after each PR, so nothing can be left for later.
+- One issue at a time. Work only on the issue the owner agreed to, and leave alone any PR this session didn't open.
+- When the PR is merged, or when asked what's next, read the open issues and suggest the one to take next, with a line on why. Then wait for a yes before starting.
+  - Prefer what can be finished here, end to end: small, clear, and blocked by nothing.
+  - Skip what only the owner can do, such as billing or a store upload, and what needs access this session lacks, such as a blocked host. Say so in a line instead.
+  - Mention anything the owner could do meanwhile to unblock others.
 - No attribution, anywhere:
   - no `Co-Authored-By` or `Claude-Session` lines in commits
   - no session links
