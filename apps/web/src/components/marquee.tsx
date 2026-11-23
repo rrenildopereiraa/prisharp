@@ -1,4 +1,4 @@
-import { catalog } from "virtual:catalog";
+import { count, marks as slice } from "virtual:catalog";
 import {
 	type CSSProperties,
 	useContext,
@@ -6,10 +6,9 @@ import {
 	useRef,
 	useState,
 } from "react";
-import { rank } from "@/famous";
-import { icons, pictures } from "@/marks";
+import { icons } from "@/marks";
 import { DarkContext } from "@/theme";
-import { hasLogo, Logo, url } from "./logo";
+import { Logo, url } from "./logo";
 import { Tooltip } from "./tooltip";
 
 type Mark = {
@@ -21,27 +20,11 @@ type Mark = {
 	hex?: string;
 };
 
-const unranked: Mark[] = catalog.flatMap((tech): Mark[] => {
-	const icon = tech.icon ?? tech.id;
-	const simple = icons[tech.id];
-	if (simple) {
-		return [
-			{
-				id: tech.id,
-				name: tech.name,
-				icon,
-				path: simple.path,
-				hex: simple.hex,
-			},
-		];
-	}
-	if (pictures.includes(icon) && hasLogo(icon)) {
-		return [{ id: tech.id, name: tech.name, icon }];
-	}
-	return [];
+// the slice comes capped and ranked; a mark from Simple Icons when it has one
+const marks: Mark[] = slice.map((mark) => {
+	const simple = icons[mark.id];
+	return simple ? { ...mark, path: simple.path, hex: simple.hex } : mark;
 });
-// a stable sort keeps the catalog's order among the rest
-const marks = [...unranked].sort((a, b) => rank(a.id) - rank(b.id));
 
 // pixels a second at full speed, and how quickly it eases to a stop or back
 const SPEED = 36;
@@ -155,7 +138,7 @@ export function Marquee() {
 				className="m:0 fs:0 px:4 fs:xs fw:400 c:hint lh:5 @md:pl:8 @md:pr:0 @md:ws:nw"
 			>
 				Prisharp can detect <br className="d:none @md:d:b" />
-				<span className="c:label">{catalog.length} technologies</span>, like
+				<span className="c:label">{count} technologies</span>, like
 			</h2>
 			<div className="d:f ai:c g:2 fg:1 min-w:0 pr:4">
 				<div
