@@ -7,18 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.2.0] - 2026-11-23
+
 ### Added
 
 - **[extension]** "Copy as Markdown" in the popup copies the list as a Markdown list, each technology linked to its site with its version, ready to paste into a README, an issue or a post.
-- **[extension]** Detection of the ten most-used libraries Prisharp missed, by how many sites HTTP Archive finds them on: Swiper, jQuery UI, jQuery Migrate, Slick, Modernizr, LazySizes, Popper, Underscore.js, Moment.js and Preact, most with their versions.
-
-## [1.2.0] - 2026-11-22
-
-### Added
-
 - **[extension]** Detection of nine UI kits, each from evidence only it ships: Ant Design, Element Plus, Angular Material, Carbon, HeroUI, Kobalte, daisyUI and Flowbite, and Bulma with its version.
 - **[extension]** Detection of six site generators from the generator tag they write, each with its version: Eleventy, Jekyll, Hexo, VuePress and Rspress. Nextra shows from its CSS variables.
 - **[extension]** Detection of seven frameworks and libraries: Inertia.js, Meteor, Hydrogen, Elm, Datastar, and Backbone.js and Knockout.js with their versions.
+- **[extension]** Detection of the ten most-used libraries Prisharp missed, by how many sites HTTP Archive finds them on: Swiper, jQuery UI, jQuery Migrate, Slick, Modernizr, LazySizes, Popper, Underscore.js, Moment.js and Preact, most with their versions.
 - **[extension]** Detection of five hosts from the headers they send: Heroku, Deno Deploy, Platform.sh, Kinsta and Railway.
 - **[extension]** Detection of four auth services from what they call: Auth.js, Okta, Amazon Cognito and Microsoft Entra ID.
 - **[extension]** An AI Builder category, with v0, Lovable, Bolt, Replit and Base44, from the tags, scripts and hosting their projects ship with.
