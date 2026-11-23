@@ -78,9 +78,15 @@ export async function collect(probes) {
 
 	const domKey = [];
 	const wantedKeys = new Set(probes.domKey);
+	// keys too short to be a prefix, which only count whole
+	const exactKeys = new Set(probes.domKeyExact);
 	for (const element of elements) {
-		if (wantedKeys.size === 0) break;
+		if (wantedKeys.size === 0 && exactKeys.size === 0) break;
 		for (const key of Object.keys(element)) {
+			if (exactKeys.has(key)) {
+				domKey.push(key);
+				exactKeys.delete(key);
+			}
 			for (const prefix of wantedKeys) {
 				if (key.startsWith(prefix)) {
 					domKey.push(prefix);

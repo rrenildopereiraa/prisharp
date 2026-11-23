@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **[extension]** "Copy as Markdown" in the popup copies the list as a Markdown list, each technology linked to its site with its version, ready to paste into a README, an issue or a post.
+- **[extension]** Detection of the ten most-used libraries Prisharp missed, by how many sites HTTP Archive finds them on: Swiper, jQuery UI, jQuery Migrate, Slick, Modernizr, LazySizes, Popper, Underscore.js, Moment.js and Preact, most with their versions.
 
 ## [1.2.0] - 2026-11-22
 

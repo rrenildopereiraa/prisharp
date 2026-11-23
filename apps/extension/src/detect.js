@@ -13,6 +13,7 @@ export function probes(technologies) {
 		js: new Set(),
 		jsPrefix: new Set(),
 		domKey: new Set(),
+		domKeyExact: new Set(),
 		attrPrefix: new Set(),
 		classes: new Set(),
 	};
@@ -23,7 +24,9 @@ export function probes(technologies) {
 		for (const signal of signals) {
 			if (signal.js) found.js.add(signal.js);
 			if (signal.jsPrefix) found.jsPrefix.add(signal.jsPrefix);
-			if (signal.domKey) found.domKey.add(signal.domKey);
+			if (signal.domKey) {
+				found[signal.exact ? "domKeyExact" : "domKey"].add(signal.domKey);
+			}
 			if (signal.attrPrefix) found.attrPrefix.add(signal.attrPrefix);
 			if (signal.file) {
 				file.set(signal.file, {
@@ -53,6 +56,7 @@ export function probes(technologies) {
 		js: [...found.js],
 		jsPrefix: [...found.jsPrefix],
 		domKey: [...found.domKey],
+		domKeyExact: [...found.domKeyExact],
 		attrPrefix: [...found.attrPrefix],
 		classes: [...found.classes],
 		dom: [...dom.values()],
@@ -88,7 +92,12 @@ function describe(signal, hit, page, byId) {
 	if (signal.js)
 		return { kind: "Global", text: `window.${signal.js}`, value: hit.version };
 	if (signal.jsPrefix) return { kind: "Global", text: `${signal.jsPrefix}…` };
-	if (signal.domKey) return { kind: "Element", text: `${signal.domKey}…` };
+	if (signal.domKey) {
+		return {
+			kind: "Element",
+			text: signal.exact ? signal.domKey : `${signal.domKey}…`,
+		};
+	}
 	if (signal.attrPrefix)
 		return { kind: "Attribute", text: `${signal.attrPrefix}…` };
 	if (signal.file) return { kind: "File", text: signal.file };
