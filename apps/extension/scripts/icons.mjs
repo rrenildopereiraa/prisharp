@@ -92,6 +92,7 @@ const marks = {
 	platformdotsh: "siPlatformdotsh",
 	plausibleanalytics: "siPlausibleanalytics",
 	posthog: "siPosthog",
+	preact: "siPreact",
 	qwik: "siQwik",
 	radix: "siRadixui",
 	railway: "siRailway",
@@ -111,10 +112,12 @@ const marks = {
 	styledcomponents: "siStyledcomponents",
 	supabase: "siSupabase",
 	svelte: "siSvelte",
+	swiper: "siSwiper",
 	tailwindcss: "siTailwindcss",
 	tanstack: "siTanstack",
 	threejs: "siThreedotjs",
 	umami: "siUmami",
+	underscoredotjs: "siUnderscoredotjs",
 	v0: "siV0",
 	vercel: "siVercel",
 	vite: "siVite",
@@ -174,6 +177,12 @@ const icons = {
 // - Base44: the icon base44.com uses, as a PNG.
 // - DataDome: its app icon from its documentation, which publishes it only
 //   as a 180px PNG, so the file wraps that PNG with its corners rounded.
+// - Modernizr: the mark of its logo from Modernizr/modernizr-neue, the
+//   repository of modernizr.com, without the wordmark. Popper: its logo from
+//   popperjs/website, the repository of popper.js.org. Moment.js: the favicon
+//   from moment/momentjs.com, which publishes it only as a 32px PNG.
+// - Slick, LazySizes: neither project has ever published a logo, so each is
+//   its initial, drawn for Prisharp in the panel's ink.
 const local = {
 	"amazon-ads": false,
 	"angular-material": true,
@@ -192,12 +201,17 @@ const local = {
 	katex: true,
 	knockout: true,
 	kobalte: false,
+	lazysizes: true,
+	modernizr: false,
+	moment: false,
 	onetrust: true,
 	outsystems: false,
+	popper: false,
 	prebid: false,
 	prism: true,
 	rspress: false,
 	"react-aria": true,
+	slick: true,
 	stylex: false,
 	"tabler-icons": true,
 	yummacss: false,

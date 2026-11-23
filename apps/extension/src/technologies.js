@@ -8,6 +8,7 @@
 //   dom       a selector matches:              { dom: "[ng-version]", attr: "ng-version" }
 //             (`attr` or `prop` reads the version off the element)
 //   domKey    an element carries an expando:   { domKey: "__reactFiber$" }
+//             (`exact` matches the whole key, not its start)
 //   attrPrefix an attribute name starts with:  { attrPrefix: "data-base-ui-" }
 //   resource  a script, stylesheet or loaded URL matches
 //   html      the rendered document matches
@@ -575,6 +576,19 @@ export const technologies = [
 		],
 	},
 	{
+		id: "preact",
+		name: "Preact",
+		website: "https://preactjs.com",
+		category: "Library",
+		signals: [
+			// the tree render() keeps on the element it renders into, under the
+			// short name Preact's build gives `_children`
+			{ domKey: "__k", exact: true },
+			// Preact 8 kept each element's props under this key
+			{ domKey: "__preactattr_" },
+		],
+	},
+	{
 		id: "angular",
 		name: "Angular",
 		website: "https://angular.dev",
@@ -615,6 +629,36 @@ export const technologies = [
 		website: "https://jquery.com",
 		category: "Library",
 		signals: [{ js: "jQuery.fn.jquery", version: true }],
+	},
+	{
+		id: "jquery-ui",
+		name: "jQuery UI",
+		website: "https://jqueryui.com",
+		category: "Library",
+		icon: "jquery",
+		implies: ["jquery"],
+		signals: [{ js: "jQuery.ui.version", version: true }],
+	},
+	{
+		id: "jquery-migrate",
+		name: "jQuery Migrate",
+		website: "https://github.com/jquery/jquery-migrate",
+		category: "Library",
+		icon: "jquery",
+		implies: ["jquery"],
+		signals: [{ js: "jQuery.migrateVersion", version: true }],
+	},
+	{
+		id: "slick",
+		name: "Slick",
+		website: "https://kenwheeler.github.io/slick/",
+		category: "Library",
+		implies: ["jquery"],
+		signals: [
+			{ js: "jQuery.fn.slick" },
+			// the class it adds to each carousel it starts
+			{ dom: ".slick-initialized" },
+		],
 	},
 	{
 		id: "threejs",
@@ -737,6 +781,76 @@ export const technologies = [
 			// flatMapDeep is Lodash's own: Underscore has no such function
 			{ js: "_.flatMapDeep" },
 		],
+	},
+	{
+		id: "swiper",
+		name: "Swiper",
+		website: "https://swiperjs.com",
+		category: "Library",
+		signals: [
+			// the banner atop its scripts and stylesheets
+			{
+				script: /Swiper (\d+\.\d+\.\d+)\s+\*\s+Most modern mobile touch slider/,
+			},
+			{ css: /Swiper (\d+\.\d+\.\d+)\s+\*\s+Most modern mobile touch slider/ },
+			// the class it adds to each slider it starts: `swiper-container-`
+			// before Swiper 7
+			{ dom: ".swiper-initialized, .swiper-container-initialized" },
+			// Swiper Element, its web component
+			{ dom: "swiper-container" },
+		],
+	},
+	{
+		id: "modernizr",
+		name: "Modernizr",
+		website: "https://modernizr.com",
+		category: "Library",
+		signals: [{ js: "Modernizr._version", version: true }],
+	},
+	{
+		id: "lazysizes",
+		name: "LazySizes",
+		website: "https://github.com/aFarkas/lazysizes",
+		category: "Library",
+		signals: [
+			{ script: /\/\*! lazysizes - v(\d+\.\d+\.\d+)/ },
+			{ js: "lazySizes.cfg" },
+			// the class it moves an image to once loaded, which other loaders
+			// borrow
+			{ classes: ["lazyloaded"], weight: 50 },
+		],
+	},
+	{
+		id: "popper",
+		name: "Popper",
+		website: "https://popper.js.org",
+		category: "Library",
+		signals: [
+			{ script: /@popperjs\/core v(\d+\.\d+\.\d+)/ },
+			{ js: "Popper.createPopper" },
+			// Popper 1
+			{ js: "Popper.Defaults" },
+			// on a tooltip or menu while it is open
+			{ attrPrefix: "data-popper-" },
+		],
+	},
+	{
+		id: "underscore",
+		name: "Underscore.js",
+		website: "https://underscorejs.org",
+		category: "Library",
+		icon: "underscoredotjs",
+		// Lodash sets `_.VERSION` too, and has runInContext where Underscore
+		// does not
+		unless: [{ js: "_.runInContext" }],
+		signals: [{ js: "_.VERSION", version: true }],
+	},
+	{
+		id: "moment",
+		name: "Moment.js",
+		website: "https://momentjs.com",
+		category: "Library",
+		signals: [{ js: "moment.version", version: true }],
 	},
 	{
 		id: "katex",

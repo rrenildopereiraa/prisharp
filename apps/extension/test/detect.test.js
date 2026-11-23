@@ -700,6 +700,92 @@ test("a site that only links to an AI builder is not built with it", () => {
 	assert.ok(!found.includes("Lovable") && !found.includes("v0"));
 });
 
+test("libraries, from the globals, classes and banners they leave", () => {
+	const found = names(
+		detect(
+			page({
+				js: {
+					"jQuery.fn.jquery": "3.7.1",
+					"jQuery.ui.version": "1.14.2",
+					"jQuery.migrateVersion": "4.0.2",
+					"jQuery.fn.slick": true,
+					"Modernizr._version": "3.13.1",
+					"lazySizes.cfg": true,
+					"Popper.createPopper": true,
+					"_.VERSION": "1.13.8",
+					"moment.version": "2.31.0",
+				},
+				script: {
+					[String.raw`Swiper (\d+\.\d+\.\d+)\s+\*\s+Most modern mobile touch slider/`]:
+						"14.4.0",
+					[String.raw`\/\*! lazysizes - v(\d+\.\d+\.\d+)/`]: "5.3.2",
+					[String.raw`@popperjs\/core v(\d+\.\d+\.\d+)/`]: "2.11.8",
+				},
+				domKey: ["__k"],
+			}),
+			technologies,
+		),
+	);
+	for (const name of [
+		"jQuery UI 1.14.2",
+		"jQuery Migrate 4.0.2",
+		"Slick",
+		"Swiper 14.4.0",
+		"Modernizr 3.13.1",
+		"LazySizes 5.3.2",
+		"Popper 2.11.8",
+		"Underscore.js 1.13.8",
+		"Moment.js 2.31.0",
+		"Preact",
+	]) {
+		assert.ok(found.includes(name), `${name} in ${found.join(", ")}`);
+	}
+});
+
+test("Swiper and Slick, from the class each adds to a carousel it starts", () => {
+	const found = names(
+		detect(
+			page({
+				dom: {
+					".swiper-initialized, .swiper-container-initialized|": true,
+					".slick-initialized|": true,
+				},
+			}),
+			technologies,
+		),
+	);
+	assert.ok(found.includes("Swiper"));
+	assert.ok(found.includes("Slick"));
+});
+
+test("Lodash's _.VERSION is not Underscore.js", () => {
+	const found = names(
+		detect(
+			page({
+				js: {
+					"_.VERSION": "4.17.21",
+					"_.runInContext": true,
+					"_.flatMapDeep": true,
+				},
+			}),
+			technologies,
+		),
+	);
+	assert.ok(found.includes("Lodash"));
+	assert.ok(!found.includes("Underscore.js"));
+});
+
+test("the lazyloaded class alone is not LazySizes", () => {
+	const found = names(detect(page({ classes: ["lazyloaded"] }), technologies));
+	assert.ok(!found.includes("LazySizes"));
+});
+
+test("a key that only starts like Preact's is not Preact", () => {
+	const wanted = probes(technologies);
+	assert.ok(wanted.domKeyExact.includes("__k"));
+	assert.ok(!wanted.domKey.includes("__k"));
+});
+
 test("MediaWiki reads its version from the generator", () => {
 	const meta = { generator: "MediaWiki 1.46.0-wmf.3" };
 	assert.deepEqual(names(detect(page({ meta }), technologies)), [
