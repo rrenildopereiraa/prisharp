@@ -3,6 +3,7 @@
 - PRs, never direct commits to `main`.
 - Name a branch for what it holds, as `type/what-it-does`: `feat/` for something new, `fix/` for a bug, `ui/` for how something looks, `docs/` for writing, `chore/` for versions, tooling and upkeep. For example `feat/detect-umami` or `fix/stale-zip-cache`.
 - A PR that settles an issue says so in its body (`Closes #53`), so the issue closes on merge.
+- After opening a PR, watch it until it's merged or closed: answer review comments and fix failed checks without waiting to be asked. Sessions are cleared after each PR, so nothing can be left for later.
 - No attribution, anywhere:
   - no `Co-Authored-By` or `Claude-Session` lines in commits
   - no session links
