@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **[extension]** "Copy as Markdown" in the popup copies the list as a Markdown list, each technology linked to its site with its version, ready to paste into a README, an issue or a post.
+
 ## [1.2.0] - 2026-11-22
 
 ### Added
