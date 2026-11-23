@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import { test } from "vite-plus/test";
 import { detect, probes } from "../src/detect.js";
+import { markdown } from "../src/markdown.js";
 import { categories, technologies } from "../src/technologies.js";
 import { README, render } from "../scripts/readme.mjs";
 import { CHANGELOG, notes } from "../scripts/notes.mjs";
@@ -881,5 +882,40 @@ test("the CHANGELOG has a section for the manifest's version", () => {
 	assert.ok(
 		notes(readFileSync(CHANGELOG, "utf8"), version),
 		`add ## [${version}] to CHANGELOG.md`,
+	);
+});
+
+test("the list copies as Markdown, in the popup's order, linked, with versions", () => {
+	const found = detect(
+		page({
+			js: { "next.version": "16.4.6" },
+			css: "/*! tailwindcss v4.3.5 | MIT License | https://tailwindcss.com */",
+		}),
+		technologies,
+		categories,
+	);
+	const text = markdown("example.com", found);
+	const lines = text.split("\n");
+	assert.equal(lines[0], "**example.com** is built with:");
+	assert.equal(lines[1], "");
+	assert.equal(lines.length, found.length + 2);
+	for (const [index, tech] of found.entries()) {
+		assert.ok(lines[index + 2].startsWith(`- ${tech.category}: [`));
+	}
+	assert.ok(
+		lines.includes("- Framework: [Next.js](https://nextjs.org) 16.4.6"),
+	);
+	assert.ok(
+		lines.includes("- Styling: [Tailwind CSS](https://tailwindcss.com) 4.3.5"),
+	);
+});
+
+test("Markdown leaves out a version it doesn't know and escapes brackets", () => {
+	const text = markdown("example.com", [
+		{ name: "A [B]", category: "Library", website: "https://a.dev" },
+	]);
+	assert.equal(
+		text,
+		"**example.com** is built with:\n\n- Library: [A \\[B\\]](https://a.dev)",
 	);
 });

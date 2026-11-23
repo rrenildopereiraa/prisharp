@@ -1,6 +1,7 @@
 import { collect } from "./collect.js";
 import { detect, probes } from "./detect.js";
 import { icons } from "./icons.js";
+import { markdown } from "./markdown.js";
 import { symbol } from "./symbols.js";
 import { categories, technologies } from "./technologies.js";
 
@@ -10,6 +11,7 @@ const status = document.getElementById("status");
 const found = document.getElementById("found");
 const list = document.getElementById("list");
 const copy = document.getElementById("copy");
+const copyMarkdown = document.getElementById("copy-markdown");
 const detail = document.getElementById("detail");
 const back = document.getElementById("back");
 
@@ -261,8 +263,12 @@ function show(all, hostname) {
 		list.replaceChildren(...all.map((tech) => row(tech, all)));
 		found.hidden = false;
 		copy.hidden = false;
+		copyMarkdown.hidden = false;
 	});
 	copy.addEventListener("click", () => copied(copy, all.map(label).join("\n")));
+	copyMarkdown.addEventListener("click", () =>
+		copied(copyMarkdown, markdown(hostname, all)),
+	);
 }
 
 async function run() {
