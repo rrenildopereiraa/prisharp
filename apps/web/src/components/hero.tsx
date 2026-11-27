@@ -1,16 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { type ReactNode, useEffect, useRef, useState } from "react";
 import { firefoxZip, typed, zip } from "virtual:catalog";
 import Button from "@/components/ui/button";
-import ButtonGroup from "@/components/ui/button-group";
 import Dialog from "@/components/ui/dialog";
-import Menu from "@/components/ui/menu";
+import { FOCUS } from "@/components/ui/style";
 import { BrowserMarks } from "@/components/browsers";
-import { useHotkey } from "@tanstack/react-hotkeys";
-import {
-	IconAlertTriangle,
-	IconChevronDown,
-	IconInfoCircle,
-} from "@tabler/icons-react";
+import { IconAlertTriangle, IconBuildingStore } from "@tabler/icons-react";
 import { FIREFOX, UNSUPPORTED } from "@/browser";
 import { REPO, STORE } from "@/links";
 
@@ -98,15 +92,13 @@ function Key({ children }: { children: string }) {
 	);
 }
 
-/** Which build a zip download is: for Chrome and its kin, or for Firefox. */
-type Build = "chrome" | "firefox";
-
-const ZIPS: Record<Build, string> = { chrome: zip, firefox: firefoxZip };
+/** This browser's zip: the Firefox build in Firefox, the Chromium one elsewhere. */
+const ZIP = FIREFOX ? firefoxZip : zip;
 
 /** Saves the zip, as its link would. */
-function download(path: string) {
+function download() {
 	const link = document.createElement("a");
-	link.href = path;
+	link.href = ZIP;
 	link.download = "";
 	link.click();
 }
@@ -124,57 +116,93 @@ function usePage() {
 	return page;
 }
 
+// a choice in the dialog: a row with a glyph, a name and a line about it
+const CHOICE = `d:f ai:fs g:3 w:100% p:3 bw:1 bc:line bg:raised c:label ta:l td:none fs:sm ${FOCUS}`;
+
+function Choice({
+	icon,
+	title,
+	children,
+}: {
+	icon: ReactNode;
+	title: string;
+	children: ReactNode;
+}) {
+	return (
+		<>
+			<span aria-hidden="true" className="d:f fs:0">
+				{icon}
+			</span>
+			<span className="d:f fd:c g:1">
+				<span className="fw:500">{title}</span>
+				<span className="c:hint lh:5">{children}</span>
+			</span>
+		</>
+	);
+}
+
 /**
- * A short warning before a zip downloads: it's what's on main, not what the
- * Chrome Web Store has. Firefox has no store listing yet, so its zip is the
- * only way to try Prisharp there.
+ * Where to get Prisharp for this browser: its store, the released version,
+ * or the zip built from main, unreleased. Firefox has no store listing yet,
+ * so there the zip is the only way.
  */
-function PreviewDialog({
-	build,
+function GetDialog({
+	open,
 	onOpenChange,
 }: {
-	build: Build | null;
+	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }) {
-	// the last build asked for, so the text holds while the dialog closes
-	const [shown, setShown] = useState<Build>("chrome");
-	useEffect(() => {
-		if (build) setShown(build);
-	}, [build]);
 	const page = usePage();
 	if (!page) return null;
 
 	return (
 		<Dialog
 			container={page}
-			open={build !== null}
+			open={open}
 			onOpenChange={onOpenChange}
 			shape="none"
-			header={
-				<IconAlertTriangle aria-hidden="true" className="w:6 h:6 c:red" />
-			}
-			title={
-				shown === "firefox"
-					? "Download for Firefox as a .zip"
-					: "Download the dev version as a .zip"
-			}
-			description={
-				<>
-					<code className="c:label">{ZIPS[shown].slice(1)}</code> is built from{" "}
-					<code className="c:label">main</code>. It's unreleased and may be
-					broken,{" "}
-					{shown === "firefox"
-						? "and Prisharp isn't on Firefox Add-ons yet."
-						: "so for everyday use, get Prisharp from the Chrome Web Store."}
-				</>
-			}
-			cancelLabel="Cancel"
-			confirmLabel="Download .zip"
-			confirmVariant="danger"
-			onConfirm={() => download(ZIPS[shown])}
+			title={FIREFOX ? "Add Prisharp to Firefox" : "Add Prisharp to Chrome"}
+			description="Pick the version you want."
 		>
-			{/* room between the text and the buttons */}
-			<span aria-hidden="true" className="d:b h:2" />
+			<div className="d:f fd:c g:2 pt:2 pb:4">
+				{FIREFOX ? (
+					<div aria-disabled="true" className={`${CHOICE} o:60`}>
+						<Choice
+							icon={<IconBuildingStore className="w:5 h:5" />}
+							title="Firefox Add-ons"
+						>
+							Coming soon.
+						</Choice>
+					</div>
+				) : (
+					<a href={STORE} className={`${CHOICE} h:bg:well`}>
+						<Choice
+							icon={<IconBuildingStore className="w:5 h:5 c:accent" />}
+							title="Chrome Web Store"
+						>
+							The released version. It updates by itself.
+						</Choice>
+					</a>
+				)}
+				<button
+					type="button"
+					onClick={() => {
+						download();
+						onOpenChange(false);
+					}}
+					className={`${CHOICE} c:p h:bg:well`}
+				>
+					<Choice
+						icon={<IconAlertTriangle className="w:5 h:5 c:red" />}
+						title="Dev version (.zip)"
+					>
+						<code className="c:label">{ZIP.slice(1)}</code>, built from{" "}
+						<code className="c:label">main</code>. Unreleased, and may be
+						broken.
+					</Choice>
+				</button>
+			</div>
 		</Dialog>
 	);
 }
@@ -184,12 +212,7 @@ const ACTION = "h:10 px:4 g:2 fs:sm us:none";
 
 export function Hero({ onName }: { onName?: (name: string) => void }) {
 	const { name, typing } = useTypedName(onName);
-	const page = usePage();
-	// a zip: from the menu beside the install button, or Shift+A for this
-	// browser's own; in Firefox, the install button itself
-	const [preview, setPreview] = useState<Build | null>(null);
-	const own: Build = FIREFOX ? "firefox" : "chrome";
-	useHotkey("Shift+A", () => setPreview(own));
+	const [getting, setGetting] = useState(false);
 
 	return (
 		<div
@@ -216,65 +239,21 @@ export function Hero({ onName }: { onName?: (name: string) => void }) {
 				Prisharp will show you all the frameworks, libraries and hosts used on
 				the page, with evidence for each.
 			</p>
-			{UNSUPPORTED && (
-				<p className="m:0 d:f ai:c g:2 fs:sm c:label">
-					<IconInfoCircle aria-hidden="true" className="w:4 h:4 fs:0" />
-					Prisharp works in Chrome and Firefox on a computer.
-				</p>
-			)}
 			<div data-actions className="d:f fw:w g:2 mt:1">
-				{!UNSUPPORTED && (
-					<ButtonGroup shape="none">
-						{FIREFOX ? (
-							<Button
-								id="install"
-								onClick={() => setPreview("firefox")}
-								className={ACTION}
-							>
-								Download for Firefox <Key>A</Key>
-							</Button>
-						) : (
-							<Button
-								id="install"
-								render={<a href={STORE} />}
-								nativeButton={false}
-								className={ACTION}
-							>
-								Add to Chrome <Key>A</Key>
-							</Button>
-						)}
-						<Menu
-							container={page}
-							shape="none"
-							trigger={
-								<Button
-									aria-label="Other ways to get Prisharp"
-									className="h:10 px:3"
-								>
-									<IconChevronDown aria-hidden="true" className="w:4 h:4" />
-								</Button>
-							}
-							items={
-								FIREFOX
-									? [
-											{
-												label: "Download for Chrome (.zip)…",
-												onClick: () => setPreview("chrome"),
-											},
-										]
-									: [
-											{
-												label: "Download the dev version (.zip)…",
-												onClick: () => setPreview("chrome"),
-											},
-											{
-												label: "Download for Firefox (.zip)…",
-												onClick: () => setPreview("firefox"),
-											},
-										]
-							}
-						/>
-					</ButtonGroup>
+				{UNSUPPORTED ? (
+					// phones, tablets and Safari: step 1 says where it works
+					<Button disabled shape="none" className={ACTION}>
+						Not available
+					</Button>
+				) : (
+					<Button
+						id="install"
+						onClick={() => setGetting(true)}
+						shape="none"
+						className={ACTION}
+					>
+						{FIREFOX ? "Add to Firefox" : "Add to Chrome"} <Key>A</Key>
+					</Button>
 				)}
 				<Button
 					id="source"
@@ -287,12 +266,7 @@ export function Hero({ onName }: { onName?: (name: string) => void }) {
 					View source <Key>S</Key>
 				</Button>
 			</div>
-			<PreviewDialog
-				build={preview}
-				onOpenChange={(open) => {
-					if (!open) setPreview(null);
-				}}
-			/>
+			<GetDialog open={getting} onOpenChange={setGetting} />
 		</div>
 	);
 }
