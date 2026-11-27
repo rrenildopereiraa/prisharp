@@ -78,7 +78,7 @@ The popup is styled with [Yumma CSS](https://yummacss.com), with Yumma UI's them
 pnpm build      # popup.css from the classes in popup.html and src
 pnpm validate   # every class is one Yumma CSS generates
 pnpm test       # the detection engine
-pnpm zip        # prisharp-<version>.zip for the Chrome Web Store, prisharp-firefox-<version>.zip for addons.mozilla.org
+pnpm zip        # prisharp-chrome-<version>.zip for the Chrome Web Store, prisharp-firefox-<version>.zip for addons.mozilla.org
 ```
 
 The Firefox zip is the same extension with its own manifest, written by [`scripts/zip.mjs`](scripts/zip.mjs): no `offscreen` permission or background page, `theme_icons` for the toolbar icon, and the ID and data-collection statement addons.mozilla.org asks for.

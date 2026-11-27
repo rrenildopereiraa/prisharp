@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **[extension]** A Firefox build. `pnpm zip` writes `prisharp-firefox-<version>.zip` beside the Chrome one: the same extension, with a manifest of its own. Firefox matches the toolbar icon to its theme by itself, so this build needs no `offscreen` permission or background page. It needs Firefox 140 or later, and carries the ID and the "collects no data" statement Firefox Add-ons asks for.
+
 - **[extension]** Detection of the ten most-used analytics and tracking tools Prisharp missed, by how many sites HTTP Archive finds them on: Facebook Pixel, Microsoft Clarity, Yandex Metrica, Snowplow, Matomo, TikTok Pixel, Hotjar, LinkedIn Insight Tag, New Relic and HubSpot Analytics, some with their versions.
 - **[extension]** Detection of the ten most-used hosts, servers and CDNs Prisharp missed, by how many sites HTTP Archive finds them on: Amazon Web Services, cdnjs, jsDelivr, Google Hosted Libraries, GoDaddy, LiteSpeed, unpkg, Hostinger, IIS and Varnish, from the headers a site sends and the addresses it loads its files from. LiteSpeed, IIS and Varnish show their versions when the server gives them. Amazon CloudFront and Amazon S3 now come with Amazon Web Services.
 - **[extension]** Detection of the next ten most-used libraries, by how many sites HTTP Archive finds them on: FancyBox, Lightbox, Owl Carousel, Isotope, Select2, Animate.css, PhotoSwipe, AOS, Flickity and Hammer.js, most with their versions. SelectWoo, WooCommerce's copy of Select2, is not mistaken for it.
@@ -22,7 +24,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **[web]** The dev version of the extension is easier to find on prisharp.com: "Add to Chrome" has a menu beside it with "Download the dev version (.zip)", which used to need Shift held down and couldn't be reached on a phone. Shift+A still opens it. A short warning comes first, over a page gone black and white: the zip is built from `main`, unreleased and may be broken, and the Chrome Web Store version is the one for everyday use. The steps for loading it are in the README. The zip is named after the extension's version, like `prisharp-1.2.0.zip`, and links to `/prisharp.zip` still work.
+- **[web]** prisharp.com offers the build for the browser it's opened in. "Add to Chrome", or "Add to Firefox" in Firefox, opens a short dialog with two versions to pick from: the release from the browser's store, and the dev build, a zip made from `main` that may be broken. It also lists the permissions that build asks for. Firefox isn't on Firefox Add-ons yet, so there the dev build is the only choice. On phones, tablets and Safari, which can't run Prisharp, the button is greyed out and says "Not available".
+- **[extension]** The Chrome zip is named `prisharp-chrome-<version>.zip`, like `prisharp-chrome-1.2.0.zip`, to match the Firefox one. Links to `/prisharp-<version>.zip` and `/prisharp.zip` still work.
 
 ## [1.2.0] - 2026-11-23
 

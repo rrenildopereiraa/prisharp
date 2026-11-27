@@ -267,7 +267,7 @@ export function Hero({ onName }: { onName?: (name: string) => void }) {
 			<div data-actions className="d:f fw:w g:2 mt:1">
 				{UNSUPPORTED ? (
 					// phones, tablets and Safari: step 1 says where it works
-					<Button disabled shape="none" className={ACTION}>
+					<Button disabled variant="subtle" shape="none" className={ACTION}>
 						Not available
 					</Button>
 				) : (
