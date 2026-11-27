@@ -56,6 +56,7 @@ const marks = {
 	github: "siGithub",
 	"google-analytics": "siGoogleanalytics",
 	google: "siGooglefonts",
+	googlemaps: "siGooglemaps",
 	googlesignin: "siGoogle",
 	googletagmanager: "siGoogletagmanager",
 	gsap: "siGsap",
@@ -79,6 +80,7 @@ const marks = {
 	kinsta: "siKinsta",
 	klarna: "siKlarna",
 	laravel: "siLaravel",
+	leaflet: "siLeaflet",
 	lemonsqueezy: "siLemonsqueezy",
 	lit: "siLit",
 	livewire: "siLivewire",
@@ -137,6 +139,7 @@ const marks = {
 	unpkg: "siUnpkg",
 	v0: "siV0",
 	vercel: "siVercel",
+	vimeo: "siVimeo",
 	vite: "siVite",
 	vue: "siVuedotjs",
 	webawesome: "siWebawesome",
@@ -145,6 +148,7 @@ const marks = {
 	wikipedia: "siWikipedia",
 	wix: "siWix",
 	wordpress: "siWordpress",
+	youtube: "siYoutube",
 };
 
 // Icon name, then the svgl component, for marks Simple Icons lacks: one for
@@ -220,6 +224,9 @@ const icons = {
 //   initial, in the panel's ink.
 // - AngularJS: its shield from the angular/angular.js repository, drawn
 //   from the PDF it ships, the same in both themes.
+// - Cookiebot, Video.js: the favicons cookiebot.com and videojs.org serve,
+//   as drawings. CookieYes, iubenda, Didomi: the favicons their own sites
+//   serve, published only as PNGs.
 const local = {
 	"amazon-ads": false,
 	"angular-material": true,
@@ -229,10 +236,13 @@ const local = {
 	base44: false,
 	carbon: false,
 	cdnjs: false,
+	cookiebot: false,
+	cookieyes: false,
 	"core-js": true,
 	crisp: false,
 	datadome: false,
 	datastar: false,
+	didomi: false,
 	"element-plus": false,
 	emotion: false,
 	fancybox: false,
@@ -243,6 +253,7 @@ const local = {
 	hyperscript: false,
 	iconoir: true,
 	isotope: false,
+	iubenda: false,
 	katex: true,
 	knockout: true,
 	kobalte: false,
@@ -267,6 +278,7 @@ const local = {
 	stylex: false,
 	"tabler-icons": true,
 	varnish: false,
+	videojs: false,
 	"yandex-metrica": true,
 	yummacss: false,
 };

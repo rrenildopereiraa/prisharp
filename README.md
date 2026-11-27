@@ -13,7 +13,7 @@ Each one is detected only from evidence it alone leaves, and the popup shows tha
 
 <!-- technologies:start -->
 
-Prisharp detects 219 technologies.
+Prisharp detects 229 technologies.
 
 - **Framework:** [Next.js](https://nextjs.org), [Next.js App Router](https://nextjs.org/docs/app), [TanStack Start](https://tanstack.com/start), [React Router](https://reactrouter.com), [Remix](https://remix.run), [Gatsby](https://www.gatsbyjs.com), [Nuxt](https://nuxt.com), [SvelteKit](https://svelte.dev/docs/kit), [Astro](https://astro.build), [Starlight](https://starlight.astro.build), [Qwik](https://qwik.dev), [VitePress](https://vitepress.dev), [VuePress](https://vuepress.vuejs.org), [Rspress](https://rspress.rs), [Nextra](https://nextra.site), [Docusaurus](https://docusaurus.io), [Hugo](https://gohugo.io), [Eleventy](https://www.11ty.dev), [Jekyll](https://jekyllrb.com), [Hexo](https://hexo.io), [ASP.NET](https://dotnet.microsoft.com/apps/aspnet), [Ruby on Rails](https://rubyonrails.org), [Express](https://expressjs.com), [AMP](https://amp.dev), [Blazor](https://dotnet.microsoft.com/apps/aspnet/web-apps/blazor), [Laravel](https://laravel.com), [Livewire](https://livewire.laravel.com), [Phoenix](https://www.phoenixframework.org), [Phoenix LiveView](https://github.com/phoenixframework/phoenix_live_view), [Inertia.js](https://inertiajs.com), [Meteor](https://www.meteor.com), [Hydrogen](https://hydrogen.shop), [Elm](https://elm-lang.org)
 - **Platform:** [Framer](https://www.framer.com), [Figma Sites](https://www.figma.com/sites), [Webflow](https://webflow.com), [WordPress](https://wordpress.org), [Shopify](https://www.shopify.com), [Ghost](https://ghost.org), [Wix](https://www.wix.com), [Squarespace](https://www.squarespace.com), [Drupal](https://www.drupal.org), [Joomla](https://www.joomla.org), [Adobe Experience Manager](https://business.adobe.com/products/experience-manager/adobe-experience-manager.html), [MediaWiki](https://www.mediawiki.org), [OutSystems](https://www.outsystems.com)
@@ -31,9 +31,11 @@ Prisharp detects 219 technologies.
 - **Monitoring:** [Sentry](https://sentry.io), [Vercel Speed Insights](https://vercel.com/docs/speed-insights), [Datadog RUM](https://www.datadoghq.com/product/real-user-monitoring), [New Relic](https://newrelic.com/platform/browser-monitoring)
 - **Marketing:** [Google Tag Manager](https://tagmanager.google.com), [Adobe Launch](https://experienceleague.adobe.com/en/docs/experience-platform/tags/home), [BuySellAds](https://www.buysellads.com), [Google Publisher Tag](https://developers.google.com/publisher-tag), [Prebid.js](https://prebid.org), [Amazon Ads](https://advertising.amazon.com), [Facebook Pixel](https://www.facebook.com/business/tools/meta-pixel), [TikTok Pixel](https://ads.tiktok.com/help/article/tiktok-pixel), [LinkedIn Insight Tag](https://business.linkedin.com/marketing-solutions/insight-tag)
 - **Search:** [Algolia](https://www.algolia.com), [Algolia DocSearch](https://docsearch.algolia.com)
+- **Media:** [YouTube](https://www.youtube.com), [Vimeo](https://vimeo.com), [Video.js](https://videojs.com)
+- **Maps:** [Google Maps](https://mapsplatform.google.com), [Leaflet](https://leafletjs.com)
 - **Fonts:** [Google Fonts](https://fonts.google.com), [Adobe Fonts](https://fonts.adobe.com)
 - **Security:** [DataDome](https://datadome.co), [Cloudflare Turnstile](https://www.cloudflare.com/application-services/products/turnstile/), [reCAPTCHA](https://developers.google.com/recaptcha), [hCaptcha](https://www.hcaptcha.com)
-- **Privacy:** [OneTrust](https://www.onetrust.com)
+- **Privacy:** [OneTrust](https://www.onetrust.com), [Funding Choices](https://support.google.com/fundingchoices), [CookieYes](https://www.cookieyes.com), [Cookiebot](https://www.cookiebot.com), [iubenda](https://www.iubenda.com), [Didomi](https://www.didomi.io)
 - **Support:** [Help Scout](https://www.helpscout.com), [Crisp](https://crisp.chat), [Intercom](https://www.intercom.com)
 
 <!-- technologies:end -->

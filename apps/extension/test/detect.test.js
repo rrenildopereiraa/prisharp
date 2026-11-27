@@ -1163,6 +1163,170 @@ test("look-alikes of platforms and frameworks are not them", () => {
 	}
 });
 
+test("video, map and cookie banner services, from what each loads", () => {
+	/** @type {[string, object][]} */
+	const cases = [
+		[
+			"YouTube",
+			{
+				dom: {
+					"iframe[src*='youtube.com/embed/'], iframe[src*='youtube-nocookie.com/embed/']|": true,
+				},
+			},
+		],
+		[
+			"YouTube",
+			{ resources: ["https://www.youtube-nocookie.com/embed/bHQqvYy5KYo"] },
+		],
+		["YouTube", { js: { "YT.Player": true } }],
+		[
+			"Vimeo",
+			{ resources: ["https://player.vimeo.com/video/1051369991?h=7d9a692c1c"] },
+		],
+		["Vimeo", { js: { "Vimeo.Player": true } }],
+		[
+			"Vimeo",
+			{
+				script: scripts(
+					"/*! @vimeo/player v2.30.4 | (c) 2026 Vimeo | MIT License | https://github.com/vimeo/player.js */",
+				),
+			},
+		],
+		["Video.js 8.10.0", { js: { "videojs.VERSION": "8.10.0" } }],
+		[
+			"Video.js 8.10.0",
+			{
+				script: scripts(
+					"/**\n * @license\n * Video.js 8.10.0 <http://videojs.com/>\n * Copyright Brightcove, Inc.",
+				),
+			},
+		],
+		["Video.js", { classes: ["video-js", "vjs-control-bar"] }],
+		["Google Maps 3.67.1d", { js: { "google.maps.version": "3.67.1d" } }],
+		[
+			"Google Maps",
+			{
+				resources: [
+					"https://maps.googleapis.com/maps/api/js?key=AIza&callback=initMap",
+				],
+			},
+		],
+		[
+			"Google Maps",
+			{ resources: ["https://www.google.com/maps/embed?pb=!1m18!1m12"] },
+		],
+		[
+			"Leaflet 1.9.4",
+			{
+				script: scripts(
+					"/* @preserve\n * Leaflet 1.9.4, a JS library for interactive maps. https://leafletjs.com",
+				),
+			},
+		],
+		[
+			"Leaflet 1.9.4",
+			{
+				js: { "L.version": "1.9.4" },
+				classes: ["leaflet-container", "leaflet-pane"],
+			},
+		],
+		[
+			"Funding Choices",
+			{
+				resources: [
+					"https://fundingchoicesmessages.google.com/i/8095840?ers=3",
+				],
+			},
+		],
+		["Funding Choices", { js: { "googlefc.ConsentStatusEnum": true } }],
+		[
+			"CookieYes",
+			{
+				resources: [
+					"https://cdn-cookieyes.com/client_data/e5ee5d26e0341217ffb7eccd/script.js",
+				],
+			},
+		],
+		["CookieYes", { js: { getCkyConsent: true } }],
+		[
+			"Cookiebot",
+			{
+				resources: [
+					"https://consent.cookiebot.com/uc.js?cbid=c99c74a8-8388-4b1a-85d7-bea3bbed4aca",
+				],
+			},
+		],
+		["Cookiebot", { dom: { "#CybotCookiebotDialog|": true } }],
+		["iubenda", { resources: ["https://cdn.iubenda.com/cs/iubenda_cs.js"] }],
+		["iubenda", { js: { "_iub.csConfiguration": true } }],
+		[
+			"Didomi",
+			{
+				resources: [
+					"https://sdk.privacy-center.org/7dd8ec4e-746c-455e-a610-99121b4148df/loader.js",
+				],
+			},
+		],
+		["Didomi", { js: { "Didomi.getUserStatus": true } }],
+	];
+	for (const [name, evidence] of cases) {
+		const found = names(detect(page(evidence), technologies));
+		assert.ok(found.includes(name), `${name} in ${found.join(", ")}`);
+	}
+});
+
+test("look-alikes of video, map and cookie banner services are not them", () => {
+	/** @type {[string, object][]} */
+	const cases = [
+		// a link to a video, and its thumbnail
+		[
+			"YouTube",
+			{
+				html: '<a href="https://www.youtube.com/watch?v=bHQqvYy5KYo">',
+				resources: ["https://i.ytimg.com/vi/bHQqvYy5KYo/hqdefault.jpg"],
+			},
+		],
+		["Vimeo", { resources: ["https://i.vimeocdn.com/video/1234-d_640"] }],
+		// a page that borrows Video.js's class name for its own player
+		["Video.js", { classes: ["video-js"] }],
+		// a link to a place, which opens Google Maps elsewhere
+		[
+			"Google Maps",
+			{ html: '<a href="https://www.google.com/maps/place/IKEA">' },
+		],
+		// another library's global named L, and Leaflet's stylesheet alone
+		["Leaflet", { js: { "L.version": "1.9.4" } }],
+		["Leaflet", { css: ".leaflet-container { overflow: hidden; }" }],
+		// the AdSense tag, which sets up the googlefc queue for itself
+		[
+			"Funding Choices",
+			{
+				js: { googlefc: true },
+				resources: [
+					"https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
+				],
+			},
+		],
+		// links to the services' own sites, from a privacy policy
+		[
+			"iubenda",
+			{
+				html: '<a href="https://www.iubenda.com/privacy-policy/123" class="iubenda-white">',
+			},
+		],
+		["Cookiebot", { js: { CookieConsent: true } }],
+		["CookieYes", { html: '<a href="https://www.cookieyes.com/">' }],
+		["Didomi", { resources: ["https://www.didomi.io/logo.svg"] }],
+	];
+	for (const [name, evidence] of cases) {
+		const found = names(detect(page(evidence), technologies));
+		assert.ok(
+			!found.some((found) => found.startsWith(name)),
+			`${name} not in ${found.join(", ")}`,
+		);
+	}
+});
+
 test("analytics and ad tags, from the globals their snippets set and the files they load", () => {
 	const cases = [
 		{
