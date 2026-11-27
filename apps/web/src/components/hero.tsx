@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { typed } from "virtual:catalog";
+import { typed, zip as ZIP } from "virtual:catalog";
 import Button from "@/components/ui/button";
 import { BrowserMarks } from "@/components/browsers";
 import { useKeyHold } from "@tanstack/react-hotkeys";
@@ -89,6 +89,41 @@ function Key({ children }: { children: string }) {
 	);
 }
 
+const LOAD = [
+	"Unzip it.",
+	<>
+		Open <code className="ff:mono c:label">chrome://extensions</code>.
+	</>,
+	"Turn on Developer mode.",
+	'Click "Load unpacked" and choose the folder.',
+];
+
+/** What the zip is, and how to load it, shown while it replaces the store. */
+function PreviewNote() {
+	return (
+		<div className="d:f fd:c g:2 p:3 bw:1 bc:line bg:raised fs:xs lh:5 c:hint">
+			<p className="m:0 tw:p">
+				<strong className="fw:500 c:label">A preview build</strong> of what's on{" "}
+				<code className="ff:mono c:label">main</code>. It may have bugs and
+				isn't the version on the Chrome Web Store, which is the one to use for
+				everyday browsing.
+			</p>
+			{/* Yumma has no numbered markers: the numbers are drawn, as in "How
+			    it works", and the list still reads as ordered */}
+			<ol className="m:0 p:0 lst:none d:f fd:c g:1">
+				{LOAD.map((step, index) => (
+					<li key={index} className="d:f g:2">
+						<span aria-hidden="true" className="c:label">
+							{index + 1}.
+						</span>
+						<span>{step}</span>
+					</li>
+				))}
+			</ol>
+		</div>
+	);
+}
+
 // the hero's buttons: the mockup's 40px height and 6px corners
 const ACTION = "h:10 px:4 g:2 fs:sm us:none";
 
@@ -126,9 +161,7 @@ export function Hero({ onName }: { onName?: (name: string) => void }) {
 			<div data-actions className="d:f fw:w g:2 mt:1">
 				<Button
 					id="install"
-					render={
-						zip ? <a href="/prisharp.zip" download /> : <a href={STORE} />
-					}
+					render={zip ? <a href={ZIP} download /> : <a href={STORE} />}
 					nativeButton={false}
 					shape="square"
 					className={ACTION}
@@ -145,6 +178,10 @@ export function Hero({ onName }: { onName?: (name: string) => void }) {
 				>
 					View source <Key>S</Key>
 				</Button>
+			</div>
+			{/* always in the page, so a screen reader hears the note appear */}
+			<div role="status" className="max-w:120">
+				{zip && <PreviewNote />}
 			</div>
 		</div>
 	);

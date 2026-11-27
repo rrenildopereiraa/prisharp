@@ -20,6 +20,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[extension]** jQuery's version no longer carries a list of modules on sites that use a custom jQuery build: jsDelivr showed "jQuery 3.6.3 -ajax,-ajax/jsonp,…" and now shows "jQuery 3.6.3".
 - **[extension]** A custom Lodash build, like the one in GoDaddy's site builder, no longer shows as "Underscore.js 4.17.5". It now shows as Lodash, and Lodash shows its version too.
 
+### Changed
+
+- **[web]** The zip download on prisharp.com is named after the extension's version, like `prisharp-1.2.0.zip`, and a note beside it says it's a preview build of what's on `main`, not the Chrome Web Store version, with the steps to load it. Links to `/prisharp.zip` still work.
+
 ## [1.2.0] - 2026-11-23
 
 ### Added
