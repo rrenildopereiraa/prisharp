@@ -93,9 +93,6 @@ function Key({ children }: { children: string }) {
 	);
 }
 
-/** The README's steps for loading the zip unpacked. */
-const LOAD = `${REPO}#load-the-dev-version`;
-
 /** Saves the zip, as its link would. */
 function download() {
 	const link = document.createElement("a");
@@ -153,6 +150,8 @@ function PreviewDialog({
 			confirmVariant="danger"
 			onConfirm={download}
 		>
+			{/* room between the text and the buttons */}
+			<span aria-hidden="true" className="d:b h:2" />
 		</Dialog>
 	);
 }
