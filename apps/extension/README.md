@@ -8,7 +8,9 @@ See what any site is built with, and the evidence for each. A Chromium extension
 2. Click **Load unpacked** and pick `apps/extension`.
 3. Pin Prisharp, open a site and click it.
 
-Prisharp runs only when you click it. It asks for `activeTab` and `scripting` and no host permissions, so it reads only the tab you clicked on, and only then. The `offscreen` permission lets a hidden page follow the browser's light or dark mode, which a service worker can't do, so the toolbar icon matches it; that page reads nothing else.
+In Firefox 140 or later, run `pnpm zip`, open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on** and pick `prisharp-firefox-<version>.zip`. Firefox keeps it until it restarts.
+
+Prisharp runs only when you click it. It asks for `activeTab` and `scripting` and no host permissions, so it reads only the tab you clicked on, and only then. The `offscreen` permission lets a hidden page follow the browser's light or dark mode, which a service worker can't do, so the toolbar icon matches it; that page reads nothing else. Firefox matches the icon to its theme by itself, so its build asks for neither and has no background page.
 
 ## The popup
 
@@ -76,7 +78,9 @@ The popup is styled with [Yumma CSS](https://yummacss.com), with Yumma UI's them
 pnpm build      # popup.css from the classes in popup.html and src
 pnpm validate   # every class is one Yumma CSS generates
 pnpm test       # the detection engine
-pnpm zip        # prisharp-<version>.zip for the Chrome Web Store
+pnpm zip        # prisharp-<version>.zip for the Chrome Web Store, prisharp-firefox-<version>.zip for addons.mozilla.org
 ```
+
+The Firefox zip is the same extension with its own manifest, written by [`scripts/zip.mjs`](scripts/zip.mjs): no `offscreen` permission or background page, `theme_icons` for the toolbar icon, and the ID and data-collection statement addons.mozilla.org asks for.
 
 Logos come from [svgl](https://svgl.app).
