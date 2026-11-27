@@ -17,6 +17,8 @@ declare module "virtual:catalog" {
 	export const count: number;
 	/** The zip download's path, named after the extension's version. */
 	export const zip: string;
+	/** The Firefox build's zip, named the same way. */
+	export const firefoxZip: string;
 	/** The names the heading types, best known first, with their evidence. */
 	export const typed: CatalogEntry[];
 	/** The marquee's technologies, best known first. */

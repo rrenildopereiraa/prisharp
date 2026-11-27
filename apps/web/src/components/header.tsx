@@ -1,5 +1,6 @@
 import Button from "@/components/ui/button";
 import { Mark } from "@/components/mark";
+import { FIREFOX } from "@/browser";
 import { STORE } from "@/links";
 
 export function Header() {
@@ -12,15 +13,27 @@ export function Header() {
 				<Mark className="h:6 w:5" />
 				<span className="ff:sans fw:400 ls:2 fs:xl @md:fs:xxl">Prisharp</span>
 			</a>
-			<Button
-				render={<a href={STORE} />}
-				nativeButton={false}
-				size="sm"
-				shape="none"
-				className="us:none"
-			>
-				Add to Chrome
-			</Button>
+			{FIREFOX ? (
+				// the hero's install button, which warns before the zip downloads
+				<Button
+					onClick={() => document.getElementById("install")?.click()}
+					size="sm"
+					shape="none"
+					className="us:none"
+				>
+					Download for Firefox
+				</Button>
+			) : (
+				<Button
+					render={<a href={STORE} />}
+					nativeButton={false}
+					size="sm"
+					shape="none"
+					className="us:none"
+				>
+					Add to Chrome
+				</Button>
+			)}
 		</header>
 	);
 }

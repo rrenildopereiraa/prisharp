@@ -21,23 +21,6 @@
 			"permanent": false
 		},
 		{
-			"source": "/firefox",
-			"destination": "https://addons.mozilla.org/firefox/addon/prisharp/",
-			"permanent": false
-		},
-		{
-			"source": "/get",
-			"has": [
-				{
-					"type": "header",
-					"key": "user-agent",
-					"value": ".*Firefox/.*"
-				}
-			],
-			"destination": "https://addons.mozilla.org/firefox/addon/prisharp/",
-			"permanent": false
-		},
-		{
 			"source": "/get",
 			"destination": "https://chromewebstore.google.com/detail/prisharp-see-what-any-sit/ahjcmijihodolfhcdeapnbmpihkoolhn",
 			"permanent": false

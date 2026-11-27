@@ -10,6 +10,7 @@
 		"./detect": "./src/detect.js",
 		"./icons": "./src/icons.js",
 		"./symbols": "./src/symbols.js",
+		"./firefox": "./scripts/firefox.mjs",
 		"./icons/*": "./icons/tech/*"
 	},
 	"scripts": {
