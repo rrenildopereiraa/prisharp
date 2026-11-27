@@ -1,6 +1,6 @@
 import { useHotkey } from "@tanstack/react-hotkeys";
 import { useState } from "react";
-import { FIREFOX } from "@/browser";
+import { FIREFOX, UNSUPPORTED } from "@/browser";
 import { Band } from "@/components/band";
 import { Footer } from "@/components/footer";
 import Threads from "@/components/threads";
@@ -13,15 +13,20 @@ import type { Found } from "@/demo";
 import { DarkContext, useDark } from "@/theme";
 
 const STEPS = [
-	FIREFOX
+	UNSUPPORTED
 		? {
-				title: "Add it to Firefox",
-				text: "Prisharp isn't on Firefox Add-ons yet. Until it is, download the .zip and load it from about:debugging.",
+				title: "Open it on a computer",
+				text: "Prisharp is an extension for Chrome and Firefox on a computer. Phones, tablets and Safari can't run it.",
 			}
-		: {
-				title: "Add it to Chrome",
-				text: "One click from the Chrome Web Store. Edge, Brave, Opera, Vivaldi and Arc take it too.",
-			},
+		: FIREFOX
+			? {
+					title: "Add it to Firefox",
+					text: "Prisharp isn't on Firefox Add-ons yet. Until it is, download the .zip and load it from about:debugging.",
+				}
+			: {
+					title: "Add it to Chrome",
+					text: "One click from the Chrome Web Store. Edge, Brave, Opera, Vivaldi and Arc take it too.",
+				},
 	{
 		title: "Open any site",
 		text: "Prisharp stays out of the way. It reads nothing until you ask.",

@@ -1,6 +1,6 @@
 import Button from "@/components/ui/button";
 import { Mark } from "@/components/mark";
-import { FIREFOX } from "@/browser";
+import { FIREFOX, UNSUPPORTED } from "@/browser";
 import { STORE } from "@/links";
 
 export function Header() {
@@ -13,7 +13,7 @@ export function Header() {
 				<Mark className="h:6 w:5" />
 				<span className="ff:sans fw:400 ls:2 fs:xl @md:fs:xxl">Prisharp</span>
 			</a>
-			{FIREFOX ? (
+			{UNSUPPORTED ? null : FIREFOX ? (
 				// the hero's install button, which warns before the zip downloads
 				<Button
 					onClick={() => document.getElementById("install")?.click()}

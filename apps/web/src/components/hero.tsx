@@ -6,8 +6,12 @@ import Dialog from "@/components/ui/dialog";
 import Menu from "@/components/ui/menu";
 import { BrowserMarks } from "@/components/browsers";
 import { useHotkey } from "@tanstack/react-hotkeys";
-import { IconAlertTriangle, IconChevronDown } from "@tabler/icons-react";
-import { FIREFOX } from "@/browser";
+import {
+	IconAlertTriangle,
+	IconChevronDown,
+	IconInfoCircle,
+} from "@tabler/icons-react";
+import { FIREFOX, UNSUPPORTED } from "@/browser";
 import { REPO, STORE } from "@/links";
 
 // best known first, as in the marquee, picked at build time
@@ -212,58 +216,66 @@ export function Hero({ onName }: { onName?: (name: string) => void }) {
 				Prisharp will show you all the frameworks, libraries and hosts used on
 				the page, with evidence for each.
 			</p>
+			{UNSUPPORTED && (
+				<p className="m:0 d:f ai:c g:2 fs:sm c:label">
+					<IconInfoCircle aria-hidden="true" className="w:4 h:4 fs:0" />
+					Prisharp works in Chrome and Firefox on a computer.
+				</p>
+			)}
 			<div data-actions className="d:f fw:w g:2 mt:1">
-				<ButtonGroup shape="none">
-					{FIREFOX ? (
-						<Button
-							id="install"
-							onClick={() => setPreview("firefox")}
-							className={ACTION}
-						>
-							Download for Firefox <Key>A</Key>
-						</Button>
-					) : (
-						<Button
-							id="install"
-							render={<a href={STORE} />}
-							nativeButton={false}
-							className={ACTION}
-						>
-							Add to Chrome <Key>A</Key>
-						</Button>
-					)}
-					<Menu
-						container={page}
-						shape="none"
-						trigger={
+				{!UNSUPPORTED && (
+					<ButtonGroup shape="none">
+						{FIREFOX ? (
 							<Button
-								aria-label="Other ways to get Prisharp"
-								className="h:10 px:3"
+								id="install"
+								onClick={() => setPreview("firefox")}
+								className={ACTION}
 							>
-								<IconChevronDown aria-hidden="true" className="w:4 h:4" />
+								Download for Firefox <Key>A</Key>
 							</Button>
-						}
-						items={
-							FIREFOX
-								? [
-										{
-											label: "Download for Chrome (.zip)…",
-											onClick: () => setPreview("chrome"),
-										},
-									]
-								: [
-										{
-											label: "Download the dev version (.zip)…",
-											onClick: () => setPreview("chrome"),
-										},
-										{
-											label: "Download for Firefox (.zip)…",
-											onClick: () => setPreview("firefox"),
-										},
-									]
-						}
-					/>
-				</ButtonGroup>
+						) : (
+							<Button
+								id="install"
+								render={<a href={STORE} />}
+								nativeButton={false}
+								className={ACTION}
+							>
+								Add to Chrome <Key>A</Key>
+							</Button>
+						)}
+						<Menu
+							container={page}
+							shape="none"
+							trigger={
+								<Button
+									aria-label="Other ways to get Prisharp"
+									className="h:10 px:3"
+								>
+									<IconChevronDown aria-hidden="true" className="w:4 h:4" />
+								</Button>
+							}
+							items={
+								FIREFOX
+									? [
+											{
+												label: "Download for Chrome (.zip)…",
+												onClick: () => setPreview("chrome"),
+											},
+										]
+									: [
+											{
+												label: "Download the dev version (.zip)…",
+												onClick: () => setPreview("chrome"),
+											},
+											{
+												label: "Download for Firefox (.zip)…",
+												onClick: () => setPreview("firefox"),
+											},
+										]
+							}
+						/>
+					</ButtonGroup>
+				)}
 				<Button
 					id="source"
 					variant="secondary"
