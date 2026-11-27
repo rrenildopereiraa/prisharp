@@ -786,6 +786,133 @@ test("a key that only starts like Preact's is not Preact", () => {
 	assert.ok(!wanted.domKey.includes("__k"));
 });
 
+test("analytics and ad tags, from the globals their snippets set and the files they load", () => {
+	const cases = [
+		[
+			"Facebook Pixel 2.9.441",
+			{
+				js: { "fbq.version": "2.9.441" },
+				resources: ["https://connect.facebook.net/en_US/fbevents.js"],
+			},
+		],
+		[
+			"Microsoft Clarity 0.8.80-beta",
+			{
+				resources: [
+					"https://www.clarity.ms/tag/abcdefghij",
+					"https://scripts.clarity.ms/0.8.80-beta/clarity.js",
+				],
+			},
+		],
+		[
+			"Yandex Metrica",
+			{
+				js: { "Ya.Metrika2": true },
+				resources: ["https://mc.yandex.ru/metrika/tag.js"],
+			},
+		],
+		[
+			"Snowplow 4.10.3",
+			{
+				js: { GlobalSnowplowNamespace: true },
+				script: scripts(
+					"/*!\n * Web analytics for Snowplow v4.10.3 (http://bit.ly/sp-js)\n */",
+				),
+			},
+		],
+		[
+			"Matomo",
+			{
+				script: scripts(
+					"/*!!\n * Matomo - free/libre analytics platform\n *\n * JavaScript tracking client",
+				),
+			},
+		],
+		["Matomo", { js: { "Piwik.getAsyncTrackers": true, _paq: true } }],
+		[
+			"TikTok Pixel",
+			{
+				js: { TiktokAnalyticsObject: "ttq" },
+				resources: [
+					"https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=C123&lib=ttq",
+				],
+			},
+		],
+		[
+			"Hotjar",
+			{
+				js: { _hjSettings: true },
+				resources: ["https://static.hotjar.com/c/hotjar-1000.js?sv=6"],
+			},
+		],
+		[
+			"LinkedIn Insight Tag",
+			{
+				js: { _linkedin_data_partner_ids: "1234567" },
+				resources: ["https://snap.licdn.com/li.lms-analytics/insight.min.js"],
+			},
+		],
+		[
+			"New Relic 1.324.1",
+			{
+				js: { NREUM: true },
+				resources: ["https://js-agent.newrelic.com/nr-spa-1.324.1.min.js"],
+			},
+		],
+		[
+			"HubSpot Analytics",
+			{
+				js: { _hsq: true },
+				resources: ["https://js.hs-scripts.com/53.js"],
+			},
+		],
+	];
+	for (const [name, overrides] of cases) {
+		const found = names(detect(page(overrides), technologies));
+		assert.ok(found.includes(name), `${name} in ${found.join(", ")}`);
+	}
+});
+
+test("look-alikes of analytics and ad tags are not them", () => {
+	const cases = [
+		// Facebook's login and share SDK, not its pixel
+		["Facebook Pixel", { resources: ["https://connect.facebook.net/en_US/sdk.js"] }],
+		// VMware's Clarity design system shares the name
+		[
+			"Microsoft Clarity",
+			{ resources: ["https://unpkg.com/@cds/core/global.min.css"] },
+		],
+		// Yandex Maps, not Metrica
+		["Yandex Metrica", { resources: ["https://api-maps.yandex.ru/2.1/?lang=en_US"] }],
+		// a site's own global named after the tracker
+		["Snowplow", { js: { snowplow: true } }],
+		// Piwik PRO's tracker fills the same queue
+		["Matomo", { js: { _paq: true } }],
+		// a TikTok video embed
+		["TikTok Pixel", { resources: ["https://www.tiktok.com/embed.js"] }],
+		// a site's own `hj` helper
+		["Hotjar", { js: { hj: true } }],
+		// a LinkedIn profile badge
+		[
+			"LinkedIn Insight Tag",
+			{ resources: ["https://platform.linkedin.com/badges/js/profile.js"] },
+		],
+		["New Relic", { js: { newrelic: true } }],
+		// HubSpot's forms, which load without its tracking code
+		[
+			"HubSpot Analytics",
+			{ resources: ["https://js.hsforms.net/forms/embed/v2.js"] },
+		],
+	];
+	for (const [name, overrides] of cases) {
+		const found = names(detect(page(overrides), technologies));
+		assert.ok(
+			!found.some((item) => item.startsWith(name)),
+			`${name} not in ${found.join(", ")}`,
+		);
+	}
+});
+
 test("MediaWiki reads its version from the generator", () => {
 	const meta = { generator: "MediaWiki 1.46.0-wmf.3" };
 	assert.deepEqual(names(detect(page({ meta }), technologies)), [
