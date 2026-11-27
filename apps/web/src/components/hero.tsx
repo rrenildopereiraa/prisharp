@@ -4,6 +4,7 @@ import Button from "@/components/ui/button";
 import Dialog from "@/components/ui/dialog";
 import { BrowserMarks } from "@/components/browsers";
 import { useKeyHold } from "@tanstack/react-hotkeys";
+import { IconAlertTriangle } from "@tabler/icons-react";
 import { REPO, STORE } from "@/links";
 
 // best known first, as in the marquee, picked at build time
@@ -100,8 +101,16 @@ const LOAD = [
 	'Click "Load unpacked" and choose the folder.',
 ];
 
+/** Saves the zip, as its link would. */
+function download() {
+	const link = document.createElement("a");
+	link.href = ZIP;
+	link.download = "";
+	link.click();
+}
+
 /**
- * What the zip is, and how to load it, before it downloads: it's what's on
+ * A warning, and how to load the zip, before it downloads: it's what's on
  * main, not what the Chrome Web Store has.
  */
 function PreviewDialog({
@@ -125,15 +134,22 @@ function PreviewDialog({
 			open={open}
 			onOpenChange={onOpenChange}
 			shape="none"
-			title="Download a preview build"
+			header={
+				<IconAlertTriangle aria-hidden="true" className="w:6 h:6 c:red" />
+			}
+			title="This isn't the store version"
 			description={
 				<>
-					<code className="c:label">{ZIP.slice(1)}</code> is what's on{" "}
-					<code className="c:label">main</code> today. It may have bugs, and it
-					isn't the version on the Chrome Web Store, which is the one to use for
-					everyday browsing.
+					<code className="c:label">{ZIP.slice(1)}</code> is the unreleased code
+					on <code className="c:label">main</code>. It may be broken, and it
+					won't update itself. For everyday browsing, get Prisharp from the
+					Chrome Web Store instead.
 				</>
 			}
+			cancelLabel="Cancel"
+			confirmLabel="Download anyway"
+			confirmVariant="danger"
+			onConfirm={download}
 		>
 			{/* Yumma has no numbered markers: the numbers are drawn, as in "How
 			    it works", and the list still reads as ordered */}
@@ -150,24 +166,6 @@ function PreviewDialog({
 					</li>
 				))}
 			</ol>
-			<div className="d:f fw:w g:2 pt:2">
-				<Button
-					render={<a href={ZIP} download />}
-					nativeButton={false}
-					shape="none"
-					onClick={() => onOpenChange(false)}
-				>
-					Download .zip
-				</Button>
-				<Button
-					variant="secondary"
-					render={<a href={STORE} />}
-					nativeButton={false}
-					shape="none"
-				>
-					Chrome Web Store
-				</Button>
-			</div>
 		</Dialog>
 	);
 }
