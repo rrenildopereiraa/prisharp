@@ -51,6 +51,8 @@ export const categories = [
 	"Monitoring",
 	"Marketing",
 	"Search",
+	"Media",
+	"Maps",
 	"Fonts",
 	"Security",
 	"Privacy",
@@ -2367,6 +2369,98 @@ export const technologies = [
 		],
 	},
 	{
+		id: "youtube",
+		name: "YouTube",
+		website: "https://www.youtube.com",
+		category: "Media",
+		signals: [
+			// the player YouTube's embed code puts in an iframe, from either
+			// of its domains; a link to a video only points at youtube.com/watch
+			{
+				dom: "iframe[src*='youtube.com/embed/'], iframe[src*='youtube-nocookie.com/embed/']",
+			},
+			{ resource: /\/\/www\.youtube(?:-nocookie)?\.com\/embed\// },
+			// the IFrame Player API, and the script it loads
+			{ js: "YT.Player" },
+			{
+				resource:
+					/\/\/www\.youtube\.com\/(?:iframe_api|s\/player\/\w+\/www-widgetapi)/,
+			},
+		],
+	},
+	{
+		id: "vimeo",
+		name: "Vimeo",
+		website: "https://vimeo.com",
+		category: "Media",
+		signals: [
+			// the player Vimeo's embed code puts in an iframe
+			{ dom: "iframe[src*='player.vimeo.com/video/']" },
+			{ resource: /\/\/player\.vimeo\.com\/video\/\d/ },
+			// its Player SDK, from player.vimeo.com/api/player.js or npm
+			{ js: "Vimeo.Player" },
+			{
+				script: /\/\*! @vimeo\/player v\d+\.\d+\.\d+ \| \(c\) \d{4} Vimeo/,
+				label: "@vimeo/player banner",
+			},
+		],
+	},
+	{
+		id: "videojs",
+		name: "Video.js",
+		website: "https://videojs.com",
+		category: "Media",
+		signals: [
+			{ js: "videojs.VERSION", version: true },
+			{
+				script: /\* Video\.js (\d+\.\d+\.\d+) <http:\/\/videojs\.com\/>/,
+				label: "Video.js banner",
+			},
+			// what it puts on the player it builds around a <video>; a page
+			// that only borrows its video-js class gets no control bar
+			{ classes: ["video-js", "vjs-tech", "vjs-control-bar"], min: 2 },
+		],
+	},
+
+	{
+		id: "google-maps",
+		name: "Google Maps",
+		website: "https://mapsplatform.google.com",
+		category: "Maps",
+		icon: "googlemaps",
+		signals: [
+			// the release of the Maps JavaScript API the page loaded
+			{ js: "google.maps.version", version: true },
+			{ resource: /\/\/maps\.googleapis\.com\/maps\/api\/js\b/ },
+			// a map embedded as an iframe; a link to a place only points at
+			// google.com/maps
+			{ dom: "iframe[src*='google.com/maps/embed']" },
+			{ resource: /\/\/(?:www\.|maps\.)?google\.com\/maps\/embed\b/ },
+		],
+	},
+	{
+		id: "leaflet",
+		name: "Leaflet",
+		website: "https://leafletjs.com",
+		category: "Maps",
+		signals: [
+			{
+				script:
+					/Leaflet (\d+\.\d+\.\d+)(?:\+[\w.-]+)?, a JS library for interactive maps/,
+				label: "Leaflet banner",
+			},
+			// the global its build sets; L is a short name, so it counts only
+			// with a version, and only as half
+			{ js: "L.version", value: /^\d+\.\d+\.\d+/, version: true, weight: 50 },
+			// what it puts on a map it draws; its stylesheet alone puts none
+			{
+				classes: ["leaflet-container", "leaflet-pane", "leaflet-map-pane"],
+				min: 2,
+			},
+		],
+	},
+
+	{
 		id: "adobe-fonts",
 		name: "Adobe Fonts",
 		website: "https://fonts.adobe.com",
@@ -2400,6 +2494,68 @@ export const technologies = [
 		category: "Privacy",
 		signals: [
 			{ resource: /cdn\.cookielaw\.org\/|otSDKStub\.js|otBannerSdk\.js/ },
+		],
+	},
+	{
+		id: "funding-choices",
+		name: "Funding Choices",
+		website: "https://support.google.com/fundingchoices",
+		category: "Privacy",
+		icon: "googlelogo",
+		signals: [
+			// the consent messages Google serves for AdSense, Ad Manager and
+			// AdMob, as Privacy & messaging
+			{ resource: /\/\/fundingchoicesmessages\.google\.com\// },
+			// what that script adds to the googlefc queue the tag sets up
+			{ js: "googlefc.ConsentStatusEnum" },
+		],
+	},
+	{
+		id: "cookieyes",
+		name: "CookieYes",
+		website: "https://www.cookieyes.com",
+		category: "Privacy",
+		signals: [
+			{ resource: /\/\/cdn-cookieyes\.com\// },
+			// what its banner script sets, also from its WordPress plugin
+			{ js: "getCkyConsent" },
+			{ dom: ".cky-consent-container" },
+		],
+	},
+	{
+		id: "cookiebot",
+		name: "Cookiebot",
+		website: "https://www.cookiebot.com",
+		category: "Privacy",
+		signals: [
+			{ resource: /\/\/consent\.cookiebot\.(?:com|eu)\// },
+			{ js: "Cookiebot.renew" },
+			{ dom: "#CybotCookiebotDialog" },
+		],
+	},
+	{
+		id: "iubenda",
+		name: "iubenda",
+		website: "https://www.iubenda.com",
+		category: "Privacy",
+		signals: [
+			// its consent and policy scripts; a link to a policy on
+			// iubenda.com loads none of them
+			{ resource: /\/\/cdn\.iubenda\.com\// },
+			{ js: "_iub.csConfiguration" },
+			{ dom: "#iubenda-cs-banner" },
+		],
+	},
+	{
+		id: "didomi",
+		name: "Didomi",
+		website: "https://www.didomi.io",
+		category: "Privacy",
+		signals: [
+			// the host its SDK loads from
+			{ resource: /\/\/sdk\.privacy-center\.org\// },
+			{ js: "Didomi.getUserStatus" },
+			{ dom: "#didomi-host" },
 		],
 	},
 	{
