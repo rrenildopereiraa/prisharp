@@ -1,6 +1,6 @@
 // Packs the extension for each store, named after the manifest's version so
 // the upload is plainly the right one:
-// - prisharp-<version>.zip for the Chrome Web Store, as the folder is
+// - prisharp-chrome-<version>.zip for the Chrome Web Store, as the folder is
 // - prisharp-firefox-<version>.zip for addons.mozilla.org, with its own
 //   manifest (see firefox.mjs)
 // Plain Node, so it runs the same on Windows, macOS and Linux.
@@ -48,7 +48,7 @@ const write = (out, contents) => {
 	console.log(`Wrote ${out} (${Object.keys(contents).length} files)`);
 };
 
-write(`prisharp-${manifest.version}.zip`, files);
+write(`prisharp-chrome-${manifest.version}.zip`, files);
 
 const gecko = Object.fromEntries(
 	Object.entries(files).filter(([file]) => !CHROME_ONLY.includes(file)),

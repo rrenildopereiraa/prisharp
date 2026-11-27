@@ -58,17 +58,18 @@ const MANIFEST = JSON.parse(
 const VERSION: string = MANIFEST.version;
 
 /** The downloads' names, with the version in them. */
-const ZIP = `prisharp-${VERSION}.zip`;
+const ZIP = `prisharp-chrome-${VERSION}.zip`;
 const FIREFOX_ZIP = `prisharp-firefox-${VERSION}.zip`;
 
 /**
  * Serves and builds the extension ready to load: for Chromium under its
- * versioned name and under /prisharp.zip, which older links point to, and
+ * versioned name and under /prisharp-<version>.zip and /prisharp.zip, which
+ * older links point to, and
  * for Firefox under its own name.
  */
 const download = (): Plugin => {
 	const zips: [string[], () => Uint8Array][] = [
-		[[ZIP, "prisharp.zip"], zipExtension],
+		[[ZIP, `prisharp-${VERSION}.zip`, "prisharp.zip"], zipExtension],
 		[[FIREFOX_ZIP], zipFirefox],
 	];
 	return {
@@ -217,6 +218,8 @@ function landing() {
 		`export const count = ${list.length};`,
 		`export const zip = ${JSON.stringify(`/${ZIP}`)};`,
 		`export const firefoxZip = ${JSON.stringify(`/${FIREFOX_ZIP}`)};`,
+		`export const permissions = ${JSON.stringify(MANIFEST.permissions)};`,
+		`export const firefoxPermissions = ${JSON.stringify(firefox(MANIFEST).permissions)};`,
 		`export const typed = ${JSON.stringify(named)};`,
 		`export const marks = ${JSON.stringify(marks)};`,
 		`export const logos = { ${logos.join(", ")} };`,

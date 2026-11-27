@@ -37,9 +37,8 @@ const STEPS = [
 	},
 ];
 
-// A and S press the hero's buttons; Shift+A, the dev version's warning, is the
-// hero's own. Typing in a field never triggers them, and neither does an open
-// dialog, which covers the buttons.
+// A and S press the hero's buttons. Typing in a field never triggers them, and
+// neither does an open dialog, which covers the buttons.
 const press = (id: string) => () => {
 	if (document.querySelector('[role="dialog"][data-open]')) return;
 	document.getElementById(id)?.click();
