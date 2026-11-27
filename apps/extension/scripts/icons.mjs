@@ -15,6 +15,7 @@ const marks = {
 	adyen: "siAdyen",
 	algolia: "siAlgolia",
 	alpinejs: "siAlpinedotjs",
+	amp: "siAmp",
 	angular: "siAngular",
 	antdesign: "siAntdesign",
 	apache: "siApache",
@@ -36,10 +37,12 @@ const marks = {
 	deno: "siDeno",
 	docusaurus: "siDocusaurus",
 	dotnet: "siDotnet",
+	drupal: "siDrupal",
 	eleventy: "siEleventy",
 	elm: "siElm",
 	ember: "siEmberdotjs",
 	envoyproxy: "siEnvoyproxy",
+	express: "siExpress",
 	fastly: "siFastly",
 	fathom: "siFathom",
 	figma: "siFigma",
@@ -70,6 +73,7 @@ const marks = {
 	inertia: "siInertia",
 	intercom: "siIntercom",
 	jekyll: "siJekyll",
+	joomla: "siJoomla",
 	jquery: "siJquery",
 	jsdelivr: "siJsdelivr",
 	kinsta: "siKinsta",
@@ -104,6 +108,7 @@ const marks = {
 	qwik: "siQwik",
 	radix: "siRadixui",
 	railway: "siRailway",
+	rails: "siRubyonrails",
 	"react-router": "siReactrouter",
 	react: "siReact",
 	remix: "siRemix",
@@ -116,6 +121,8 @@ const marks = {
 	shopify: "siShopify",
 	solidjs: "siSolid",
 	square: "siSquare",
+	squarespace: "siSquarespace",
+	stimulus: "siStimulus",
 	stripe: "siStripe",
 	styledcomponents: "siStyledcomponents",
 	supabase: "siSupabase",
@@ -136,6 +143,7 @@ const marks = {
 	webflow: "siWebflow",
 	webpack: "siWebpack",
 	wikipedia: "siWikipedia",
+	wix: "siWix",
 	wordpress: "siWordpress",
 };
 
@@ -210,9 +218,12 @@ const icons = {
 //   black diamond in the panel's dark ink for the dark theme.
 // - Lightbox, AOS: neither project has published a logo, so each is its
 //   initial, in the panel's ink.
+// - AngularJS: its shield from the angular/angular.js repository, drawn
+//   from the PDF it ships, the same in both themes.
 const local = {
 	"amazon-ads": false,
 	"angular-material": true,
+	angularjs: false,
 	"animate-css": true,
 	aos: true,
 	base44: false,

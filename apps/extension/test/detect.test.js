@@ -1042,6 +1042,127 @@ test("a stylesheet that only names its animations like Animate.css's is not it",
 	assert.ok(!found.includes("Animate.css"));
 });
 
+test("platforms and frameworks, from what each writes into its pages", () => {
+	const cases = [
+		[
+			"Wix",
+			{
+				meta: { generator: "Wix.com Website Builder" },
+				jsPrefix: ["webpackJsonp__wix_thunderbolt"],
+			},
+		],
+		["Wix", { headers: { "x-wix-request-id": "1795811754.00186" } }],
+		[
+			"Squarespace",
+			{ html: "<head><!-- This is Squarespace. --><!-- www -->" },
+		],
+		["Squarespace", { js: { "Static.SQUARESPACE_CONTEXT": true } }],
+		[
+			"Drupal 10",
+			{ meta: { generator: "Drupal 10 (https://www.drupal.org)" } },
+		],
+		[
+			"Drupal 11",
+			{ headers: { "x-generator": "Drupal 11 (https://www.drupal.org)" } },
+		],
+		["Drupal", { js: { drupalSettings: true, "Drupal.behaviors": true } }],
+		[
+			"Joomla",
+			{ meta: { generator: "Joomla! - Open Source Content Management" } },
+		],
+		["Joomla", { dom: { "script.joomla-script-options|": true } }],
+		["Ruby on Rails", { meta: { "csrf-param": "authenticity_token" } }],
+		[
+			"Ruby on Rails",
+			{
+				resources: [
+					"https://example.com/rails/active_storage/blobs/redirect/eyJf/a.png",
+				],
+			},
+		],
+		["Express", { headers: { "x-powered-by": "Express" } }],
+		[
+			"AMP 2608201643000",
+			{
+				dom: {
+					"html[amp], html[⚡]|": true,
+					"html[amp-version]|amp-version": "2608201643000",
+				},
+			},
+		],
+		["AMP", { resources: ["https://cdn.ampproject.org/v0.js"] }],
+		["AngularJS 1.8.3", { js: { "angular.version.full": "1.8.3" } }],
+		[
+			"AngularJS",
+			{
+				dom: { "[ng-app], [data-ng-app]|": true },
+				classes: ["ng-scope", "ng-binding"],
+			},
+		],
+		[
+			"Stimulus 3.2.1",
+			{
+				script: scripts(
+					"/*\nStimulus 3.2.1\nCopyright © 2023 Basecamp, LLC\n */",
+				),
+			},
+		],
+		["Stimulus", { js: { "Stimulus.router": true } }],
+		["Stimulus", { dom: { "[data-action*='->'][data-action*='#']|": true } }],
+		["Next.js App Router", { js: { __next_f: true } }],
+	];
+	for (const [name, evidence] of cases) {
+		const found = names(detect(page(evidence), technologies));
+		assert.ok(found.includes(name), `${name} in ${found.join(", ")}`);
+	}
+});
+
+test("look-alikes of platforms and frameworks are not them", () => {
+	const cases = [
+		// a site that shows images hosted on Squarespace or Wix
+		[
+			"Squarespace",
+			{
+				resources: [
+					"https://static1.squarespace.com/static/5134/t/6a8c/Thumbnail.png",
+				],
+			},
+		],
+		["Wix", { resources: ["https://static.wixstatic.com/media/bb826b.jpg"] }],
+		// Backdrop, a Drupal fork, keeps Drupal's name for old modules
+		[
+			"Drupal",
+			{ js: { "Drupal.behaviors": true, "Backdrop.behaviors": true } },
+		],
+		// Phoenix names its CSRF parameter differently
+		["Ruby on Rails", { meta: { "csrf-param": "_csrf_token" } }],
+		["Express", { headers: { "x-powered-by": "Next.js, Payload" } }],
+		// a page that links to its AMP version, or uses one AMP component
+		[
+			"AMP",
+			{
+				html: '<link rel="amphtml" href="https://example.com/amp/">',
+				resources: ["https://cdn.ampproject.org/v0/amp-carousel-1.0.js"],
+			},
+		],
+		// Cloudflare's challenge page has an element whose id is "angular"
+		["AngularJS", { js: { angular: true } }],
+		// Angular, its successor
+		["AngularJS", { dom: { "[ng-version]|ng-version": "20.1.0" } }],
+		// Catalyst, GitHub's library, writes event:controller#method
+		["Stimulus", { html: '<button data-action="click:menu#open">' }],
+		// a Pages Router page
+		["Next.js App Router", { js: { __NEXT_DATA__: true } }],
+	];
+	for (const [name, evidence] of cases) {
+		const found = names(detect(page(evidence), technologies));
+		assert.ok(
+			!found.some((found) => found.startsWith(name)),
+			`${name} not in ${found.join(", ")}`,
+		);
+	}
+});
+
 test("analytics and ad tags, from the globals their snippets set and the files they load", () => {
 	const cases = [
 		{
