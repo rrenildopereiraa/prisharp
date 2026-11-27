@@ -74,6 +74,17 @@ export const technologies = [
 		],
 	},
 	{
+		id: "nextjs-app-router",
+		name: "Next.js App Router",
+		website: "https://nextjs.org/docs/app",
+		category: "Framework",
+		icon: "nextjs",
+		implies: ["nextjs"],
+		// the queue its server components stream into, which only the App
+		// Router writes: a Pages Router page carries __NEXT_DATA__ instead
+		signals: [{ js: "__next_f" }],
+	},
+	{
 		id: "tanstack-start",
 		name: "TanStack Start",
 		website: "https://tanstack.com/start",
@@ -367,6 +378,66 @@ export const technologies = [
 			{ resource: /cdn\.jsdelivr\.net\/ghost\/(?:portal|sodo-search)@/ },
 		],
 	},
+	{
+		id: "wix",
+		name: "Wix",
+		website: "https://www.wix.com",
+		category: "Platform",
+		signals: [
+			{ meta: ["generator", /^Wix\.com Website Builder/] },
+			// the bundles of Thunderbolt, the renderer every Wix site runs on
+			{ jsPrefix: "webpackJsonp__wix_thunderbolt" },
+			{ header: ["x-wix-request-id", /./] },
+			// Wix's own file host, which a widget it sells can load elsewhere
+			{ resource: /\/\/static\.parastorage\.com\//, weight: 50 },
+		],
+	},
+	{
+		id: "squarespace",
+		name: "Squarespace",
+		website: "https://www.squarespace.com",
+		category: "Platform",
+		signals: [
+			{ js: "Static.SQUARESPACE_CONTEXT" },
+			{
+				html: /<!-- This is Squarespace\. -->/,
+				label: "<!-- This is Squarespace. -->",
+			},
+			// its image host, which any site can link to
+			{ resource: /\/\/static1\.squarespace\.com\//, weight: 50 },
+		],
+	},
+	{
+		id: "drupal",
+		name: "Drupal",
+		website: "https://www.drupal.org",
+		category: "Platform",
+		// Backdrop, a fork of Drupal 7, can answer to Drupal's name too
+		unless: [{ js: "Backdrop.behaviors" }],
+		signals: [
+			// the major version, which Drupal writes to both
+			{ meta: ["generator", /^Drupal (\d+)/] },
+			{ header: ["x-generator", /^Drupal (\d+)/] },
+			{ header: ["x-drupal-cache", /./] },
+			{ header: ["x-drupal-dynamic-cache", /./] },
+			{ js: "drupalSettings" },
+			{ js: "Drupal.behaviors" },
+			// what its form builder sets on each field, since Drupal 8
+			{ dom: "[data-drupal-selector]" },
+		],
+	},
+	{
+		id: "joomla",
+		name: "Joomla",
+		website: "https://www.joomla.org",
+		category: "Platform",
+		signals: [
+			{ meta: ["generator", /^Joomla!/] },
+			{ js: "Joomla.getOptions" },
+			// the options Joomla hands its scripts, since 3.7
+			{ dom: "script.joomla-script-options" },
+		],
+	},
 
 	{
 		id: "aspnet",
@@ -380,6 +451,44 @@ export const technologies = [
 			{ dom: "input[name='__VIEWSTATE']" },
 			// IIS sends this for any page it serves, ASP.NET or not
 			{ header: ["x-powered-by", /asp\.net/i], weight: 50 },
+		],
+	},
+	{
+		id: "rails",
+		name: "Ruby on Rails",
+		website: "https://rubyonrails.org",
+		category: "Framework",
+		signals: [
+			// the name Rails gives its CSRF token, in the tag csrf_meta_tags
+			// writes; Laravel and Phoenix write only the token
+			{ meta: ["csrf-param", /^authenticity_token$/] },
+			// where Active Storage serves uploaded files from
+			{ resource: /\/rails\/active_storage\// },
+			// what rails-ujs sets once it starts
+			{ js: "_rails_loaded" },
+		],
+	},
+	{
+		id: "express",
+		name: "Express",
+		website: "https://expressjs.com",
+		category: "Framework",
+		// the header Express adds to every response unless it is turned off
+		signals: [{ header: ["x-powered-by", /^Express$/] }],
+	},
+	{
+		id: "amp",
+		name: "AMP",
+		website: "https://amp.dev",
+		category: "Framework",
+		signals: [
+			// the attribute every AMP page must carry, as a word or a bolt
+			{ dom: "html[amp], html[\u26a1]" },
+			// the release, which the runtime writes onto the page
+			{ dom: "html[amp-version]", attr: "amp-version" },
+			// the runtime itself; its components also load on pages that
+			// aren't AMP, so only v0.js counts
+			{ resource: /\/\/cdn\.ampproject\.org\/(?:lts\/)?v0\.m?js/ },
 		],
 	},
 	{
@@ -600,6 +709,19 @@ export const technologies = [
 		],
 	},
 	{
+		id: "angularjs",
+		name: "AngularJS",
+		website: "https://angularjs.org",
+		category: "Library",
+		signals: [
+			// AngularJS is 1.x; Angular, its successor, sets no such global
+			{ js: "angular.version.full", value: /^1\./, version: true },
+			{ dom: "[ng-app], [data-ng-app]", weight: 50 },
+			// what it adds to the elements it binds, unless debug info is off
+			{ classes: ["ng-scope", "ng-binding", "ng-isolate-scope"], weight: 50 },
+		],
+	},
+	{
 		id: "ember",
 		name: "Ember",
 		website: "https://emberjs.com",
@@ -759,6 +881,27 @@ export const technologies = [
 		signals: [
 			{ js: "Turbo.session" },
 			{ dom: "turbo-frame, turbo-stream-source" },
+		],
+	},
+	{
+		id: "stimulus",
+		name: "Stimulus",
+		website: "https://stimulus.hotwired.dev",
+		category: "Library",
+		signals: [
+			{
+				script: /Stimulus (\d+\.\d+\.\d+)\s+Copyright © \d{4} Basecamp/,
+				label: "Stimulus banner",
+			},
+			// one of its errors, since 3.0
+			{
+				script: /Stimulus couldn't find a matching outlet\s+element/,
+				label: "Stimulus outlet error",
+			},
+			// the Application the Rails generator puts on window
+			{ js: "Stimulus.router" },
+			// its action syntax: event->controller#method
+			{ dom: "[data-action*='->'][data-action*='#']" },
 		],
 	},
 	{
