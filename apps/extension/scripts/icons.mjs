@@ -60,8 +60,10 @@ const marks = {
 	helpscout: "siHelpscout",
 	heroui: "siHeroui",
 	hexo: "siHexo",
+	hotjar: "siHotjar",
 	hotwire: "siHotwire",
 	htmx: "siHtmx",
+	hubspot: "siHubspot",
 	hugo: "siHugo",
 	inertia: "siInertia",
 	intercom: "siIntercom",
@@ -76,10 +78,13 @@ const marks = {
 	lodash: "siLodash",
 	lucide: "siLucide",
 	mantine: "siMantine",
+	matomo: "siMatomo",
+	meta: "siMeta",
 	meteor: "siMeteor",
 	mobx: "siMobx",
 	mui: "siMui",
 	netlify: "siNetlify",
+	newrelic: "siNewrelic",
 	nextjs: "siNextdotjs",
 	nextra: "siNextra",
 	nginx: "siNginx",
@@ -116,6 +121,7 @@ const marks = {
 	tailwindcss: "siTailwindcss",
 	tanstack: "siTanstack",
 	threejs: "siThreedotjs",
+	tiktok: "siTiktok",
 	umami: "siUmami",
 	underscoredotjs: "siUnderscoredotjs",
 	v0: "siV0",
@@ -140,6 +146,7 @@ const icons = {
 	flowbite: "Flowbite",
 	googlelogo: "Google",
 	heroku: "Heroku",
+	linkedin: "LinkedIn",
 	lovable: "Lovable",
 	microsoft: "Microsoft",
 	hcaptcha: "HCaptcha",
@@ -183,6 +190,11 @@ const icons = {
 //   from moment/momentjs.com, which publishes it only as a 32px PNG.
 // - Slick, LazySizes: neither project has ever published a logo, so each is
 //   its initial, drawn for Prisharp in the panel's ink.
+// - Microsoft Clarity: the favicon clarity.microsoft.com serves, which it
+//   publishes only as a 32px icon. Snowplow: the favicon snowplow.io serves.
+// - Yandex Metrica: its site answers automated requests with a captcha and
+//   its tag's repository has no logo, so it is its initial, in the panel's
+//   ink, until its own mark is added.
 const local = {
 	"amazon-ads": false,
 	"angular-material": true,
@@ -202,6 +214,7 @@ const local = {
 	knockout: true,
 	kobalte: false,
 	lazysizes: true,
+	"microsoft-clarity": false,
 	modernizr: false,
 	moment: false,
 	onetrust: true,
@@ -212,8 +225,10 @@ const local = {
 	rspress: false,
 	"react-aria": true,
 	slick: true,
+	snowplow: false,
 	stylex: false,
 	"tabler-icons": true,
+	"yandex-metrica": true,
 	yummacss: false,
 };
 

@@ -1869,7 +1869,10 @@ export const technologies = [
 				resource:
 					/js-agent\.newrelic\.com\/nr-[a-z-]*?(\d+\.\d+\.\d+)(?:\.min)?\.js/,
 			},
-			{ resource: /js-agent\.newrelic\.com\/|\/\/bam(?:-cell)?\.(?:eu01\.)?nr-data\.net\// },
+			{
+				resource:
+					/js-agent\.newrelic\.com\/|\/\/bam(?:-cell)?\.(?:eu01\.)?nr-data\.net\//,
+			},
 		],
 	},
 	{
@@ -1920,7 +1923,8 @@ export const technologies = [
 			{ js: "Matomo.getAsyncTrackers" },
 			{ js: "Piwik.getAsyncTrackers" },
 			{
-				script: /(?:Matomo|Piwik) - free\/libre analytics platform/,
+				script:
+					/\/\*!!\s*\*\s*(?:Matomo|Piwik) - free\/libre analytics platform/,
 				label: "Matomo - free/libre analytics platform",
 			},
 			{ resource: /cdn\.matomo\.cloud\// },
@@ -1950,7 +1954,10 @@ export const technologies = [
 		signals: [
 			// the queue its tracking code reads
 			{ js: "_hsq" },
-			{ resource: /js\.hs-scripts\.com\/\d+\.js|js\.hs-analytics\.net\/analytics\// },
+			{
+				resource:
+					/js\.hs-scripts\.com\/\d+\.js|js\.hs-analytics\.net\/analytics\//,
+			},
 		],
 	},
 	{
@@ -2107,7 +2114,10 @@ export const technologies = [
 		signals: [
 			// fbevents.js writes its version over the snippet's 2.0
 			{ js: "fbq.version", version: true },
-			{ resource: /connect\.facebook\.net\/[\w-]+\/fbevents\.js|connect\.facebook\.net\/signals\/config\// },
+			{
+				resource:
+					/connect\.facebook\.net\/[\w-]+\/fbevents\.js|connect\.facebook\.net\/signals\/config\//,
+			},
 		],
 	},
 	{
