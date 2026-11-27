@@ -1856,6 +1856,111 @@ export const technologies = [
 		],
 	},
 	{
+		id: "new-relic",
+		name: "New Relic",
+		website: "https://newrelic.com/platform/browser-monitoring",
+		category: "Monitoring",
+		icon: "newrelic",
+		signals: [
+			// the agent and its loader both keep their state here
+			{ js: "NREUM" },
+			// the agent's own files carry its version, as nr-spa-1.324.1.min.js
+			{
+				resource:
+					/js-agent\.newrelic\.com\/nr-[a-z-]*?(\d+\.\d+\.\d+)(?:\.min)?\.js/,
+			},
+			{
+				resource:
+					/js-agent\.newrelic\.com\/|\/\/bam(?:-cell)?\.(?:eu01\.)?nr-data\.net\//,
+			},
+		],
+	},
+	{
+		id: "microsoft-clarity",
+		name: "Microsoft Clarity",
+		website: "https://clarity.microsoft.com",
+		category: "Analytics",
+		signals: [
+			// the tag, then the script it loads, under a folder named for its version
+			{ resource: /www\.clarity\.ms\/tag\// },
+			{ resource: /scripts\.clarity\.ms\/(\d+\.\d+\.\d+[\w.-]*)\/clarity\.js/ },
+		],
+	},
+	{
+		id: "yandex-metrica",
+		name: "Yandex Metrica",
+		website: "https://metrica.yandex.com",
+		category: "Analytics",
+		signals: [
+			// tag.js, and watch.js before it
+			{ resource: /mc\.yandex\.[a-z.]+\/metrika\/(?:tag|watch)\w*\.js/ },
+			{ js: "Ya.Metrika2" },
+			{ js: "Ya.Metrika" },
+		],
+	},
+	{
+		id: "snowplow",
+		name: "Snowplow",
+		website: "https://snowplow.io",
+		category: "Analytics",
+		signals: [
+			// where its snippet queues the name the tracker answers to
+			{ js: "GlobalSnowplowNamespace" },
+			// the banner atop sp.js, which sites mostly host themselves
+			{
+				script: /Web analytics for Snowplow v(\d+\.\d+\.\d+)/,
+				label: "Web analytics for Snowplow",
+			},
+		],
+	},
+	{
+		id: "matomo",
+		name: "Matomo",
+		website: "https://matomo.org",
+		category: "Analytics",
+		signals: [
+			// the tracker, which still answers to Piwik, its old name
+			{ js: "Matomo.getAsyncTrackers" },
+			{ js: "Piwik.getAsyncTrackers" },
+			{
+				script:
+					/\/\*!!\s*\*\s*(?:Matomo|Piwik) - free\/libre analytics platform/,
+				label: "Matomo - free/libre analytics platform",
+			},
+			{ resource: /cdn\.matomo\.cloud\// },
+			// the queue its snippet fills before the tracker loads, which
+			// trackers forked from Piwik use too
+			{ js: "_paq", weight: 50 },
+		],
+	},
+	{
+		id: "hotjar",
+		name: "Hotjar",
+		website: "https://www.hotjar.com",
+		category: "Analytics",
+		signals: [
+			// its snippet's settings, then the site's own settings it loads
+			{ js: "_hjSettings" },
+			{ js: "hjSiteSettings" },
+			{ resource: /static\.hotjar\.com\/c\/hotjar-|script\.hotjar\.com\// },
+		],
+	},
+	{
+		id: "hubspot-analytics",
+		name: "HubSpot Analytics",
+		website: "https://www.hubspot.com/products/marketing/analytics",
+		category: "Analytics",
+		icon: "hubspot",
+		signals: [
+			// the queue its tracking code reads
+			{ js: "_hsq" },
+			{
+				resource:
+					/js\.hs-scripts\.com\/\d+\.js|js\.hs-analytics\.net\/analytics\//,
+			},
+		],
+	},
+	{
 		id: "adobe-fonts",
 		name: "Adobe Fonts",
 		website: "https://fonts.adobe.com",
@@ -1999,6 +2104,45 @@ export const technologies = [
 		website: "https://advertising.amazon.com",
 		category: "Marketing",
 		signals: [{ resource: /c\.amazon-adsystem\.com\// }],
+	},
+	{
+		id: "facebook-pixel",
+		name: "Facebook Pixel",
+		website: "https://www.facebook.com/business/tools/meta-pixel",
+		category: "Marketing",
+		icon: "meta",
+		signals: [
+			// fbevents.js writes its version over the snippet's 2.0
+			{ js: "fbq.version", version: true },
+			{
+				resource:
+					/connect\.facebook\.net\/[\w-]+\/fbevents\.js|connect\.facebook\.net\/signals\/config\//,
+			},
+		],
+	},
+	{
+		id: "tiktok-pixel",
+		name: "TikTok Pixel",
+		website: "https://ads.tiktok.com/help/article/tiktok-pixel",
+		category: "Marketing",
+		icon: "tiktok",
+		signals: [
+			// the name its snippet keeps the queue under, which events.js reads
+			{ js: "TiktokAnalyticsObject" },
+			{ resource: /analytics\.tiktok\.com\/i18n\/pixel\// },
+		],
+	},
+	{
+		id: "linkedin-insight",
+		name: "LinkedIn Insight Tag",
+		website: "https://business.linkedin.com/marketing-solutions/insight-tag",
+		category: "Marketing",
+		icon: "linkedin",
+		signals: [
+			// the partner ids its snippet pushes for insight.min.js to read
+			{ js: "_linkedin_data_partner_ids" },
+			{ resource: /snap\.licdn\.com\/li\.lms-analytics\/insight/ },
+		],
 	},
 	{
 		id: "google-sign-in",

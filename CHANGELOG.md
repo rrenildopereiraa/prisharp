@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **[extension]** Detection of the ten most-used analytics and tracking tools Prisharp missed, by how many sites HTTP Archive finds them on: Facebook Pixel, Microsoft Clarity, Yandex Metrica, Snowplow, Matomo, TikTok Pixel, Hotjar, LinkedIn Insight Tag, New Relic and HubSpot Analytics, some with their versions.
+
 ## [1.2.0] - 2026-11-23
 
 ### Added
