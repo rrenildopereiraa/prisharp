@@ -1482,11 +1482,25 @@ export const technologies = [
 	},
 
 	{
+		id: "aws",
+		name: "Amazon Web Services",
+		website: "https://aws.amazon.com",
+		category: "Hosting",
+		signals: [
+			// Elastic Load Balancing names itself: awselb/2.0 for an
+			// Application Load Balancer, awselb for a Classic one
+			{ header: ["server", /^awselb(?:\/[\d.]+)?$/] },
+			// API Gateway's request id
+			{ header: ["x-amz-apigw-id", /./] },
+		],
+	},
+	{
 		id: "cloudfront",
 		name: "Amazon CloudFront",
 		website: "https://aws.amazon.com/cloudfront",
 		category: "Hosting",
 		icon: "aws",
+		implies: ["aws"],
 		signals: [
 			{ header: ["x-amz-cf-id", /./] },
 			{ header: ["via", /cloudfront/i] },
@@ -1499,6 +1513,7 @@ export const technologies = [
 		website: "https://aws.amazon.com/s3",
 		category: "Hosting",
 		icon: "aws",
+		implies: ["aws"],
 		signals: [
 			{ header: ["server", /^AmazonS3$/] },
 			{ header: ["x-amz-bucket-region", /./] },
@@ -1541,6 +1556,96 @@ export const technologies = [
 			{ header: ["server", /^envoy$/i] },
 			{ header: ["x-envoy-upstream-service-time", /./] },
 		],
+	},
+	{
+		id: "litespeed",
+		name: "LiteSpeed",
+		website: "https://www.litespeedtech.com",
+		category: "Hosting",
+		signals: [
+			// "LiteSpeed", or "LiteSpeed/1.8.3 Open" from OpenLiteSpeed when it
+			// shows its version
+			{ header: ["server", /^LiteSpeed(?:\/([\d.]+))?/i] },
+			// what its LSCache plugins send for a cached page
+			{ header: ["x-litespeed-cache", /./] },
+		],
+	},
+	{
+		id: "iis",
+		name: "IIS",
+		website: "https://www.iis.net",
+		category: "Hosting",
+		icon: "microsoft",
+		signals: [{ header: ["server", /^Microsoft-IIS(?:\/([\d.]+))?/] }],
+	},
+	{
+		id: "varnish",
+		name: "Varnish",
+		website: "https://varnish-cache.org",
+		category: "Hosting",
+		// Fastly runs its own fork of Varnish and sends X-Varnish too
+		unless: [
+			{ header: ["x-fastly-request-id", /./] },
+			{ header: ["x-served-by", /^cache-[a-z0-9-]+$/i] },
+		],
+		signals: [
+			// "1.1 <host> (Varnish/6.0)", the Via it adds to each response
+			{ header: ["via", /\(Varnish\/([\d.]+)\)/] },
+			// the id of the request, and of the one that filled the cache
+			{ header: ["x-varnish", /^\d+(?: \d+)?$/] },
+		],
+	},
+	{
+		id: "hostinger",
+		name: "Hostinger",
+		website: "https://www.hostinger.com",
+		category: "Hosting",
+		// Hostinger's own CDN, in front of the sites it hosts
+		signals: [
+			{ header: ["server", /^hcdn$/] },
+			{ header: ["x-hcdn-request-id", /./] },
+		],
+	},
+	{
+		id: "godaddy",
+		name: "GoDaddy",
+		website: "https://www.godaddy.com",
+		category: "Hosting",
+		// Websites + Marketing, GoDaddy's site builder, serves its images and
+		// scripts from GoDaddy's own wsimg.com
+		signals: [
+			{ meta: ["generator", /Go Daddy Website Builder/] },
+			{ resource: /^https:\/\/(?:img\d*|isteam)\.wsimg\.com\// },
+		],
+	},
+	{
+		id: "cdnjs",
+		name: "cdnjs",
+		website: "https://cdnjs.com",
+		category: "Hosting",
+		signals: [{ resource: /^https:\/\/cdnjs\.cloudflare\.com\/ajax\/libs\// }],
+	},
+	{
+		id: "jsdelivr",
+		name: "jsDelivr",
+		website: "https://www.jsdelivr.com",
+		category: "Hosting",
+		signals: [{ resource: /^https:\/\/cdn\.jsdelivr\.net\// }],
+	},
+	{
+		id: "unpkg",
+		name: "unpkg",
+		website: "https://unpkg.com",
+		category: "Hosting",
+		signals: [{ resource: /^https:\/\/unpkg\.com\// }],
+	},
+	{
+		id: "google-hosted-libraries",
+		name: "Google Hosted Libraries",
+		website: "https://developers.google.com/speed/libraries",
+		category: "Hosting",
+		icon: "googlelogo",
+		signals: [{ resource: /^https:\/\/ajax\.googleapis\.com\/ajax\/libs\// }],
 	},
 	// Services
 	{

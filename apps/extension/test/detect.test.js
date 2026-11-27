@@ -426,7 +426,11 @@ test("Google Tag Manager and CloudFront, from what they load and send", () => {
 			technologies,
 		),
 	);
-	assert.deepEqual(found.sort(), ["Amazon CloudFront", "Google Tag Manager"]);
+	assert.deepEqual(found.sort(), [
+		"Amazon CloudFront",
+		"Amazon Web Services",
+		"Google Tag Manager",
+	]);
 });
 
 test("an Adobe stack: AEM, Launch, React Aria, MobX, core-js and S3", () => {
@@ -452,6 +456,7 @@ test("an Adobe stack: AEM, Launch, React Aria, MobX, core-js and S3", () => {
 		"Adobe Experience Manager",
 		"Adobe Launch",
 		"Amazon S3",
+		"Amazon Web Services",
 		"MobX",
 		"React",
 		"React Aria",
@@ -493,6 +498,103 @@ test("servers and CDNs, from the headers they send", () => {
 	assert.deepEqual(
 		found({ "x-served-by": "cache-lis1490051-LIS", via: "1.1 varnish" }),
 		["Fastly"],
+	);
+});
+
+test("ten hosts and servers, from the headers they send", () => {
+	const found = (headers) => names(detect(page({ headers }), technologies));
+	// headers as dnnsoftware.com, varnish-cache.org, litespeedtech.com,
+	// orchardcore.net and a site on Hostinger send them
+	assert.deepEqual(found({ server: "awselb/2.0" }), ["Amazon Web Services"]);
+	assert.deepEqual(found({ "x-amz-apigw-id": "abc=" }), [
+		"Amazon Web Services",
+	]);
+	assert.deepEqual(
+		found({ via: "1.1 varnish (Varnish/6.0)", "x-varnish": "3964200" }),
+		["Varnish 6.0"],
+	);
+	assert.deepEqual(found({ "x-varnish": "32770 3" }), ["Varnish"]);
+	assert.deepEqual(found({ server: "LiteSpeed" }), ["LiteSpeed"]);
+	assert.deepEqual(found({ server: "LiteSpeed/1.8.3 Open" }), [
+		"LiteSpeed 1.8.3",
+	]);
+	assert.deepEqual(found({ "x-litespeed-cache": "hit" }), ["LiteSpeed"]);
+	assert.deepEqual(found({ server: "Microsoft-IIS/10.0" }), ["IIS 10.0"]);
+	assert.deepEqual(
+		found({ server: "hcdn", "x-hcdn-request-id": "40e2b2bd-phx-edge12" }),
+		["Hostinger"],
+	);
+});
+
+test("look-alike headers claim none of the ten", () => {
+	const found = (headers) => names(detect(page({ headers }), technologies));
+	// Fastly's Varnish fork sends X-Varnish and a plain varnish Via
+	assert.deepEqual(
+		found({
+			"x-fastly-request-id": "abc",
+			"x-varnish": "123 456",
+			via: "1.1 varnish",
+		}),
+		["Fastly"],
+	);
+	// a load balancer that only borrows the word, a request id any app sends
+	assert.deepEqual(found({ server: "my-awselb-proxy" }), []);
+	assert.deepEqual(found({ "x-amzn-requestid": "abc" }), []);
+	assert.deepEqual(found({ server: "Microsoft-HTTPAPI/2.0" }), []);
+	assert.deepEqual(found({ server: "hcdn-proxy" }), []);
+	assert.deepEqual(found({ "x-varnish": "cached" }), []);
+});
+
+test("GoDaddy, from its site builder's tag and CDN", () => {
+	const found = (overrides) => names(detect(page(overrides), technologies));
+	assert.deepEqual(
+		found({
+			meta: {
+				generator: "Starfield Technologies; Go Daddy Website Builder 8.0.0000",
+			},
+		}),
+		["GoDaddy"],
+	);
+	assert.deepEqual(
+		found({ resources: ["https://img1.wsimg.com/isteam/ip/abc/logo.png"] }),
+		["GoDaddy"],
+	);
+	// a wsimg path on someone else's host is not GoDaddy's CDN
+	assert.deepEqual(
+		found({ resources: ["https://img1.wsimg.com.example.com/a.png"] }),
+		[],
+	);
+});
+
+test("library CDNs, from the URLs a page loads its files from", () => {
+	const found = (...resources) =>
+		names(detect(page({ resources }), technologies));
+	assert.deepEqual(
+		found(
+			"https://cdnjs.cloudflare.com/ajax/libs/fontsource-inter/5.2.8/index.min.css",
+		),
+		["cdnjs"],
+	);
+	assert.deepEqual(
+		found("https://cdn.jsdelivr.net/npm/marked@15/marked.min.js"),
+		["jsDelivr"],
+	);
+	assert.deepEqual(found("https://unpkg.com/htmx.org@2.0.4"), ["unpkg"]);
+	assert.deepEqual(
+		found("https://ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"),
+		["Google Hosted Libraries"],
+	);
+	// a CDN's address inside another URL, Google's other APIs on the same
+	// host, and hosts that only start with the CDN's name
+	assert.deepEqual(
+		found(
+			"https://example.com/proxy/https://unpkg.com/a.js",
+			"https://example.com/?u=https://cdn.jsdelivr.net/npm/a",
+			"https://ajax.googleapis.com/maps/api/js",
+			"https://unpkg.com.example.com/a.js",
+			"https://cdnjs.cloudflare.com.example.com/ajax/libs/a.js",
+		),
+		[],
 	);
 });
 
@@ -946,6 +1048,7 @@ test("payment providers, from the checkout scripts they load", () => {
 		"Paddle",
 		"Polar",
 		"Square",
+		"jsDelivr",
 	]);
 });
 
@@ -993,7 +1096,7 @@ test("Ghost reads its version from the generator", () => {
 			technologies,
 		),
 	);
-	assert.deepEqual(found, ["Ghost 6.76"]);
+	assert.deepEqual(found, ["Ghost 6.76", "jsDelivr"]);
 });
 
 test("captchas, from the scripts they load", () => {
