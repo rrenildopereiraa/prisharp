@@ -771,8 +771,34 @@ test("Lodash's _.VERSION is not Underscore.js", () => {
 			technologies,
 		),
 	);
-	assert.ok(found.includes("Lodash"));
-	assert.ok(!found.includes("Underscore.js"));
+	assert.ok(found.includes("Lodash 4.17.21"), found.join(", "));
+	assert.ok(!found.some((name) => name.startsWith("Underscore.js")));
+});
+
+// GoDaddy's site builder ships a custom Lodash with neither runInContext
+// nor flatMapDeep
+test("a custom Lodash build is Lodash, not Underscore.js", () => {
+	const found = names(
+		detect(page({ js: { "_.VERSION": "4.17.5" } }), technologies),
+	);
+	assert.ok(found.includes("Lodash 4.17.5"), found.join(", "));
+	assert.ok(!found.some((name) => name.startsWith("Underscore.js")));
+});
+
+// a custom jQuery build lists the modules it leaves out after its version
+test("a version ends at the first space", () => {
+	const found = names(
+		detect(
+			page({
+				js: {
+					"jQuery.fn.jquery":
+						"3.6.3 -ajax,-ajax/jsonp,-ajax/load,-effects,-effects/Tween",
+				},
+			}),
+			technologies,
+		),
+	);
+	assert.ok(found.includes("jQuery 3.6.3"), found.join(", "));
 });
 
 test("the lazyloaded class alone is not LazySizes", () => {

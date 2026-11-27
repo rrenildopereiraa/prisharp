@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **[extension]** Detection of the ten most-used analytics and tracking tools Prisharp missed, by how many sites HTTP Archive finds them on: Facebook Pixel, Microsoft Clarity, Yandex Metrica, Snowplow, Matomo, TikTok Pixel, Hotjar, LinkedIn Insight Tag, New Relic and HubSpot Analytics, some with their versions.
 
+### Fixed
+
+- **[extension]** jQuery's version no longer carries a list of modules on sites that use a custom jQuery build: jsDelivr showed "jQuery 3.6.3 -ajax,-ajax/jsonp,…" and now shows "jQuery 3.6.3".
+- **[extension]** A custom Lodash build, like the one in GoDaddy's site builder, no longer shows as "Underscore.js 4.17.5". It now shows as Lodash, and Lodash shows its version too.
+
 ## [1.2.0] - 2026-11-23
 
 ### Added
