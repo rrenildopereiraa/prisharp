@@ -15,6 +15,8 @@ type CatalogEntry = {
 declare module "virtual:catalog" {
 	/** How many technologies Prisharp detects. */
 	export const count: number;
+	/** The zip download's path, named after the extension's version. */
+	export const zip: string;
 	/** The names the heading types, best known first, with their evidence. */
 	export const typed: CatalogEntry[];
 	/** The marquee's technologies, best known first. */

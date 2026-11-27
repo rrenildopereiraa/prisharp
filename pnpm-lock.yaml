@@ -160,6 +160,9 @@ importers:
       '@fontsource/instrument-serif':
         specifier: ^5.3.0
         version: 5.3.0
+      '@tabler/icons-react':
+        specifier: ^3.53.0
+        version: 3.53.0(react@19.3.1)
       '@tanstack/react-hotkeys':
         specifier: 0.27.2
         version: 0.27.2(react-dom@19.3.1(react@19.3.1))(react@19.3.1)
@@ -575,6 +578,14 @@ packages:
 
   '@rolldown/pluginutils@1.0.1':
     resolution: {integrity: sha512-2j9bGt5Jh8hj+vPtgzPtl72j0yRxHAyumoo6TNfAjsLB04UtpSvPbPcDcBMxz7n+9CYB0c1GxQFxYRg2jimqGw==}
+
+  '@tabler/icons-react@3.53.0':
+    resolution: {integrity: sha512-uaj3Pne8ULNIOhYYHCX1kK6q1AVzxB2qCoyRnb67Q36YTA+1ctSmrrzZS/VptG/OQWOsXYz4prA7lQMTG2llcw==}
+    peerDependencies:
+      react: '>= 16'
+
+  '@tabler/icons@3.53.0':
+    resolution: {integrity: sha512-7V77PESErZob7+Ie4ibDs9tjRoMmZyjr3RpxRK3KLJejwggzxrkhVunbQ7xGYewjwdUyPc6dHpMvvft0prkkzQ==}
 
   '@tanstack/hotkeys@0.33.1':
     resolution: {integrity: sha512-8lTyzrwAKIQm/8Ml938RXMSDBy/6wsIlavczmjDec4hsXkSPys0SbQ59kYboC6cBOfR2T1jFBQ1P0J3A06szsA==}
@@ -1591,6 +1602,13 @@ snapshots:
       react-dom: 19.3.1(react@19.3.1)
 
   '@rolldown/pluginutils@1.0.1': {}
+
+  '@tabler/icons-react@3.53.0(react@19.3.1)':
+    dependencies:
+      '@tabler/icons': 3.53.0
+      react: 19.3.1
+
+  '@tabler/icons@3.53.0': {}
 
   '@tanstack/hotkeys@0.33.1': {}
 

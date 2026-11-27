@@ -1,6 +1,7 @@
 "use client";
 
 import { Button } from "@base-ui/react/button";
+import { IconArrowBackUp } from "@tabler/icons-react";
 import type {
   ComponentProps,
   KeyboardEvent,
@@ -10,38 +11,60 @@ import type {
 } from "react";
 import { useEffect, useRef, useState } from "react";
 import { merge } from "yummacss/merge";
+import { FOCUS, RADIUS, Roll, type Shape, type Size, useMorph, useShape } from "./style";
 
 type Variant = "primary" | "secondary" | "subtle" | "ghost" | "danger" | "link";
-type Size = "sm" | "md" | "lg";
-type Shape = "rounded" | "square" | "squircle" | "pill";
 type IconSide = "leading" | "trailing";
 
-const FOCUS = "fv:os:s fv:ow:3 fv:oo:0 fv:oc:focus/40 fv:bc:focus";
+const BASE = "d:if ai:c jc:c g:2 bw:1 fw:500 ws:nw us:none";
 
-const BASE = "d:if ai:c jc:c g:2 bw:1 fw:500 us:none";
+const MOTION = "tdu:150 ttf:out-quart a:s:98 wc:s @prm:tp:none @prm:a:s:100";
 
-const MOTION = "tp:a tdu:150 ttf:io a:s:95";
-
-// a bevel names all four sides: Yumma sorts rules by name, so bc: would beat bbc:
 const VARIANTS: Record<Variant, string> = {
-  primary:
-    "bg:fill h:o:90 btc:white/20 blc:black/40 brc:black/40 bbc:black/60 c:on-fill bs-o:sm",
-  secondary:
-    "bg:raised btc:rim blc:rim brc:rim bbc:shadow c:label h:bg:well bs-o:xs",
-  subtle: "bg:well bc:transparent c:hint h:bg:rim",
-  ghost: "bg:transparent bc:transparent c:label h:bg:well",
-  danger:
-    "bg:red h:bg:red-8 btc:red-5 blc:red-8 brc:red-8 bbc:red-9 c:white bs-o:sm",
-  link: "bg:transparent bc:transparent c:label tuo:2 h:td:u",
+  primary: "bg:fill bc:edge c:on-fill bs-o:key-fill",
+  secondary: "bg:raised bs-o:key bc:rim c:label",
+  subtle: "bg:well bc:transparent c:hint",
+  ghost: "bg:transparent bc:transparent c:label",
+  danger: "bg:red bc:red-9 c:white bs-o:key-fill",
+  link: "bg:transparent bc:transparent c:label tuo:2",
+};
+
+// apart, so a disabled button keeps no hover that says it can be pressed
+const HOVERS: Record<Variant, string> = {
+  primary: "h:o:90",
+  secondary: "h:bg:well",
+  subtle: "h:bg:line",
+  ghost: "h:bg:well",
+  danger: "h:bg:red-8 h:bc:red-8",
+  link: "h:td:u",
 };
 
 const VARIANT_OUTLINE: Partial<Record<Variant, string>> = {
-  danger: "fv:oc:red-2/60 fv:bc:red-3",
+  danger: "oc:red-2/60 fv:bc:red-3",
 };
 
 // held, the button's content again in a stronger color sweeps across it
+// counting: a pale tint of the button, its label in the button's own color
+const COUNTING: Record<Variant, string> = {
+  primary: "bg:well bc:rim c:label",
+  secondary: "bg:well bc:rim c:label",
+  subtle: "bg:well bc:transparent c:label",
+  ghost: "bg:well bc:transparent c:label",
+  danger: "bg:red-1 bc:red-3 c:red-8",
+  link: "bg:well bc:transparent c:label",
+};
+
+const BADGE: Record<Variant, string> = {
+  primary: "bg:fill c:on-fill",
+  secondary: "bg:fill c:on-fill",
+  subtle: "bg:fill c:on-fill",
+  ghost: "bg:fill c:on-fill",
+  danger: "bg:red c:white",
+  link: "bg:fill c:on-fill",
+};
+
 const HOLD_FILL: Record<Variant, string> = {
-  primary: "bg:check c:white",
+  primary: "bg:edge c:on-fill",
   secondary: "bg:fill c:on-fill",
   subtle: "bg:fill c:on-fill",
   ghost: "bg:fill c:on-fill",
@@ -62,13 +85,6 @@ const ICON_ONLY: Record<Size, string> = {
   lg: "w:11 h:11",
 };
 
-const SHAPES: Record<Shape, string> = {
-  rounded: "br:lg",
-  square: "br:0",
-  squircle: "br:xxl cs:s",
-  pill: "br:9999",
-};
-
 export interface ButtonProps extends ComponentProps<typeof Button> {
   /**
    * Extra classes. `merge` folds them in last, so one here replaces the
@@ -85,10 +101,7 @@ export interface ButtonProps extends ComponentProps<typeof Button> {
    * buttons lines up.
    */
   size?: Size;
-  /**
-   * Corner radius. `squircle` uses `corner-shape`, which degrades to a rounded
-   * square where that is unsupported.
-   */
+  /** Corner radius. Inherits the nearest `Shape`. */
   shape?: Shape;
   /**
    * Swaps the icon for a spinner, dims the button and blocks interaction, while
@@ -122,6 +135,18 @@ export interface ButtonProps extends ComponentProps<typeof Button> {
   /** Called once a hold completes. A held button never calls `onClick`. */
   onHold?: () => void;
   /**
+   * Acts only once a countdown runs out, for `true` 5 seconds or for this many
+   * milliseconds. A press starts it and turns the button pale with the seconds
+   * left in a badge, and a second press cancels it. Not with `hold`.
+   */
+  countdown?: boolean | number;
+  /** What the button says while the countdown runs, beside the seconds left. */
+  countdownLabel?: string;
+  /**
+   * Called once a countdown runs out. A counting button never calls `onClick`.
+   */
+  onCountdown?: () => void;
+  /**
    * The hover and focus transition. Turn it off for a static button, or when
    * the user has asked for reduced motion.
    */
@@ -140,12 +165,12 @@ export interface ButtonProps extends ComponentProps<typeof Button> {
 
 /**
  * A primary action, in six variants, three sizes and four shapes, with loading,
- * icon-only and hold-to-confirm states.
+ * icon-only, hold-to-confirm and countdown states.
  */
 export default function ButtonBase({
   variant = "primary",
   size = "md",
-  shape = "rounded",
+  shape: shapeProp,
   loading = false,
   icon,
   iconPosition = "leading",
@@ -153,6 +178,9 @@ export default function ButtonBase({
   hold,
   holdLabel,
   onHold,
+  countdown,
+  countdownLabel = "Undo",
+  onCountdown,
   transition = true,
   disabled,
   className,
@@ -161,6 +189,7 @@ export default function ButtonBase({
   onClick,
   ...props
 }: ButtonProps) {
+  const shape = useShape(shapeProp);
   const outline = focus
     ? merge(FOCUS, VARIANT_OUTLINE[variant], focus === true ? "" : focus)
     : "";
@@ -181,16 +210,35 @@ export default function ButtonBase({
     >
       <path d="M12 3a9 9 0 1 0 9 9" />
     </svg>
-  ) : (
-    icon
-  );
+  ) : icon ? (
+    // an icon passed in keeps its size when the label is long
+    <span className="d:f fs:0">{icon}</span>
+  ) : null;
 
   const held = useHold(hold, onHold, transition);
-  const label =
-    holdLabel && held.done ? (
-      <Swap shown={holdLabel} hidden={children} />
-    ) : holdLabel ? (
-      <Swap shown={children} hidden={holdLabel} />
+  const timed = !hold && Boolean(countdown);
+  const counter = useCountdown(timed ? countdown : undefined, onCountdown);
+  const counting = counter.seconds > 0;
+  const morph = useMorph<HTMLSpanElement>(counting, transition);
+  const label = counting ? (
+    <>
+      {countdownLabel}
+      <span
+        className={merge(
+          "d:if ai:c jc:c h:5 min-w:5 px:1 br:9999 fs:xs fw:600 fvn:tn",
+          BADGE[variant],
+        )}
+      >
+        <Roll value={counter.seconds} text={String(counter.seconds)} still={!transition} />
+      </span>
+    </>
+  ) : holdLabel ? (
+      <Swap
+        first={children}
+        second={holdLabel}
+        swapped={held.done}
+        animated={transition}
+      />
     ) : (
       children
     );
@@ -198,11 +246,14 @@ export default function ButtonBase({
   const classes = merge(
     outline,
     BASE,
-    hold ? "p:r o:h ta:none" : "",
-    transition ? MOTION : "",
-    VARIANTS[variant],
+    hold || timed ? "p:r o:h ta:none" : "",
+    transition && !inactive
+      ? `tp:t ${MOTION}`
+      : "",
+    counting ? COUNTING[variant] : VARIANTS[variant],
+    inactive || counting ? "" : HOVERS[variant],
     iconOnlyActive ? ICON_ONLY[size] : SIZES[size],
-    SHAPES[shape],
+    RADIUS.control[shape],
     inactive ? "o:60 c:na" : "c:p",
     className,
   );
@@ -216,12 +267,22 @@ export default function ButtonBase({
       aria-label={
         iconOnlyActive && typeof children === "string" ? children : undefined
       }
-      onClick={hold ? undefined : onClick}
+      onClick={hold ? undefined : timed ? counter.toggle : onClick}
       {...(hold && !inactive ? held.handlers : {})}
       {...props}
     >
       {iconOnlyActive ? (
-        glyph
+        counting ? (
+          <Dial seconds={counter.seconds} duration={counter.duration} />
+        ) : (
+          glyph
+        )
+      ) : timed ? (
+        <span ref={morph} className="d:if ai:c jc:c g:2 ws:nw o:h">
+          {counting ? <IconArrowBackUp aria-hidden className="w:4 h:4 fs:0" /> : !trailing && glyph}
+          {label}
+          {!counting && trailing && glyph}
+        </span>
       ) : (
         <>
           {!trailing && glyph}
@@ -246,6 +307,11 @@ export default function ButtonBase({
           )}
         </span>
       )}
+      {timed && (
+        <span aria-live="polite" className="p:a w:px h:px o:h">
+          {counter.started ? `${countdownLabel}, ${counter.started} seconds` : ""}
+        </span>
+      )}
       {hold && holdLabel && (
         <span aria-live="polite" className="p:a w:px h:px o:h">
           {held.done ? holdLabel : ""}
@@ -256,13 +322,69 @@ export default function ButtonBase({
 }
 
 // both labels share one grid cell, so the button keeps the wider one's width
-function Swap({ shown, hidden }: { shown: ReactNode; hidden: ReactNode }) {
+// both labels share one cell, so the button keeps the wider one's width; the
+// incoming one rises in as the outgoing one rises out
+function Swap({
+  first,
+  second,
+  swapped,
+  animated,
+}: {
+  first: ReactNode;
+  second: ReactNode;
+  swapped: boolean;
+  animated: boolean;
+}) {
+  const motion = animated ? "tp:ot tdu:200 ttf:eo @prm:tp:none" : "";
   return (
-    <span className="d:ig ji:c">
-      <span className="gcs:1 grs:1">{shown}</span>
-      <span aria-hidden className="gcs:1 grs:1 v:h">
-        {hidden}
+    <span className="d:ig ji:c o:h">
+      <span
+        aria-hidden={swapped || undefined}
+        className={`gcs:1 grs:1 ${motion} ${swapped ? "o:0 tty:-full" : ""}`}
+      >
+        {first}
       </span>
+      <span
+        aria-hidden={!swapped || undefined}
+        className={`gcs:1 grs:1 ${motion} ${swapped ? "" : "o:0 tty:full"}`}
+      >
+        {second}
+      </span>
+    </span>
+  );
+}
+
+// an icon-only countdown: a circle empties around the seconds; reduced motion keeps the number alone
+function Dial({ seconds, duration }: { seconds: number; duration: number }) {
+  const [empty, setEmpty] = useState(false);
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => setEmpty(true));
+    return () => cancelAnimationFrame(frame);
+  }, []);
+  const length = 2 * Math.PI * 13;
+
+  return (
+    <span className="p:r d:f ai:c jc:c w:100% h:100%">
+      <svg
+        aria-hidden
+        viewBox="0 0 32 32"
+        className="p:a i:0 w:100% h:100% ro:54 @prm:d:none"
+      >
+        <circle cx="16" cy="16" r="13" fill="none" stroke="currentColor" strokeOpacity={0.2} strokeWidth={2} />
+        <circle
+          cx="16"
+          cy="16"
+          r="13"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeDasharray={length}
+          strokeDashoffset={empty ? length : 0}
+          style={{ transition: `stroke-dashoffset ${duration}ms linear` }}
+        />
+      </svg>
+      <span className="p:r fs:xs fw:600 fvn:tn">{seconds}</span>
     </span>
   );
 }
@@ -343,5 +465,52 @@ function useHold(
         stop();
       },
     },
+  };
+}
+
+function useCountdown(
+  countdown: boolean | number | undefined,
+  onCountdown: (() => void) | undefined,
+) {
+  const duration = typeof countdown === "number" ? countdown : 5000;
+  const [seconds, setSeconds] = useState(0);
+  const [started, setStarted] = useState(0);
+  const timers = useRef<{
+    tick?: ReturnType<typeof setInterval>;
+    end?: ReturnType<typeof setTimeout>;
+  }>({});
+
+  const clear = () => {
+    clearInterval(timers.current.tick);
+    clearTimeout(timers.current.end);
+  };
+
+  useEffect(() => clear, []);
+
+  const reset = () => {
+    clear();
+    setSeconds(0);
+    setStarted(0);
+  };
+
+  const start = () => {
+    const endsAt = Date.now() + duration;
+    const first = Math.ceil(duration / 1000);
+    setSeconds(first);
+    setStarted(first);
+    timers.current.tick = setInterval(() => {
+      setSeconds(Math.max(1, Math.ceil((endsAt - Date.now()) / 1000)));
+    }, 200);
+    timers.current.end = setTimeout(() => {
+      reset();
+      onCountdown?.();
+    }, duration);
+  };
+
+  return {
+    seconds,
+    started,
+    duration,
+    toggle: () => (seconds ? reset() : start()),
   };
 }

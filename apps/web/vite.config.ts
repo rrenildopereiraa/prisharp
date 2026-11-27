@@ -36,21 +36,33 @@ const zipExtension = () =>
 		),
 	);
 
-/** Serves and builds /prisharp.zip, the extension ready to load unpacked. */
+/** The extension's version, as the store upload is named. */
+const VERSION: string = JSON.parse(
+	readFileSync(join(extension, "manifest.json"), "utf8"),
+).version;
+
+/** The download's name, with the version in it. */
+const ZIP = `prisharp-${VERSION}.zip`;
+
+/**
+ * Serves and builds the extension ready to load unpacked, under its versioned
+ * name and under /prisharp.zip, which older links point to.
+ */
 const download = (): Plugin => ({
 	name: "prisharp-download",
 	configureServer(server) {
-		server.middlewares.use("/prisharp.zip", (_request, response) => {
-			response.setHeader("content-type", "application/zip");
-			response.end(zipExtension());
-		});
+		for (const path of [`/${ZIP}`, "/prisharp.zip"]) {
+			server.middlewares.use(path, (_request, response) => {
+				response.setHeader("content-type", "application/zip");
+				response.end(zipExtension());
+			});
+		}
 	},
 	generateBundle() {
-		this.emitFile({
-			type: "asset",
-			fileName: "prisharp.zip",
-			source: zipExtension(),
-		});
+		const source = zipExtension();
+		for (const fileName of [ZIP, "prisharp.zip"]) {
+			this.emitFile({ type: "asset", fileName, source });
+		}
 	},
 });
 
@@ -175,6 +187,7 @@ function landing() {
 	return [
 		...imports,
 		`export const count = ${list.length};`,
+		`export const zip = ${JSON.stringify(`/${ZIP}`)};`,
 		`export const typed = ${JSON.stringify(named)};`,
 		`export const marks = ${JSON.stringify(marks)};`,
 		`export const logos = { ${logos.join(", ")} };`,

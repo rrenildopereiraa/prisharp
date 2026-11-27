@@ -116,3 +116,20 @@
 		border-left-width: 1px;
 	}
 }
+
+/* While the zip's warning is open, the page behind it goes black and white,
+   so the warning is the only thing in color. The dialog's own layer is the
+   one child of the page that holds it. */
+[data-page] > * {
+	transition: filter 250ms ease-out;
+}
+
+[data-page]:has([role="dialog"][data-open]) > :not(:has([role="dialog"])) {
+	filter: grayscale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+	[data-page] > * {
+		transition: none;
+	}
+}
