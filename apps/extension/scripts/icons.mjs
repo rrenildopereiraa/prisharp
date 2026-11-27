@@ -202,9 +202,19 @@ const icons = {
 // - cdnjs: the favicon cdnjs.com serves. LiteSpeed: the icon
 //   litespeedtech.com serves, and Varnish the one varnish-cache.org serves,
 //   both published only as PNGs.
+// - FancyBox: the favicon fancyapps.com serves. Isotope, Flickity: the
+//   drawing of each that Metafizzy's own sites show. Owl Carousel: Mr. Owl
+//   from its site's header; Select2: the logo select2.org shows; both
+//   published only as PNGs. Hammer.js, PhotoSwipe, Animate.css: the favicons
+//   their sites serve, published only as 32px and 16px PNGs, Animate.css's
+//   black diamond in the panel's dark ink for the dark theme.
+// - Lightbox, AOS: neither project has published a logo, so each is its
+//   initial, in the panel's ink.
 const local = {
 	"amazon-ads": false,
 	"angular-material": true,
+	"animate-css": true,
+	aos: true,
 	base44: false,
 	carbon: false,
 	cdnjs: false,
@@ -214,25 +224,33 @@ const local = {
 	datastar: false,
 	"element-plus": false,
 	emotion: false,
+	fancybox: false,
+	flickity: false,
+	hammerjs: false,
 	hugeicons: true,
 	hydrogen: true,
 	hyperscript: false,
 	iconoir: true,
+	isotope: false,
 	katex: true,
 	knockout: true,
 	kobalte: false,
 	lazysizes: true,
+	lightbox: true,
 	litespeed: false,
 	"microsoft-clarity": false,
 	modernizr: false,
 	moment: false,
 	onetrust: true,
 	outsystems: false,
+	"owl-carousel": false,
+	photoswipe: false,
 	popper: false,
 	prebid: false,
 	prism: true,
 	rspress: false,
 	"react-aria": true,
+	select2: false,
 	slick: true,
 	snowplow: false,
 	stylex: false,
