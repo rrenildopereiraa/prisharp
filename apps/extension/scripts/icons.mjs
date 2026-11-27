@@ -49,6 +49,7 @@ const marks = {
 	framer: "siFramer",
 	gatsby: "siGatsby",
 	ghost: "siGhost",
+	godaddy: "siGodaddy",
 	github: "siGithub",
 	"google-analytics": "siGoogleanalytics",
 	google: "siGooglefonts",
@@ -60,6 +61,7 @@ const marks = {
 	helpscout: "siHelpscout",
 	heroui: "siHeroui",
 	hexo: "siHexo",
+	hostinger: "siHostinger",
 	hotjar: "siHotjar",
 	hotwire: "siHotwire",
 	htmx: "siHtmx",
@@ -69,6 +71,7 @@ const marks = {
 	intercom: "siIntercom",
 	jekyll: "siJekyll",
 	jquery: "siJquery",
+	jsdelivr: "siJsdelivr",
 	kinsta: "siKinsta",
 	klarna: "siKlarna",
 	laravel: "siLaravel",
@@ -124,6 +127,7 @@ const marks = {
 	tiktok: "siTiktok",
 	umami: "siUmami",
 	underscoredotjs: "siUnderscoredotjs",
+	unpkg: "siUnpkg",
 	v0: "siV0",
 	vercel: "siVercel",
 	vite: "siVite",
@@ -195,11 +199,15 @@ const icons = {
 // - Yandex Metrica: its site answers automated requests with a captcha and
 //   its tag's repository has no logo, so it is its initial, in the panel's
 //   ink, until its own mark is added.
+// - cdnjs: the favicon cdnjs.com serves. LiteSpeed: the icon
+//   litespeedtech.com serves, and Varnish the one varnish-cache.org serves,
+//   both published only as PNGs.
 const local = {
 	"amazon-ads": false,
 	"angular-material": true,
 	base44: false,
 	carbon: false,
+	cdnjs: false,
 	"core-js": true,
 	crisp: false,
 	datadome: false,
@@ -214,6 +222,7 @@ const local = {
 	knockout: true,
 	kobalte: false,
 	lazysizes: true,
+	litespeed: false,
 	"microsoft-clarity": false,
 	modernizr: false,
 	moment: false,
@@ -228,6 +237,7 @@ const local = {
 	snowplow: false,
 	stylex: false,
 	"tabler-icons": true,
+	varnish: false,
 	"yandex-metrica": true,
 	yummacss: false,
 };
