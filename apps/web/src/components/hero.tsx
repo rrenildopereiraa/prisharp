@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { typed, zip as ZIP } from "virtual:catalog";
 import Button from "@/components/ui/button";
+import ButtonGroup from "@/components/ui/button-group";
 import Dialog from "@/components/ui/dialog";
+import Menu from "@/components/ui/menu";
 import { BrowserMarks } from "@/components/browsers";
-import { useKeyHold } from "@tanstack/react-hotkeys";
-import { IconAlertTriangle } from "@tabler/icons-react";
+import { useHotkey } from "@tanstack/react-hotkeys";
+import { IconAlertTriangle, IconChevronDown } from "@tabler/icons-react";
 import { REPO, STORE } from "@/links";
 
 // best known first, as in the marquee, picked at build time
@@ -92,7 +94,7 @@ function Key({ children }: { children: string }) {
 }
 
 /** The README's steps for loading the zip unpacked. */
-const LOAD = `${REPO}#load-the-preview-build`;
+const LOAD = `${REPO}#load-the-dev-version`;
 
 /** Saves the zip, as its link would. */
 function download() {
@@ -100,6 +102,19 @@ function download() {
 	link.href = ZIP;
 	link.download = "";
 	link.click();
+}
+
+/**
+ * The page's own wrapper, for popups to render in, so they take its font and
+ * colors rather than the body's.
+ */
+function usePage() {
+	const [page, setPage] = useState<HTMLElement | null>(null);
+	useEffect(
+		() => setPage(document.querySelector<HTMLElement>("[data-page]")),
+		[],
+	);
+	return page;
 }
 
 /**
@@ -113,12 +128,7 @@ function PreviewDialog({
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 }) {
-	// inside the page, not the body, so it takes the page's font and colors
-	const [page, setPage] = useState<HTMLElement | null>(null);
-	useEffect(
-		() => setPage(document.querySelector<HTMLElement>("[data-page]")),
-		[],
-	);
+	const page = usePage();
 	if (!page) return null;
 
 	return (
@@ -130,21 +140,26 @@ function PreviewDialog({
 			header={
 				<IconAlertTriangle aria-hidden="true" className="w:6 h:6 c:red" />
 			}
-			title="This isn't the store version"
+			title="Download the dev version as a .zip"
 			description={
 				<>
-					It's unreleased and may be broken. For everyday use, get Prisharp from
-					the Chrome Web Store.{" "}
-					<a href={LOAD} className="c:label tuo:2 td:u">
-						How to load it
-					</a>
+					<code className="c:label">{ZIP.slice(1)}</code> is built from{" "}
+					<code className="c:label">main</code>. It's unreleased and may be
+					broken, so for everyday use, get Prisharp from the Chrome Web Store.
 				</>
 			}
 			cancelLabel="Cancel"
-			confirmLabel="Download anyway"
+			confirmLabel="Download .zip"
 			confirmVariant="danger"
 			onConfirm={download}
-		/>
+		>
+			{/* the link's room below keeps the buttons off the text */}
+			<p className="m:0 pb:4 fs:sm">
+				<a href={LOAD} className="c:label tuo:2 td:u">
+					How to load it
+				</a>
+			</p>
+		</Dialog>
 	);
 }
 
@@ -153,10 +168,10 @@ const ACTION = "h:10 px:4 g:2 fs:sm us:none";
 
 export function Hero({ onName }: { onName?: (name: string) => void }) {
 	const { name, typing } = useTypedName(onName);
-	// held Shift turns the install button into the zip, to load unpacked or
-	// upload a build without typing its address
-	const zip = useKeyHold("Shift");
+	const page = usePage();
+	// the dev version: from the menu beside the install button, or Shift+A
 	const [preview, setPreview] = useState(false);
+	useHotkey("Shift+A", () => setPreview(true));
 
 	return (
 		<div
@@ -184,18 +199,34 @@ export function Hero({ onName }: { onName?: (name: string) => void }) {
 				the page, with evidence for each.
 			</p>
 			<div data-actions className="d:f fw:w g:2 mt:1">
-				{/* keyed, so the link and the button never share an element */}
-				<Button
-					key={zip ? "zip" : "store"}
-					id="install"
-					render={zip ? undefined : <a href={STORE} />}
-					nativeButton={zip}
-					onClick={zip ? () => setPreview(true) : undefined}
-					shape="none"
-					className={ACTION}
-				>
-					{zip ? "Download .zip" : "Add to Chrome"} <Key>A</Key>
-				</Button>
+				<ButtonGroup shape="none">
+					<Button
+						id="install"
+						render={<a href={STORE} />}
+						nativeButton={false}
+						className={ACTION}
+					>
+						Add to Chrome <Key>A</Key>
+					</Button>
+					<Menu
+						container={page}
+						shape="none"
+						trigger={
+							<Button
+								aria-label="Other ways to get Prisharp"
+								className="h:10 px:3"
+							>
+								<IconChevronDown aria-hidden="true" className="w:4 h:4" />
+							</Button>
+						}
+						items={[
+							{
+								label: "Download the dev version (.zip)…",
+								onClick: () => setPreview(true),
+							},
+						]}
+					/>
+				</ButtonGroup>
 				<Button
 					id="source"
 					variant="secondary"

@@ -22,7 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **[web]** The zip download on prisharp.com is named after the extension's version, like `prisharp-1.2.0.zip`, and clicking it opens a warning first, over a page gone black and white: the zip is unreleased and may be broken, and the Chrome Web Store version is the one for everyday use. It links to the steps for loading it, now in the README, and "Download anyway" saves it. Links to `/prisharp.zip` still work.
+- **[web]** The dev version of the extension is easier to find on prisharp.com: "Add to Chrome" has a menu beside it with "Download the dev version (.zip)", which used to need Shift held down and couldn't be reached on a phone. Shift+A still opens it. A short warning comes first, over a page gone black and white: the zip is built from `main`, unreleased and may be broken, and the Chrome Web Store version is the one for everyday use. It links to the steps for loading it, now in the README. The zip is named after the extension's version, like `prisharp-1.2.0.zip`, and links to `/prisharp.zip` still work.
 
 ## [1.2.0] - 2026-11-23
 

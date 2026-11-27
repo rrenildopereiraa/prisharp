@@ -26,9 +26,9 @@ const STEPS = [
 	},
 ];
 
-// A and S press the hero's buttons, and Shift+A the install button while
-// Shift turns it into the zip. Typing in a field never triggers them, and
-// neither does an open dialog, which covers the buttons.
+// A and S press the hero's buttons; Shift+A, the dev version's warning, is the
+// hero's own. Typing in a field never triggers them, and neither does an open
+// dialog, which covers the buttons.
 const press = (id: string) => () => {
 	if (document.querySelector('[role="dialog"][data-open]')) return;
 	document.getElementById(id)?.click();
@@ -47,7 +47,6 @@ export function App() {
 	const proof = found(named);
 
 	useHotkey("A", press("install"));
-	useHotkey("Shift+A", press("install"));
 	useHotkey("S", press("source"));
 
 	return (
