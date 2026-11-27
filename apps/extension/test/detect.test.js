@@ -914,6 +914,134 @@ test("a key that only starts like Preact's is not Preact", () => {
 	assert.ok(!wanted.domKey.includes("__k"));
 });
 
+test("ten more libraries, from the globals and banners they leave", () => {
+	const found = names(
+		detect(
+			page({
+				js: {
+					"jQuery.fn.jquery": "3.7.1",
+					"jQuery.fancybox.version": "3.5.7",
+					"lightbox.imageCountLabel": true,
+					"jQuery.fn.owlCarousel": true,
+					"Isotope.LayoutMode": true,
+					"jQuery.fn.select2.defaults": true,
+					PhotoSwipeUI_Default: true,
+					"AOS.refreshHard": true,
+					"Flickity.Cell": true,
+					"Hammer.VERSION": "2.0.8",
+				},
+				script: scripts(
+					"/*!\n * Lightbox v2.12.0\n * by Lokesh Dhakar",
+					"/**\n * Owl Carousel v2.3.4\n * Copyright 2013-2018 David Deutsch",
+					"/*!\n * Isotope PACKAGED v3.0.6\n *",
+					"/*! Select2 4.1.0-rc.0 | https://github.com/select2/select2 */",
+					"/*! PhotoSwipe - v4.1.3 - 2019-01-08",
+					"/*!\n * Flickity PACKAGED v3.0.0\n * Touch, responsive, flickable carousels",
+				),
+				css: "/*!\n * animate.css - https://animate.style/\n * Version - 4.1.1\n",
+			}),
+			technologies,
+		),
+	);
+	for (const name of [
+		"FancyBox 3.5.7",
+		"Lightbox 2.12.0",
+		"Owl Carousel 2.3.4",
+		"Isotope 3.0.6",
+		"Select2 4.1.0",
+		"Animate.css 4.1.1",
+		"PhotoSwipe 4.1.3",
+		"AOS",
+		"Flickity 3.0.0",
+		"Hammer.js 2.0.8",
+	]) {
+		assert.ok(found.includes(name), `${name} in ${found.join(", ")}`);
+	}
+});
+
+test("Fancybox 4 onwards and PhotoSwipe 5, without jQuery", () => {
+	const found = names(
+		detect(
+			page({
+				js: { "Fancybox.version": "6.1.15" },
+				script: scripts(
+					"/*!\n  * PhotoSwipe Lightbox 5.4.4 - https://photoswipe.com\n  * (c) 2024",
+				),
+			}),
+			technologies,
+		),
+	);
+	assert.ok(found.includes("FancyBox 6.1.15"));
+	assert.ok(found.includes("PhotoSwipe 5.4.4"));
+	assert.ok(!found.includes("jQuery"));
+});
+
+test("carousels and widgets, from the markup and styles they leave", () => {
+	const dom = Object.fromEntries(
+		[
+			"#lightboxOverlay + #lightbox .lb-outerContainer",
+			".owl-carousel.owl-loaded, .owl-wrapper-outer",
+			"select.select2-hidden-accessible",
+			"a[data-pswp-width], .pswp .pswp__scroll-wrap",
+			"[data-aos].aos-init",
+			".flickity-enabled",
+		].map((selector) => [`${selector}|`, true]),
+	);
+	const found = names(
+		detect(
+			page({
+				dom,
+				classes: ["animate__animated"],
+				css: ".fancybox__container{direction:ltr}",
+			}),
+			technologies,
+		),
+	);
+	for (const name of [
+		"FancyBox",
+		"Lightbox",
+		"Owl Carousel",
+		"Select2",
+		"PhotoSwipe",
+		"AOS",
+		"Flickity",
+		"Animate.css",
+	]) {
+		assert.ok(found.includes(name), `${name} in ${found.join(", ")}`);
+	}
+});
+
+test("SelectWoo, WooCommerce's fork of Select2, is not Select2", () => {
+	const found = names(
+		detect(
+			page({
+				js: {
+					"jQuery.fn.jquery": "3.7.1",
+					"jQuery.fn.selectWoo": true,
+					"jQuery.fn.select2.defaults": true,
+				},
+				dom: { "select.select2-hidden-accessible|": true },
+				script: scripts("/*!\n * SelectWoo 1.0.11\n"),
+			}),
+			technologies,
+		),
+	);
+	assert.ok(!found.includes("Select2"));
+});
+
+test("a stylesheet that only names its animations like Animate.css's is not it", () => {
+	const found = names(
+		detect(
+			page({
+				css: ".animated{animation-duration:1s}@keyframes bounce{}",
+				classes: ["animated"],
+			}),
+			technologies,
+		),
+	);
+	assert.ok(!found.includes("Animate.css"));
+});
+
 test("analytics and ad tags, from the globals their snippets set and the files they load", () => {
 	const cases = [
 		{

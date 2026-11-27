@@ -858,6 +858,145 @@ export const technologies = [
 		signals: [{ js: "moment.version", version: true }],
 	},
 	{
+		id: "fancybox",
+		name: "FancyBox",
+		website: "https://fancyapps.com/fancybox/",
+		category: "Library",
+		signals: [
+			// fancyBox 2 and 3, a jQuery plugin
+			{ js: "jQuery.fancybox.version", version: true },
+			// Fancybox 4 onwards, part of @fancyapps/ui
+			{ js: "Fancybox.version", version: true },
+			// its stylesheet, which a bundled Fancybox 4 onwards still ships
+			{ css: /\.fancybox__container\b/ },
+		],
+	},
+	{
+		id: "lightbox",
+		name: "Lightbox",
+		website: "https://lokeshdhakar.com/projects/lightbox2/",
+		category: "Library",
+		implies: ["jquery"],
+		signals: [
+			{
+				script: /Lightbox v(\d+\.\d+\.\d+)\s+\*\s+by Lokesh Dhakar/,
+				label: "Lightbox banner",
+			},
+			{ js: "lightbox.imageCountLabel" },
+			// the overlay it adds to every page it runs on, before any image
+			// is opened
+			{ dom: "#lightboxOverlay + #lightbox .lb-outerContainer" },
+		],
+	},
+	{
+		id: "owl-carousel",
+		name: "Owl Carousel",
+		website: "https://owlcarousel2.github.io/OwlCarousel2/",
+		category: "Library",
+		implies: ["jquery"],
+		signals: [
+			{
+				script: /Owl Carousel v(\d+\.\d+\.\d+)\s+\*\s+Copyright 2013/,
+				label: "Owl Carousel banner",
+			},
+			{ js: "jQuery.fn.owlCarousel" },
+			// the class it adds to each carousel it starts, and the wrapper
+			// Owl Carousel 1 built around the slides
+			{ dom: ".owl-carousel.owl-loaded, .owl-wrapper-outer" },
+		],
+	},
+	{
+		id: "isotope",
+		name: "Isotope",
+		website: "https://isotope.metafizzy.co",
+		category: "Library",
+		signals: [
+			{
+				script: /Isotope PACKAGED v(\d+\.\d+\.\d+)/,
+				label: "Isotope banner",
+			},
+			{ js: "Isotope.LayoutMode" },
+			// Isotope 1, a jQuery plugin
+			{ js: "jQuery.Isotope" },
+		],
+	},
+	{
+		id: "select2",
+		name: "Select2",
+		website: "https://select2.org",
+		category: "Library",
+		implies: ["jquery"],
+		// SelectWoo, WooCommerce's fork, answers to the same plugin name and
+		// writes the same classes
+		unless: [{ js: "jQuery.fn.selectWoo" }],
+		signals: [
+			{
+				script: /\/\*!\s*(?:\*\s*)?Select2 (\d+\.\d+\.\d+)/,
+				label: "Select2 banner",
+			},
+			{ js: "jQuery.fn.select2.defaults" },
+			// on each select it replaces, since Select2 4
+			{ dom: "select.select2-hidden-accessible" },
+		],
+	},
+	{
+		id: "photoswipe",
+		name: "PhotoSwipe",
+		website: "https://photoswipe.com",
+		category: "Library",
+		signals: [
+			// PhotoSwipe 5, its core and its lightbox
+			{
+				script:
+					/PhotoSwipe(?: Lightbox)? (\d+\.\d+\.\d+) - https:\/\/photoswipe\.com/,
+				label: "PhotoSwipe 5 banner",
+			},
+			// PhotoSwipe 4
+			{
+				script: /PhotoSwipe - v(\d+\.\d+\.\d+) - /,
+				label: "PhotoSwipe 4 banner",
+			},
+			{ js: "PhotoSwipeUI_Default" },
+			{ js: "PhotoSwipeLightbox" },
+			// the sizes PhotoSwipe 5 needs on each link it opens, and the
+			// template PhotoSwipe 4 needs in the page
+			{ dom: "a[data-pswp-width], .pswp .pswp__scroll-wrap" },
+		],
+	},
+	{
+		id: "aos",
+		name: "AOS",
+		website: "https://michalsnik.github.io/aos/",
+		category: "Library",
+		signals: [
+			{ js: "AOS.refreshHard" },
+			// the class it adds to each element it animates
+			{ dom: "[data-aos].aos-init" },
+		],
+	},
+	{
+		id: "flickity",
+		name: "Flickity",
+		website: "https://flickity.metafizzy.co",
+		category: "Library",
+		signals: [
+			{
+				script: /Flickity PACKAGED v(\d+\.\d+\.\d+)/,
+				label: "Flickity banner",
+			},
+			{ js: "Flickity.Cell" },
+			// the class it adds to each carousel it starts
+			{ dom: ".flickity-enabled" },
+		],
+	},
+	{
+		id: "hammerjs",
+		name: "Hammer.js",
+		website: "https://hammerjs.github.io",
+		category: "Library",
+		signals: [{ js: "Hammer.VERSION", version: true }],
+	},
+	{
 		id: "katex",
 		name: "KaTeX",
 		website: "https://katex.org",
@@ -1321,6 +1460,20 @@ export const technologies = [
 		website: "https://emotion.sh",
 		category: "Styling",
 		signals: [{ dom: "style[data-emotion]" }],
+	},
+	{
+		id: "animate-css",
+		name: "Animate.css",
+		website: "https://animate.style",
+		category: "Styling",
+		signals: [
+			// the banner atop its stylesheet, under each of the sites it has had
+			{
+				css: /animate\.css -\s?https?:\/\/\S+\s+\*\s+Version - (\d+\.\d+\.\d+)/,
+			},
+			// the class every animation needs since Animate.css 4
+			{ classes: ["animate__animated"] },
+		],
 	},
 
 	// Build
