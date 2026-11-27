@@ -40,6 +40,15 @@ Prisharp detects 229 technologies.
 
 <!-- technologies:end -->
 
+## Load the preview build
+
+Hold Shift on [prisharp.com](https://prisharp.com) and "Add to Chrome" becomes "Download .zip": the extension as it is on `main`, ahead of the Chrome Web Store and not yet released. It may have bugs, so use the store version for everyday browsing. To load it:
+
+1. Unzip it.
+2. Open `chrome://extensions`.
+3. Turn on Developer mode.
+4. Click "Load unpacked" and choose the folder.
+
 ## Develop
 
 The workspace runs on [Vite+](https://viteplus.dev).

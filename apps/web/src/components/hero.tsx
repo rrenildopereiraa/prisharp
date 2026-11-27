@@ -91,15 +91,8 @@ function Key({ children }: { children: string }) {
 	);
 }
 
-/** The steps to load the zip, as Chrome names them. */
-const LOAD = [
-	"Unzip it.",
-	<>
-		Open <code className="c:label">chrome://extensions</code>.
-	</>,
-	"Turn on Developer mode.",
-	'Click "Load unpacked" and choose the folder.',
-];
+/** The README's steps for loading the zip unpacked. */
+const LOAD = `${REPO}#load-the-preview-build`;
 
 /** Saves the zip, as its link would. */
 function download() {
@@ -110,8 +103,8 @@ function download() {
 }
 
 /**
- * A warning, and how to load the zip, before it downloads: it's what's on
- * main, not what the Chrome Web Store has.
+ * A short warning before the zip downloads: it's what's on main, not what
+ * the Chrome Web Store has.
  */
 function PreviewDialog({
 	open,
@@ -140,33 +133,18 @@ function PreviewDialog({
 			title="This isn't the store version"
 			description={
 				<>
-					<code className="c:label">{ZIP.slice(1)}</code> is the unreleased code
-					on <code className="c:label">main</code>. It may be broken, and it
-					won't update itself. For everyday browsing, get Prisharp from the
-					Chrome Web Store instead.
+					It's unreleased and may be broken. For everyday use, get Prisharp from
+					the Chrome Web Store.{" "}
+					<a href={LOAD} className="c:label tuo:2 td:u">
+						How to load it
+					</a>
 				</>
 			}
 			cancelLabel="Cancel"
 			confirmLabel="Download anyway"
 			confirmVariant="danger"
 			onConfirm={download}
-		>
-			{/* Yumma has no numbered markers: the numbers are drawn, as in "How
-			    it works", and the list still reads as ordered */}
-			<ol
-				aria-label="To load it"
-				className="m:0 p:0 lst:none d:f fd:c g:1 fs:sm c:hint lh:4"
-			>
-				{LOAD.map((step, index) => (
-					<li key={index} className="d:f g:2">
-						<span aria-hidden="true" className="c:label">
-							{index + 1}.
-						</span>
-						<span>{step}</span>
-					</li>
-				))}
-			</ol>
-		</Dialog>
+		/>
 	);
 }
 
