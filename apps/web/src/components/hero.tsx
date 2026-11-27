@@ -153,12 +153,6 @@ function PreviewDialog({
 			confirmVariant="danger"
 			onConfirm={download}
 		>
-			{/* the link's room below keeps the buttons off the text */}
-			<p className="m:0 pb:4 fs:sm">
-				<a href={LOAD} className="c:label tuo:2 td:u">
-					How to load it
-				</a>
-			</p>
 		</Dialog>
 	);
 }
