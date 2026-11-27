@@ -1,12 +1,13 @@
 import react from "@vitejs/plugin-react";
 import yummacss from "@yummacss/vite";
-import { zipSync } from "fflate";
+import { strToU8, zipSync } from "fflate";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite-plus";
 import { technologies } from "extension/technologies";
 import { icons as logoFiles } from "extension/icons";
+import { CHROME_ONLY, firefox } from "extension/firefox";
 import { icons as simpleMarks } from "./src/marks";
 import { marquee, typed } from "./src/slices";
 
@@ -26,45 +27,72 @@ const walk = (path: string): string[] =>
 		? readdirSync(path).flatMap((name) => walk(join(path, name)))
 		: [path];
 
-const zipExtension = () =>
-	zipSync(
-		Object.fromEntries(
-			SHIPPED.flatMap((entry) => walk(join(extension, entry))).map((file) => [
-				relative(extension, file),
-				readFileSync(file),
-			]),
-		),
+const shippedFiles = () =>
+	Object.fromEntries(
+		SHIPPED.flatMap((entry) => walk(join(extension, entry))).map((file) => [
+			relative(extension, file).split("\\").join("/"),
+			readFileSync(file),
+		]),
 	);
 
-/** The extension's version, as the store upload is named. */
-const VERSION: string = JSON.parse(
-	readFileSync(join(extension, "manifest.json"), "utf8"),
-).version;
+const zipExtension = () => zipSync(shippedFiles());
 
-/** The download's name, with the version in it. */
+/** The Firefox build: the same files with its own manifest, as `pnpm zip` packs it. */
+const zipFirefox = () => {
+	const files: Record<string, Uint8Array> = Object.fromEntries(
+		Object.entries(shippedFiles()).filter(
+			([file]) => !CHROME_ONLY.includes(file),
+		),
+	);
+	files["manifest.json"] = strToU8(
+		`${JSON.stringify(firefox(MANIFEST), null, "\t")}\n`,
+	);
+	return zipSync(files);
+};
+
+const MANIFEST = JSON.parse(
+	readFileSync(join(extension, "manifest.json"), "utf8"),
+);
+
+/** The extension's version, as the store upload is named. */
+const VERSION: string = MANIFEST.version;
+
+/** The downloads' names, with the version in them. */
 const ZIP = `prisharp-${VERSION}.zip`;
+const FIREFOX_ZIP = `prisharp-firefox-${VERSION}.zip`;
 
 /**
- * Serves and builds the extension ready to load unpacked, under its versioned
- * name and under /prisharp.zip, which older links point to.
+ * Serves and builds the extension ready to load: for Chromium under its
+ * versioned name and under /prisharp.zip, which older links point to, and
+ * for Firefox under its own name.
  */
-const download = (): Plugin => ({
-	name: "prisharp-download",
-	configureServer(server) {
-		for (const path of [`/${ZIP}`, "/prisharp.zip"]) {
-			server.middlewares.use(path, (_request, response) => {
-				response.setHeader("content-type", "application/zip");
-				response.end(zipExtension());
-			});
-		}
-	},
-	generateBundle() {
-		const source = zipExtension();
-		for (const fileName of [ZIP, "prisharp.zip"]) {
-			this.emitFile({ type: "asset", fileName, source });
-		}
-	},
-});
+const download = (): Plugin => {
+	const zips: [string[], () => Uint8Array][] = [
+		[[ZIP, "prisharp.zip"], zipExtension],
+		[[FIREFOX_ZIP], zipFirefox],
+	];
+	return {
+		name: "prisharp-download",
+		configureServer(server) {
+			for (const [names, build] of zips) {
+				for (const name of names) {
+					server.middlewares.use(`/${name}`, (_request, response) => {
+						response.setHeader("content-type", "application/zip");
+						response.end(build());
+					});
+				}
+			}
+		},
+		generateBundle() {
+			for (const [names, build] of zips) {
+				const source = build();
+				for (const fileName of names) {
+					this.emitFile({ type: "asset", fileName, source });
+				}
+			}
+		},
+	};
+};
 
 const CATALOG = "virtual:catalog";
 
@@ -188,6 +216,7 @@ function landing() {
 		...imports,
 		`export const count = ${list.length};`,
 		`export const zip = ${JSON.stringify(`/${ZIP}`)};`,
+		`export const firefoxZip = ${JSON.stringify(`/${FIREFOX_ZIP}`)};`,
 		`export const typed = ${JSON.stringify(named)};`,
 		`export const marks = ${JSON.stringify(marks)};`,
 		`export const logos = { ${logos.join(", ")} };`,
