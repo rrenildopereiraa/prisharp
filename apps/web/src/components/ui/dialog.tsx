@@ -1,0 +1,272 @@
+"use client";
+
+import { Button } from "@base-ui/react/button";
+import { Dialog } from "@base-ui/react/dialog";
+import { IconX } from "@tabler/icons-react";
+import type { ReactElement, ReactNode } from "react";
+import { useRef, useState } from "react";
+import { merge } from "yummacss/merge";
+import ButtonBase from "./button";
+import { asTrigger, FOCUS, RADIUS, type Shape, type Size, useShape } from "./style";
+
+type IconPosition = "leading" | "trailing";
+type TriggerIntent = "neutral" | "danger";
+type ConfirmVariant = "primary" | "danger";
+
+export interface DialogProps {
+  /**
+   * Where the popup is rendered. Defaults to `document.body`, which is right
+   * almost always; pass an element to portal somewhere else, such as inside a
+   * frame or a container that owns its own stacking context.
+   */
+  container?: HTMLElement | null;
+  /**
+   * The trigger button's label. Leave it out when `open` opens it from code.
+   */
+  trigger?: ReactNode;
+  /**
+   * Your own element as the trigger, such as a link, an avatar or a picture, in
+   * place of the default one. It takes the trigger's behavior and none of its
+   * look; the focus outline and `className` merge onto its classes. An element
+   * that cannot take focus, like an `<img>`, needs `tabIndex={0}`.
+   */
+  render?: ReactElement<{ className?: string }>;
+  /**
+   * Controlled open state, for opening it from code: a menu item, a keyboard
+   * shortcut or a list row. Uncontrolled (the default) if omitted.
+   */
+  open?: boolean;
+  /** Called whenever it opens or closes, controlled or not. */
+  onOpenChange?: (open: boolean) => void;
+  /** A glyph beside the trigger's label. */
+  triggerIcon?: ReactNode;
+  /** Which end of the trigger `triggerIcon` sits at. */
+  triggerIconPosition?: IconPosition;
+  /** Color: `neutral` or `danger`, for a destructive confirmation. */
+  triggerIntent?: TriggerIntent;
+  /**
+   * Fires when the trigger is pressed, before the dialog opens, for capturing
+   * which row triggered it, say, in a dialog reused across a list.
+   */
+  onTriggerClick?: () => void;
+  /**
+   * Content above the title: an avatar and name block, say. Centered in its own
+   * padded row.
+   */
+  header?: ReactNode;
+  /** The dialog's heading, wired up by Base UI's own Dialog.Title. */
+  title: string;
+  /** The body text, wired up by Base UI's own Dialog.Description. */
+  description?: ReactNode;
+  /**
+   * The body, below the description. Form fields and anything else go here.
+   * Style them yourself.
+   */
+  children?: ReactNode;
+  /** The dismissing button's label. */
+  cancelLabel?: string;
+  /**
+   * The confirming button's label. No footer renders without this, so an
+   * informational dialog closes by its X alone.
+   */
+  confirmLabel?: string;
+  /**
+   * Called when the confirm button is pressed. The dialog closes either way.
+   */
+  onConfirm?: () => void;
+  /**
+   * Color of the confirm button: `primary` or `danger`, for a destructive
+   * action like a delete.
+   */
+  confirmVariant?: ConfirmVariant;
+  /** The X in the corner. */
+  showClose?: boolean;
+  /**
+   * Padding and text size of the trigger and the popup's buttons, on the same
+   * scale as Button, so a dialog matches the buttons beside it.
+   */
+  size?: Size;
+  /**
+   * Corner radius on the popup and its buttons. Inherits the nearest `Shape`.
+   */
+  shape?: Shape;
+  /**
+   * The backdrop's fade and the popup's scale-in. Turn it off for an instant
+   * dialog, or when the user has asked for reduced motion.
+   */
+  animated?: boolean;
+  /**
+   * Extra classes. `merge` folds them in last, so one here replaces the
+   * component's own class for the same utility.
+   */
+  className?: string;
+  /**
+   * The focus outline. `true` draws it, `false` removes it along with the
+   * danger, error and success tints that ride with it, and a string of Yumma
+   * CSS utilities restyles it on every focusable part of the component, which
+   * is more than `className` reaches. Removing it outright and putting nothing
+   * back fails WCAG 2.4.7.
+   */
+  focus?: boolean | string;
+}
+
+/**
+ * A modal dialog with a title, optional description and body, and an optional
+ * cancel/confirm pair.
+ */
+export default function DialogBase({
+  trigger,
+  render,
+  triggerIcon,
+  triggerIconPosition = "leading",
+  triggerIntent = "neutral",
+  size = "md",
+  onTriggerClick,
+  header,
+  title,
+  description,
+  children,
+  cancelLabel = "Cancel",
+  confirmLabel,
+  onConfirm,
+  confirmVariant = "primary",
+  showClose = true,
+  shape: shapeProp,
+  animated = true,
+  className,
+  focus = true,
+  container,
+  open: controlledOpen,
+  onOpenChange,
+}: DialogProps) {
+  const shape = useShape(shapeProp);
+  const outline = focus ? merge(FOCUS, focus === true ? "" : focus) : "";
+
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false);
+  const open = controlledOpen ?? uncontrolledOpen;
+  const setOpen = (next: boolean) => {
+    if (controlledOpen === undefined) setUncontrolledOpen(next);
+    onOpenChange?.(next);
+  };
+  const popupRef = useRef<HTMLDivElement>(null);
+
+  const popupClasses = [
+    "o:h p:r w:96 max-w:calc(90vw) bg:raised bc:line c:label bw:1 os:none bs-o:pop",
+    RADIUS.popup[shape],
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const popup = (
+    <Dialog.Portal container={container} keepMounted>
+      <Dialog.Backdrop
+        className={`p:f i:0 min-h:dvh bg:shadow/30 ${
+          animated
+            ? "tp:o tdu:250 ttf:out-quart opening:o:0 closing:o:0 closing:tdu:150 closing:ttf:eo @prm:tp:none"
+            : ""
+        }`}
+      />
+      <Dialog.Viewport className="d:f p:f i:0 ai:c jc:c">
+        <Dialog.Popup
+          ref={popupRef}
+          initialFocus={(type) => type === "keyboard" || popupRef.current}
+          className={`${popupClasses} ${animated ? "tp:ot tdu:250 ttf:out-quart opening:o:0 wc:s opening:s:97 closing:o:0 closing:s:97 closing:tdu:150 closing:ttf:eo @prm:tp:none" : ""}`}
+        >
+          {showClose && (
+            <Dialog.Close
+              render={
+                <Button
+                  className={merge(
+                    outline,
+                    "d:f p:a r:4 t:4 ai:c jc:c w:7 h:7 p:0 bw:1 bg:raised bs-o:key bc:rim c:label h:bg:well",
+                    RADIUS.item[shape],
+                  )}
+                />
+              }
+              aria-label="Close"
+            >
+              <IconX aria-hidden className="w:4 h:4" />
+            </Dialog.Close>
+          )}
+
+          {header && (
+            <div className="d:f fd:c ai:fs g:3 px:5 pt:5">{header}</div>
+          )}
+
+          <div className={`d:f fd:c g:3 px:5 pb:4 ${header ? "pt:3" : "pt:5"}`}>
+            <Dialog.Title
+              className={`m:0 tw:b c:label fs:md fw:500 ${showClose ? "pr:10" : ""}`}
+            >
+              {title}
+            </Dialog.Title>
+
+            {description && (
+              <Dialog.Description className="m:0 tw:p c:hint fs:sm lh:4">
+                {description}
+              </Dialog.Description>
+            )}
+
+            {children}
+          </div>
+
+          {confirmLabel && (
+            <div className="d:f jc:fe g:2 px:5 pb:5">
+              <Dialog.Close
+                render={
+                  <ButtonBase
+                    variant="secondary"
+                    size={size}
+                    shape={shape}
+                    focus={focus}
+                  />
+                }
+              >
+                {cancelLabel}
+              </Dialog.Close>
+              <Dialog.Close
+                render={
+                  <ButtonBase
+                    variant={confirmVariant}
+                    size={size}
+                    shape={shape}
+                    focus={focus}
+                  />
+                }
+                onClick={onConfirm}
+              >
+                {confirmLabel}
+              </Dialog.Close>
+            </div>
+          )}
+        </Dialog.Popup>
+      </Dialog.Viewport>
+    </Dialog.Portal>
+  );
+
+  return (
+    <Dialog.Root open={open} onOpenChange={setOpen}>
+      {render ? (
+        <Dialog.Trigger onClick={onTriggerClick} render={asTrigger(render, outline, className)} />
+      ) : trigger !== undefined && (
+        <Dialog.Trigger
+          onClick={onTriggerClick}
+          render={
+            <ButtonBase
+              variant={triggerIntent === "danger" ? "danger" : "secondary"}
+              size={size}
+              shape={shape}
+              focus={focus}
+              icon={triggerIcon}
+              iconPosition={triggerIconPosition}
+              className={className}
+            />
+          }
+        >
+          {trigger}
+        </Dialog.Trigger>
+      )}
+
+      {popup}
+    </Dialog.Root>
+  );
+}

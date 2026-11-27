@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { typed, zip as ZIP } from "virtual:catalog";
 import Button from "@/components/ui/button";
+import Dialog from "@/components/ui/dialog";
 import { BrowserMarks } from "@/components/browsers";
 import { useKeyHold } from "@tanstack/react-hotkeys";
 import { REPO, STORE } from "@/links";
@@ -89,28 +90,57 @@ function Key({ children }: { children: string }) {
 	);
 }
 
+/** The steps to load the zip, as Chrome names them. */
 const LOAD = [
 	"Unzip it.",
 	<>
-		Open <code className="ff:mono c:label">chrome://extensions</code>.
+		Open <code className="c:label">chrome://extensions</code>.
 	</>,
 	"Turn on Developer mode.",
 	'Click "Load unpacked" and choose the folder.',
 ];
 
-/** What the zip is, and how to load it, shown while it replaces the store. */
-function PreviewNote() {
+/**
+ * What the zip is, and how to load it, before it downloads: it's what's on
+ * main, not what the Chrome Web Store has.
+ */
+function PreviewDialog({
+	open,
+	onOpenChange,
+}: {
+	open: boolean;
+	onOpenChange: (open: boolean) => void;
+}) {
+	// inside the page, not the body, so it takes the page's font and colors
+	const [page, setPage] = useState<HTMLElement | null>(null);
+	useEffect(
+		() => setPage(document.querySelector<HTMLElement>("[data-page]")),
+		[],
+	);
+	if (!page) return null;
+
 	return (
-		<div className="d:f fd:c g:2 p:3 bw:1 bc:line bg:raised fs:xs lh:5 c:hint">
-			<p className="m:0 tw:p">
-				<strong className="fw:500 c:label">A preview build</strong> of what's on{" "}
-				<code className="ff:mono c:label">main</code>. It may have bugs and
-				isn't the version on the Chrome Web Store, which is the one to use for
-				everyday browsing.
-			</p>
+		<Dialog
+			container={page}
+			open={open}
+			onOpenChange={onOpenChange}
+			shape="none"
+			title="Download a preview build"
+			description={
+				<>
+					<code className="c:label">{ZIP.slice(1)}</code> is what's on{" "}
+					<code className="c:label">main</code> today. It may have bugs, and it
+					isn't the version on the Chrome Web Store, which is the one to use for
+					everyday browsing.
+				</>
+			}
+		>
 			{/* Yumma has no numbered markers: the numbers are drawn, as in "How
 			    it works", and the list still reads as ordered */}
-			<ol className="m:0 p:0 lst:none d:f fd:c g:1">
+			<ol
+				aria-label="To load it"
+				className="m:0 p:0 lst:none d:f fd:c g:1 fs:sm c:hint lh:4"
+			>
 				{LOAD.map((step, index) => (
 					<li key={index} className="d:f g:2">
 						<span aria-hidden="true" className="c:label">
@@ -120,7 +150,25 @@ function PreviewNote() {
 					</li>
 				))}
 			</ol>
-		</div>
+			<div className="d:f fw:w g:2 pt:2">
+				<Button
+					render={<a href={ZIP} download />}
+					nativeButton={false}
+					shape="none"
+					onClick={() => onOpenChange(false)}
+				>
+					Download .zip
+				</Button>
+				<Button
+					variant="secondary"
+					render={<a href={STORE} />}
+					nativeButton={false}
+					shape="none"
+				>
+					Chrome Web Store
+				</Button>
+			</div>
+		</Dialog>
 	);
 }
 
@@ -132,6 +180,7 @@ export function Hero({ onName }: { onName?: (name: string) => void }) {
 	// held Shift turns the install button into the zip, to load unpacked or
 	// upload a build without typing its address
 	const zip = useKeyHold("Shift");
+	const [preview, setPreview] = useState(false);
 
 	return (
 		<div
@@ -159,11 +208,14 @@ export function Hero({ onName }: { onName?: (name: string) => void }) {
 				the page, with evidence for each.
 			</p>
 			<div data-actions className="d:f fw:w g:2 mt:1">
+				{/* keyed, so the link and the button never share an element */}
 				<Button
+					key={zip ? "zip" : "store"}
 					id="install"
-					render={zip ? <a href={ZIP} download /> : <a href={STORE} />}
-					nativeButton={false}
-					shape="square"
+					render={zip ? undefined : <a href={STORE} />}
+					nativeButton={zip}
+					onClick={zip ? () => setPreview(true) : undefined}
+					shape="none"
 					className={ACTION}
 				>
 					{zip ? "Download .zip" : "Add to Chrome"} <Key>A</Key>
@@ -173,16 +225,13 @@ export function Hero({ onName }: { onName?: (name: string) => void }) {
 					variant="secondary"
 					render={<a href={REPO} />}
 					nativeButton={false}
-					shape="square"
+					shape="none"
 					className={ACTION}
 				>
 					View source <Key>S</Key>
 				</Button>
 			</div>
-			{/* always in the page, so a screen reader hears the note appear */}
-			<div role="status" className="max-w:120">
-				{zip && <PreviewNote />}
-			</div>
+			<PreviewDialog open={preview} onOpenChange={setPreview} />
 		</div>
 	);
 }

@@ -16,7 +16,7 @@ export function Header() {
 				render={<a href={STORE} />}
 				nativeButton={false}
 				size="sm"
-				shape="square"
+				shape="none"
 				className="us:none"
 			>
 				Add to Chrome

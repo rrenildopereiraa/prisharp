@@ -27,8 +27,12 @@ const STEPS = [
 ];
 
 // A and S press the hero's buttons, and Shift+A the install button while
-// Shift turns it into the zip. Typing in a field never triggers them.
-const press = (id: string) => () => document.getElementById(id)?.click();
+// Shift turns it into the zip. Typing in a field never triggers them, and
+// neither does an open dialog, which covers the buttons.
+const press = (id: string) => () => {
+	if (document.querySelector('[role="dialog"][data-open]')) return;
+	document.getElementById(id)?.click();
+};
 
 /** A typed name's entry, in the shape the popup's evidence page reads. */
 const found = (name: string): Found => {
@@ -48,7 +52,10 @@ export function App() {
 
 	return (
 		<DarkContext.Provider value={dark}>
-			<div className="d:f fd:c min-h:dvh bg:paper c:label ff:mono fs:sm s::bg:accent/25 s::c:label">
+			<div
+				data-page
+				className="d:f fd:c min-h:dvh bg:paper c:label ff:mono fs:sm s::bg:accent/25 s::c:label"
+			>
 				<Band>
 					<Header />
 				</Band>
