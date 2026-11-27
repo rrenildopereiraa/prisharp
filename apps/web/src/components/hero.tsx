@@ -1,10 +1,14 @@
 import { type ReactNode, useEffect, useRef, useState } from "react";
-import { firefoxZip, typed, zip } from "virtual:catalog";
+import {
+	firefoxPermissions,
+	firefoxZip,
+	permissions,
+	typed,
+	zip,
+} from "virtual:catalog";
 import Button from "@/components/ui/button";
 import Dialog from "@/components/ui/dialog";
-import { FOCUS } from "@/components/ui/style";
 import { BrowserMarks } from "@/components/browsers";
-import { IconAlertTriangle, IconBuildingStore } from "@tabler/icons-react";
 import { FIREFOX, UNSUPPORTED } from "@/browser";
 import { REPO, STORE } from "@/links";
 
@@ -116,35 +120,52 @@ function usePage() {
 	return page;
 }
 
-// a choice in the dialog: a row with a glyph, a name and a line about it
-const CHOICE = `d:f ai:fs g:3 w:100% p:3 bw:1 bc:line bg:raised c:label ta:l td:none fs:sm ${FOCUS}`;
+/** Where to get it from: the store, the released version, or the dev zip. */
+type Source = "store" | "zip";
 
-function Choice({
-	icon,
-	title,
-	children,
-}: {
-	icon: ReactNode;
-	title: string;
-	children: ReactNode;
-}) {
-	return (
-		<>
-			<span aria-hidden="true" className="d:f fs:0">
-				{icon}
-			</span>
-			<span className="d:f fd:c g:1">
-				<span className="fw:500">{title}</span>
-				<span className="c:hint lh:5">{children}</span>
-			</span>
-		</>
-	);
-}
+type Option = {
+	value: Source;
+	key: string;
+	/** green for the release, red for the dev build, grey while unavailable */
+	dot: string;
+	text: ReactNode;
+	disabled?: boolean;
+};
+
+const OPTIONS: Option[] = [
+	FIREFOX
+		? {
+				value: "store",
+				key: "Release",
+				dot: "bg:hint",
+				text: "Firefox Add-ons · soon",
+				disabled: true,
+			}
+		: {
+				value: "store",
+				key: "Release",
+				dot: "bg:green",
+				text: "Chrome Web Store",
+			},
+	{
+		value: "zip",
+		key: "Dev",
+		dot: "bg:red",
+		text: ZIP.slice(1),
+	},
+];
+
+const PERMISSIONS = (FIREFOX ? firefoxPermissions : permissions).join(", ");
+
+// a row of the sheet: a radio or a gap, the key, then the value
+const ROW = "d:f ai:c g:3 px:5 py:3 btw:1 bc:line fs:xs";
+// the key's column, wide enough for "Permissions"
+const KEY = "w:20 fs:0 c:hint";
 
 /**
- * Where to get Prisharp for this browser: its store, the released version,
- * or the zip built from main, unreleased. Firefox has no store listing yet,
- * so there the zip is the only way.
+ * Where to get Prisharp for this browser, as a short sheet: its store, the
+ * released version, or the zip built from main, unreleased. Firefox has no
+ * store listing yet, so there the zip is the only choice.
  */
 function GetDialog({
 	open,
@@ -154,6 +175,7 @@ function GetDialog({
 	onOpenChange: (open: boolean) => void;
 }) {
 	const page = usePage();
+	const [source, setSource] = useState<Source>(FIREFOX ? "zip" : "store");
 	if (!page) return null;
 
 	return (
@@ -163,45 +185,48 @@ function GetDialog({
 			onOpenChange={onOpenChange}
 			shape="none"
 			title={FIREFOX ? "Add Prisharp to Firefox" : "Add Prisharp to Chrome"}
-			description="Pick the version you want."
+			cancelLabel="Cancel"
+			confirmLabel="Continue"
+			onConfirm={() => {
+				if (source === "zip") download();
+				else location.href = STORE;
+			}}
 		>
-			<div className="d:f fd:c g:2 pt:2 pb:4">
-				{FIREFOX ? (
-					<div aria-disabled="true" className={`${CHOICE} o:60`}>
-						<Choice
-							icon={<IconBuildingStore className="w:5 h:5" />}
-							title="Firefox Add-ons"
+			{/* rows run edge to edge, between rules */}
+			<div className="d:f fd:c mx:-5 mt:1 bbw:1 bc:line">
+				<div role="radiogroup" aria-label="Version" className="d:f fd:c">
+					{OPTIONS.map((option) => (
+						<label
+							key={option.value}
+							className={`${ROW} ${option.disabled ? "o:50" : "c:p"} ${
+								source === option.value ? "bg:well" : "h:bg:well/50"
+							}`}
 						>
-							Coming soon.
-						</Choice>
-					</div>
-				) : (
-					<a href={STORE} className={`${CHOICE} h:bg:well`}>
-						<Choice
-							icon={<IconBuildingStore className="w:5 h:5 c:accent" />}
-							title="Chrome Web Store"
-						>
-							The released version. It updates by itself.
-						</Choice>
-					</a>
-				)}
-				<button
-					type="button"
-					onClick={() => {
-						download();
-						onOpenChange(false);
-					}}
-					className={`${CHOICE} c:p h:bg:well`}
-				>
-					<Choice
-						icon={<IconAlertTriangle className="w:5 h:5 c:red" />}
-						title="Dev version (.zip)"
-					>
-						<code className="c:label">{ZIP.slice(1)}</code>, built from{" "}
-						<code className="c:label">main</code>. Unreleased, and may be
-						broken.
-					</Choice>
-				</button>
+							<input
+								type="radio"
+								name="source"
+								value={option.value}
+								checked={source === option.value}
+								disabled={option.disabled}
+								onChange={() => setSource(option.value)}
+								className="m:0 w:4 h:4 fs:0 ac:accent"
+							/>
+							<span className={KEY}>{option.key}</span>
+							<span className="d:f ai:c g:2 c:label min-w:0">
+								<span
+									aria-hidden="true"
+									className={`d:ib w:2 h:2 br:9999 fs:0 ${option.dot}`}
+								/>
+								<span className="to:e ws:nw o:h">{option.text}</span>
+							</span>
+						</label>
+					))}
+				</div>
+				<div className={ROW}>
+					<span aria-hidden="true" className="w:4 fs:0" />
+					<span className={KEY}>Permissions</span>
+					<span className="min-w:0 c:label">{PERMISSIONS}</span>
+				</div>
 			</div>
 		</Dialog>
 	);

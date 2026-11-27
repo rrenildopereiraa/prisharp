@@ -19,6 +19,9 @@ declare module "virtual:catalog" {
 	export const zip: string;
 	/** The Firefox build's zip, named the same way. */
 	export const firefoxZip: string;
+	/** What each build asks the browser for, from its manifest. */
+	export const permissions: string[];
+	export const firefoxPermissions: string[];
 	/** The names the heading types, best known first, with their evidence. */
 	export const typed: CatalogEntry[];
 	/** The marquee's technologies, best known first. */

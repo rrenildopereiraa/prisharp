@@ -217,6 +217,8 @@ function landing() {
 		`export const count = ${list.length};`,
 		`export const zip = ${JSON.stringify(`/${ZIP}`)};`,
 		`export const firefoxZip = ${JSON.stringify(`/${FIREFOX_ZIP}`)};`,
+		`export const permissions = ${JSON.stringify(MANIFEST.permissions)};`,
+		`export const firefoxPermissions = ${JSON.stringify(firefox(MANIFEST).permissions)};`,
 		`export const typed = ${JSON.stringify(named)};`,
 		`export const marks = ${JSON.stringify(marks)};`,
 		`export const logos = { ${logos.join(", ")} };`,
