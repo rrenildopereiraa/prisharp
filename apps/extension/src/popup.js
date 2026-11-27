@@ -291,7 +291,7 @@ async function run() {
 		});
 		page = result.result;
 	} catch {
-		status.textContent = "Chrome doesn't let extensions read this page.";
+		status.textContent = "This browser doesn't let extensions read this page.";
 		return;
 	}
 
