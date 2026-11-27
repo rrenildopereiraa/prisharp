@@ -67,8 +67,14 @@ export function probes(technologies) {
 
 const version = (value) => {
 	if (typeof value !== "string" || !/\d/.test(value)) return undefined;
-	// a build's +metadata says which commit, not which version
-	const clean = value.replace(/^v/i, "").replace(/\+.*$/, "");
+	// a build's +metadata says which commit, not which version, and what
+	// follows a space is a note on the build, such as the modules a custom
+	// jQuery leaves out: "3.6.3 -ajax,-effects"
+	const clean = value
+		.trim()
+		.replace(/\s.*$/, "")
+		.replace(/^v/i, "")
+		.replace(/\+.*$/, "");
 	// 0.0.0 is what a build from source writes in place of one
 	return /^0(?:\.0)*$/.test(clean) ? undefined : clean;
 };
@@ -143,6 +149,7 @@ function describe(signal, hit, page, byId) {
 function match(signal, page) {
 	if (signal.js) {
 		const value = page.js[signal.js];
+		if (signal.value && !signal.value.test(String(value))) return false;
 		return (
 			value !== undefined && {
 				version: signal.version ? version(value) : undefined,

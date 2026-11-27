@@ -4,6 +4,7 @@
 // A signal is one piece of evidence. Its kind is the key it carries:
 //
 //   js        a global path exists:            { js: "next.version", version: true }
+//             (`value` is a regex its value must match)
 //   jsPrefix  a global name starts with this:  { jsPrefix: "webpackChunk" }
 //   dom       a selector matches:              { dom: "[ng-version]", attr: "ng-version" }
 //             (`attr` or `prop` reads the version off the element)
@@ -778,6 +779,9 @@ export const technologies = [
 		website: "https://lodash.com",
 		category: "Library",
 		signals: [
+			// Underscore has never left 1.x, so a `_.VERSION` of 2 or more is
+			// Lodash, even a custom build without the functions below
+			{ js: "_.VERSION", value: /^(?:[2-9]|\d{2,})\./, version: true },
 			// flatMapDeep is Lodash's own: Underscore has no such function
 			{ js: "_.flatMapDeep" },
 		],
@@ -841,9 +845,10 @@ export const technologies = [
 		category: "Library",
 		icon: "underscoredotjs",
 		// Lodash sets `_.VERSION` too, and has runInContext where Underscore
-		// does not
+		// does not. A custom Lodash build may leave runInContext out, but
+		// its version is 2 or more, and Underscore's has always been 1.x.
 		unless: [{ js: "_.runInContext" }],
-		signals: [{ js: "_.VERSION", version: true }],
+		signals: [{ js: "_.VERSION", value: /^1\./, version: true }],
 	},
 	{
 		id: "moment",
