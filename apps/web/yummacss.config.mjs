@@ -60,17 +60,6 @@ export default defineConfig({
 			check: { light: "#1f35d6", dark: "#a5b2ff" },
 			focus: { light: "#2b44ff", dark: "#8394ff" },
 
-			// the extension's panel, drawn in Chrome's colors as in the popup
-			panel: { light: "#ffffff", dark: "#282a2c" },
-
-			"panel-ink": { light: "#1f1f1f", dark: "#e3e3e3" },
-			"panel-muted": { light: "#474747", dark: "#c4c7c5" },
-			"panel-line": { light: "#e3e3e3", dark: "#444746" },
-			"panel-hover": { light: "#ececec", dark: "#3a3c3e" },
-			"panel-well": { light: "#f1f3f4", dark: "#1f2022" },
-			"panel-ok": { light: "#146c2e", dark: "#6dd58c" },
-			"panel-focus": { light: "#0b57d0", dark: "#a8c7fa" },
-
 			field: {
 				light: "oklch(1 0 none)",
 				dark: "oklch(0.215 0.007 290)",

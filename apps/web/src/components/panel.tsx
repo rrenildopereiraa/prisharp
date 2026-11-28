@@ -1,5 +1,5 @@
-import { paths } from "extension/symbols";
-import { useContext, useEffect, useRef } from "react";
+import { paths, stroke } from "extension/symbols";
+import { useContext, useEffect, useRef, useState } from "react";
 import { merge } from "yummacss/merge";
 import type { Evidence, Found } from "@/demo";
 import { useMorph } from "@/morph";
@@ -7,24 +7,34 @@ import { Logo, LogosContext } from "./logo";
 
 type Name = keyof typeof paths;
 
-/** One of the popup's Material Symbols, colored by the text around it. */
+/** One of the popup's Tabler icons, colored by the text around it. */
 function Symbol({ name, className }: { name: Name; className: string }) {
 	return (
 		<svg
-			viewBox="0 -960 960 960"
-			fill="currentColor"
+			viewBox={stroke.viewBox}
+			fill={stroke.fill}
+			stroke={stroke.stroke}
+			strokeWidth={stroke["stroke-width"]}
+			strokeLinecap="round"
+			strokeLinejoin="round"
 			aria-hidden="true"
 			className={`${className} us:none`}
 		>
-			<path d={paths[name]} />
+			{paths[name].map((d) => (
+				<path key={d} d={d} />
+			))}
 		</svg>
 	);
 }
 
-const ROW =
-	"d:f ai:c g:3 w:100% h:10 px:4 bw:0 bg:transparent c:panel-ink ff:d fs:sm ta:l td:none c:p h:bg:panel-hover fv:os:s fv:ow:2 fv:oo:-2 fv:oc:panel-focus";
+// the popup's own classes, so the drawing and the popup look the same
+const ICON =
+	"d:f ai:c jc:c fs:0 w:8 h:8 bw:0 bg:transparent c:hint c:p h:bg:paper h:c:label fv:os:s fv:ow:2 fv:oc:focus";
 
-const RULE = "m:0 h:px bw:0 bg:panel-line";
+const BUTTON =
+	"d:f ai:c jc:c g:2 h:9 px:3 bw:1 bc:rim bg:raised bs-o:key c:label ff:mono fs:xs ws:nw c:p h:bg:well a:s:98 tp:a tdu:150 @prm:tp:none fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus";
+
+const VERSION = "fs:0 py:0 px:1 bw:1 bc:accent/40 c:accent fs:xs lh:4 ws:nw";
 
 // the logos are pictures of the product, not text to select
 function Mark({ tech, size }: { tech: Found; size: string }) {
@@ -34,14 +44,14 @@ function Mark({ tech, size }: { tech: Found; size: string }) {
 		return (
 			<Logo
 				name={tech.icon}
-				className={`d:b ${size} p:calc(0.125rem) br:sm us:none`}
+				className={`d:b ${size} p:calc(0.125rem) us:none`}
 			/>
 		);
 	}
 	return (
 		<span
 			aria-hidden="true"
-			className={`d:f ai:c jc:c fs:0 ${size} br:sm bg:panel-well fs:xs fw:600 c:panel-muted us:none`}
+			className={`d:f ai:c jc:c fs:0 ${size} bg:well ff:sans fs:md c:hint us:none`}
 		>
 			{tech.name[0]}
 		</span>
@@ -50,17 +60,48 @@ function Mark({ tech, size }: { tech: Found; size: string }) {
 
 function EvidenceItem({ kind, text, value }: Evidence) {
 	return (
-		<li className="d:f ai:fs g:2 py:2 px:4">
-			<Symbol name="check" className="d:b fs:0 w:4 h:4 mt:1 c:panel-ok" />
+		<li className="d:f ai:fs g:3 py:2 px:4">
+			<Symbol name="check" className="d:b fs:0 w:4 h:4 mt:1 c:accent" />
 			<span className="d:f fd:c g:1 fg:1 min-w:0">
-				<code className="as:fs py:0 px:1 br:sm bg:panel-well ff:m fs:xs wb:ba">
+				<code className="as:fs py:0 px:1 bg:well ff:mono fs:xs wb:ba">
 					{text}
 				</code>
-				<span className="fs:xs c:panel-muted wb:ba">
+				<span className="fs:xs c:hint wb:ba">
 					{value === undefined ? kind : `${kind} · ${value}`}
 				</span>
 			</span>
 		</li>
+	);
+}
+
+/** Copies the technology's evidence, as the popup's button does. */
+function CopyEvidence({ tech }: { tech: Found }) {
+	const [copied, setCopied] = useState(false);
+	useEffect(() => {
+		if (!copied) return;
+		const timer = setTimeout(() => setCopied(false), 1500);
+		return () => clearTimeout(timer);
+	}, [copied]);
+
+	const text = [
+		[tech.name, tech.version].filter(Boolean).join(" "),
+		...tech.evidence.map(
+			({ kind, text, value }) =>
+				`${kind}: ${text}${value === undefined ? "" : ` (${value})`}`,
+		),
+	].join("\n");
+
+	return (
+		<button
+			type="button"
+			onClick={() => {
+				void navigator.clipboard.writeText(text).then(() => setCopied(true));
+			}}
+			className={merge(BUTTON, "w:100%")}
+		>
+			<Symbol name="copy" className="d:b fs:0 w:4 h:4" />
+			<span>{copied ? "Copied" : "Copy evidence"}</span>
+		</button>
 	);
 }
 
@@ -98,63 +139,67 @@ function Detail({
 				onBack();
 			}}
 		>
-			<div className={`d:f ai:c g:1 py:2 ${onBack ? "px:2" : "px:4 h:12"}`}>
+			<div
+				className={`d:f ai:c h:12 bbw:1 bbc:line ${onBack ? "px:2" : "px:4"}`}
+			>
 				{onBack && (
 					<button
 						ref={back}
 						type="button"
 						aria-label="Back to the list"
 						onClick={onBack}
-						className={merge(
-							"d:f ai:c jc:c fs:0 w:8 h:8 br:9999 bw:0 bg:transparent c:panel-muted h:bg:panel-hover c:p fv:os:s fv:ow:2 fv:oc:panel-focus",
-							backClasses,
-						)}
+						className={merge(ICON, backClasses)}
 					>
-						<Symbol name="arrow_back" className="d:b w:5 h:5" />
+						<Symbol name="back" className="d:b w:4 h:4" />
 					</button>
 				)}
-				<p className="m:0 fg:1 min-w:0 fs:md fw:400 o:h to:e ws:nw">
-					{tech.name}
+				<p
+					className={`m:0 fg:1 min-w:0 fs:xs c:hint o:h to:e ws:nw ${onBack ? "px:2" : ""}`}
+				>
+					{tech.category}
 				</p>
 			</div>
-			<hr className={RULE} />
-			<div className="d:f ai:c g:3 p:4">
-				<span className="d:f ai:c jc:c fs:0 w:11 h:11 br:lg bg:panel-well">
-					<Mark tech={tech} size="w:7 h:7" />
+			<div className="d:f ai:c g:4 p:4 bbw:1 bbc:line">
+				<span className="d:f ai:c jc:c fs:0 w:14 h:14 bw:1 bc:line bg:paper">
+					<Mark tech={tech} size="w:8 h:8" />
 				</span>
-				<div className="min-w:0">
-					<p className="m:0">{tech.name}</p>
-					<p className="m:0 mt:1 fs:xs c:panel-muted">
-						<span className="d:b">
-							{[tech.category, tech.version && `Version ${tech.version}`]
-								.filter(Boolean)
-								.join(" · ")}
-						</span>
-						{brings.length > 0 && (
-							<span className="d:b">Brings in {brings.join(", ")}</span>
+				<div className="d:f fd:c g:1 min-w:0">
+					<span className="d:f ai:b g:2 min-w:0">
+						<p className="m:0 min-w:0 ff:sans fs:xxl fw:400 lh:1 o:h to:e ws:nw">
+							{tech.name}
+						</p>
+						{tech.version && (
+							<span aria-label={`Version ${tech.version}`} className={VERSION}>
+								{tech.version}
+							</span>
 						)}
-					</p>
+					</span>
+					<a
+						href={tech.website}
+						target="_blank"
+						rel="noreferrer"
+						aria-label={`Open ${site}`}
+						className="d:if ai:c g:1 as:fs max-w:100% fs:xs c:accent td:none h:td:u fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus"
+					>
+						<span className="o:h to:e ws:nw">{site}</span>
+						<Symbol name="external" className="d:b fs:0 w:3 h:3" />
+					</a>
+					{brings.length > 0 && (
+						<p className="m:0 fs:xs c:hint">Brings in {brings.join(", ")}</p>
+					)}
 				</div>
 			</div>
-			<hr className={RULE} />
-			<p className="m:0 pt:3 pb:1 px:4 fs:xs fw:400 c:panel-muted">
-				How Prisharp knows
+			<p className="d:f jc:sb m:0 pt:3 pb:1 px:4 fs:xs fw:400 c:hint">
+				<span>How Prisharp knows</span>
+				<span>{tech.evidence.length}</span>
 			</p>
-			<ul className="m:0 pt:0 pb:2 px:0">
+			<ul className="m:0 pt:0 pb:2 px:0 bbw:1 bbc:line">
 				{tech.evidence.map((item) => (
 					<EvidenceItem key={`${item.kind} ${item.text}`} {...item} />
 				))}
 			</ul>
-			<hr className={RULE} />
-			<div className="py:1">
-				<a href={tech.website} target="_blank" rel="noreferrer" className={ROW}>
-					<Symbol name="language" className="d:b fs:0 w:5 h:5 c:panel-muted" />
-					<span className="fg:1 min-w:0 o:h to:e ws:nw">Open {site}</span>
-					<Symbol
-						name="open_in_new"
-						className="d:b fs:0 w:4 h:4 c:panel-muted"
-					/>
-				</a>
+			<div className="p:4">
+				<CopyEvidence tech={tech} />
 			</div>
 		</div>
 	);
@@ -173,7 +218,7 @@ export function Proof({ tech }: { tech: Found }) {
 			ref={box}
 			aria-label={`How Prisharp knows ${tech.name}`}
 			aria-live="polite"
-			className="p:r w:80 max-w:100% max-h:100% oy:auto ob:c br:lg bg:panel c:panel-ink ff:d fs:sm bw:1 bc:transparent bs-o:lg"
+			className="p:r w:88 max-w:100% max-h:100% oy:auto ob:c bg:raised c:label ff:mono fs:sm bw:1 bc:line bs-o:pop"
 		>
 			<div ref={content}>
 				<Detail tech={tech} all={[]} focus={false} />

@@ -10,7 +10,7 @@ const home = document.getElementById("home");
 const host = document.getElementById("host");
 const status = document.getElementById("status");
 const found = document.getElementById("found");
-const list = document.getElementById("list");
+const copies = document.getElementById("copies");
 const copy = document.getElementById("copy");
 const copyMarkdown = document.getElementById("copy-markdown");
 const detail = document.getElementById("detail");
@@ -19,9 +19,20 @@ const count = document.getElementById("count");
 const countTrack = document.getElementById("count-track");
 const countKnob = document.getElementById("count-knob");
 
-// A row of the panel, the same for a technology, a link and an action.
+// A row of the panel, the same for a technology, a link and a setting.
 const ROW =
-	"d:f ai:c g:3 w:100% h:10 px:4 bw:0 bg:transparent c:ink ff:d fs:sm ta:l td:none c:p h:bg:hover fv:os:s fv:ow:2 fv:oo:-2 fv:oc:focus";
+	"d:f ai:c g:3 w:100% h:9 px:4 bw:0 bg:transparent c:label ff:mono fs:sm ta:l td:none c:p h:bg:paper fv:os:s fv:ow:2 fv:oo:-2 fv:oc:focus";
+
+// prisharp.com's secondary button: a raised key with a thin rim.
+const BUTTON =
+	"d:f ai:c jc:c g:2 h:9 px:3 bw:1 bc:rim bg:raised bs-o:key c:label ff:mono fs:xs ws:nw c:p h:bg:well a:s:98 tp:a tdu:150 @prm:tp:none fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus";
+
+// A square button with only an icon, such as Back and Close.
+const ICON =
+	"d:f ai:c jc:c fs:0 w:8 h:8 bw:0 bg:transparent c:hint c:p h:bg:paper h:c:label fv:os:s fv:ow:2 fv:oc:focus";
+
+// A version, set apart from the name in the accent.
+const VERSION = "fs:0 py:0 px:1 bw:1 bc:accent/40 c:accent fs:xs lh:4 ws:nw";
 
 const hostOf = (url) => new URL(url).hostname.replace(/^www\./, "");
 
@@ -32,6 +43,12 @@ for (const element of document.querySelectorAll("[data-symbol]")) {
 }
 for (const element of document.querySelectorAll("[data-row]")) {
 	element.className = ROW;
+}
+for (const element of document.querySelectorAll("[data-button]")) {
+	element.className = `${BUTTON} ${element.className}`.trim();
+}
+for (const element of document.querySelectorAll("[data-icon]")) {
+	element.className = ICON;
 }
 for (const button of document.querySelectorAll("[data-close]")) {
 	button.addEventListener("click", () => window.close());
@@ -46,7 +63,7 @@ function icon(tech, size) {
 	const name = tech.icon ?? tech.id;
 	const letter = () => {
 		const span = document.createElement("span");
-		span.className = `${size} d:f ai:c jc:c fs:0 br:sm bg:well fs:xs fw:600 c:muted`;
+		span.className = `${size} d:f ai:c jc:c fs:0 bg:well ff:sans fs:md c:hint`;
 		span.textContent = tech.name[0];
 		return span;
 	};
@@ -103,7 +120,7 @@ function morph(change, from = "translateY(4px)") {
 }
 
 const copied = (button, text) => {
-	const caption = button.querySelector(".fg\\:1");
+	const caption = button.querySelector("[data-caption]");
 	const original = caption.textContent;
 	void navigator.clipboard.writeText(text).then(() => {
 		caption.textContent = "Copied";
@@ -121,19 +138,19 @@ const brings = (tech, all) =>
 
 function evidenceItem({ kind, text, value }) {
 	const item = document.createElement("li");
-	item.className = "d:f ai:fs g:2 py:2 px:4";
+	item.className = "d:f ai:fs g:3 py:2 px:4";
 
 	const mark = document.createElement("span");
-	mark.className = "d:f fs:0 w:4 h:4 mt:1 c:ok";
+	mark.className = "d:f fs:0 w:4 h:4 mt:1 c:accent";
 	mark.append(symbol("check", "d:b w:100% h:100%"));
 
 	const body = document.createElement("span");
 	body.className = "d:f fd:c g:1 fg:1 min-w:0";
 	const code = document.createElement("code");
-	code.className = "as:fs py:0 px:1 br:sm bg:well ff:m fs:xs wb:ba";
+	code.className = "as:fs py:0 px:1 bg:well ff:mono fs:xs wb:ba";
 	code.textContent = text;
 	const meta = document.createElement("span");
-	meta.className = "fs:xs c:muted wb:ba";
+	meta.className = "fs:xs c:hint wb:ba";
 	meta.textContent = value === undefined ? kind : `${kind} · ${value}`;
 	body.append(code, meta);
 
@@ -143,24 +160,22 @@ function evidenceItem({ kind, text, value }) {
 
 function open(tech, all, row) {
 	document.getElementById("name").textContent = tech.name;
-	document.getElementById("badge").replaceChildren(icon(tech, "w:7 h:7"));
+	document.getElementById("category").textContent = tech.category;
+	document.getElementById("badge").replaceChildren(icon(tech, "w:8 h:8"));
+
+	const version = document.getElementById("version");
+	version.hidden = !tech.version;
+	version.className = VERSION;
+	version.textContent = tech.version ?? "";
+	version.setAttribute("aria-label", `Version ${tech.version}`);
+
 	const implied = brings(tech, all);
-	// the technology by name, then what it is: its category and version, and
-	// on a line of its own what it brings in
-	document.getElementById("headline").textContent = tech.name;
-	const lines = [
-		[tech.category, tech.version && `Version ${tech.version}`]
-			.filter(Boolean)
-			.join(" · "),
-		implied.length > 0 && `Brings in ${implied.join(", ")}`,
-	].filter(Boolean);
-	document.getElementById("subline").replaceChildren(
-		...lines.map((text) => {
-			const line = document.createElement("span");
-			line.className = "d:b";
-			line.textContent = text;
-			return line;
-		}),
+	const bringsIn = document.getElementById("brings");
+	bringsIn.hidden = implied.length === 0;
+	bringsIn.textContent = `Brings in ${implied.join(", ")}`;
+
+	document.getElementById("evidence-count").textContent = String(
+		tech.evidence.length,
 	);
 	document
 		.getElementById("evidence")
@@ -168,8 +183,8 @@ function open(tech, all, row) {
 
 	const website = document.getElementById("website");
 	website.href = tech.website;
-	document.getElementById("website-label").textContent =
-		`Open ${hostOf(tech.website)}`;
+	document.getElementById("website-label").textContent = hostOf(tech.website);
+	website.setAttribute("aria-label", `Open ${hostOf(tech.website)}`);
 
 	const copyEvidence = document.getElementById("copy-evidence");
 	copyEvidence.onclick = () =>
@@ -209,37 +224,41 @@ function open(tech, all, row) {
 }
 
 // A technology's row opens its evidence. On hover or focus, a link to its
-// site takes the category's place, so the row is the same as any other at
-// rest and the site is one click away.
+// site shows by the chevron, so the row is quiet at rest and the site is one
+// click away.
 const VISIT =
-	"p:a t:1 r:10 d:f ai:c jc:c w:8 h:8 br:9999 c:muted td:none h:bg:line fv:os:s fv:ow:2 fv:oc:focus";
+	"p:a t:1 r:9 d:f ai:c jc:c w:8 h:8 bg:paper c:hint td:none h:c:accent fv:os:s fv:ow:2 fv:oc:focus";
 
 function row(tech, all) {
 	const item = document.createElement("li");
-	item.className = "p:r d:b h:bg:hover";
+	item.className = "p:r d:b h:bg:paper fw:bg:paper";
 	item.dataset.tech = "";
 
 	const button = document.createElement("button");
 	button.type = "button";
-	button.className = ROW.replace(" h:bg:hover", "");
+	button.className = ROW.replace(" h:bg:paper", "");
 	button.setAttribute(
 		"aria-label",
 		`${label(tech)}, ${tech.category}. Show the evidence`,
 	);
 
 	const name = document.createElement("span");
-	name.className = "fg:1 min-w:0 o:h to:e ws:nw";
+	name.className = "min-w:0 o:h to:e ws:nw";
 	name.textContent = tech.name;
-	// the category only: the version is on the technology's own page
-	const meta = document.createElement("span");
-	meta.className = "fs:xs c:muted ws:nw";
-	meta.dataset.meta = "";
-	meta.textContent = tech.category;
+	const spacer = document.createElement("span");
+	spacer.className = "fg:1";
 	const chevron = document.createElement("span");
-	chevron.className = "d:f fs:0 w:4 h:4 c:muted";
-	chevron.append(symbol("chevron_right", "d:b w:100% h:100%"));
+	chevron.className = "d:f fs:0 w:4 h:4 c:hint";
+	chevron.append(symbol("chevron", "d:b w:100% h:100%"));
 
-	button.append(icon(tech, "w:5 h:5"), name, meta, chevron);
+	const parts = [icon(tech, "w:5 h:5"), name];
+	if (tech.version) {
+		const version = document.createElement("span");
+		version.className = VERSION;
+		version.textContent = tech.version;
+		parts.push(version);
+	}
+	button.append(...parts, spacer, chevron);
 	button.addEventListener("click", () => open(tech, all, button));
 
 	const site = hostOf(tech.website);
@@ -251,23 +270,55 @@ function row(tech, all) {
 	visit.dataset.visit = "";
 	visit.title = `Open ${site}`;
 	visit.setAttribute("aria-label", `Open ${site}`);
-	visit.append(symbol("open_in_new", "d:b w:4 h:4"));
+	visit.append(symbol("external", "d:b w:4 h:4"));
 
 	item.append(button, visit);
 	return item;
 }
 
+// The technologies in groups, one per category, in the order detect() sorts
+// them: frameworks first, then libraries, styling, hosting and the rest.
+function groups(all) {
+	const byCategory = Map.groupBy(all, (tech) => tech.category);
+	return [...byCategory].map(([category, techs], index) => {
+		const section = document.createElement("section");
+		const id = `group-${index}`;
+		section.setAttribute("aria-labelledby", id);
+
+		const heading = document.createElement("h2");
+		heading.id = id;
+		heading.className = "d:f jc:sb m:0 pt:2 pb:1 px:4 fs:xs fw:400 c:hint";
+		const title = document.createElement("span");
+		title.textContent = category;
+		const amount = document.createElement("span");
+		amount.textContent = String(techs.length);
+		amount.setAttribute("aria-hidden", "true");
+		heading.append(title, amount);
+
+		const list = document.createElement("ul");
+		list.className = "m:0 p:0";
+		list.append(...techs.map((tech) => row(tech, all)));
+
+		section.append(heading, list);
+		return section;
+	});
+}
+
 function show(all, hostname) {
 	host.textContent = hostname;
-	status.textContent =
-		all.length === 1
-			? "Built with 1 technology"
-			: `Built with ${all.length} technologies`;
+	// "Built with 7 technologies", the number in the accent
+	const number = document.createElement("span");
+	number.className = "c:accent fw:600";
+	number.textContent = String(all.length);
+	status.replaceChildren(
+		"Built with ",
+		number,
+		all.length === 1 ? " technology" : " technologies",
+	);
 	morph(() => {
-		list.replaceChildren(...all.map((tech) => row(tech, all)));
+		found.replaceChildren(...groups(all));
 		found.hidden = false;
-		copy.hidden = false;
-		copyMarkdown.hidden = false;
+		copies.hidden = false;
 	});
 	copy.addEventListener("click", () => copied(copy, all.map(label).join("\n")));
 	copyMarkdown.addEventListener("click", () =>
@@ -281,10 +332,11 @@ function paint(on) {
 	count.setAttribute("aria-checked", String(on));
 	countTrack.className = countTrack.className
 		.replace(/ jc:\S+/, on ? " jc:fe" : " jc:fs")
-		.replace(/ bg:\S+/, on ? " bg:focus" : " bg:line");
+		.replace(/ bc:\S+/, on ? " bc:accent" : " bc:rim")
+		.replace(/ bg:\S+/, on ? " bg:accent" : " bg:well");
 	countKnob.className = countKnob.className.replace(
 		/ bg:\S+/,
-		on ? " bg:surface" : " bg:muted",
+		on ? " bg:on-fill" : " bg:hint",
 	);
 }
 

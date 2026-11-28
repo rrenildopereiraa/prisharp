@@ -23,6 +23,7 @@ const SHIPPED = [
 	"popup.css",
 	"src",
 	"icons",
+	"fonts",
 ];
 
 const walk = (path) =>

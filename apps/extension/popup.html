@@ -7,47 +7,55 @@
 		<link rel="stylesheet" href="src/base.css" />
 		<script type="module" src="src/popup.js"></script>
 	</head>
-	<!-- Drawn like Chrome's site information panel: a title, rows that open a
-	     page of their own, and quiet actions at the bottom. -->
-	<body class="m:0 w:80 bg:surface c:ink ff:d fs:sm">
+	<!-- Drawn in prisharp.com's style: its serif for names, its mono for the
+	     rest, thin lines between parts and square corners. Classes for the
+	     repeated rows, buttons and icon buttons are set in src/popup.js. -->
+	<body class="m:0 w:88 bg:raised c:label ff:mono fs:sm">
 		<main>
 			<section id="home" aria-labelledby="host">
-				<header class="d:f ai:fs g:3 pt:4 pb:3 pl:4 pr:2">
-					<div class="fg:1 min-w:0">
-						<h1 id="host" class="m:0 fs:md fw:400 o:h to:e ws:nw">Prisharp</h1>
-						<p id="status" role="status" class="m:0 mt:1 fs:xs c:muted">
-							Reading the page…
-						</p>
-					</div>
-					<button
-						type="button"
-						data-close
-						aria-label="Close"
-						class="d:f ai:c jc:c fs:0 w:8 h:8 br:9999 bw:0 bg:transparent c:muted h:bg:hover c:p fv:os:s fv:ow:2 fv:oc:focus"
-					>
-						<span data-symbol="close" class="d:f w:5 h:5"></span>
+				<header class="d:f ai:c jc:sb h:12 pl:4 pr:2 bbw:1 bbc:line">
+					<span class="d:f ai:c g:2 us:none">
+						<svg
+							viewBox="0 0 40 48"
+							aria-hidden="true"
+							class="d:b w:4 h:5 c:logo"
+						>
+							<g fill="currentColor">
+								<path d="m0 14.5264v18.9473l17.8947-12.2437v-18.94741z" />
+								<path d="m40 14.5263v18.9474l-17.8947-12.2438v-18.94737z" />
+							</g>
+							<g fill="currentColor" class="o:60">
+								<path d="m0 33.4737v-18.9474l17.8947 12.2438v18.9474z" />
+								<path d="m40 33.4737v-18.9474l-17.8947 12.2438v18.9474z" />
+							</g>
+						</svg>
+						<span class="ff:sans fs:xl ls:2">Prisharp</span>
+					</span>
+					<button type="button" data-close data-icon aria-label="Close">
+						<span data-symbol="close" class="d:f w:4 h:4"></span>
 					</button>
 				</header>
-				<hr class="m:0 h:px bw:0 bg:line" />
-				<div id="found" hidden>
-					<ul id="list" class="m:0 py:1 px:0"></ul>
-					<hr class="m:0 h:px bw:0 bg:line" />
+				<div class="px:4 pt:4 pb:4 bbw:1 bbc:line">
+					<h1 id="host" class="m:0 ff:sans fs:3xl fw:400 lh:1 o:h to:e ws:nw">
+						Prisharp
+					</h1>
+					<p id="status" role="status" class="m:0 mt:2 fs:xs c:hint">
+						Reading the page…
+					</p>
+				</div>
+				<!-- the technologies, one group per category -->
+				<div id="found" hidden class="pb:2 bbw:1 bbc:line"></div>
+				<div id="copies" hidden class="d:g gtc:2 g:2 p:4 bbw:1 bbc:line">
+					<button id="copy" type="button" data-button>
+						<span data-symbol="copy" class="d:f fs:0 w:4 h:4"></span>
+						<span data-caption>Copy list</span>
+					</button>
+					<button id="copy-markdown" type="button" data-button>
+						<span data-symbol="markdown" class="d:f fs:0 w:4 h:4"></span>
+						<span data-caption>Copy as Markdown</span>
+					</button>
 				</div>
 				<div class="py:1">
-					<button id="copy" type="button" hidden data-row>
-						<span
-							data-symbol="content_copy"
-							class="d:f fs:0 w:5 h:5 c:muted"
-						></span>
-						<span class="fg:1">Copy list</span>
-					</button>
-					<button id="copy-markdown" type="button" hidden data-row>
-						<span
-							data-symbol="content_copy"
-							class="d:f fs:0 w:5 h:5 c:muted"
-						></span>
-						<span class="fg:1">Copy as Markdown</span>
-					</button>
 					<!-- Off until turned on, and turning it on asks for access to every
 					     site: the only way to count before anyone clicks. -->
 					<button
@@ -59,15 +67,15 @@
 						data-row
 					>
 						<span
-							data-symbol="counter_1"
-							class="d:f fs:0 w:5 h:5 c:muted"
+							data-symbol="count"
+							class="d:f fs:0 w:5 h:5 p:calc(0.125rem) c:hint"
 						></span>
 						<span class="fg:1">Count on the toolbar icon</span>
 						<span
 							id="count-track"
-							class="d:f ai:c jc:fs fs:0 w:9 h:5 px:1 br:9999 bg:line"
+							class="d:f ai:c jc:fs fs:0 w:9 h:5 px:1 bw:1 bc:rim bg:well tp:a tdu:150 @prm:tp:none"
 						>
-							<span id="count-knob" class="d:b w:3 h:3 br:9999 bg:muted"></span>
+							<span id="count-knob" class="d:b w:3 h:3 bg:hint"></span>
 						</span>
 					</button>
 					<a
@@ -76,74 +84,78 @@
 						rel="noreferrer"
 						data-row
 					>
-						<span data-symbol="info" class="d:f fs:0 w:5 h:5 c:muted"></span>
-						<span class="fg:1">How Prisharp detects</span>
 						<span
-							data-symbol="open_in_new"
-							class="d:f fs:0 w:4 h:4 c:muted"
+							data-symbol="info"
+							class="d:f fs:0 w:5 h:5 p:calc(0.125rem) c:hint"
 						></span>
+						<span class="fg:1">How Prisharp detects</span>
+						<span data-symbol="external" class="d:f fs:0 w:4 h:4 c:hint"></span>
 					</a>
 				</div>
 			</section>
 
 			<section id="detail" hidden aria-labelledby="name">
-				<header class="d:f ai:c g:1 py:2 px:2">
+				<header class="d:f ai:c jc:sb h:12 px:2 bbw:1 bbc:line">
 					<button
 						id="back"
 						type="button"
+						data-icon
 						aria-label="Back to the list"
-						class="d:f ai:c jc:c fs:0 w:8 h:8 br:9999 bw:0 bg:transparent c:muted h:bg:hover c:p fv:os:s fv:ow:2 fv:oc:focus"
 					>
-						<span data-symbol="arrow_back" class="d:f w:5 h:5"></span>
+						<span data-symbol="back" class="d:f w:4 h:4"></span>
 					</button>
-					<h2
-						id="name"
-						class="m:0 fg:1 min-w:0 fs:md fw:400 o:h to:e ws:nw"
-					></h2>
-					<button
-						type="button"
-						data-close
-						aria-label="Close"
-						class="d:f ai:c jc:c fs:0 w:8 h:8 br:9999 bw:0 bg:transparent c:muted h:bg:hover c:p fv:os:s fv:ow:2 fv:oc:focus"
-					>
-						<span data-symbol="close" class="d:f w:5 h:5"></span>
+					<p
+						id="category"
+						class="m:0 fg:1 min-w:0 px:2 fs:xs c:hint o:h to:e ws:nw"
+					></p>
+					<button type="button" data-close data-icon aria-label="Close">
+						<span data-symbol="close" class="d:f w:4 h:4"></span>
 					</button>
 				</header>
-				<hr class="m:0 h:px bw:0 bg:line" />
-				<div class="d:f ai:c g:3 p:4">
+				<div class="d:f ai:c g:4 p:4 bbw:1 bbc:line">
 					<span
 						id="badge"
-						class="d:f ai:c jc:c fs:0 w:11 h:11 br:lg bg:well"
+						class="d:f ai:c jc:c fs:0 w:14 h:14 bw:1 bc:line bg:paper"
 					></span>
-					<div class="min-w:0">
-						<p id="headline" class="m:0"></p>
-						<p id="subline" class="m:0 mt:1 fs:xs c:muted"></p>
+					<div class="d:f fd:c g:1 min-w:0">
+						<span class="d:f ai:b g:2 min-w:0">
+							<h2
+								id="name"
+								class="m:0 min-w:0 ff:sans fs:xxl fw:400 lh:1 o:h to:e ws:nw"
+							></h2>
+							<span id="version" hidden></span>
+						</span>
+						<a
+							id="website"
+							href="#"
+							target="_blank"
+							rel="noreferrer"
+							class="d:if ai:c g:1 as:fs max-w:100% fs:xs c:accent td:none h:td:u fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus"
+						>
+							<span id="website-label" class="o:h to:e ws:nw"></span>
+							<span data-symbol="external" class="d:f fs:0 w:3 h:3"></span>
+						</a>
+						<p id="brings" hidden class="m:0 fs:xs c:hint"></p>
 					</div>
 				</div>
-				<hr class="m:0 h:px bw:0 bg:line" />
-				<h3 class="m:0 pt:3 pb:1 px:4 fs:xs fw:400 c:muted">
-					How Prisharp knows
+				<h3
+					id="evidence-title"
+					class="d:f jc:sb m:0 pt:3 pb:1 px:4 fs:xs fw:400 c:hint"
+				>
+					<span>How Prisharp knows</span>
+					<span id="evidence-count"></span>
 				</h3>
-				<ul id="evidence" class="m:0 pt:0 pb:2 px:0"></ul>
-				<hr class="m:0 h:px bw:0 bg:line" />
-				<div class="py:1">
-					<a id="website" href="#" target="_blank" rel="noreferrer" data-row>
-						<span
-							data-symbol="language"
-							class="d:f fs:0 w:5 h:5 c:muted"
-						></span>
-						<span id="website-label" class="fg:1 min-w:0 o:h to:e ws:nw"></span>
-						<span
-							data-symbol="open_in_new"
-							class="d:f fs:0 w:4 h:4 c:muted"
-						></span>
-					</a>
-					<button id="copy-evidence" type="button" data-row>
-						<span
-							data-symbol="content_copy"
-							class="d:f fs:0 w:5 h:5 c:muted"
-						></span>
-						<span class="fg:1">Copy evidence</span>
+				<!-- Each signal on a row of its own, with room at its end for an
+				     action on that signal. -->
+				<ul
+					id="evidence"
+					aria-labelledby="evidence-title"
+					class="m:0 pt:0 pb:2 px:0 bbw:1 bbc:line"
+				></ul>
+				<div class="p:4">
+					<button id="copy-evidence" type="button" data-button class="w:100%">
+						<span data-symbol="copy" class="d:f fs:0 w:4 h:4"></span>
+						<span data-caption>Copy evidence</span>
 					</button>
 				</div>
 			</section>

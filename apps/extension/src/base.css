@@ -1,3 +1,21 @@
+/* prisharp.com's two fonts, shipped inside the extension so the popup asks
+   no other server for anything. Latin only; other scripts fall back to the
+   system's. Both are under the SIL Open Font License (fonts/*-OFL.txt). */
+@font-face {
+	font-family: "Geist Mono Variable";
+	font-style: normal;
+	font-display: block;
+	font-weight: 100 900;
+	src: url(../fonts/geist-mono.woff2) format("woff2-variations");
+}
+@font-face {
+	font-family: "Instrument Serif";
+	font-style: normal;
+	font-display: block;
+	font-weight: 400;
+	src: url(../fonts/instrument-serif.woff2) format("woff2");
+}
+
 /* Loaded after popup.css, so `hidden` wins over a Yumma display class. */
 [hidden] {
 	display: none;
@@ -9,16 +27,12 @@ img[data-logo] {
 	object-fit: contain;
 }
 
-/* A row's link to the technology's site takes the category's place while
-   the row is hovered or has focus, so the list stays quiet at rest. */
+/* A row's link to the technology's site shows while the row is hovered or
+   has focus, so the list stays quiet at rest. */
 [data-visit] {
 	opacity: 0;
 }
 [data-tech]:hover [data-visit],
 [data-tech]:focus-within [data-visit] {
 	opacity: 1;
-}
-[data-tech]:hover [data-meta],
-[data-tech]:focus-within [data-meta] {
-	visibility: hidden;
 }

@@ -18,7 +18,11 @@ The popup's **Count on the toolbar icon** switch puts the number of technologies
 
 ## The popup
 
-The popup copies the look of Chrome's site information panel: the system font, Chrome's light and dark surfaces, flat rows and [Material Symbols](https://fonts.google.com/icons) (Apache 2.0), the icon set Chrome draws its own panels with. Its colors live in [`yummacss.config.mjs`](yummacss.config.mjs). The toolbar icon and the extension's icon on `chrome://extensions` are the Prisharp mark from prisharp.com ([`apps/web/public/icon.svg`](../web/public/icon.svg)): on light toolbars in the site's accent over the mark's sky, which holds up at 16px better than the sky alone, and on dark ones in the lighter tint the site uses in dark mode.
+The popup is drawn in prisharp.com's own style, the same in Chrome and Firefox: Instrument Serif for the site and each technology's name, Geist Mono for the rest, the site's cool greys and its one cobalt accent, light and dark, with thin lines between parts and square corners. Its colors live in [`yummacss.config.mjs`](yummacss.config.mjs), copied from [`apps/web/yummacss.config.mjs`](../web/yummacss.config.mjs) under the same names. The two fonts ship in [`fonts`](fonts) (SIL Open Font License, Latin only), and its icons are [Tabler Icons](https://tabler.io/icons) (MIT), the set prisharp.com uses, in [`src/symbols.js`](src/symbols.js). The home page draws the popup's evidence page with the same classes and icons ([`apps/web/src/components/panel.tsx`](../web/src/components/panel.tsx)).
+
+The popup opens on the site's name and how many technologies it is built with, then lists them in groups, one per category. A version shows next to its technology's name. Opening one shows the evidence for it, with a link to its site and a button to copy the evidence; Back or Escape returns to the list.
+
+The toolbar icon and the extension's icon on `chrome://extensions` are the Prisharp mark from prisharp.com ([`apps/web/public/icon.svg`](../web/public/icon.svg)): on light toolbars in the site's accent over the mark's sky, which holds up at 16px better than the sky alone, and on dark ones in the lighter tint the site uses in dark mode.
 
 ## How detection works
 
@@ -76,7 +80,7 @@ A technology without a logo in `icons/tech` shows its first letter. The popup ne
 
 ## Develop
 
-The popup is styled with [Yumma CSS](https://yummacss.com), with Yumma UI's theme and recipes: its theme comes from `apps/web/yummacss.config.mjs`, so the popup and prisharp.com always match.
+The popup is styled with [Yumma CSS](https://yummacss.com), in the colors and fonts of `apps/web/yummacss.config.mjs`. A color changed there changes here by hand.
 
 ```bash
 pnpm build      # popup.css from the classes in popup.html and src
