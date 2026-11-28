@@ -40,7 +40,7 @@ export const categories = [
 	"Server framework",
 	"Website builder",
 	"CMS",
-	"AI app builder",
+	"AI builder",
 	"UI framework",
 	"JS library",
 	"UI widget",
@@ -50,17 +50,17 @@ export const categories = [
 	"Icon set",
 	"Font service",
 	"Build tool",
-	"Hosting",
+	"Hosting platform",
 	"CDN",
 	"Web server",
-	"Backend service",
-	"Auth",
+	"Backend",
+	"Authentication",
 	"Payments",
 	"Analytics",
 	"Monitoring",
 	"Ads & tags",
-	"Search",
-	"Video",
+	"Search engine",
+	"Video player",
 	"Maps",
 	"Bot protection",
 	"Cookie consent",
@@ -574,12 +574,12 @@ export const technologies = [
 		category: "CMS",
 		signals: [{ resource: /cdn\.sanity\.io\/(?:images|files)\// }],
 	},
-	// AI app builder
+	// AI builder
 	{
 		id: "v0",
 		name: "v0",
 		website: "https://v0.app",
-		category: "AI app builder",
+		category: "AI builder",
 		// the generator its Next.js layout sets
 		signals: [{ meta: ["generator", /^v0\.(?:app|dev)$/i] }],
 	},
@@ -587,7 +587,7 @@ export const technologies = [
 		id: "lovable",
 		name: "Lovable",
 		website: "https://lovable.dev",
-		category: "AI app builder",
+		category: "AI builder",
 		signals: [
 			// the tags its template's index.html ships
 			{ meta: ["author", /^Lovable$/] },
@@ -604,7 +604,7 @@ export const technologies = [
 		id: "bolt",
 		name: "Bolt",
 		website: "https://bolt.new",
-		category: "AI app builder",
+		category: "AI builder",
 		signals: [
 			{ url: /^https?:\/\/[\w-]+\.bolt\.host\//, label: "A site on bolt.host" },
 		],
@@ -613,7 +613,7 @@ export const technologies = [
 		id: "replit",
 		name: "Replit",
 		website: "https://replit.com",
-		category: "AI app builder",
+		category: "AI builder",
 		signals: [
 			// the banner script its templates keep in production builds
 			{ resource: /replit\.com\/public\/js\/replit-dev-banner\.js/ },
@@ -627,7 +627,7 @@ export const technologies = [
 		id: "base44",
 		name: "Base44",
 		website: "https://base44.com",
-		category: "AI app builder",
+		category: "AI builder",
 		signals: [
 			// its SDK calls the app's API on base44.app
 			{ resource: /\/\/base44\.app\/api\// },
@@ -1705,12 +1705,12 @@ export const technologies = [
 		category: "Build tool",
 		signals: [{ jsPrefix: "parcelRequire" }],
 	},
-	// Hosting
+	// Hosting platform
 	{
 		id: "vercel",
 		name: "Vercel",
 		website: "https://vercel.com",
-		category: "Hosting",
+		category: "Hosting platform",
 		signals: [
 			{ header: ["x-vercel-id", /./] },
 			{ header: ["server", /^vercel$/i] },
@@ -1720,7 +1720,7 @@ export const technologies = [
 		id: "netlify",
 		name: "Netlify",
 		website: "https://www.netlify.com",
-		category: "Hosting",
+		category: "Hosting platform",
 		signals: [
 			{ header: ["x-nf-request-id", /./] },
 			{ header: ["server", /^netlify$/i] },
@@ -1730,7 +1730,7 @@ export const technologies = [
 		id: "cloudflare",
 		name: "Cloudflare",
 		website: "https://www.cloudflare.com",
-		category: "Hosting",
+		category: "Hosting platform",
 		signals: [
 			{ header: ["cf-ray", /./] },
 			{ header: ["server", /^cloudflare$/i] },
@@ -1740,7 +1740,7 @@ export const technologies = [
 		id: "github",
 		name: "GitHub Pages",
 		website: "https://pages.github.com",
-		category: "Hosting",
+		category: "Hosting platform",
 		// github.com sends the same server header as the sites it hosts
 		unless: [{ url: /^https?:\/\/(?:[\w-]+\.)*github\.com\// }],
 		signals: [{ header: ["server", /^GitHub\.com$/i] }],
@@ -1749,21 +1749,21 @@ export const technologies = [
 		id: "fly",
 		name: "Fly.io",
 		website: "https://fly.io",
-		category: "Hosting",
+		category: "Hosting platform",
 		signals: [{ header: ["fly-request-id", /./] }],
 	},
 	{
 		id: "render",
 		name: "Render",
 		website: "https://render.com",
-		category: "Hosting",
+		category: "Hosting platform",
 		signals: [{ header: ["rndr-id", /./] }],
 	},
 	{
 		id: "heroku",
 		name: "Heroku",
 		website: "https://www.heroku.com",
-		category: "Hosting",
+		category: "Hosting platform",
 		// its routers: vegur, the newer heroku-router, and Private Spaces'
 		signals: [{ header: ["via", /\b(?:vegur|heroku-router|spaces-router)\b/] }],
 	},
@@ -1772,7 +1772,7 @@ export const technologies = [
 		name: "Deno Deploy",
 		website: "https://deno.com/deploy",
 		icon: "deno",
-		category: "Hosting",
+		category: "Hosting platform",
 		signals: [
 			{ header: ["x-deno-trace-id", /./] },
 			{ header: ["via", /deno-cluster\.net/] },
@@ -1783,7 +1783,7 @@ export const technologies = [
 		name: "Platform.sh",
 		website: "https://upsun.com",
 		icon: "platformdotsh",
-		category: "Hosting",
+		category: "Hosting platform",
 		// Upsun, as it is now named, sends the same headers
 		signals: [
 			{ header: ["x-platform-router", /./] },
@@ -1794,14 +1794,14 @@ export const technologies = [
 		id: "kinsta",
 		name: "Kinsta",
 		website: "https://kinsta.com",
-		category: "Hosting",
+		category: "Hosting platform",
 		signals: [{ header: ["x-kinsta-cache", /./] }],
 	},
 	{
 		id: "railway",
 		name: "Railway",
 		website: "https://railway.com",
-		category: "Hosting",
+		category: "Hosting platform",
 		signals: [
 			{ header: ["x-railway-request-id", /./] },
 			{ header: ["x-railway-edge", /./] },
@@ -1811,7 +1811,7 @@ export const technologies = [
 		id: "aws",
 		name: "Amazon Web Services",
 		website: "https://aws.amazon.com",
-		category: "Hosting",
+		category: "Hosting platform",
 		signals: [
 			// Elastic Load Balancing names itself: awselb/2.0 for an
 			// Application Load Balancer, awselb for a Classic one
@@ -1824,7 +1824,7 @@ export const technologies = [
 		id: "amazon-s3",
 		name: "Amazon S3",
 		website: "https://aws.amazon.com/s3",
-		category: "Hosting",
+		category: "Hosting platform",
 		icon: "aws",
 		implies: ["aws"],
 		signals: [
@@ -1836,7 +1836,7 @@ export const technologies = [
 		id: "hostinger",
 		name: "Hostinger",
 		website: "https://www.hostinger.com",
-		category: "Hosting",
+		category: "Hosting platform",
 		// Hostinger's own CDN, in front of the sites it hosts
 		signals: [
 			{ header: ["server", /^hcdn$/] },
@@ -1847,7 +1847,7 @@ export const technologies = [
 		id: "godaddy",
 		name: "GoDaddy",
 		website: "https://www.godaddy.com",
-		category: "Hosting",
+		category: "Hosting platform",
 		// Websites + Marketing, GoDaddy's site builder, serves its images and
 		// scripts from GoDaddy's own wsimg.com
 		signals: [
@@ -1973,27 +1973,27 @@ export const technologies = [
 			{ header: ["x-varnish", /^\d+(?: \d+)?$/] },
 		],
 	},
-	// Backend service
+	// Backend
 	{
 		id: "supabase",
 		name: "Supabase",
 		website: "https://supabase.com",
-		category: "Backend service",
+		category: "Backend",
 		signals: [{ resource: /\.supabase\.co\// }],
 	},
 	{
 		id: "firebase",
 		name: "Firebase",
 		website: "https://firebase.google.com",
-		category: "Backend service",
+		category: "Backend",
 		signals: [{ resource: /gstatic\.com\/firebasejs|\.firebaseapp\.com\// }],
 	},
-	// Auth
+	// Authentication
 	{
 		id: "clerk",
 		name: "Clerk",
 		website: "https://clerk.com",
-		category: "Auth",
+		category: "Authentication",
 		signals: [
 			{ js: "Clerk.version", version: true },
 			{ resource: /clerk\.[\w.-]+\/npm\/@clerk/ },
@@ -2003,7 +2003,7 @@ export const technologies = [
 		id: "authjs",
 		name: "Auth.js",
 		website: "https://authjs.dev",
-		category: "Auth",
+		category: "Authentication",
 		// the session its client fetches, at its default base path
 		signals: [{ resource: /\/api\/auth\/session(?:\?|$)/ }],
 	},
@@ -2011,7 +2011,7 @@ export const technologies = [
 		id: "okta",
 		name: "Okta",
 		website: "https://www.okta.com",
-		category: "Auth",
+		category: "Authentication",
 		signals: [
 			{
 				resource:
@@ -2025,7 +2025,7 @@ export const technologies = [
 		name: "Amazon Cognito",
 		website: "https://aws.amazon.com/cognito",
 		icon: "aws",
-		category: "Auth",
+		category: "Authentication",
 		signals: [
 			{
 				resource:
@@ -2039,7 +2039,7 @@ export const technologies = [
 		website:
 			"https://www.microsoft.com/security/business/identity-access/microsoft-entra-id",
 		icon: "microsoft",
-		category: "Auth",
+		category: "Authentication",
 		signals: [
 			{
 				resource:
@@ -2051,7 +2051,7 @@ export const technologies = [
 		id: "auth0",
 		name: "Auth0",
 		website: "https://auth0.com",
-		category: "Auth",
+		category: "Authentication",
 		signals: [
 			// a tenant's own domain, which the SDK calls to sign in and refresh
 			{ resource: /\/\/[\w.-]+\.auth0\.com\// },
@@ -2061,7 +2061,7 @@ export const technologies = [
 		id: "google-sign-in",
 		name: "Sign in with Google",
 		website: "https://developers.google.com/identity/gsi/web",
-		category: "Auth",
+		category: "Authentication",
 		icon: "googlesignin",
 		signals: [{ resource: /accounts\.google\.com\/gsi\/client/ }],
 	},
@@ -2069,7 +2069,7 @@ export const technologies = [
 		id: "apple-sign-in",
 		name: "Sign in with Apple",
 		website: "https://developer.apple.com/sign-in-with-apple",
-		category: "Auth",
+		category: "Authentication",
 		icon: "apple",
 		signals: [{ resource: /appleid\.cdn-apple\.com\/appleauth\// }],
 	},
@@ -2471,19 +2471,19 @@ export const technologies = [
 			{ resource: /snap\.licdn\.com\/li\.lms-analytics\/insight/ },
 		],
 	},
-	// Search
+	// Search engine
 	{
 		id: "algolia",
 		name: "Algolia",
 		website: "https://www.algolia.com",
-		category: "Search",
+		category: "Search engine",
 		signals: [{ resource: /\.algolia(?:net)?\.(?:com|net)\// }],
 	},
 	{
 		id: "docsearch",
 		name: "Algolia DocSearch",
 		website: "https://docsearch.algolia.com",
-		category: "Search",
+		category: "Search engine",
 		icon: "algolia",
 		implies: ["algolia"],
 		signals: [
@@ -2491,12 +2491,12 @@ export const technologies = [
 			{ css: /--docsearch-/ },
 		],
 	},
-	// Video
+	// Video player
 	{
 		id: "youtube",
 		name: "YouTube",
 		website: "https://www.youtube.com",
-		category: "Video",
+		category: "Video player",
 		signals: [
 			// the player YouTube's embed code puts in an iframe, from either
 			// of its domains; a link to a video only points at youtube.com/watch
@@ -2516,7 +2516,7 @@ export const technologies = [
 		id: "vimeo",
 		name: "Vimeo",
 		website: "https://vimeo.com",
-		category: "Video",
+		category: "Video player",
 		signals: [
 			// the player Vimeo's embed code puts in an iframe
 			{ dom: "iframe[src*='player.vimeo.com/video/']" },
@@ -2533,7 +2533,7 @@ export const technologies = [
 		id: "videojs",
 		name: "Video.js",
 		website: "https://videojs.com",
-		category: "Video",
+		category: "Video player",
 		signals: [
 			{ js: "videojs.VERSION", version: true },
 			{

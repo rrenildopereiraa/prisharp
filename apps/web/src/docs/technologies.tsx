@@ -178,10 +178,12 @@ export function Technologies() {
 
 					{!searching && (
 						<div className="d:f ai:c jc:sb g:3">
-							<h2 className="m:0 fs:sm fw:500">
-								{category}{" "}
-								<span className="c:hint fw:400">· {COUNTS.get(category)}</span>
-							</h2>
+							{/* the page's heading names the category */}
+							<p className="m:0 fs:sm c:hint">
+								{COUNTS.get(category) === 1
+									? "1 technology"
+									: `${COUNTS.get(category)} technologies`}
+							</p>
 							{/* on wider screens the index is in the side menu */}
 							<Drawer
 								container={page}
