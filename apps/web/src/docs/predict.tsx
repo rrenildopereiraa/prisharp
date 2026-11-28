@@ -11,8 +11,9 @@ import {
 import { FOCUS, INPUT_TEXT } from "@/components/ui/style";
 import { predict } from "./search";
 
-// the box and the grey text over it share their size, border and padding,
-// so the prediction lines up with what was typed
+// the box and the text over it share their size, border and padding. The
+// text over it draws what was typed as well as the prediction, so the two line
+// up exactly; the box itself only draws its caret, selection and placeholder.
 const BOX = `w:100% h:11 bw:1 pl:10 pr:3 ${INPUT_TEXT}`;
 
 /**
@@ -120,19 +121,19 @@ export function Predict<T extends { name: string; category: string }>({
 					autoComplete="off"
 					spellCheck={false}
 					aria-describedby={hint ? `${id}-hint` : undefined}
-					className={`${BOX} ${FOCUS} bg:field bs-o:key bc:rim c:label`}
+					className={`${BOX} ${FOCUS} bg:field bs-o:key bc:rim c:transparent cc:label p::c:hint`}
 				/>
-				{shown && !taken && (
-					<span
-						aria-hidden="true"
-						className={`${BOX} p:a t:0 l:0 d:f ai:c bc:transparent ws:p o:h pe:none`}
-					>
-						<span className="c:transparent">{value}</span>
+				<span
+					aria-hidden="true"
+					className={`${BOX} p:a t:0 l:0 d:f ai:c bc:transparent ws:p o:h pe:none`}
+				>
+					<span className="c:label">{value}</span>
+					{shown && !taken && (
 						<span className="c:hint">
 							{shown.rest ?? `  → ${shown.tech.name}`}
 						</span>
-					</span>
-				)}
+					)}
+				</span>
 			</div>
 			<p
 				id={`${id}-hint`}
