@@ -244,36 +244,50 @@ function landing() {
 }
 
 /**
- * The docs' technologies page: every technology with all of its evidence,
- * the categories in the popup's order and every logo, so the list can't fall
- * out of date.
+ * The docs' technologies page: every technology with all of its evidence and
+ * the categories in the popup's order, so the list can't fall out of date.
+ * Each category's logos are a module of their own, loaded as it comes into
+ * view, so the page doesn't wait for all of them.
  */
 function docs() {
-	const list = entries(true);
-	const { imports, logos } = logoModule(
-		list.map((tech) => tech.icon ?? tech.id),
+	const loaders = categories.map(
+		(_, index) =>
+			`() => import(${JSON.stringify(`${LOGOS}${index}`)}).then((m) => m.logos)`,
 	);
 	return [
-		...imports,
-		`export const catalog = ${JSON.stringify(list)};`,
+		`export const catalog = ${JSON.stringify(entries(true))};`,
 		`export const categories = ${JSON.stringify(categories)};`,
-		`export const logos = ${logos};`,
+		`export const logoLoaders = [${loaders.join(", ")}];`,
 	].join("\n");
+}
+
+/** One category's logo files, by file name. */
+function categoryLogos(index: number) {
+	const icons = technologies
+		.filter((tech) => tech.category === categories[index])
+		.map((tech) => tech.icon ?? tech.id);
+	const { imports, logos } = logoModule(icons);
+	return [...imports, `export const logos = ${logos};`].join("\n");
 }
 
 const ALL = `${CATALOG}/all`;
 const DOCS = `${CATALOG}/docs`;
+const LOGOS = `${DOCS}/logos/`;
 const MODULES = [CATALOG, ALL, DOCS];
 
 const catalog = (): Plugin => ({
 	name: "prisharp-catalog",
-	resolveId: (id) => (MODULES.includes(id) ? `\0${id}` : undefined),
+	resolveId: (id) =>
+		MODULES.includes(id) || id.startsWith(LOGOS) ? `\0${id}` : undefined,
 	load(id) {
 		if (id === `\0${CATALOG}`) return landing();
 		if (id === `\0${ALL}`) {
 			return `export const catalog = ${JSON.stringify(entries())};`;
 		}
 		if (id === `\0${DOCS}`) return docs();
+		if (id.startsWith(`\0${LOGOS}`)) {
+			return categoryLogos(Number(id.slice(LOGOS.length + 1)));
+		}
 	},
 });
 

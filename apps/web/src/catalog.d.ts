@@ -47,6 +47,6 @@ declare module "virtual:catalog/docs" {
 	export const catalog: CatalogEntry[];
 	/** The categories, in the order the popup lists them. */
 	export const categories: string[];
-	/** The URL of every logo file, by file name. */
-	export const logos: Record<string, string>;
+	/** Loads one category's logo files, by file name, in the order of `categories`. */
+	export const logoLoaders: (() => Promise<Record<string, string>>)[];
 }

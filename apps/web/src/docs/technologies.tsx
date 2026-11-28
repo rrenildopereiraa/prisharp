@@ -1,5 +1,13 @@
-import { useContext, useDeferredValue, useRef, useState } from "react";
-import { catalog, categories, logos } from "virtual:catalog/docs";
+import {
+	type ReactNode,
+	useCallback,
+	useContext,
+	useDeferredValue,
+	useEffect,
+	useRef,
+	useState,
+} from "react";
+import { catalog, categories, logoLoaders } from "virtual:catalog/docs";
 import { LogosContext } from "@/components/logo";
 import { Proof } from "@/components/panel";
 import type { Found } from "@/demo";
@@ -24,11 +32,14 @@ const found = (tech: Tech): Found => ({
 });
 
 /** A technology's logo, in its dark variant on a dark page, else its letter. */
-function Logo({ tech }: { tech: Tech }) {
+function Logo({ tech, ready }: { tech: Tech; ready: boolean }) {
 	const dark = useContext(DarkContext);
+	const logos = useContext(LogosContext);
 	const icon = tech.icon ?? tech.id;
 	const file = dark && `${icon}-dark` in logos ? `${icon}-dark` : icon;
 	const box = "w:5 h:5 fs:0";
+	// a blank tile until the category's logos arrive, so no letter flashes first
+	if (!ready) return <span aria-hidden="true" className={`${box} bg:well`} />;
 	if (!(file in logos)) {
 		return (
 			<span
@@ -53,7 +64,61 @@ function Logo({ tech }: { tech: Tech }) {
 	);
 }
 
+/**
+ * Each category's logos, loaded the first time it comes near the screen or
+ * one of its technologies is picked, and every loaded one merged into one map.
+ */
+function useLogos() {
+	const [logos, setLogos] = useState<Record<string, string>>({});
+	const [ready, setReady] = useState<Set<string>>(() => new Set());
+	const asked = useRef(new Set<string>());
+	const load = useCallback((category: string) => {
+		if (asked.current.has(category)) return;
+		asked.current.add(category);
+		void logoLoaders[categories.indexOf(category)]().then((files) => {
+			setLogos((current) => ({ ...current, ...files }));
+			setReady((current) => new Set(current).add(category));
+		});
+	}, []);
+	return { logos, ready, load };
+}
+
+/** A category's part of the list, which asks for its logos as it nears view. */
+function Group({
+	category,
+	onNear,
+	children,
+}: {
+	category: string;
+	onNear: (category: string) => void;
+	children: ReactNode;
+}) {
+	const section = useRef<HTMLElement>(null);
+	useEffect(() => {
+		const element = section.current;
+		if (!element) return;
+		const observer = new IntersectionObserver(
+			(entries) => {
+				if (entries.some((entry) => entry.isIntersecting)) {
+					onNear(category);
+					observer.disconnect();
+				}
+			},
+			{ rootMargin: "600px 0px" },
+		);
+		observer.observe(element);
+		return () => observer.disconnect();
+	}, [category, onNear]);
+	return (
+		<section ref={section} className="d:f fd:c g:2">
+			<h2 className="m:0 ff:mono fs:xs fw:500 c:hint">{category}</h2>
+			{children}
+		</section>
+	);
+}
+
 export function Technologies() {
+	const { logos, ready, load } = useLogos();
 	const [query, setQuery] = useState("");
 	const deferred = useDeferredValue(query);
 	const [picked, setPicked] = useState<Tech>(catalog[0]);
@@ -69,6 +134,7 @@ export function Technologies() {
 
 	const pick = (tech: Tech) => {
 		setPicked(tech);
+		load(tech.category);
 		// on a narrow screen the preview sits above the list
 		if (!matchMedia("(min-width: 64rem)").matches) {
 			preview.current?.scrollIntoView({ block: "nearest" });
@@ -105,10 +171,7 @@ export function Technologies() {
 					</div>
 
 					{groups.map((group) => (
-						<section key={group.category} className="d:f fd:c g:2">
-							<h2 className="m:0 ff:mono fs:xs fw:500 c:hint">
-								{group.category}
-							</h2>
+						<Group key={group.category} category={group.category} onNear={load}>
 							<ul className="m:0 p:0 sst:none d:g gtc:2 @sm:gtc:3 @lg:gtc:2">
 								{group.techs.map((tech) => {
 									const here = tech.id === picked.id;
@@ -125,7 +188,7 @@ export function Technologies() {
 														: "bg:transparent c:label h:bg:well"
 												}`}
 											>
-												<Logo tech={tech} />
+												<Logo tech={tech} ready={ready.has(group.category)} />
 												<span className="min-w:0 to:e ws:nw o:h">
 													{tech.name}
 												</span>
@@ -134,7 +197,7 @@ export function Technologies() {
 									);
 								})}
 							</ul>
-						</section>
+						</Group>
 					))}
 
 					<Text>
