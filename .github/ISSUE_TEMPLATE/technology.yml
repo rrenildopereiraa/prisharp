@@ -8,7 +8,7 @@ body:
       value: |
         Prisharp only adds a technology it can prove from what a site ships to the browser. A live site that uses it is what makes that possible, so that part is required.
 
-        Check the [list of technologies](https://github.com/rrenildopereiraa/prisharp#technologies) first. If one is there but missed a site, open a regular issue with the site instead.
+        Check the [list of technologies](https://prisharp.com/docs/technologies/) first. If one is there but missed a site, open a regular issue with the site instead.
   - type: input
     id: name
     attributes:

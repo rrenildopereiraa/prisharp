@@ -7,6 +7,9 @@ export function Footer() {
 		<footer className="d:f ai:c jc:sb g:4 py:4 px:4 fs:xs c:hint @md:h:16 @md:py:0 @md:px:8">
 			<p className="m:0">© 2026 Prisharp · MIT License</p>
 			<nav className="d:f g:5">
+				<a href="/docs/" className={LINK}>
+					Docs
+				</a>
 				<a href="/privacy/" className={LINK}>
 					Privacy
 				</a>
