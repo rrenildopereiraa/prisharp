@@ -1,7 +1,8 @@
-// Runs inside the page, in its own JavaScript world, when the popup opens.
+// Runs inside the page, in its own JavaScript world, when the popup opens,
+// and on each page load once the count on the toolbar icon is turned on.
 // `chrome.scripting` serializes this function, so it cannot use anything
 // from outside its body. It reads what the probes ask for and returns plain
-// data; matching happens back in the popup.
+// data; matching happens back in the popup or the background.
 
 export async function collect(probes) {
 	const timeout = 2500;

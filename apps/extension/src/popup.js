@@ -1,3 +1,4 @@
+import { ACCESS, counting, show as badge } from "./badge.js";
 import { collect } from "./collect.js";
 import { detect, probes } from "./detect.js";
 import { icons } from "./icons.js";
@@ -14,6 +15,9 @@ const copy = document.getElementById("copy");
 const copyMarkdown = document.getElementById("copy-markdown");
 const detail = document.getElementById("detail");
 const back = document.getElementById("back");
+const count = document.getElementById("count");
+const countTrack = document.getElementById("count-track");
+const countKnob = document.getElementById("count-knob");
 
 // A row of the panel, the same for a technology, a link and an action.
 const ROW =
@@ -271,6 +275,39 @@ function show(all, hostname) {
 	);
 }
 
+// The switch for the count on the toolbar icon. It is on while Prisharp
+// holds access to every site, so it shows the browser's own record.
+function paint(on) {
+	count.setAttribute("aria-checked", String(on));
+	countTrack.className = countTrack.className
+		.replace(/ jc:\S+/, on ? " jc:fe" : " jc:fs")
+		.replace(/ bg:\S+/, on ? " bg:focus" : " bg:line");
+	countKnob.className = countKnob.className.replace(
+		/ bg:\S+/,
+		on ? " bg:surface" : " bg:muted",
+	);
+}
+
+// The tab the popup read, and how many technologies it found, so turning the
+// count on shows it on this tab straight away.
+let counted;
+
+count.addEventListener("click", () => {
+	// Firefox only asks for access straight from the click, before any wait
+	const on = count.getAttribute("aria-checked") === "true";
+	const change = on
+		? chrome.permissions.remove(ACCESS).then((removed) => !removed)
+		: chrome.permissions.request(ACCESS);
+	void change
+		.then((now) => {
+			paint(now);
+			if (now && counted) void badge(...counted).catch(() => {});
+		})
+		.catch(() => {});
+});
+
+void counting().then(paint);
+
 async function run() {
 	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 	const url = tab?.url ? new URL(tab.url) : null;
@@ -296,6 +333,9 @@ async function run() {
 	}
 
 	const all = detect(page, technologies, categories);
+	// keep the icon's count in step with the list
+	counted = [tab.id, all.length];
+	if (await counting()) void badge(...counted).catch(() => {});
 	if (all.length === 0) {
 		status.textContent = "No known technology found on this page.";
 		return;

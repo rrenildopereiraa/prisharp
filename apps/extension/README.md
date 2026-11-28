@@ -10,7 +10,11 @@ See what any site is built with, and the evidence for each. A Chromium extension
 
 In Firefox 140 or later, run `pnpm zip`, open `about:debugging#/runtime/this-firefox`, click **Load Temporary Add-on** and pick `prisharp-firefox-<version>.zip`. Firefox keeps it until it restarts.
 
-Prisharp runs only when you click it. It asks for `activeTab` and `scripting` and no host permissions, so it reads only the tab you clicked on, and only then. The `offscreen` permission lets a hidden page follow the browser's light or dark mode, which a service worker can't do, so the toolbar icon matches it; that page reads nothing else. Firefox matches the icon to its theme by itself, so its build asks for neither and has no background page.
+Prisharp runs only when you click it. It asks for `activeTab` and `scripting` and no host permissions, so it reads only the tab you clicked on, and only then. The `offscreen` permission lets a hidden page follow the browser's light or dark mode, which a service worker can't do, so the toolbar icon matches it; that page reads nothing else. Firefox matches the icon to its theme by itself, so its build doesn't ask for `offscreen`.
+
+### The count on the toolbar icon
+
+The popup's **Count on the toolbar icon** switch puts the number of technologies on the icon as each page loads, before anyone clicks. It is off by default. Turning it on asks for access to every site, the manifest's one `optional_host_permissions` entry, because that is the only way to read a page nobody clicked on. Whether the count is on is whether Prisharp holds that access, so nothing is stored: turning the switch off gives the access back, and so does removing it in the browser's extension settings. [`src/count.js`](src/count.js) reads each page with the same `collect` and `detect` the popup uses, and nothing is sent anywhere. In Chrome it runs in the service worker; in Firefox it is the build's only background script.
 
 ## The popup
 
@@ -81,6 +85,6 @@ pnpm test       # the detection engine
 pnpm zip        # prisharp-chrome-<version>.zip for the Chrome Web Store, prisharp-firefox-<version>.zip for addons.mozilla.org
 ```
 
-The Firefox zip is the same extension with its own manifest, written by [`scripts/zip.mjs`](scripts/zip.mjs): no `offscreen` permission or background page, `theme_icons` for the toolbar icon, and the ID and data-collection statement addons.mozilla.org asks for.
+The Firefox zip is the same extension with its own manifest, written by [`scripts/zip.mjs`](scripts/zip.mjs): no `offscreen` permission, a background script that only keeps the count, `theme_icons` for the toolbar icon, and the ID and data-collection statement addons.mozilla.org asks for.
 
 Logos come from [svgl](https://svgl.app).

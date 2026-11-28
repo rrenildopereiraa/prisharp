@@ -1,6 +1,9 @@
 // Chrome shows an extension's toolbar icon as is: it does not follow the
 // browser into dark mode. An offscreen page watches the color scheme, which a
 // service worker cannot, and the worker swaps in the matching icon.
+// It also keeps the technology count on the icon, for people who turn it on.
+
+import "./count.js";
 
 const tint = (dark) => {
 	const tone = dark ? "dark" : "light";
