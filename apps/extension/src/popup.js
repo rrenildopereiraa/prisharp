@@ -3,25 +3,64 @@ import { collect } from "./collect.js";
 import { detect, probes } from "./detect.js";
 import { icons } from "./icons.js";
 import { markdown } from "./markdown.js";
+import { set, setting } from "./settings.js";
 import { symbol } from "./symbols.js";
 import { categories, technologies } from "./technologies.js";
 
-const home = document.getElementById("home");
-const host = document.getElementById("host");
-const status = document.getElementById("status");
-const found = document.getElementById("found");
-const list = document.getElementById("list");
-const copy = document.getElementById("copy");
-const copyMarkdown = document.getElementById("copy-markdown");
-const detail = document.getElementById("detail");
-const back = document.getElementById("back");
-const count = document.getElementById("count");
-const countTrack = document.getElementById("count-track");
-const countKnob = document.getElementById("count-knob");
+const $ = (id) => document.getElementById(id);
 
-// A row of the panel, the same for a technology, a link and an action.
+const home = $("home");
+const detail = $("detail");
+const settings = $("settings");
+const pages = [home, detail, settings];
+const status = $("status");
+const list = $("list");
+const copies = $("copies");
+const copy = $("copy");
+const copyEvidence = $("copy-evidence");
+const count = $("count");
+const showCopy = $("show-copy");
+
+// A square button with only an icon: Settings and Close.
+const ICON =
+	"d:f ai:c jc:c fs:0 w:8 h:8 bw:0 p:0 bg:transparent c:hint c:p h:c:label fv:os:s fv:ow:2 fv:oc:focus";
+
+// A quiet button that reads as text: Copy, Copy the list.
+const TEXT =
+	"d:if ai:c g:2 bw:0 p:0 bg:transparent c:accent ff:mono fs:xs c:p h:td:u fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus";
+
+// Back to the page before, in the hint's color: "All 7", "Back".
+const BACK = TEXT.replace("c:accent", "c:hint h:c:label").replace(
+	" h:td:u",
+	"",
+);
+const BACK_SIZE = " h:8";
+
+// A technology's row in the list.
 const ROW =
-	"d:f ai:c g:3 w:100% h:10 px:4 bw:0 bg:transparent c:ink ff:d fs:sm ta:l td:none c:p h:bg:hover fv:os:s fv:ow:2 fv:oo:-2 fv:oc:focus";
+	"d:f ai:c g:4 w:100% h:12 px:1 bw:0 bg:transparent c:label ff:mono fs:xs ta:l td:none c:p h:bg:paper fv:os:s fv:ow:2 fv:oo:-2 fv:oc:focus";
+
+// A switch drawn as one of prisharp.com's keys: raised and white with "Off",
+// filled with the accent with "On".
+const KEY =
+	"min-w:11 h:6 px:2 bw:1 ff:mono fs:xs c:p a:s:98 tp:a tdu:150 @prm:tp:none fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus";
+const KEY_STATE = {
+	off: "bc:rim bg:raised c:hint bs-o:key h:c:label",
+	on: "bc:edge bg:accent c:on-fill bs-o:key-fill",
+};
+
+// One choice of a setting with several, chosen or not.
+const OPTION = "p:r d:f ai:c h:6 px:2 fs:xs c:p fw:os:s fw:ow:2 fw:oc:focus";
+const OPTION_STATE = {
+	off: "bg:transparent c:hint h:c:label",
+	on: "bg:accent/10 c:accent",
+};
+
+// A section's heading, a setting's row, and a link at the foot of the page.
+const SECTION = "m:0 mb:1 fs:xs fw:400 c:hint";
+const SETTING = "d:f ai:c g:3 min-h:12 bbw:1 bbc:line";
+const FOOTER =
+	"c:hint td:none h:c:label h:td:u fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus";
 
 const hostOf = (url) => new URL(url).hostname.replace(/^www\./, "");
 
@@ -30,57 +69,82 @@ const label = (tech) => [tech.name, tech.version].filter(Boolean).join(" ");
 for (const element of document.querySelectorAll("[data-symbol]")) {
 	element.append(symbol(element.dataset.symbol, "d:b w:100% h:100%"));
 }
-for (const element of document.querySelectorAll("[data-row]")) {
-	element.className = ROW;
+for (const element of document.querySelectorAll("[data-icon]")) {
+	element.className = ICON;
+}
+for (const element of document.querySelectorAll("[data-text]")) {
+	element.className = TEXT;
+}
+for (const element of document.querySelectorAll("[data-back]")) {
+	element.className = BACK + BACK_SIZE;
+}
+for (const element of document.querySelectorAll("[data-section]")) {
+	element.className = SECTION;
+}
+for (const element of document.querySelectorAll("[data-setting]")) {
+	element.className = SETTING;
+}
+for (const element of document.querySelectorAll("[data-footer]")) {
+	element.className = FOOTER;
 }
 for (const button of document.querySelectorAll("[data-close]")) {
 	button.addEventListener("click", () => window.close());
 }
 
+// The theme: the browser's, or the one picked in Settings. The colors are
+// built on light-dark(), so the page's color-scheme is all that turns them.
+const prefersDark = matchMedia("(prefers-color-scheme: dark)");
+const isDark = () =>
+	setting("theme") === "dark" ||
+	(setting("theme") === "auto" && prefersDark.matches);
+
+function applyTheme() {
+	const theme = setting("theme");
+	document.documentElement.style.colorScheme = theme === "auto" ? "" : theme;
+	for (const img of document.querySelectorAll("img[data-logo]")) {
+		img.src =
+			isDark() && img.dataset.dark ? img.dataset.dark : img.dataset.light;
+	}
+}
+applyTheme();
+prefersDark.addEventListener("change", applyTheme);
+
 // The logo Prisharp ships for the technology, and its first letter when it
 // has none or the logo fails to load. Logos come from the extension itself,
-// so the popup asks no other server for them.
-// Each logo sits 2px inside its box, so the edges of the wide ones are not
-// cut off where they meet it.
+// so the popup asks no other server for them. Each logo sits 2px inside its
+// box, so the edges of the wide ones are not cut off where they meet it.
 function icon(tech, size) {
 	const name = tech.icon ?? tech.id;
 	const letter = () => {
 		const span = document.createElement("span");
-		span.className = `${size} d:f ai:c jc:c fs:0 br:sm bg:well fs:xs fw:600 c:muted`;
+		span.className = `${size} d:f ai:c jc:c fs:0 bg:well ff:sans fs:md c:hint`;
 		span.textContent = tech.name[0];
 		return span;
 	};
 	if (!(name in icons)) return letter();
 
-	const picture = document.createElement("picture");
 	const img = document.createElement("img");
-	img.className = `d:b ${size} p:calc(0.125rem)`;
-	img.dataset.logo = "";
+	img.className = `d:b fs:0 ${size} p:calc(0.125rem)`;
 	img.alt = "";
 	img.decoding = "async";
-	img.src = `icons/tech/${name}.svg`;
-	if (icons[name]) {
-		const dark = document.createElement("source");
-		dark.media = "(prefers-color-scheme: dark)";
-		dark.srcset = `icons/tech/${name}-dark.svg`;
-		picture.append(dark);
-	}
-	img.addEventListener("error", () => picture.replaceWith(letter()));
-
-	picture.className = "d:f ai:c jc:c fs:0";
-	picture.append(img);
-	return picture;
+	img.dataset.logo = "";
+	img.dataset.light = `icons/tech/${name}.svg`;
+	if (icons[name]) img.dataset.dark = `icons/tech/${name}-dark.svg`;
+	img.src = isDark() && img.dataset.dark ? img.dataset.dark : img.dataset.light;
+	img.addEventListener("error", () => img.replaceWith(letter()));
+	return img;
 }
 
 const EASE = "cubic-bezier(0.2, 0, 0, 1)";
 const still = matchMedia("(prefers-reduced-motion: reduce)");
 const main = document.querySelector("main");
 
-// Changes what the popup shows, then eases its height from the old size to
-// the new one and slides the new view in. Chrome sizes the popup to its
-// content, so the window follows. Nothing moves under reduced motion.
-function morph(change, from = "translateY(4px)") {
+// Shows one page, then eases the popup's height from the old size to the new
+// one and slides the page in. Chrome sizes the popup to its content, so the
+// window follows. Nothing moves under reduced motion.
+function go(page, from = "translateY(4px)", change = () => {}) {
 	const before = main.getBoundingClientRect().height;
+	for (const other of pages) other.hidden = other !== page;
 	change();
 	if (still.matches) return;
 	const after = main.getBoundingClientRect().height;
@@ -93,7 +157,7 @@ function morph(change, from = "translateY(4px)") {
 			{ duration: 260, easing: EASE },
 		);
 	}
-	(home.hidden ? detail : home).animate(
+	page.animate(
 		[
 			{ opacity: 0, transform: from },
 			{ opacity: 1, transform: "none" },
@@ -102,8 +166,25 @@ function morph(change, from = "translateY(4px)") {
 	);
 }
 
+// Back to the list from a technology or the settings, by its button or
+// Escape, with focus on what opened the page.
+let returnTo = null;
+
+function goHome() {
+	go(home, "translateX(-16px)");
+	returnTo?.focus();
+}
+
+document.addEventListener("keydown", (event) => {
+	if (event.key !== "Escape" || !home.hidden) return;
+	event.preventDefault();
+	goHome();
+});
+$("back").addEventListener("click", goHome);
+$("settings-back").addEventListener("click", goHome);
+
 const copied = (button, text) => {
-	const caption = button.querySelector(".fg\\:1");
+	const caption = button.querySelector("[data-caption]");
 	const original = caption.textContent;
 	void navigator.clipboard.writeText(text).then(() => {
 		caption.textContent = "Copied";
@@ -113,65 +194,64 @@ const copied = (button, text) => {
 	});
 };
 
-// What a technology brings in, among what was found: "brings in React".
+// What a technology brings in, among what was found: "+ React".
 const brings = (tech, all) =>
 	(tech.implies ?? [])
 		.map((id) => all.find((other) => other.id === id)?.name)
 		.filter(Boolean);
 
+function tag(text, classes) {
+	const span = document.createElement("span");
+	span.className = `py:px px:2 ${classes}`;
+	span.textContent = text;
+	return span;
+}
+
+// A match on a row of its own: its kind on a quiet line, then what matched,
+// as code, in the accent.
 function evidenceItem({ kind, text, value }) {
 	const item = document.createElement("li");
-	item.className = "d:f ai:fs g:2 py:2 px:4";
+	item.className = "d:f fd:c g:1 py:3 px:1 bbw:1 bbc:line";
 
-	const mark = document.createElement("span");
-	mark.className = "d:f fs:0 w:4 h:4 mt:1 c:ok";
-	mark.append(symbol("check", "d:b w:100% h:100%"));
-
-	const body = document.createElement("span");
-	body.className = "d:f fd:c g:1 fg:1 min-w:0";
-	const code = document.createElement("code");
-	code.className = "as:fs py:0 px:1 br:sm bg:well ff:m fs:xs wb:ba";
-	code.textContent = text;
 	const meta = document.createElement("span");
-	meta.className = "fs:xs c:muted wb:ba";
+	meta.className = "c:hint wb:ba";
 	meta.textContent = value === undefined ? kind : `${kind} · ${value}`;
-	body.append(code, meta);
 
-	item.append(mark, body);
+	const code = document.createElement("code");
+	code.className = "as:fs ff:mono fs:xs wb:ba";
+	const match = document.createElement("span");
+	match.className = "bg:accent/10 c:accent";
+	match.textContent = text;
+	code.append(match);
+
+	item.append(meta, code);
 	return item;
 }
 
 function open(tech, all, row) {
-	document.getElementById("name").textContent = tech.name;
-	document.getElementById("badge").replaceChildren(icon(tech, "w:7 h:7"));
+	$("back-label").textContent = `All ${all.length}`;
+	$("name").textContent = tech.name;
+	$("badge").replaceChildren(icon(tech, "w:8 h:8"));
+
 	const implied = brings(tech, all);
-	// the technology by name, then what it is: its category and version, and
-	// on a line of its own what it brings in
-	document.getElementById("headline").textContent = tech.name;
-	const lines = [
-		[tech.category, tech.version && `Version ${tech.version}`]
-			.filter(Boolean)
-			.join(" · "),
-		implied.length > 0 && `Brings in ${implied.join(", ")}`,
+	const tags = [
+		tech.version && tag(`v${tech.version}`, "bg:accent/10 c:accent"),
+		tag(tech.category, "bw:1 bc:line c:hint"),
+		...implied.map((name) => tag(`+ ${name}`, "bw:1 bc:line c:hint")),
 	].filter(Boolean);
-	document.getElementById("subline").replaceChildren(
-		...lines.map((text) => {
-			const line = document.createElement("span");
-			line.className = "d:b";
-			line.textContent = text;
-			return line;
-		}),
-	);
-	document
-		.getElementById("evidence")
-		.replaceChildren(...tech.evidence.map(evidenceItem));
+	if (tech.version)
+		tags[0].setAttribute("aria-label", `Version ${tech.version}`);
+	$("tags").replaceChildren(...tags);
 
-	const website = document.getElementById("website");
+	const matches = tech.evidence.length;
+	$("evidence-count").textContent =
+		matches === 1 ? "1 match" : `${matches} matches`;
+	$("evidence").replaceChildren(...tech.evidence.map(evidenceItem));
+
+	const website = $("website");
 	website.href = tech.website;
-	document.getElementById("website-label").textContent =
-		`Open ${hostOf(tech.website)}`;
+	website.textContent = `${hostOf(tech.website)} ↗`;
 
-	const copyEvidence = document.getElementById("copy-evidence");
 	copyEvidence.onclick = () =>
 		copied(
 			copyEvidence,
@@ -184,114 +264,133 @@ function open(tech, all, row) {
 			].join("\n"),
 		);
 
-	// Back, or Escape, returns to the row it came from.
-	const close = () => {
-		morph(() => {
-			detail.hidden = true;
-			home.hidden = false;
-		}, "translateX(-16px)");
-		document.removeEventListener("keydown", escape);
-		row.focus();
-	};
-	const escape = (event) => {
-		if (event.key !== "Escape") return;
-		event.preventDefault();
-		close();
-	};
-	back.onclick = close;
-	document.addEventListener("keydown", escape);
-
-	morph(() => {
-		home.hidden = true;
-		detail.hidden = false;
-	}, "translateX(16px)");
-	back.focus();
+	returnTo = row;
+	go(detail, "translateX(16px)");
+	$("back").focus();
 }
 
-// A technology's row opens its evidence. On hover or focus, a link to its
-// site takes the category's place, so the row is the same as any other at
-// rest and the site is one click away.
-const VISIT =
-	"p:a t:1 r:10 d:f ai:c jc:c w:8 h:8 br:9999 c:muted td:none h:bg:line fv:os:s fv:ow:2 fv:oc:focus";
-
+// A technology's row opens its evidence: its logo, its name in the serif,
+// and its category. The version is on its own page.
 function row(tech, all) {
 	const item = document.createElement("li");
-	item.className = "p:r d:b h:bg:hover";
-	item.dataset.tech = "";
+	item.className = "bbw:1 bbc:line";
 
 	const button = document.createElement("button");
 	button.type = "button";
-	button.className = ROW.replace(" h:bg:hover", "");
+	button.className = ROW;
 	button.setAttribute(
 		"aria-label",
 		`${label(tech)}, ${tech.category}. Show the evidence`,
 	);
 
 	const name = document.createElement("span");
-	name.className = "fg:1 min-w:0 o:h to:e ws:nw";
+	name.className = "min-w:0 ff:sans fs:xl lh:1 c:label o:h to:e ws:nw";
 	name.textContent = tech.name;
-	// the category only: the version is on the technology's own page
-	const meta = document.createElement("span");
-	meta.className = "fs:xs c:muted ws:nw";
-	meta.dataset.meta = "";
-	meta.textContent = tech.category;
-	const chevron = document.createElement("span");
-	chevron.className = "d:f fs:0 w:4 h:4 c:muted";
-	chevron.append(symbol("chevron_right", "d:b w:100% h:100%"));
+	const spacer = document.createElement("span");
+	spacer.className = "fg:1";
+	const category = document.createElement("span");
+	category.className = "fs:0 c:hint ws:nw";
+	category.textContent = tech.category;
 
-	button.append(icon(tech, "w:5 h:5"), name, meta, chevron);
+	button.append(icon(tech, "w:5 h:5"), name, spacer, category);
 	button.addEventListener("click", () => open(tech, all, button));
-
-	const site = hostOf(tech.website);
-	const visit = document.createElement("a");
-	visit.href = tech.website;
-	visit.target = "_blank";
-	visit.rel = "noreferrer";
-	visit.className = VISIT;
-	visit.dataset.visit = "";
-	visit.title = `Open ${site}`;
-	visit.setAttribute("aria-label", `Open ${site}`);
-	visit.append(symbol("open_in_new", "d:b w:4 h:4"));
-
-	item.append(button, visit);
+	item.append(button);
 	return item;
 }
 
-function show(all, hostname) {
-	host.textContent = hostname;
-	status.textContent =
-		all.length === 1
-			? "Built with 1 technology"
-			: `Built with ${all.length} technologies`;
-	morph(() => {
-		list.replaceChildren(...all.map((tech) => row(tech, all)));
-		found.hidden = false;
-		copy.hidden = false;
-		copyMarkdown.hidden = false;
-	});
-	copy.addEventListener("click", () => copied(copy, all.map(label).join("\n")));
-	copyMarkdown.addEventListener("click", () =>
-		copied(copyMarkdown, markdown(hostname, all)),
-	);
+// The copy buttons show only when turned on in Settings.
+function paintCopies() {
+	copies.hidden = !setting("showCopy") || list.hidden;
+	copyEvidence.hidden = !setting("showCopy");
 }
+
+let found = null;
+
+function show(all, hostname) {
+	found = { all, hostname };
+	// "7 technologies", the number large in the accent
+	const amount = document.createElement("span");
+	amount.className = "ff:sans fs:6xl lh:1 c:accent";
+	amount.textContent = String(all.length);
+	go(home, undefined, () => {
+		// the space is for screen readers; flex layout drops it on screen
+		status.replaceChildren(
+			amount,
+			" ",
+			all.length === 1 ? "technology" : "technologies",
+		);
+		list.replaceChildren(...all.map((tech) => row(tech, all)));
+		list.hidden = false;
+		paintCopies();
+	});
+}
+
+copy.addEventListener("click", () => {
+	if (!found) return;
+	const { all, hostname } = found;
+	copied(
+		copy,
+		setting("format") === "markdown"
+			? markdown(hostname, all)
+			: all.map(label).join("\n"),
+	);
+});
+
+// Settings
+
+function paintSwitch(button, on) {
+	button.setAttribute("aria-checked", String(on));
+	button.className = `${KEY} ${on ? KEY_STATE.on : KEY_STATE.off}`;
+	button.textContent = on ? "On" : "Off";
+}
+
+function paintChoice(name) {
+	for (const input of document.querySelectorAll(`input[name="${name}"]`)) {
+		input.checked = input.value === setting(name);
+		input
+			.closest("[data-option]")
+			.setAttribute(
+				"class",
+				`${OPTION} ${input.checked ? OPTION_STATE.on : OPTION_STATE.off}`,
+			);
+	}
+}
+
+for (const input of document.querySelectorAll("[data-radio]")) {
+	// out of sight, still reached by Tab and the arrow keys
+	input.className = "p:a o:0 w:px h:px m:0";
+	input.addEventListener("change", () => {
+		set(input.name, input.value);
+		paintChoice(input.name);
+		if (input.name === "theme") applyTheme();
+	});
+}
+paintChoice("format");
+paintChoice("theme");
+
+paintSwitch(showCopy, setting("showCopy"));
+showCopy.addEventListener("click", () => {
+	set("showCopy", !setting("showCopy"));
+	paintSwitch(showCopy, setting("showCopy"));
+	paintCopies();
+});
+
+$("version").textContent = `Prisharp ${chrome.runtime.getManifest().version}`;
+
+const openSettings = $("open-settings");
+openSettings.addEventListener("click", () => {
+	returnTo = openSettings;
+	go(settings, "translateX(16px)");
+	$("settings-back").focus();
+});
 
 // The switch for the count on the toolbar icon. It is on while Prisharp
 // holds access to every site, so it shows the browser's own record.
-function paint(on) {
-	count.setAttribute("aria-checked", String(on));
-	countTrack.className = countTrack.className
-		.replace(/ jc:\S+/, on ? " jc:fe" : " jc:fs")
-		.replace(/ bg:\S+/, on ? " bg:focus" : " bg:line");
-	countKnob.className = countKnob.className.replace(
-		/ bg:\S+/,
-		on ? " bg:surface" : " bg:muted",
-	);
-}
-
 // The tab the popup read, and how many technologies it found, so turning the
 // count on shows it on this tab straight away.
 let counted;
 
+paintSwitch(count, false);
 count.addEventListener("click", () => {
 	// Firefox only asks for access straight from the click, before any wait
 	const on = count.getAttribute("aria-checked") === "true";
@@ -300,13 +399,13 @@ count.addEventListener("click", () => {
 		: chrome.permissions.request(ACCESS);
 	void change
 		.then((now) => {
-			paint(now);
+			paintSwitch(count, now);
 			if (now && counted) void badge(...counted).catch(() => {});
 		})
 		.catch(() => {});
 });
 
-void counting().then(paint);
+void counting().then((on) => paintSwitch(count, on));
 
 async function run() {
 	const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
@@ -316,7 +415,7 @@ async function run() {
 		return;
 	}
 	const hostname = url.hostname.replace(/^www\./, "");
-	host.textContent = hostname;
+	$("host").textContent = hostname;
 
 	let page;
 	try {

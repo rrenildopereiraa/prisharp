@@ -14,11 +14,17 @@ Prisharp runs only when you click it. It asks for `activeTab` and `scripting` an
 
 ### The count on the toolbar icon
 
-The popup's **Count on the toolbar icon** switch puts the number of technologies on the icon as each page loads, before anyone clicks. It is off by default. Turning it on asks for access to every site, the manifest's one `optional_host_permissions` entry, because that is the only way to read a page nobody clicked on. Whether the count is on is whether Prisharp holds that access, so nothing is stored: turning the switch off gives the access back, and so does removing it in the browser's extension settings. [`src/count.js`](src/count.js) reads each page with the same `collect` and `detect` the popup uses, and nothing is sent anywhere. In Chrome it runs in the service worker; in Firefox it is the build's only background script.
+The **Count on the toolbar icon** switch in the popup's settings puts the number of technologies on the icon as each page loads, before anyone clicks. It is off by default. Turning it on asks for access to every site, the manifest's one `optional_host_permissions` entry, because that is the only way to read a page nobody clicked on. Whether the count is on is whether Prisharp holds that access, so nothing is stored: turning the switch off gives the access back, and so does removing it in the browser's extension settings. [`src/count.js`](src/count.js) reads each page with the same `collect` and `detect` the popup uses, and nothing is sent anywhere. In Chrome it runs in the service worker; in Firefox it is the build's only background script.
 
 ## The popup
 
-The popup copies the look of Chrome's site information panel: the system font, Chrome's light and dark surfaces, flat rows and [Material Symbols](https://fonts.google.com/icons) (Apache 2.0), the icon set Chrome draws its own panels with. Its colors live in [`yummacss.config.mjs`](yummacss.config.mjs). The toolbar icon and the extension's icon on `chrome://extensions` are the Prisharp mark from prisharp.com ([`apps/web/public/icon.svg`](../web/public/icon.svg)): on light toolbars in the site's accent over the mark's sky, which holds up at 16px better than the sky alone, and on dark ones in the lighter tint the site uses in dark mode.
+The popup is drawn in prisharp.com's own style, the same in Chrome and Firefox: Instrument Serif for the site and each technology's name, Geist Mono for the rest, the site's cool greys and its one cobalt accent, light and dark, with thin lines between parts and square corners. Its colors live in [`yummacss.config.mjs`](yummacss.config.mjs), copied from [`apps/web/yummacss.config.mjs`](../web/yummacss.config.mjs) under the same names. The two fonts ship in [`fonts`](fonts) (SIL Open Font License, Latin only), and its icons are [Tabler Icons](https://tabler.io/icons) (MIT), the set prisharp.com uses, in [`src/symbols.js`](src/symbols.js). The home page draws the popup's evidence page with the same classes and icons ([`apps/web/src/components/panel.tsx`](../web/src/components/panel.tsx)).
+
+The popup opens on the site's address and how many technologies it is built with, the number large in the accent, then lists them one per row: logo, name and category. Opening one shows its version, category and what it brings in as tags, then every match Prisharp found in the page, the matched text in the accent, and a link to its site. Back or Escape returns to the list.
+
+The settings page, from the gear, holds the count on the toolbar icon (above), whether to show the copy buttons (off by default), whether "Copy the list" writes plain text or Markdown, and the theme: Auto follows the browser, Light and Dark hold one. These are kept in the popup's own `localStorage` ([`src/settings.js`](src/settings.js)), so they need no permission.
+
+The toolbar icon and the extension's icon on `chrome://extensions` are the Prisharp mark from prisharp.com ([`apps/web/public/icon.svg`](../web/public/icon.svg)): on light toolbars in the site's accent over the mark's sky, which holds up at 16px better than the sky alone, and on dark ones in the lighter tint the site uses in dark mode.
 
 ## How detection works
 
@@ -76,7 +82,7 @@ A technology without a logo in `icons/tech` shows its first letter. The popup ne
 
 ## Develop
 
-The popup is styled with [Yumma CSS](https://yummacss.com), with Yumma UI's theme and recipes: its theme comes from `apps/web/yummacss.config.mjs`, so the popup and prisharp.com always match.
+The popup is styled with [Yumma CSS](https://yummacss.com), in the colors and fonts of `apps/web/yummacss.config.mjs`. A color changed there changes here by hand.
 
 ```bash
 pnpm build      # popup.css from the classes in popup.html and src
