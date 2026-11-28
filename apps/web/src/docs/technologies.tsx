@@ -12,7 +12,7 @@ import { LogosContext } from "@/components/logo";
 import { Proof } from "@/components/panel";
 import Button from "@/components/ui/button";
 import Drawer from "@/components/ui/drawer";
-import Field from "@/components/ui/field";
+import Autocomplete from "@/components/ui/autocomplete";
 import type { Found } from "@/demo";
 import { REPO } from "@/links";
 import { DarkContext } from "@/theme";
@@ -137,6 +137,24 @@ export function Technologies() {
 		if (!matchMedia("(min-width: 64rem)").matches) setSheet(true);
 	};
 
+	// every technology as a suggestion, its category beside it
+	const suggestions = catalog
+		.map((tech) => ({
+			label: tech.name,
+			description: tech.category,
+			icon: <Logo tech={tech} ready={ready.has(tech.category)} />,
+		}))
+		.sort((a, b) =>
+			a.label.localeCompare(b.label, "en", { sensitivity: "base" }),
+		);
+
+	// picking a suggestion fills in its whole name, which opens its evidence
+	const search = (text: string) => {
+		setQuery(text);
+		const exact = catalog.find((tech) => tech.name === text);
+		if (exact) pick(exact);
+	};
+
 	return (
 		<LogosContext.Provider value={logos}>
 			<div className="d:f fd:c g:6 @lg:fd:rr @lg:ai:fs">
@@ -159,17 +177,18 @@ export function Technologies() {
 				</Drawer>
 
 				<div className="d:f fd:c g:5 fg:1 min-w:0">
-					<Field
-						type="search"
+					<Autocomplete
 						label="Search"
-						aria-label={`Search ${catalog.length} technologies`}
 						placeholder={`${catalog.length} technologies`}
 						icon={<IconSearch aria-hidden className="w:4 h:4" />}
-						value={query}
-						onChange={(event) => setQuery(event.target.value)}
-						autoComplete="off"
-						spellCheck={false}
+						items={suggestions}
+						onQueryChange={search}
+						emptyMessage="No technology by that name"
+						autoHighlight
+						limit={8}
+						size="lg"
 						shape="none"
+						container={page}
 						className="w:100%"
 						description={
 							searching ? `${shown.length} found in every category` : undefined
