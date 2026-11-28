@@ -1,12 +1,5 @@
 import { IconSearch } from "@tabler/icons-react";
-import {
-	useCallback,
-	useContext,
-	useDeferredValue,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { catalog, categories, logoLoaders } from "virtual:catalog/docs";
 import { LogosContext } from "@/components/logo";
 import { Proof } from "@/components/panel";
@@ -16,9 +9,9 @@ import Autocomplete from "@/components/ui/autocomplete";
 import type { Found } from "@/demo";
 import { REPO } from "@/links";
 import { DarkContext } from "@/theme";
-import { useCategory } from "./category";
+import { show, useCategory } from "./category";
 import { CategoryIndex } from "./index-list";
-import { Code, LINK, Text } from "./layout";
+import { LINK, Text } from "./layout";
 import { matches } from "./search";
 
 type Tech = (typeof catalog)[number];
@@ -101,8 +94,6 @@ const COUNTS = new Map(
 
 export function Technologies() {
 	const { logos, ready, load } = useLogos();
-	const [query, setQuery] = useState("");
-	const deferred = useDeferredValue(query);
 	const category = useCategory();
 	const [picked, setPicked] = useState<Tech>(
 		() => catalog.filter((tech) => tech.category === category).sort(byName)[0],
@@ -116,19 +107,13 @@ export function Technologies() {
 		[],
 	);
 
-	// a search looks through every category; otherwise one category shows
-	const searching = deferred.trim() !== "";
+	// the list shows one category; the search finds a technology in any
 	const shown = catalog
-		.filter((tech) =>
-			searching ? matches(tech.name, deferred) : tech.category === category,
-		)
+		.filter((tech) => tech.category === category)
 		.sort(byName);
 
 	// only the logos of what is on screen
-	const needed = [...new Set(shown.map((tech) => tech.category))].join("|");
-	useEffect(() => {
-		for (const name of needed.split("|")) if (name) load(name);
-	}, [needed, load]);
+	useEffect(() => load(category), [category, load]);
 
 	// on a narrow screen the evidence opens in a sheet over the list
 	const [sheet, setSheet] = useState(false);
@@ -148,11 +133,19 @@ export function Technologies() {
 			a.label.localeCompare(b.label, "en", { sensitivity: "base" }),
 		);
 
-	// picking a suggestion fills in its whole name, which opens its evidence
+	// as a name is typed, the logos its suggestions need; picking one fills in
+	// its whole name, which moves to its category and opens its evidence
 	const search = (text: string) => {
-		setQuery(text);
 		const exact = catalog.find((tech) => tech.name === text);
-		if (exact) pick(exact);
+		if (exact) {
+			show(exact.category);
+			pick(exact);
+			return;
+		}
+		if (text.trim() === "") return;
+		for (const tech of catalog) {
+			if (matches(tech.name, text)) load(tech.category);
+		}
 	};
 
 	return (
@@ -190,40 +183,35 @@ export function Technologies() {
 						shape="none"
 						container={page}
 						className="w:100%"
-						description={
-							searching ? `${shown.length} found in every category` : undefined
-						}
 					/>
 
-					{!searching && (
-						<div className="d:f ai:c jc:sb g:3">
-							{/* the page's heading names the category */}
-							<p className="m:0 fs:sm c:hint">
-								{COUNTS.get(category) === 1
-									? "1 technology"
-									: `${COUNTS.get(category)} technologies`}
-							</p>
-							{/* on wider screens the index is in the side menu */}
-							<Drawer
-								container={page}
-								trigger="Categories"
-								open={index}
-								onOpenChange={setIndex}
-								side="bottom"
-								handle
-								size="sm"
-								shape="none"
-								title="Categories"
-								closeLabel="Close"
-								className="@md:d:none"
-							>
-								<CategoryIndex
-									current={category}
-									onPick={() => setIndex(false)}
-								/>
-							</Drawer>
-						</div>
-					)}
+					<div className="d:f ai:c jc:sb g:3">
+						{/* the page's heading names the category */}
+						<p className="m:0 fs:sm c:hint">
+							{COUNTS.get(category) === 1
+								? "1 technology"
+								: `${COUNTS.get(category)} technologies`}
+						</p>
+						{/* on wider screens the index is in the side menu */}
+						<Drawer
+							container={page}
+							trigger="Categories"
+							open={index}
+							onOpenChange={setIndex}
+							side="bottom"
+							handle
+							size="sm"
+							shape="none"
+							title="Categories"
+							closeLabel="Close"
+							className="@md:d:none"
+						>
+							<CategoryIndex
+								current={category}
+								onPick={() => setIndex(false)}
+							/>
+						</Drawer>
+					</div>
 
 					<ul className="m:0 p:0 sst:none d:g g:1 gtc:2 @sm:gtc:3 @lg:gtc:2 @xl:gtc:3">
 						{shown.map((tech) => {
@@ -248,11 +236,6 @@ export function Technologies() {
 					</ul>
 
 					<Text>
-						{searching && shown.length === 0 && (
-							<>
-								No match for <Code>{deferred.trim()}</Code>.{" "}
-							</>
-						)}
 						Missing one?{" "}
 						<a href={REQUEST} className={LINK}>
 							Request a technology
