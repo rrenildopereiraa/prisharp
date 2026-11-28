@@ -237,6 +237,7 @@ function landing() {
 		`export const permissions = ${JSON.stringify(MANIFEST.permissions)};`,
 		`export const firefoxPermissions = ${JSON.stringify(firefox(MANIFEST).permissions)};`,
 		`export const hostPermissions = ${JSON.stringify(MANIFEST.optional_host_permissions ?? [])};`,
+		`export const categoryCounts = ${JSON.stringify(categories.map((name) => [name, list.filter((tech) => tech.category === name).length]))};`,
 		`export const typed = ${JSON.stringify(named)};`,
 		`export const marks = ${JSON.stringify(marks)};`,
 		`export const logos = ${logos};`,

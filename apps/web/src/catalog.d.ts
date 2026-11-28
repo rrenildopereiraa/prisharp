@@ -29,6 +29,8 @@ declare module "virtual:catalog" {
 	export const firefoxPermissions: string[];
 	/** What the count on the toolbar icon asks for, when it's turned on. */
 	export const hostPermissions: string[];
+	/** Each category with how many technologies it holds, in the popup's order. */
+	export const categoryCounts: [string, number][];
 	/** The names the heading types, best known first, with their evidence. */
 	export const typed: CatalogEntry[];
 	/** The marquee's technologies, best known first. */

@@ -16,6 +16,8 @@ import { TooltipProvider } from "@/components/tooltip";
 import { DarkContext, useDark } from "@/theme";
 import { Browsers } from "./browsers";
 import { How } from "./how";
+import { useCategory } from "./category";
+import { CategoryIndex } from "./index-list";
 import { DocLink, follow, GoContext, PAGES, type Page } from "./layout";
 import { Permissions } from "./permissions";
 import "../styles.css";
@@ -37,7 +39,7 @@ const VIEWS: Record<Page, { lead: string; view: () => ReactNode }> = {
 		view: () => <Browsers />,
 	},
 	"/docs/technologies/": {
-		lead: "Everything Prisharp detects, one category at a time. Pick one to see the evidence it looks for.",
+		lead: "Everything Prisharp detects. Pick one to see the evidence it looks for.",
 		view: () => <Technologies />,
 	},
 	"/docs/permissions/": {
@@ -50,14 +52,21 @@ const pageOf = (path: string): Page =>
 	PAGES.find((page) => page.href === path || `${page.href}index.html` === path)
 		?.href ?? "/docs/";
 
+const TECHNOLOGIES: Page = "/docs/technologies/";
+
 function Menu({ current }: { current: Page }) {
 	const go = useContext(GoContext);
+	const category = useCategory();
+	// the index makes the menu taller than a screen, so it scrolls with the page
+	const indexed = current === TECHNOLOGIES;
 	return (
 		<nav
 			aria-label="Docs"
 			className="fs:0 bbw:1 bbc:line @md:w:56 @md:bbw:0 @md:brw:1 @md:brc:line"
 		>
-			<ul className="m:0 p:0 px:1 sst:none d:f ox:auto @md:fd:c @md:px:0 @md:py:10 @md:p:st @md:t:0">
+			<ul
+				className={`m:0 p:0 px:1 sst:none d:f ox:auto @md:fd:c @md:px:0 @md:py:10 ${indexed ? "" : "@md:p:st @md:t:0"}`}
+			>
 				{PAGES.map((page) => {
 					const here = page.href === current;
 					return (
@@ -65,9 +74,7 @@ function Menu({ current }: { current: Page }) {
 							<a
 								href={page.href}
 								onClick={follow(go, page.href)}
-								onPointerEnter={
-									page.href === "/docs/technologies/" ? load : undefined
-								}
+								onPointerEnter={page.href === TECHNOLOGIES ? load : undefined}
 								aria-current={here ? "page" : undefined}
 								className={`d:b py:3 px:2 fs:xs td:none ws:nw fv:os:s fv:ow:2 fv:oo:-2 fv:oc:focus @sm:px:3 @md:py:2 @md:px:8 ${
 									here ? "c:accent fw:500" : "c:hint h:c:label"
@@ -75,6 +82,15 @@ function Menu({ current }: { current: Page }) {
 							>
 								{page.title}
 							</a>
+							{page.href === TECHNOLOGIES && indexed && (
+								// on a phone the page's own button opens the index instead
+								<nav
+									aria-label="Categories"
+									className="d:none pt:1 pb:3 @md:d:b @md:pl:6 @md:pr:3"
+								>
+									<CategoryIndex current={category} />
+								</nav>
+							)}
 						</li>
 					);
 				})}
@@ -115,7 +131,10 @@ function Docs() {
 	return (
 		<GoContext.Provider value={go}>
 			<DarkContext.Provider value={dark}>
-				<div className="d:f fd:c min-h:dvh bg:paper c:label ff:mono fs:sm s::bg:accent/25 s::c:label">
+				<div
+					data-docs
+					className="d:f fd:c min-h:dvh bg:paper c:label ff:mono fs:sm s::bg:accent/25 s::c:label"
+				>
 					<Band>
 						<Header />
 					</Band>

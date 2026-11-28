@@ -13,10 +13,11 @@ import { Proof } from "@/components/panel";
 import Button from "@/components/ui/button";
 import Drawer from "@/components/ui/drawer";
 import Field from "@/components/ui/field";
-import Tabs from "@/components/ui/tabs";
 import type { Found } from "@/demo";
 import { REPO } from "@/links";
 import { DarkContext } from "@/theme";
+import { useCategory } from "./category";
+import { CategoryIndex } from "./index-list";
 import { Code, LINK, Text } from "./layout";
 import { matches } from "./search";
 
@@ -102,10 +103,17 @@ export function Technologies() {
 	const { logos, ready, load } = useLogos();
 	const [query, setQuery] = useState("");
 	const deferred = useDeferredValue(query);
-	const [category, setCategory] = useState(categories[0]);
+	const category = useCategory();
 	const [picked, setPicked] = useState<Tech>(
-		() =>
-			catalog.filter((tech) => tech.category === categories[0]).sort(byName)[0],
+		() => catalog.filter((tech) => tech.category === category).sort(byName)[0],
+	);
+	// the phone's index, in a drawer of its own
+	const [index, setIndex] = useState(false);
+	// drawers open inside the docs, so they take its font and colors
+	const [page, setPage] = useState<HTMLElement | null>(null);
+	useEffect(
+		() => setPage(document.querySelector<HTMLElement>("[data-docs]")),
+		[],
 	);
 
 	// a search looks through every category; otherwise one category shows
@@ -136,6 +144,7 @@ export function Technologies() {
 					<Proof tech={found(picked)} />
 				</div>
 				<Drawer
+					container={page}
 					open={sheet}
 					onOpenChange={setSheet}
 					side="bottom"
@@ -168,20 +177,30 @@ export function Technologies() {
 					/>
 
 					{!searching && (
-						// every category in one row, scrolled sideways when it doesn't fit
-						<div className="ox:auto mx:-1 px:1 py:1">
-							<Tabs
+						<div className="d:f ai:c jc:sb g:3">
+							<h2 className="m:0 fs:sm fw:500">
+								{category}{" "}
+								<span className="c:hint fw:400">· {COUNTS.get(category)}</span>
+							</h2>
+							{/* on wider screens the index is in the side menu */}
+							<Drawer
+								container={page}
+								trigger="Categories"
+								open={index}
+								onOpenChange={setIndex}
+								side="bottom"
+								handle
 								size="sm"
 								shape="none"
-								className="ws:nw"
-								value={category}
-								onValueChange={setCategory}
-								items={categories.map((name) => ({
-									value: name,
-									label: name,
-									count: COUNTS.get(name),
-								}))}
-							/>
+								title="Categories"
+								closeLabel="Close"
+								className="@md:d:none"
+							>
+								<CategoryIndex
+									current={category}
+									onPick={() => setIndex(false)}
+								/>
+							</Drawer>
 						</div>
 					)}
 
