@@ -1,18 +1,17 @@
-import { IconSearch } from "@tabler/icons-react";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { catalog, categories, logoLoaders } from "virtual:catalog/docs";
 import { LogosContext } from "@/components/logo";
+import { rank } from "@/famous";
 import { Proof } from "@/components/panel";
 import Button from "@/components/ui/button";
 import Drawer from "@/components/ui/drawer";
-import Autocomplete from "@/components/ui/autocomplete";
 import type { Found } from "@/demo";
 import { REPO } from "@/links";
 import { DarkContext } from "@/theme";
 import { show, useCategory } from "./category";
 import { CategoryIndex } from "./index-list";
 import { LINK, Text } from "./layout";
-import { matches } from "./search";
+import { Predict } from "./predict";
 
 type Tech = (typeof catalog)[number];
 
@@ -85,6 +84,9 @@ function useLogos() {
 const byName = (a: Tech, b: Tech) =>
 	a.name.localeCompare(b.name, "en", { sensitivity: "base" });
 
+/** Every technology, best known first, as the search predicts them. */
+const BY_FAME = [...catalog].sort((a, b) => rank(a.id) - rank(b.id));
+
 const COUNTS = new Map(
 	categories.map((category) => [
 		category,
@@ -122,31 +124,12 @@ export function Technologies() {
 		if (!matchMedia("(min-width: 64rem)").matches) setSheet(true);
 	};
 
-	// every technology as a suggestion, its category beside it
-	const suggestions = catalog
-		.map((tech) => ({
-			label: tech.name,
-			description: tech.category,
-			icon: <Logo tech={tech} ready={ready.has(tech.category)} />,
-		}))
-		.sort((a, b) =>
-			a.label.localeCompare(b.label, "en", { sensitivity: "base" }),
-		);
-
-	// as a name is typed, the logos its suggestions need; picking one fills in
-	// its whole name, which moves to its category and opens its evidence
-	const search = (text: string) => {
-		const exact = catalog.find((tech) => tech.name === text);
-		if (exact) {
-			show(exact.category);
-			pick(exact);
-			return;
-		}
-		if (text.trim() === "") return;
-		for (const tech of catalog) {
-			if (matches(tech.name, text)) load(tech.category);
-		}
+	// a prediction moves to its technology's category and opens its evidence
+	const open = (tech: Tech) => {
+		show(tech.category);
+		pick(tech);
 	};
+	const predicted = useCallback((tech: Tech) => load(tech.category), [load]);
 
 	return (
 		<LogosContext.Provider value={logos}>
@@ -170,19 +153,15 @@ export function Technologies() {
 				</Drawer>
 
 				<div className="d:f fd:c g:5 fg:1 min-w:0">
-					<Autocomplete
+					<Predict
+						list={BY_FAME}
 						label="Search"
 						placeholder={`${catalog.length} technologies`}
-						icon={<IconSearch aria-hidden className="w:4 h:4" />}
-						items={suggestions}
-						onQueryChange={search}
-						emptyMessage="No technology by that name"
-						autoHighlight
-						limit={8}
-						size="lg"
-						shape="none"
-						container={page}
-						className="w:100%"
+						logo={(tech) => (
+							<Logo tech={tech} ready={ready.has(tech.category)} />
+						)}
+						onPredict={predicted}
+						onPick={open}
 					/>
 
 					<div className="d:f ai:c jc:sb g:3">
