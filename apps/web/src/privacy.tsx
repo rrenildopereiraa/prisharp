@@ -7,7 +7,7 @@ import { TooltipProvider } from "@/components/tooltip";
 import { REPO } from "@/links";
 import "./styles.css";
 
-const UPDATED = "November 10, 2026";
+const UPDATED = "November 28, 2026";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
 	return (
@@ -51,14 +51,29 @@ function Privacy() {
 							</Text>
 						</Section>
 
+						<Section title="The count on its icon">
+							<Text>
+								You can turn on a count of a site's technologies on Prisharp's
+								toolbar icon, from its popup. It is off until you do. Turning it
+								on asks your browser to let Prisharp read every site you open,
+								because that is the only way to count before you click. From
+								then on it reads each page you load, the same way it does when
+								you click, and puts the number on the icon. The count stays in
+								your browser like everything else, and is not stored. Turn it
+								off in the popup, or take the access away in your browser's
+								extension settings, and Prisharp is back to reading only the tab
+								you click on.
+							</Text>
+						</Section>
+
 						<Section title="What it reads">
 							<Text>
-								On that tab it reads the page's scripts, stylesheets, meta tags
-								and the global variables frameworks leave behind. To read
-								response headers and file contents, it requests the page and its
-								scripts and stylesheets again, from the same servers the page
-								already loads them from, usually straight from your browser's
-								cache.
+								On that tab, or on every page you load if you turn the count on,
+								it reads the page's scripts, stylesheets, meta tags and the
+								global variables frameworks leave behind. To read response
+								headers and file contents, it requests the page and its scripts
+								and stylesheets again, from the same servers the page already
+								loads them from, usually straight from your browser's cache.
 							</Text>
 						</Section>
 

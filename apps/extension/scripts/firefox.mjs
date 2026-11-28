@@ -10,10 +10,11 @@ export const CHROME_ONLY = [
 
 /**
  * Firefox has no offscreen documents and no background service worker, but it
- * turns the toolbar icon with its theme by itself through `theme_icons`, so
- * its build needs no background at all. AMO also asks for an ID and for what
- * the extension collects: nothing. `data_collection_permissions` needs
- * Firefox 140.
+ * turns the toolbar icon with its theme by itself through `theme_icons`. Its
+ * background is a plain script that only keeps the opt-in technology count on
+ * the icon. AMO also asks for an ID and for what the extension collects:
+ * nothing, since the count is worked out in the browser and sent nowhere.
+ * `data_collection_permissions` needs Firefox 140.
  */
 export const firefox = (manifest) => {
 	const { background: _background, ...rest } = manifest;
@@ -22,6 +23,7 @@ export const firefox = (manifest) => {
 	return {
 		...rest,
 		permissions: manifest.permissions.filter((name) => name !== "offscreen"),
+		background: { scripts: ["src/count.js"], type: "module" },
 		action: {
 			// Without a default_icon, Firefox's own theme follows these icons
 			// too. "light" shows on dark themes, "dark" on light ones.

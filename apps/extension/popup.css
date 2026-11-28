@@ -92,8 +92,16 @@ hr {
   align-self: flex-start;
 }
 
+.bg\:focus {
+  background-color: light-dark(oklch(0.495 0.199 261), oklch(0.825 0.08 260));
+}
+
 .bg\:line {
   background-color: light-dark(oklch(0.916 0 none), oklch(0.395 0.004 174));
+}
+
+.bg\:muted {
+  background-color: light-dark(oklch(0.398 0 none), oklch(0.827 0.004 157));
 }
 
 .bg\:surface {
@@ -244,6 +252,10 @@ hr {
   height: 2.75rem;
 }
 
+.h\:3 {
+  height: .75rem;
+}
+
 .h\:4 {
   height: 1rem;
 }
@@ -266,6 +278,14 @@ hr {
 
 .jc\:c {
   justify-content: center;
+}
+
+.jc\:fe {
+  justify-content: flex-end;
+}
+
+.jc\:fs {
+  justify-content: flex-start;
 }
 
 .jc\:sb {
@@ -392,6 +412,10 @@ hr {
   width: 2.75rem;
 }
 
+.w\:3 {
+  width: .75rem;
+}
+
 .w\:4 {
   width: 1rem;
 }
@@ -410,6 +434,10 @@ hr {
 
 .w\:80 {
   width: 20rem;
+}
+
+.w\:9 {
+  width: 2.25rem;
 }
 
 .wb\:ba {

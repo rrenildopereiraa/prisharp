@@ -48,6 +48,28 @@
 						></span>
 						<span class="fg:1">Copy as Markdown</span>
 					</button>
+					<!-- Off until turned on, and turning it on asks for access to every
+					     site: the only way to count before anyone clicks. -->
+					<button
+						id="count"
+						type="button"
+						role="switch"
+						aria-checked="false"
+						title="Shows how many technologies each site uses, before you click. Asks to read the sites you open; nothing leaves your browser."
+						data-row
+					>
+						<span
+							data-symbol="counter_1"
+							class="d:f fs:0 w:5 h:5 c:muted"
+						></span>
+						<span class="fg:1">Count on the toolbar icon</span>
+						<span
+							id="count-track"
+							class="d:f ai:c jc:fs fs:0 w:9 h:5 px:1 br:9999 bg:line"
+						>
+							<span id="count-knob" class="d:b w:3 h:3 br:9999 bg:muted"></span>
+						</span>
+					</button>
 					<a
 						href="https://github.com/rrenildopereiraa/prisharp/tree/main/apps/extension#how-detection-works"
 						target="_blank"
