@@ -2,7 +2,7 @@
 	"name": "web",
 	"version": "0.0.0",
 	"private": true,
-	"description": "prisharp.com: one page on what Prisharp is and how it works.",
+	"description": "prisharp.com: what Prisharp is, and its docs.",
 	"license": "MIT",
 	"type": "module",
 	"scripts": {

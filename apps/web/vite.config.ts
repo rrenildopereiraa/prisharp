@@ -5,7 +5,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join, relative } from "node:path";
 import { fileURLToPath } from "node:url";
 import { defineConfig, type Plugin } from "vite-plus";
-import { technologies } from "extension/technologies";
+import { categories, technologies } from "extension/technologies";
 import { icons as logoFiles } from "extension/icons";
 import { CHROME_ONLY, firefox } from "extension/firefox";
 import { icons as simpleMarks } from "./src/marks";
@@ -97,6 +97,9 @@ const download = (): Plugin => {
 
 const CATALOG = "virtual:catalog";
 
+/** The docs' pages under /docs/, each its own HTML entry. "" is /docs/ itself. */
+const DOC_PAGES = ["", "browsers", "technologies", "permissions"];
+
 const clip = (text: string, max = 60) => {
 	const line = text.replace(/\s+/g, " ").trim();
 	return line.length > max ? `${line.slice(0, max - 1)}…` : line;
@@ -119,6 +122,7 @@ type Signal = {
 	html?: RegExp;
 	url?: RegExp;
 	label?: string;
+	weight?: number;
 };
 
 /**
@@ -157,7 +161,7 @@ function evidence(signal: Signal): { kind: string; text: string }[] {
 }
 
 /** Every technology, without its fingerprints, in the shape the site reads. */
-function entries() {
+function entries(all = false) {
 	const names = new Map(technologies.map((tech) => [tech.id, tech.name]));
 	const list = technologies.map((tech) => ({
 		id: tech.id,
@@ -166,7 +170,13 @@ function entries() {
 		category: tech.category,
 		website: tech.website,
 		implies: (tech.implies ?? []).map((id) => names.get(id) ?? id),
-		evidence: (tech.signals as Signal[]).flatMap(evidence).slice(0, 3),
+		evidence: (tech.signals as Signal[])
+			.flatMap((signal) =>
+				evidence(signal).map((line) =>
+					all && (signal.weight ?? 100) < 100 ? { ...line, weak: true } : line,
+				),
+			)
+			.slice(0, all ? undefined : 3),
 	}));
 	// one with no trace of its own, like Laravel, shows what brings it in
 	for (const entry of list) {
@@ -180,6 +190,25 @@ function entries() {
 }
 
 const hasLogo = (icon: string) => icon in logoFiles;
+
+/** Imports for these logos, each with its dark variant, and the map to them. */
+function logoModule(icons: string[]) {
+	const files = [...new Set(icons)]
+		.filter(hasLogo)
+		.flatMap((icon) =>
+			(logoFiles as Record<string, boolean>)[icon]
+				? [icon, `${icon}-dark`]
+				: [icon],
+		);
+	const imports = files.map(
+		(file, index) =>
+			`import logo${index} from ${JSON.stringify(`${extension}/icons/tech/${file}.svg?url`)};`,
+	);
+	const logos = files.map(
+		(file, index) => `${JSON.stringify(file)}: logo${index}`,
+	);
+	return { imports, logos: `{ ${logos.join(", ")} }` };
+}
 
 /**
  * The landing page's module: the count, the heading's names with their
@@ -199,20 +228,7 @@ function landing() {
 		...named.map((tech) => tech.icon ?? tech.id),
 		...marks.filter((mark) => !(mark.id in simpleMarks)).map((m) => m.icon),
 	];
-	const files = [...new Set(pictured)]
-		.filter(hasLogo)
-		.flatMap((icon) =>
-			(logoFiles as Record<string, boolean>)[icon]
-				? [icon, `${icon}-dark`]
-				: [icon],
-		);
-	const imports = files.map(
-		(file, index) =>
-			`import logo${index} from ${JSON.stringify(`${extension}/icons/tech/${file}.svg?url`)};`,
-	);
-	const logos = files.map(
-		(file, index) => `${JSON.stringify(file)}: logo${index}`,
-	);
+	const { imports, logos } = logoModule(pictured);
 	return [
 		...imports,
 		`export const count = ${list.length};`,
@@ -220,21 +236,58 @@ function landing() {
 		`export const firefoxZip = ${JSON.stringify(`/${FIREFOX_ZIP}`)};`,
 		`export const permissions = ${JSON.stringify(MANIFEST.permissions)};`,
 		`export const firefoxPermissions = ${JSON.stringify(firefox(MANIFEST).permissions)};`,
+		`export const hostPermissions = ${JSON.stringify(MANIFEST.optional_host_permissions ?? [])};`,
+		`export const categoryCounts = ${JSON.stringify(categories.map((name) => [name, list.filter((tech) => tech.category === name).length]))};`,
 		`export const typed = ${JSON.stringify(named)};`,
 		`export const marks = ${JSON.stringify(marks)};`,
-		`export const logos = { ${logos.join(", ")} };`,
+		`export const logos = ${logos};`,
 	].join("\n");
 }
 
+/**
+ * The docs' technologies page: every technology with all of its evidence and
+ * the categories in the popup's order, so the list can't fall out of date.
+ * Each category's logos are a module of their own, loaded as it comes into
+ * view, so the page doesn't wait for all of them.
+ */
+function docs() {
+	const loaders = categories.map(
+		(_, index) =>
+			`() => import(${JSON.stringify(`${LOGOS}${index}`)}).then((m) => m.logos)`,
+	);
+	return [
+		`export const catalog = ${JSON.stringify(entries(true))};`,
+		`export const categories = ${JSON.stringify(categories)};`,
+		`export const logoLoaders = [${loaders.join(", ")}];`,
+	].join("\n");
+}
+
+/** One category's logo files, by file name. */
+function categoryLogos(index: number) {
+	const icons = technologies
+		.filter((tech) => tech.category === categories[index])
+		.map((tech) => tech.icon ?? tech.id);
+	const { imports, logos } = logoModule(icons);
+	return [...imports, `export const logos = ${logos};`].join("\n");
+}
+
 const ALL = `${CATALOG}/all`;
+const DOCS = `${CATALOG}/docs`;
+const LOGOS = `${DOCS}/logos/`;
+const MODULES = [CATALOG, ALL, DOCS];
 
 const catalog = (): Plugin => ({
 	name: "prisharp-catalog",
-	resolveId: (id) => (id === CATALOG || id === ALL ? `\0${id}` : undefined),
+	resolveId: (id) =>
+		MODULES.includes(id) || id.startsWith(LOGOS) ? `\0${id}` : undefined,
 	load(id) {
 		if (id === `\0${CATALOG}`) return landing();
 		if (id === `\0${ALL}`) {
 			return `export const catalog = ${JSON.stringify(entries())};`;
+		}
+		if (id === `\0${DOCS}`) return docs();
+		if (id.startsWith(`\0${LOGOS}`)) {
+			return categoryLogos(Number(id.slice(LOGOS.length + 1)));
 		}
 	},
 });
@@ -250,6 +303,17 @@ export default defineConfig({
 				main: fileURLToPath(new URL("./index.html", import.meta.url)),
 				privacy: fileURLToPath(
 					new URL("./privacy/index.html", import.meta.url),
+				),
+				...Object.fromEntries(
+					DOC_PAGES.map((page) => [
+						`docs-${page || "index"}`,
+						fileURLToPath(
+							new URL(
+								`./docs/${page ? `${page}/` : ""}index.html`,
+								import.meta.url,
+							),
+						),
+					]),
 				),
 			},
 		},

@@ -1,9 +1,9 @@
 import { paths } from "extension/symbols";
-import { useEffect, useRef } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { merge } from "yummacss/merge";
 import type { Evidence, Found } from "@/demo";
 import { useMorph } from "@/morph";
-import { hasLogo, Logo } from "./logo";
+import { Logo, LogosContext } from "./logo";
 
 type Name = keyof typeof paths;
 
@@ -28,7 +28,8 @@ const RULE = "m:0 h:px bw:0 bg:panel-line";
 
 // the logos are pictures of the product, not text to select
 function Mark({ tech, size }: { tech: Found; size: string }) {
-	if (hasLogo(tech.icon)) {
+	const files = useContext(LogosContext);
+	if (tech.icon in files) {
 		// 2px in, as in the popup, so wide logos keep their edges
 		return (
 			<Logo

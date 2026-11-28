@@ -12,17 +12,30 @@ export function Header() {
 				<Mark className="h:6 w:5" />
 				<span className="ff:sans fw:400 ls:2 fs:xl @md:fs:xxl">Prisharp</span>
 			</a>
-			{!UNSUPPORTED && (
-				// the hero's button, which opens where to get it from
-				<Button
-					onClick={() => document.getElementById("install")?.click()}
-					size="sm"
-					shape="none"
-					className="us:none"
+			<nav className="d:f ai:c g:5">
+				<a
+					href="/docs/"
+					className="fs:xs c:hint td:none h:c:label fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus"
 				>
-					{FIREFOX ? "Add to Firefox" : "Add to Chrome"}
-				</Button>
-			)}
+					Docs
+				</a>
+				{!UNSUPPORTED && (
+					// the hero's button, which opens where to get it from; on a page
+					// without one, the browsers page says the same
+					<Button
+						onClick={() => {
+							const install = document.getElementById("install");
+							if (install) install.click();
+							else location.href = "/docs/browsers/";
+						}}
+						size="sm"
+						shape="none"
+						className="us:none"
+					>
+						{FIREFOX ? "Add to Firefox" : "Add to Chrome"}
+					</Button>
+				)}
+			</nav>
 		</header>
 	);
 }
