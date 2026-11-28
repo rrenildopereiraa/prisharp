@@ -1644,19 +1644,21 @@ test("the list copies as Markdown, in the popup's order, linked, with versions",
 		assert.ok(lines[index + 2].startsWith(`- ${tech.category}: [`));
 	}
 	assert.ok(
-		lines.includes("- Framework: [Next.js](https://nextjs.org) 16.4.6"),
+		lines.includes("- App framework: [Next.js](https://nextjs.org) 16.4.6"),
 	);
 	assert.ok(
-		lines.includes("- Styling: [Tailwind CSS](https://tailwindcss.com) 4.3.5"),
+		lines.includes(
+			"- CSS framework: [Tailwind CSS](https://tailwindcss.com) 4.3.5",
+		),
 	);
 });
 
 test("Markdown leaves out a version it doesn't know and escapes brackets", () => {
 	const text = markdown("example.com", [
-		{ name: "A [B]", category: "Library", website: "https://a.dev" },
+		{ name: "A [B]", category: "JS library", website: "https://a.dev" },
 	]);
 	assert.equal(
 		text,
-		"**example.com** is built with:\n\n- Library: [A \\[B\\]](https://a.dev)",
+		"**example.com** is built with:\n\n- JS library: [A \\[B\\]](https://a.dev)",
 	);
 });

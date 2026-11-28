@@ -2,7 +2,7 @@
 //
 //   **example.com** is built with:
 //
-//   - Framework: [Next.js](https://nextjs.org) 16.4.6
+//   - App framework: [Next.js](https://nextjs.org) 16.4.6
 //
 // One line per technology in the order the popup lists them, each linked to
 // its site, with its version when Prisharp read one.

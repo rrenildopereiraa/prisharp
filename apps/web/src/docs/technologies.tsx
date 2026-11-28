@@ -1,25 +1,17 @@
-import { IconSearch } from "@tabler/icons-react";
-import {
-	useCallback,
-	useContext,
-	useDeferredValue,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { catalog, categories, logoLoaders } from "virtual:catalog/docs";
 import { LogosContext } from "@/components/logo";
+import { rank } from "@/famous";
 import { Proof } from "@/components/panel";
 import Button from "@/components/ui/button";
 import Drawer from "@/components/ui/drawer";
-import Field from "@/components/ui/field";
 import type { Found } from "@/demo";
 import { REPO } from "@/links";
 import { DarkContext } from "@/theme";
-import { useCategory } from "./category";
+import { show, useCategory } from "./category";
 import { CategoryIndex } from "./index-list";
-import { Code, LINK, Text } from "./layout";
-import { matches } from "./search";
+import { LINK, Text } from "./layout";
+import { Predict } from "./predict";
 
 type Tech = (typeof catalog)[number];
 
@@ -92,6 +84,9 @@ function useLogos() {
 const byName = (a: Tech, b: Tech) =>
 	a.name.localeCompare(b.name, "en", { sensitivity: "base" });
 
+/** Every technology, best known first, as the search predicts them. */
+const BY_FAME = [...catalog].sort((a, b) => rank(a.id) - rank(b.id));
+
 const COUNTS = new Map(
 	categories.map((category) => [
 		category,
@@ -101,8 +96,6 @@ const COUNTS = new Map(
 
 export function Technologies() {
 	const { logos, ready, load } = useLogos();
-	const [query, setQuery] = useState("");
-	const deferred = useDeferredValue(query);
 	const category = useCategory();
 	const [picked, setPicked] = useState<Tech>(
 		() => catalog.filter((tech) => tech.category === category).sort(byName)[0],
@@ -116,19 +109,13 @@ export function Technologies() {
 		[],
 	);
 
-	// a search looks through every category; otherwise one category shows
-	const searching = deferred.trim() !== "";
+	// the list shows one category; the search finds a technology in any
 	const shown = catalog
-		.filter((tech) =>
-			searching ? matches(tech.name, deferred) : tech.category === category,
-		)
+		.filter((tech) => tech.category === category)
 		.sort(byName);
 
 	// only the logos of what is on screen
-	const needed = [...new Set(shown.map((tech) => tech.category))].join("|");
-	useEffect(() => {
-		for (const name of needed.split("|")) if (name) load(name);
-	}, [needed, load]);
+	useEffect(() => load(category), [category, load]);
 
 	// on a narrow screen the evidence opens in a sheet over the list
 	const [sheet, setSheet] = useState(false);
@@ -136,6 +123,13 @@ export function Technologies() {
 		setPicked(tech);
 		if (!matchMedia("(min-width: 64rem)").matches) setSheet(true);
 	};
+
+	// a prediction moves to its technology's category and opens its evidence
+	const open = (tech: Tech) => {
+		show(tech.category);
+		pick(tech);
+	};
+	const predicted = useCallback((tech: Tech) => load(tech.category), [load]);
 
 	return (
 		<LogosContext.Provider value={logos}>
@@ -159,50 +153,44 @@ export function Technologies() {
 				</Drawer>
 
 				<div className="d:f fd:c g:5 fg:1 min-w:0">
-					<Field
-						type="search"
+					<Predict
+						list={BY_FAME}
 						label="Search"
-						aria-label={`Search ${catalog.length} technologies`}
 						placeholder={`${catalog.length} technologies`}
-						icon={<IconSearch aria-hidden className="w:4 h:4" />}
-						value={query}
-						onChange={(event) => setQuery(event.target.value)}
-						autoComplete="off"
-						spellCheck={false}
-						shape="none"
-						className="w:100%"
-						description={
-							searching ? `${shown.length} found in every category` : undefined
-						}
+						logo={(tech) => (
+							<Logo tech={tech} ready={ready.has(tech.category)} />
+						)}
+						onPredict={predicted}
+						onPick={open}
 					/>
 
-					{!searching && (
-						<div className="d:f ai:c jc:sb g:3">
-							<h2 className="m:0 fs:sm fw:500">
-								{category}{" "}
-								<span className="c:hint fw:400">· {COUNTS.get(category)}</span>
-							</h2>
-							{/* on wider screens the index is in the side menu */}
-							<Drawer
-								container={page}
-								trigger="Categories"
-								open={index}
-								onOpenChange={setIndex}
-								side="bottom"
-								handle
-								size="sm"
-								shape="none"
-								title="Categories"
-								closeLabel="Close"
-								className="@md:d:none"
-							>
-								<CategoryIndex
-									current={category}
-									onPick={() => setIndex(false)}
-								/>
-							</Drawer>
-						</div>
-					)}
+					<div className="d:f ai:c jc:sb g:3">
+						{/* the page's heading names the category */}
+						<p className="m:0 fs:sm c:hint">
+							{COUNTS.get(category) === 1
+								? "1 technology"
+								: `${COUNTS.get(category)} technologies`}
+						</p>
+						{/* on wider screens the index is in the side menu */}
+						<Drawer
+							container={page}
+							trigger="Categories"
+							open={index}
+							onOpenChange={setIndex}
+							side="bottom"
+							handle
+							size="sm"
+							shape="none"
+							title="Categories"
+							closeLabel="Close"
+							className="@md:d:none"
+						>
+							<CategoryIndex
+								current={category}
+								onPick={() => setIndex(false)}
+							/>
+						</Drawer>
+					</div>
 
 					<ul className="m:0 p:0 sst:none d:g g:1 gtc:2 @sm:gtc:3 @lg:gtc:2 @xl:gtc:3">
 						{shown.map((tech) => {
@@ -227,11 +215,6 @@ export function Technologies() {
 					</ul>
 
 					<Text>
-						{searching && shown.length === 0 && (
-							<>
-								No match for <Code>{deferred.trim()}</Code>.{" "}
-							</>
-						)}
 						Missing one?{" "}
 						<a href={REQUEST} className={LINK}>
 							Request a technology

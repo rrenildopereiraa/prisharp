@@ -105,6 +105,9 @@ function Docs() {
 	const index = PAGES.findIndex((page) => page.href === current);
 	const { title } = PAGES[index];
 	const next = PAGES[index + 1];
+	// the technologies page is headed by the category it shows
+	const category = useCategory();
+	const heading = current === TECHNOLOGIES ? category : title;
 
 	const go = useCallback((page: Page) => {
 		if (page !== pageOf(location.pathname)) history.pushState(null, "", page);
@@ -119,8 +122,11 @@ function Docs() {
 	}, []);
 
 	useEffect(() => {
-		document.title = `${title} · Prisharp`;
-	}, [title]);
+		document.title =
+			heading === title
+				? `${title} · Prisharp`
+				: `${heading} · ${title} · Prisharp`;
+	}, [heading, title]);
 
 	useEffect(() => {
 		const early = () => void load();
@@ -144,7 +150,7 @@ function Docs() {
 							<article className="d:f fd:c g:8 fg:1 min-w:0 py:8 px:4 @md:py:12 @md:px:8">
 								<header className="d:f fd:c g:3 max-w:160">
 									<h1 className="m:0 ff:sans fw:400 fs:4xl @md:fs:5xl lh:1">
-										{title}
+										{heading}
 									</h1>
 									<p className="m:0 fs:sm c:hint lh:5">{VIEWS[current].lead}</p>
 								</header>
