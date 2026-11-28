@@ -19,7 +19,7 @@ it("caps what the landing page ships, however big the catalog", () => {
 		id: `tech-${index}`,
 		name: `Tech ${index}`,
 		icon: "yummacss",
-		category: "Framework",
+		category: "App framework",
 	}));
 	expect(marquee(many, () => true).length).toBe(MARQUEE_MAX);
 });

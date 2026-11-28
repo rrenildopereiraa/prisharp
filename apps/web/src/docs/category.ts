@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { categoryCounts } from "virtual:catalog";
 
-/** A category's name as it reads in an address: `#ai-builder`. */
+/** A category's name as it reads in an address: `#ai-app-builder`. */
 export const slug = (name: string) =>
 	name
 		.toLowerCase()

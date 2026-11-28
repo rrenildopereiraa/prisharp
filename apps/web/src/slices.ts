@@ -12,12 +12,18 @@ export const MARQUEE_MAX = 48;
 // adds; and only names that fit the heading's second line with the question
 // mark at every width: "built with TanStack Router?" is the longest that does.
 const BUILT = new Set([
-	"Framework",
-	"Platform",
-	"Library",
-	"Components",
-	"Styling",
-	"Build",
+	"App framework",
+	"Site generator",
+	"Server framework",
+	"Website builder",
+	"CMS",
+	"UI framework",
+	"JS library",
+	"UI widget",
+	"Component library",
+	"CSS framework",
+	"CSS-in-JS",
+	"Build tool",
 ]);
 
 type Entry = { id: string; name: string; icon?: string; category: string };
