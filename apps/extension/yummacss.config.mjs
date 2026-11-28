@@ -25,11 +25,15 @@ export default defineConfig({
 			accent: { light: "#2b44ff", dark: "#8394ff" },
 			logo: { light: "#8394ff", dark: "#b7c2ff" },
 			"on-fill": { light: "#ffffff", dark: "#0d0f14" },
+			// the edge of a filled key
+			edge: { light: "oklch(0.18 0.008 286)", dark: "oklch(0.1 0.004 290)" },
 			focus: { light: "#2b44ff", dark: "#8394ff" },
 		},
 		boxShadow: {
-			// the raised edge of the site's secondary buttons
+			// the raised edges of the site's buttons: a white key, a filled one
 			key: "inset 0 1px 0 light-dark(oklch(1 0 0), oklch(1 0 0 / .11)), 0 1px 0 light-dark(oklch(0.18 0.008 286 / .1), oklch(0 0 0 / .45)), 0 2px 4px -1px light-dark(oklch(0.18 0.008 286 / .08), oklch(0 0 0 / .4))",
+			"key-fill":
+				"inset 0 1px 0 light-dark(oklch(1 0 0 / .14), oklch(1 0 0 / .7)), 0 1px 0 light-dark(oklch(0.18 0.008 286 / .25), oklch(0 0 0 / 0)), 0 2px 4px -1px light-dark(oklch(0.18 0.008 286 / .2), oklch(0 0 0 / .35))",
 		},
 	},
 });

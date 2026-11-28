@@ -103,104 +103,173 @@
 						<span data-symbol="close" class="d:f w:4 h:4"></span>
 					</button>
 				</header>
-				<h2
-					id="settings-title"
-					class="m:0 mt:4 px:5 ff:sans fs:4xl fw:400 lh:1 ls:-1"
-				>
-					Settings
-				</h2>
-				<div class="mt:5 mx:5 btw:1 btc:line">
-					<!-- Off until turned on, and turning it on asks for access to
-					     every site: the only way to count before anyone clicks. -->
-					<div class="d:f ai:fs jc:sb g:4 py:4 bbw:1 bbc:line">
-						<span class="d:f fd:c g:1">
-							<span id="count-title">Count on the toolbar icon</span>
-							<span id="count-note" class="fs:xs c:hint lh:4">
-								Shows how many technologies a site uses before you click. Asks
-								to read the sites you open; nothing leaves your browser.
-							</span>
-						</span>
-						<button
-							id="count"
-							type="button"
-							role="switch"
-							aria-checked="false"
-							aria-labelledby="count-title"
-							aria-describedby="count-note"
-							data-switch
-						>
-							<span data-knob></span>
-						</button>
-					</div>
-					<div class="d:f ai:fs jc:sb g:4 py:4 bbw:1 bbc:line">
-						<span class="d:f fd:c g:1">
-							<span id="show-copy-title">Show the copy button</span>
-							<span id="show-copy-note" class="fs:xs c:hint lh:4">
-								Adds Copy to the list and to each technology.
-							</span>
-						</span>
-						<button
-							id="show-copy"
-							type="button"
-							role="switch"
-							aria-checked="false"
-							aria-labelledby="show-copy-title"
-							aria-describedby="show-copy-note"
-							data-switch
-						>
-							<span data-knob></span>
-						</button>
-					</div>
-					<div class="bbw:1 bbc:line">
-						<fieldset class="d:f ai:c jc:sb g:3 m:0 py:4 px:0 bw:0">
-							<legend class="fl:l p:0">Copy as</legend>
-							<span data-choice="format" class="d:f bw:1 bc:rim">
-								<label data-option>
-									<input type="radio" name="format" value="text" data-radio />
-									Text
-								</label>
-								<label data-option>
-									<input
-										type="radio"
-										name="format"
-										value="markdown"
-										data-radio
-									/>
-									Markdown
-								</label>
-							</span>
-						</fieldset>
-					</div>
-					<div class="bbw:1 bbc:line">
-						<fieldset class="d:f ai:c jc:sb g:3 m:0 py:4 px:0 bw:0">
-							<legend class="fl:l p:0">Theme</legend>
-							<span data-choice="theme" class="d:f bw:1 bc:rim">
-								<label data-option>
-									<input type="radio" name="theme" value="auto" data-radio />
-									Auto
-								</label>
-								<label data-option>
-									<input type="radio" name="theme" value="light" data-radio />
-									Light
-								</label>
-								<label data-option>
-									<input type="radio" name="theme" value="dark" data-radio />
-									Dark
-								</label>
-							</span>
-						</fieldset>
-					</div>
-				</div>
-				<div class="d:f ai:c jc:sb g:4 p:5 fs:xs c:hint">
-					<span id="version"></span>
-					<a
-						href="https://github.com/rrenildopereiraa/prisharp/tree/main/apps/extension#how-detection-works"
-						target="_blank"
-						rel="noreferrer"
-						class="c:hint td:none h:c:label h:td:u fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus"
-						>How it works ↗</a
+				<div class="d:f ai:c g:3 mt:4 px:5">
+					<svg
+						viewBox="0 0 40 48"
+						aria-hidden="true"
+						class="d:b fs:0 w:8 h:10 c:accent"
 					>
+						<g fill="currentColor">
+							<path d="m0 14.5264v18.9473l17.8947-12.2437v-18.94741z" />
+							<path d="m40 14.5263v18.9474l-17.8947-12.2438v-18.94737z" />
+						</g>
+						<g fill="currentColor" class="o:60">
+							<path d="m0 33.4737v-18.9474l17.8947 12.2438v18.9474z" />
+							<path d="m40 33.4737v-18.9474l-17.8947 12.2438v18.9474z" />
+						</g>
+					</svg>
+					<h2 id="settings-title" class="m:0 ff:sans fs:4xl fw:400 lh:1 ls:-1">
+						Settings
+					</h2>
 				</div>
+				<div class="d:f fd:c g:4 mt:5 mx:5">
+					<section aria-labelledby="toolbar-title">
+						<h3 id="toolbar-title" data-section>
+							<span class="c:accent">01</span> Toolbar
+						</h3>
+						<div class="btw:1 btc:line">
+							<!-- Off until turned on, and turning it on asks for access to
+							     every site: the only way to count before anyone clicks. -->
+							<div data-setting>
+								<span
+									aria-hidden="true"
+									class="p:r d:f ai:c jc:c fs:0 w:7 h:7 bw:1 bc:line bg:paper"
+								>
+									<svg viewBox="0 0 40 48" class="d:b w:3 h:4 c:accent">
+										<g fill="currentColor">
+											<path d="m0 14.5264v18.9473l17.8947-12.2437v-18.94741z" />
+											<path
+												d="m40 14.5263v18.9474l-17.8947-12.2438v-18.94737z"
+											/>
+										</g>
+										<g fill="currentColor" class="o:60">
+											<path d="m0 33.4737v-18.9474l17.8947 12.2438v18.9474z" />
+											<path
+												d="m40 33.4737v-18.9474l-17.8947 12.2438v18.9474z"
+											/>
+										</g>
+									</svg>
+									<span
+										class="p:a r:-2 b:-2 min-w:4 h:4 px:1 bg:accent c:on-fill ta:c fs:xs lh:4"
+										>7</span
+									>
+								</span>
+								<span id="count-title" class="fg:1">Count on the icon</span>
+								<button
+									id="count"
+									type="button"
+									role="switch"
+									aria-checked="false"
+									aria-labelledby="count-title"
+									title="Shows how many technologies each site uses, before you click. Asks to read the sites you open; nothing leaves your browser."
+									data-key
+								>
+									Off
+								</button>
+							</div>
+						</div>
+					</section>
+					<section aria-labelledby="copying-title">
+						<h3 id="copying-title" data-section>
+							<span class="c:accent">02</span> Copying
+						</h3>
+						<div class="btw:1 btc:line">
+							<div data-setting>
+								<span id="show-copy-title" class="fg:1"
+									>Show the copy button</span
+								>
+								<button
+									id="show-copy"
+									type="button"
+									role="switch"
+									aria-checked="false"
+									aria-labelledby="show-copy-title"
+									data-key
+								>
+									Off
+								</button>
+							</div>
+							<div data-setting>
+								<span id="format-title" class="fg:1">Copy as</span>
+								<span
+									role="radiogroup"
+									aria-labelledby="format-title"
+									class="d:f"
+								>
+									<label data-option>
+										<input type="radio" name="format" value="text" data-radio />
+										Text
+									</label>
+									<label data-option>
+										<input
+											type="radio"
+											name="format"
+											value="markdown"
+											data-radio
+										/>
+										Markdown
+									</label>
+								</span>
+							</div>
+						</div>
+					</section>
+					<section aria-labelledby="appearance-title">
+						<h3 id="appearance-title" data-section>
+							<span class="c:accent">03</span> Appearance
+						</h3>
+						<div class="btw:1 btc:line">
+							<div data-setting>
+								<span id="theme-title" class="fg:1">Theme</span>
+								<span
+									role="radiogroup"
+									aria-labelledby="theme-title"
+									class="d:f"
+								>
+									<label data-option>
+										<input type="radio" name="theme" value="auto" data-radio />
+										Auto
+									</label>
+									<label data-option>
+										<input type="radio" name="theme" value="light" data-radio />
+										Light
+									</label>
+									<label data-option>
+										<input type="radio" name="theme" value="dark" data-radio />
+										Dark
+									</label>
+								</span>
+							</div>
+						</div>
+					</section>
+				</div>
+				<footer
+					class="d:f ai:c jc:sb g:4 h:12 mt:6 px:5 btw:1 btc:line fs:xs c:hint"
+				>
+					<span id="version"></span>
+					<span class="d:f g:4">
+						<a
+							href="https://prisharp.com/docs/"
+							target="_blank"
+							rel="noreferrer"
+							data-footer
+							>Docs</a
+						>
+						<a
+							href="https://prisharp.com/privacy/"
+							target="_blank"
+							rel="noreferrer"
+							data-footer
+							>Privacy</a
+						>
+						<a
+							href="https://github.com/rrenildopereiraa/prisharp"
+							target="_blank"
+							rel="noreferrer"
+							data-footer
+							>GitHub</a
+						>
+					</span>
+				</footer>
 			</section>
 		</main>
 	</body>

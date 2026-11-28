@@ -40,20 +40,27 @@ const BACK_SIZE = " h:8";
 const ROW =
 	"d:f ai:c g:4 w:100% h:12 px:1 bw:0 bg:transparent c:label ff:mono fs:xs ta:l td:none c:p h:bg:paper fv:os:s fv:ow:2 fv:oo:-2 fv:oc:focus";
 
-// The switch's track and knob, off and on.
-const TRACK =
-	"d:f ai:c fs:0 w:9 h:5 mt:px px:calc(0.125rem) bw:1 c:p tp:a tdu:150 @prm:tp:none fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus";
-const SWITCH = {
-	off: { track: "jc:fs bc:rim bg:well", knob: "bg:hint" },
-	on: { track: "jc:fe bc:accent bg:accent", knob: "bg:raised" },
+// A switch drawn as one of prisharp.com's keys: raised and white with "Off",
+// filled with the accent with "On".
+const KEY =
+	"min-w:11 h:6 px:2 bw:1 ff:mono fs:xs c:p a:s:98 tp:a tdu:150 @prm:tp:none fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus";
+const KEY_STATE = {
+	off: "bc:rim bg:raised c:hint bs-o:key h:c:label",
+	on: "bc:edge bg:accent c:on-fill bs-o:key-fill",
 };
 
-// One choice of a segmented setting, chosen or not.
-const OPTION = "p:r d:f ai:c h:7 px:3 fs:xs c:p fw:os:s fw:ow:2 fw:oc:focus";
+// One choice of a setting with several, chosen or not.
+const OPTION = "p:r d:f ai:c h:6 px:2 fs:xs c:p fw:os:s fw:ow:2 fw:oc:focus";
 const OPTION_STATE = {
 	off: "bg:transparent c:hint h:c:label",
-	on: "bg:label c:raised",
+	on: "bg:accent/10 c:accent",
 };
+
+// A section's heading, a setting's row, and a link at the foot of the page.
+const SECTION = "m:0 mb:1 fs:xs fw:400 c:hint";
+const SETTING = "d:f ai:c g:3 min-h:12 bbw:1 bbc:line";
+const FOOTER =
+	"c:hint td:none h:c:label h:td:u fv:os:s fv:ow:2 fv:oo:2 fv:oc:focus";
 
 const hostOf = (url) => new URL(url).hostname.replace(/^www\./, "");
 
@@ -70,6 +77,15 @@ for (const element of document.querySelectorAll("[data-text]")) {
 }
 for (const element of document.querySelectorAll("[data-back]")) {
 	element.className = BACK + BACK_SIZE;
+}
+for (const element of document.querySelectorAll("[data-section]")) {
+	element.className = SECTION;
+}
+for (const element of document.querySelectorAll("[data-setting]")) {
+	element.className = SETTING;
+}
+for (const element of document.querySelectorAll("[data-footer]")) {
+	element.className = FOOTER;
 }
 for (const button of document.querySelectorAll("[data-close]")) {
 	button.addEventListener("click", () => window.close());
@@ -324,17 +340,19 @@ copy.addEventListener("click", () => {
 
 function paintSwitch(button, on) {
 	button.setAttribute("aria-checked", String(on));
-	const state = on ? SWITCH.on : SWITCH.off;
-	button.className = `${TRACK} ${state.track}`;
-	button.querySelector("[data-knob]").className = `d:b w:3 h:3 ${state.knob}`;
+	button.className = `${KEY} ${on ? KEY_STATE.on : KEY_STATE.off}`;
+	button.textContent = on ? "On" : "Off";
 }
 
 function paintChoice(name) {
 	for (const input of document.querySelectorAll(`input[name="${name}"]`)) {
 		input.checked = input.value === setting(name);
-		const option = input.closest("[data-option]");
-		const first = option === option.parentElement.firstElementChild;
-		option.className = `${OPTION} ${input.checked ? OPTION_STATE.on : OPTION_STATE.off}${first ? "" : " blw:1 blc:rim"}`;
+		input
+			.closest("[data-option]")
+			.setAttribute(
+				"class",
+				`${OPTION} ${input.checked ? OPTION_STATE.on : OPTION_STATE.off}`,
+			);
 	}
 }
 
