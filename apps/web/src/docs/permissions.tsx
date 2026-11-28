@@ -1,59 +1,64 @@
+import type { ReactNode } from "react";
 import {
 	firefoxPermissions,
 	hostPermissions,
 	permissions,
 } from "virtual:catalog";
-import { Code, LINK, render, Section, Text } from "./layout";
+import { Code, LINK, Text } from "./layout";
 import { USES } from "./uses";
 
-function Permission({ name }: { name: string }) {
-	const firefox = firefoxPermissions.includes(name);
+function Tag({ children }: { children: ReactNode }) {
 	return (
-		<Section title={name}>
-			<Text>{USES[name]}</Text>
-			{!firefox && <Text>Chrome and Chromium browsers only.</Text>}
-		</Section>
+		<span className="px:2 py:1 bw:1 bc:line c:hint fs:xs ws:nw">
+			{children}
+		</span>
 	);
 }
 
-render(
-	"/docs/permissions/",
-	"What Prisharp asks your browser for, and what each permission is used for. It asks for no access to your sites until you turn the count on.",
-	<>
-		{permissions.map((name) => (
-			<Permission key={name} name={name} />
-		))}
+function Row({
+	name,
+	use,
+	tag,
+}: {
+	name: ReactNode;
+	use: string;
+	tag?: string;
+}) {
+	return (
+		<li className="d:f fd:c g:2 py:4 btw:1 btc:line @sm:fd:r @sm:ai:c @sm:g:4">
+			<span className="w:40 fs:0">{name}</span>
+			<span className="fg:1 fs:xs c:hint lh:5">{use}</span>
+			{tag && <Tag>{tag}</Tag>}
+		</li>
+	);
+}
 
-		<Section title="The count on the toolbar icon">
-			<Text>
-				The popup has a switch that puts the number of technologies on
-				Prisharp's icon as each page loads, before you click. It is off until
-				you turn it on. Turning it on asks your browser for access to every site
-				(
-				{hostPermissions.map((name, index) => (
-					<span key={name}>
-						{index > 0 && ", "}
-						<Code>{name}</Code>
-					</span>
+export function Permissions() {
+	return (
+		<>
+			<ul className="m:0 p:0 sst:none max-w:160 bbw:1 bbc:line">
+				{permissions.map((name) => (
+					<Row
+						key={name}
+						name={<Code>{name}</Code>}
+						use={USES[name]}
+						tag={firefoxPermissions.includes(name) ? undefined : "Chrome only"}
+					/>
 				))}
-				), because that is the only way to read a page you haven't clicked on.
-				Your browser asks you first.
-			</Text>
+				<Row
+					name={hostPermissions.map((name) => (
+						<Code key={name}>{name}</Code>
+					))}
+					use="Only if you turn on the count on the toolbar icon, so it can count before you click. Turn it off and the access goes."
+					tag="Off until you ask"
+				/>
+			</ul>
 			<Text>
-				Turn the switch off, or remove the access in your browser's extension
-				settings, and Prisharp is back to reading only the tab you click on.
-				Either way, the count is worked out in your browser and sent nowhere.
-			</Text>
-		</Section>
-
-		<Section title="What leaves your browser">
-			<Text>
-				Nothing. The{" "}
+				Everything stays in your browser.{" "}
 				<a href="/privacy/" className={LINK}>
-					privacy page
-				</a>{" "}
-				says what Prisharp reads and what it doesn't.
+					Privacy
+				</a>
 			</Text>
-		</Section>
-	</>,
-);
+		</>
+	);
+}
