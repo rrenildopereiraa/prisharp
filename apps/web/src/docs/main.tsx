@@ -37,7 +37,7 @@ const VIEWS: Record<Page, { lead: string; view: () => ReactNode }> = {
 		view: () => <Browsers />,
 	},
 	"/docs/technologies/": {
-		lead: "Everything Prisharp detects. Pick one to see the evidence it looks for.",
+		lead: "Everything Prisharp detects, one category at a time. Pick one to see the evidence it looks for.",
 		view: () => <Technologies />,
 	},
 	"/docs/permissions/": {

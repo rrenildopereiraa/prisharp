@@ -1,5 +1,5 @@
+import { IconSearch } from "@tabler/icons-react";
 import {
-	type ReactNode,
 	useCallback,
 	useContext,
 	useDeferredValue,
@@ -10,6 +10,10 @@ import {
 import { catalog, categories, logoLoaders } from "virtual:catalog/docs";
 import { LogosContext } from "@/components/logo";
 import { Proof } from "@/components/panel";
+import Button from "@/components/ui/button";
+import Drawer from "@/components/ui/drawer";
+import Field from "@/components/ui/field";
+import Tabs from "@/components/ui/tabs";
 import type { Found } from "@/demo";
 import { REPO } from "@/links";
 import { DarkContext } from "@/theme";
@@ -83,125 +87,128 @@ function useLogos() {
 	return { logos, ready, load };
 }
 
-/** A category's part of the list, which asks for its logos as it nears view. */
-function Group({
-	category,
-	onNear,
-	children,
-}: {
-	category: string;
-	onNear: (category: string) => void;
-	children: ReactNode;
-}) {
-	const section = useRef<HTMLElement>(null);
-	useEffect(() => {
-		const element = section.current;
-		if (!element) return;
-		const observer = new IntersectionObserver(
-			(entries) => {
-				if (entries.some((entry) => entry.isIntersecting)) {
-					onNear(category);
-					observer.disconnect();
-				}
-			},
-			{ rootMargin: "600px 0px" },
-		);
-		observer.observe(element);
-		return () => observer.disconnect();
-	}, [category, onNear]);
-	return (
-		<section ref={section} className="d:f fd:c g:2">
-			<h2 className="m:0 ff:mono fs:xs fw:500 c:hint">{category}</h2>
-			{children}
-		</section>
-	);
-}
+/** A–Z, as people look a name up, ignoring case. */
+const byName = (a: Tech, b: Tech) =>
+	a.name.localeCompare(b.name, "en", { sensitivity: "base" });
+
+const COUNTS = new Map(
+	categories.map((category) => [
+		category,
+		catalog.filter((tech) => tech.category === category).length,
+	]),
+);
 
 export function Technologies() {
 	const { logos, ready, load } = useLogos();
 	const [query, setQuery] = useState("");
 	const deferred = useDeferredValue(query);
-	const [picked, setPicked] = useState<Tech>(catalog[0]);
-	const preview = useRef<HTMLDivElement>(null);
+	const [category, setCategory] = useState(categories[0]);
+	const [picked, setPicked] = useState<Tech>(
+		() =>
+			catalog.filter((tech) => tech.category === categories[0]).sort(byName)[0],
+	);
 
-	const shown = catalog.filter((tech) => matches(tech.name, deferred));
-	const groups = categories
-		.map((category) => ({
-			category,
-			techs: shown.filter((tech) => tech.category === category),
-		}))
-		.filter((group) => group.techs.length > 0);
+	// a search looks through every category; otherwise one category shows
+	const searching = deferred.trim() !== "";
+	const shown = catalog
+		.filter((tech) =>
+			searching ? matches(tech.name, deferred) : tech.category === category,
+		)
+		.sort(byName);
 
+	// only the logos of what is on screen
+	const needed = [...new Set(shown.map((tech) => tech.category))].join("|");
+	useEffect(() => {
+		for (const name of needed.split("|")) if (name) load(name);
+	}, [needed, load]);
+
+	// on a narrow screen the evidence opens in a sheet over the list
+	const [sheet, setSheet] = useState(false);
 	const pick = (tech: Tech) => {
 		setPicked(tech);
-		load(tech.category);
-		// on a narrow screen the preview sits above the list
-		if (!matchMedia("(min-width: 64rem)").matches) {
-			preview.current?.scrollIntoView({ block: "nearest" });
-		}
+		if (!matchMedia("(min-width: 64rem)").matches) setSheet(true);
 	};
 
 	return (
 		<LogosContext.Provider value={logos}>
 			<div className="d:f fd:c g:6 @lg:fd:rr @lg:ai:fs">
-				<div
-					ref={preview}
-					className="d:f jc:c p:4 bw:1 bc:line bg:well @lg:p:st @lg:t:6 @lg:fs:0"
-				>
+				<div className="d:none jc:c p:4 bw:1 bc:line bg:well @lg:d:f @lg:p:st @lg:t:6 @lg:fs:0">
 					<Proof tech={found(picked)} />
 				</div>
-
-				<div className="d:f fd:c g:6 fg:1 min-w:0">
-					<div className="d:f fd:c g:2">
-						<input
-							type="search"
-							aria-label={`Search ${catalog.length} technologies`}
-							value={query}
-							onChange={(event) => setQuery(event.target.value)}
-							placeholder={`Search ${catalog.length} technologies`}
-							autoComplete="off"
-							spellCheck={false}
-							className="h:10 px:3 bw:1 bc:rim bg:raised c:label ff:mono fs:md @sm:fs:sm bs-o:sunk p::c:hint f:os:s f:ow:2 f:oo:-1 f:oc:focus"
-						/>
-						<p aria-live="polite" className="m:0 fs:xs c:hint">
-							{deferred.trim()
-								? `${shown.length} found`
-								: `${catalog.length} in ${groups.length} categories`}
-						</p>
+				<Drawer
+					open={sheet}
+					onOpenChange={setSheet}
+					side="bottom"
+					handle
+					shape="none"
+					title={picked.name}
+					closeLabel="Close"
+				>
+					<div className="d:f jc:c">
+						<Proof tech={found(picked)} />
 					</div>
+				</Drawer>
 
-					{groups.map((group) => (
-						<Group key={group.category} category={group.category} onNear={load}>
-							<ul className="m:0 p:0 sst:none d:g gtc:2 @sm:gtc:3 @lg:gtc:2">
-								{group.techs.map((tech) => {
-									const here = tech.id === picked.id;
-									return (
-										<li key={tech.id} className="min-w:0">
-											<button
-												type="button"
-												aria-pressed={here}
-												title={tech.name}
-												onClick={() => pick(tech)}
-												className={`d:f ai:c g:2 w:100% h:10 px:2 bw:0 ta:l ff:mono fs:xs c:p fv:os:s fv:ow:2 fv:oo:-2 fv:oc:focus ${
-													here
-														? "bg:raised c:accent"
-														: "bg:transparent c:label h:bg:well"
-												}`}
-											>
-												<Logo tech={tech} ready={ready.has(group.category)} />
-												<span className="min-w:0 to:e ws:nw o:h">
-													{tech.name}
-												</span>
-											</button>
-										</li>
-									);
-								})}
-							</ul>
-						</Group>
-					))}
+				<div className="d:f fd:c g:5 fg:1 min-w:0">
+					<Field
+						type="search"
+						label="Search"
+						aria-label={`Search ${catalog.length} technologies`}
+						placeholder={`${catalog.length} technologies`}
+						icon={<IconSearch aria-hidden className="w:4 h:4" />}
+						value={query}
+						onChange={(event) => setQuery(event.target.value)}
+						autoComplete="off"
+						spellCheck={false}
+						shape="none"
+						className="w:100%"
+						description={
+							searching ? `${shown.length} found in every category` : undefined
+						}
+					/>
+
+					{!searching && (
+						// every category in one row, scrolled sideways when it doesn't fit
+						<div className="ox:auto mx:-1 px:1 py:1">
+							<Tabs
+								size="sm"
+								shape="none"
+								className="ws:nw"
+								value={category}
+								onValueChange={setCategory}
+								items={categories.map((name) => ({
+									value: name,
+									label: name,
+									count: COUNTS.get(name),
+								}))}
+							/>
+						</div>
+					)}
+
+					<ul className="m:0 p:0 sst:none d:g g:1 gtc:2 @sm:gtc:3 @lg:gtc:2 @xl:gtc:3">
+						{shown.map((tech) => {
+							const here = tech.id === picked.id;
+							return (
+								<li key={tech.id} className="min-w:0">
+									<Button
+										variant={here ? "secondary" : "ghost"}
+										size="sm"
+										shape="none"
+										aria-pressed={here}
+										title={tech.name}
+										onClick={() => pick(tech)}
+										className={`w:100% jc:fs fw:400 ${here ? "c:accent" : ""}`}
+									>
+										<Logo tech={tech} ready={ready.has(tech.category)} />
+										<span className="min-w:0 to:e ws:nw o:h">{tech.name}</span>
+									</Button>
+								</li>
+							);
+						})}
+					</ul>
 
 					<Text>
-						{shown.length === 0 && (
+						{searching && shown.length === 0 && (
 							<>
 								No match for <Code>{deferred.trim()}</Code>.{" "}
 							</>

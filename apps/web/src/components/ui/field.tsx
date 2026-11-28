@@ -1,0 +1,338 @@
+"use client";
+
+import { Field } from "@base-ui/react/field";
+import { Toggle } from "@base-ui/react/toggle";
+import { IconAlertTriangle, IconCheck, IconEye, IconEyeOff } from "@tabler/icons-react";
+import { type ComponentProps, type ReactNode, useState } from "react";
+import { merge } from "yummacss/merge";
+import { FOCUS, FOCUS_WITHIN, INPUT_TEXT, MESSAGE_IN, RADIUS, type Shape, type Size, SIZE, useShape, useShake } from "./style";
+
+type IconSide = "leading" | "trailing";
+type Status = "default" | "error" | "success";
+
+const ICON_PADDING: Record<IconSide, string> = {
+  leading: "pl:9 pr:3",
+  trailing: "pl:3 pr:9",
+};
+
+const STATUS_BORDER: Record<Status, string> = {
+  default: "bc:rim",
+  error: "bc:red-5",
+  success: "bc:green-5",
+};
+
+const STATUS_OUTLINE: Record<Status, string> = {
+  default: "",
+  error: "oc:red-2/60 fv:bc:red-3",
+  success: "oc:green-2/60 fv:bc:green-3",
+};
+
+const STATUS_OUTLINE_WITHIN: Record<Status, string> = {
+  default: "",
+  error: "fw:oc:red-2/60 fw:bc:red-3",
+  success: "fw:oc:green-2/60 fw:bc:green-3",
+};
+
+const STATUS_ICON: Record<Status, string> = {
+  default: "",
+  error: "c:red-5",
+  success: "c:green-5",
+};
+
+const STATUS_MESSAGE: Record<Status, string> = {
+  default: "c:hint",
+  error: "c:red-5",
+  success: "c:green-6",
+};
+
+export interface FieldProps
+  extends Omit<ComponentProps<typeof Field.Control>, "size"> {
+  /**
+   * Extra classes. `merge` folds them in last, so one here replaces the
+   * component's own class for the same utility.
+   */
+  className?: string;
+  /**
+   * The focus outline. `true` draws it, `false` removes it along with the
+   * danger, error and success tints that ride with it, and a string of Yumma
+   * CSS utilities restyles it on every focusable part of the component, which
+   * is more than `className` reaches. Removing it outright and putting nothing
+   * back fails WCAG 2.4.7.
+   */
+  focus?: boolean | string;
+  /**
+   * Text above the control. `Field.Root` and `Field.Label` associate it
+   * automatically, so no `id`/`htmlFor` bookkeeping is needed.
+   */
+  label?: string;
+
+  /**
+   * A line under the control, for format or context. Replaced by `error` or
+   * `success` when either is set.
+   */
+  description?: string;
+
+  /**
+   * Red border, a warning icon & this message in place of `description`. Wins
+   * over `success` if both are set.
+   */
+  error?: string;
+
+  /**
+   * A red border with no message, such as while Form marks a failed submit.
+   * `error` also shows its text.
+   */
+  invalid?: boolean;
+
+  /** Green border, a check icon & this message in place of `description`. */
+  success?: string;
+  /** Height and width of the control. */
+  size?: Size;
+  /** Corner radius. Inherits the nearest `Shape`. */
+  shape?: Shape;
+
+  /**
+   * Any icon. It is positioned over the control, so pass the glyph and nothing
+   * else. Hidden once `error` or `success` is set, which claim the trailing
+   * slot for their own icon.
+   */
+  icon?: ReactNode;
+  /** Which end `icon` sits at. */
+  iconPosition?: IconSide;
+
+  /**
+   * Lets `icon` receive pointer events, for an inline button, a clear or reveal
+   * toggle, instead of a decorative glyph.
+   */
+  iconInteractive?: boolean;
+
+  /**
+   * Static content flush against the control's leading edge, like a URL scheme.
+   * Mutually exclusive with `icon`/`suffix` in practice: each claims the same
+   * row.
+   */
+  prefixNode?: ReactNode;
+
+  /**
+   * Static content flush against the control's trailing edge, like a domain
+   * suffix.
+   */
+  suffix?: ReactNode;
+
+  /**
+   * Adds a trailing button that shows and hides the value, for password fields.
+   * Always trailing and always interactive, so it overrides `iconPosition` and
+   * `icon`.
+   */
+  revealable?: boolean;
+}
+
+/**
+ * A labelled input, in three sizes and three shapes, with an optional icon and
+ * error or success states.
+ */
+export default function FieldBase({
+  label,
+  description,
+  error,
+  invalid = false,
+  success,
+  size = "md",
+  shape: shapeProp,
+  icon,
+  iconPosition = "leading",
+  iconInteractive = false,
+  prefixNode,
+  suffix,
+  revealable = false,
+  disabled,
+  required,
+  className,
+  focus = true,
+  type,
+  ...props
+}: FieldProps) {
+  const shape = useShape(shapeProp);
+  const [revealed, setRevealed] = useState(false);
+  // what the border says, and what the icon & message say: invalid only colors
+  const marked: Status = error ? "error" : success ? "success" : "default";
+  const status: Status = invalid && marked === "default" ? "error" : marked;
+  const outline = focus
+    ? merge(FOCUS, STATUS_OUTLINE[status], focus === true ? "" : focus)
+    : "";
+  const message = error ?? success ?? description;
+  const box = useShake<HTMLDivElement>(error);
+  const reveal = revealable;
+  const controlType = reveal && revealed ? "text" : type;
+  const trailingIcon = reveal ? (
+    <Toggle
+      aria-label={revealed ? "Hide" : "Show"}
+      pressed={revealed}
+      onPressedChange={setRevealed}
+      disabled={disabled}
+      className={merge(
+        outline,
+        "d:f ai:c jc:c w:6 h:6 m:-1 p:0 bg:transparent bw:0 c:hint c:p us:none",
+        RADIUS.item[shape],
+      )}
+    >
+      {revealed ? (
+        <IconEye className="w:4 h:4" />
+      ) : (
+        <IconEyeOff className="w:4 h:4" />
+      )}
+    </Toggle>
+  ) : (
+    icon
+  );
+  const activeIcon = reveal ? trailingIcon : icon;
+  const showDecorativeIcon = Boolean(activeIcon) && marked === "default";
+  const activeSide: IconSide =
+    reveal || marked !== "default" ? "trailing" : iconPosition;
+  const hasAffix = Boolean(prefixNode) || Boolean(suffix);
+
+  const controlClasses = merge(
+    outline,
+    "bg:field bs-o:key c:label bw:1",
+    INPUT_TEXT,
+    SIZE.height[size],
+    SIZE.width[size],
+    RADIUS.control[shape],
+    STATUS_BORDER[status],
+    showDecorativeIcon || marked !== "default"
+      ? ICON_PADDING[activeSide]
+      : "px:3",
+    className,
+  );
+
+  // the affixes sit inside the box, so the box takes the focus outline
+  // the box around a plain input takes the width, so the status icon sits inside the input's edge
+  const widths = (className ?? "").split(/\s+/).filter((token) => /(^|:)(min-|max-)?w:/.test(token));
+  const plainBoxClasses = merge("d:f p:r ai:c", SIZE.width[size], ...widths);
+  const affixBoxClasses = merge(
+    focus
+      ? merge(
+          FOCUS_WITHIN,
+          STATUS_OUTLINE_WITHIN[status],
+          focus === true ? "" : focus.replace(/\bfv:/g, "fw:"),
+        )
+      : "",
+    "d:f ai:c g:2 px:3 bg:field bs-o:key bw:1",
+    INPUT_TEXT,
+    SIZE.height[size],
+    SIZE.width[size],
+    RADIUS.control[shape],
+    STATUS_BORDER[status],
+    className,
+  );
+
+  return (
+    <Field.Root
+      name={props.name}
+      disabled={disabled}
+      className={`d:f fd:c g:2 c:label fs:sm ${disabled ? "o:60 c:na" : ""}`}
+    >
+      {label && (
+        <Field.Label className="fw:500">
+          {label}
+          {required && <span className="c:red-5"> *</span>}
+        </Field.Label>
+      )}
+
+      {hasAffix ? (
+        <div ref={box} data-shake className={affixBoxClasses}>
+          {showDecorativeIcon && activeSide === "leading" && (
+            <span
+              className={merge(
+                "d:f ai:c fs:0 c:hint",
+                !(iconInteractive || reveal) && "pe:none",
+              )}
+            >
+              {activeIcon}
+            </span>
+          )}
+          {prefixNode && (
+            <span className="d:f ai:c fs:0 c:hint">{prefixNode}</span>
+          )}
+          <Field.Control
+            required={required}
+            type={controlType}
+            className={`f:1 min-w:0 h:100% p:0 bw:0 bg:transparent c:label os:none ${INPUT_TEXT}`}
+            {...props}
+          />
+          {suffix && <span className="d:f ai:c fs:0 c:hint">{suffix}</span>}
+          {showDecorativeIcon && activeSide === "trailing" && (
+            <span
+              className={merge(
+                "d:f ai:c fs:0 c:hint",
+                !(iconInteractive || reveal) && "pe:none",
+              )}
+            >
+              {activeIcon}
+            </span>
+          )}
+          {marked !== "default" && (
+            <span className={`d:f ai:c fs:0 pe:none ${STATUS_ICON[marked]}`}>
+              {marked === "error" ? (
+                <IconAlertTriangle className="w:4 h:4" />
+              ) : (
+                <IconCheck className="w:4 h:4" />
+              )}
+            </span>
+          )}
+        </div>
+      ) : (
+        <div ref={box} data-shake className={plainBoxClasses}>
+          {showDecorativeIcon && (
+            <span
+              className={merge(
+                "d:f p:a ai:c c:hint",
+                !(iconInteractive || reveal) && "pe:none",
+                activeSide === "leading" ? "l:3" : "r:3",
+              )}
+            >
+              {activeIcon}
+            </span>
+          )}
+          <Field.Control
+            required={required}
+            type={controlType}
+            className={(state) =>
+              // invalid stays red while focused, where Form leaves it after a failed submit
+              merge(
+                controlClasses,
+                "w:100%",
+                state.valid === false &&
+                  merge(STATUS_BORDER.error, focus ? STATUS_OUTLINE.error : ""),
+              )
+            }
+            {...props}
+          />
+          {marked !== "default" && (
+            <span className={`d:f p:a r:3 ai:c pe:none ${STATUS_ICON[marked]}`}>
+              {marked === "error" ? (
+                <IconAlertTriangle className="w:4 h:4" />
+              ) : (
+                <IconCheck className="w:4 h:4" />
+              )}
+            </span>
+          )}
+        </div>
+      )}
+
+      {message && (
+        <Field.Description
+          key={message}
+          // a Form's error takes the description's place
+          className={(state) =>
+            `fs:xs ${STATUS_MESSAGE[marked]} ${marked === "default" ? "" : MESSAGE_IN} ${state.valid === false && marked === "default" ? "d:none" : ""}`
+          }
+        >
+          {message}
+        </Field.Description>
+      )}
+      {/* what a surrounding Form reports, by this field's name */}
+      <Field.Error className={`fs:xs c:red-5 ${MESSAGE_IN}`} />
+    </Field.Root>
+  );
+}
